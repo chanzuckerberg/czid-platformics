@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "entities"
+version = "0.1.0"
+description = "Entities Service for Platformics"
+authors = ["CZI Infectious Disease Team <help@czid.org>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+strawberry-sqlalchemy-mapper = "^0.1.1"
+fastapi = "^0.100.0"
+rich = "^13.4.2"
+typer = "^0.9.0"
+libcst = "^1.0.1"
+uvicorn = "^0.23.1"
+gunicorn = "^21.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
