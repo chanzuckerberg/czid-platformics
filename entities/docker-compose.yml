@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  postgres:
+    platform: linux/arm64
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password_postgres
+      - POSTGRES_DB=entities_db
+      # The postgres image declares a mounted volume at /var/lib/postgresql/data
+      # by default, which means that the data in that directory is difficult to
+      # snapshot and export. Here, we're telling Postgres to use this (non-mounted)
+      # directory as its storage location instead so it works with our db snapshot
+      # workflow.
+      - PGDATA=/var/lib/platformics/data
+  entities:
+    image: "platformics-entities"
+    platform: linux/arm64
+    build:
+      context: "."
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    restart: always
+    stdin_open: true # Helps with pdb
+    tty: true # Helps with pdb
+    ports:
+      - "8008:8008"
+    environment:
+      - DB_HOST=postgres.czidnet
+    volumes:
+      - ./:/czid-platformics/entities
+networks:
+  default:
+    name: czidnet
+    driver: overlay
+    attachable: true
