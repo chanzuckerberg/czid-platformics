@@ -1,52 +1,22 @@
 import typing
-import time
-from sqlalchemy import select
-from fastapi import FastAPI, Depends
+import sqlalchemy as sa
+from fastapi import FastAPI
 import uvicorn
 
 import strawberry
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import relationship, scoped_session, sessionmaker
+import database.models as db
 from strawberry.fastapi import GraphQLRouter
+from database.connect import init_async_db
 
 # from strawberry_sqlalchemy_mapper import strawberry_dataclass_from_model
-from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader
+from strawberry_sqlalchemy_mapper import (
+    StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
 
 ############
 # Database #
 ############
-engine = create_engine("sqlite:///")
-session = scoped_session(sessionmaker(autocommit=False,
-                                      autoflush=False,
-                                      bind=engine))
-Base = declarative_base()
-
-
-#####################
-# SQLAlchemy Models #
-#####################
-
-class SampleModel(Base):
-    __tablename__ = "sample"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-
-    name = Column(String, nullable=False)
-    location = Column(String, nullable=False)
-
-    sequencing_reads = relationship("SequencingReadModel", backref="sample")
-
-
-class SequencingReadModel(Base):
-    __tablename__ = "sequencing_read"
-    sequencing_read_id = Column(Integer, primary_key=True, autoincrement=True)
-
-    nucleotide = Column(String, nullable=False)
-    sequence = Column(String, nullable=False)
-    protocol = Column(String, nullable=False)
-
-    sample_id = Column(Integer, ForeignKey("sample.id"), nullable=False)
-
+app_db = init_async_db()
+session = app_db.session()
 
 ######################
 # Strawberry-GraphQL #
@@ -54,12 +24,12 @@ class SequencingReadModel(Base):
 
 strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
 
-@strawberry_sqlalchemy_mapper.type(SampleModel)
+@strawberry_sqlalchemy_mapper.type(db.Sample)
 class Sample:
     sequencing_reads: typing.List["SequencingRead"]
 
 
-@strawberry_sqlalchemy_mapper.type(SequencingReadModel)
+@strawberry_sqlalchemy_mapper.type(db.SequencingRead)
 class SequencingRead:
     sample: "Sample"
 
@@ -67,65 +37,31 @@ class SequencingRead:
 @strawberry.type
 class Query:
     @strawberry.field
-    def get_sample(self, id: strawberry.ID) -> Sample:
-        return session.query(SampleModel).get(id)
+    async def get_sample(self, id: strawberry.ID) -> Sample:
+        result = await session.execute(sa.select(db.Sample).where(db.Sample.id == id))
+        return result.scalars()
 
     @strawberry.field
-    def get_all_samples(self) -> typing.List[Sample]:
-        return session.query(SampleModel).all()
+    async def get_all_samples(self) -> typing.List[Sample]:
+        result = await session.execute(sa.select(db.Sample))
+        return result.scalars()
 
     @strawberry.field
-    def get_sequencing_read(self, id: strawberry.ID) -> SequencingRead:
-        return session.query(SequencingReadModel).get(id)
+    async def get_sequencing_read(self, id: strawberry.ID) -> SequencingRead:
+        result = await session.execute(sa.select(db.SequencingRead).where(db.SequencingRead.id == id))
+        return result.scalars().one()
+
 
     @strawberry.field
-    def get_all_sequencing_reads(self) -> typing.List[SequencingRead]:
-        return session.scalars(select(SequencingReadModel)).all()
+    async def get_all_sequencing_reads(self) -> typing.List[SequencingRead]:
+        result = await session.execute(sa.select(db.SequencingRead))
+        return result.scalars()
 
 def get_context():
     global session
     return {
         "sqlalchemy_loader": StrawberrySQLAlchemyLoader(bind=session),
     }
-
-# Create models
-Base.metadata.create_all(bind=engine)
-
-# Fill database with test data
-pond = SampleModel(name="Pond Sample", location="San Diego, CA")
-nasal = SampleModel(name="Nasal Swab", location="Atlanta, GA")
-
-session.add(pond)
-session.add(nasal)
-session.flush()  # Makes id available on the model instances
-
-session.add(SequencingReadModel(sequence="ACTGACTGGCTA",
-                      nucleotide="dna",
-                      protocol="mngs",
-                      sample_id=pond.id))
-session.add(SequencingReadModel(sequence="GAGAGAGCTGACTGACTGA",
-                      nucleotide="dna",
-                      protocol="targeted",
-                      sample_id=pond.id))
-session.add(SequencingReadModel(sequence="CTCTCTTGACTGACTGA",
-                      nucleotide="dna",
-                      protocol="msspe",
-                      sample_id=pond.id))
-
-session.add(SequencingReadModel(sequence="AAAACTGACTGACTGA",
-                      nucleotide="rna",
-                      protocol="msspe",
-                      sample_id=nasal.id))
-session.add(SequencingReadModel(sequence="TTTTCTGACTGACTGA",
-                      nucleotide="dna",
-                      protocol="mngs",
-                      sample_id=nasal.id))
-session.add(SequencingReadModel(sequence="CCCCTGACTGACTGA",
-                      nucleotide="rna",
-                      protocol="targeted",
-                      sample_id=nasal.id))
-
-session.commit()
 
 # call finalize() before using the schema:
 # (note that models that are related to models that are in the schema

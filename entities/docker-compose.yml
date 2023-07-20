@@ -10,7 +10,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password_postgres
-      - POSTGRES_DB=entities_db
+      - POSTGRES_DB=entities
       # The postgres image declares a mounted volume at /var/lib/postgresql/data
       # by default, which means that the data in that directory is difficult to
       # snapshot and export. Here, we're telling Postgres to use this (non-mounted)
@@ -31,6 +31,10 @@ services:
       - "8008:8008"
     environment:
       - DB_HOST=postgres.czidnet
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=password_postgres
+      - DB_NAME=entities
     volumes:
       - ./:/czid-platformics/entities
 networks:

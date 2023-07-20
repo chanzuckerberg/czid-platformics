@@ -6,7 +6,6 @@ export COMPOSE_DOCKER_CLI_BUILD:=1
 export docker_compose:=docker compose
 
 ### DATABASE VARIABLES #################################################
-DB_SEARCH_PATH=entities,public
 LOCAL_DB_NAME = entities
 LOCAL_DB_SERVER = localhost:5432
 LOCAL_DB_USERNAME = postgres
@@ -26,6 +25,8 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 .PHONY: local-init
 local-init:
 	$(docker_compose) up -d
+	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
+	$(docker_compose) run entities make alembic-upgrade-head
 
 .PHONY: debugger
 debugger: ## Attach to the backend service (useful for pdb)
@@ -41,7 +42,7 @@ local-rebuild: ## Rebuild local dev without re-importing data
 	$(docker_compose) up -d
 
 .PHONY: local-sync
-local-sync: local-rebuild local-init local-hostconfig ## Re-sync the local-environment state after modifying library deps or docker configs
+local-sync: local-rebuild local-init ## Re-sync the local-environment state after modifying library deps or docker configs
 
 .PHONY: local-start
 local-start: ## Start a local dev environment that's been stopped.
@@ -52,7 +53,7 @@ local-stop: ## Stop the local dev environment.
 	$(docker_compose) --profile '*' stop
 
 .PHONY: local-clean
-local-clean: local-stop local-nohostconfig ## Remove everything related to the local dev environment (including db data!)
+local-clean: local-stop ## Remove everything related to the local dev environment (including db data!)
 	$(docker_compose) down
 
 .PHONY: local-logs
@@ -65,7 +66,7 @@ local-shell: ## Open a command shell in one of the dev containers. ex: make loca
 
 .PHONY: local-pgconsole
 local-pgconsole: ## Connect to the local postgres database.
-	$(docker_compose) exec database psql "$(LOCAL_DB_CONN_STRING)?options=--search_path%3d$(DB_SEARCH_PATH)"
+	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
 .PHONY: local-update-backend-deps
 local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
@@ -75,3 +76,13 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 .PHONY: gha-setup
 gha-setup:
 	docker swarm init
+
+### ALEMBIC #############################################
+alembic-upgrade-head:
+	alembic upgrade head # applies to local only
+
+alembic-undo-migration:
+	alembic downgrade -1
+
+alembic-autogenerate:
+	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
