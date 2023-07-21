@@ -1,5 +1,8 @@
 FROM python:3.11-slim-bookworm AS build
-RUN apt-get update && apt-get install -y vim wget nginx nginx-extras procps ripgrep make && apt-get clean
+RUN apt-get update && \
+    apt-get install -y vim wget nginx nginx-extras procps ripgrep make gcc postgresql-15 && \
+    apt-get clean
+
 ENV POETRY_VERSION=1.5
 # Some base python dependencies to kickstart our container build.
 RUN python3 -m pip install --no-cache-dir poetry==$POETRY_VERSION supervisor
