@@ -72,6 +72,7 @@ local-pgconsole: ## Connect to the local postgres database.
 local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
 	$(docker_compose) exec backend poetry update
 
+## FIXME: running `poetry run pytest` on a Mac gives `ImportError: no pq wrapper available.`, even with psycopg installed.
 .PHONY: local-tests
 local-tests: ## Run entities tests
 	docker exec -u postgres -t $$(docker ps --filter ancestor="platformics-entities" --quiet) bash -c "poetry run pytest"
