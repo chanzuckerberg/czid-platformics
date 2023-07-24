@@ -129,6 +129,64 @@ files = [
 ]
 
 [[package]]
+name = "factory-boy"
+version = "3.3.0"
+description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "factory_boy-3.3.0-py2.py3-none-any.whl", hash = "sha256:a2cdbdb63228177aa4f1c52f4b6d83fab2b8623bf602c7dedd7eb83c0f69c04c"},
+    {file = "factory_boy-3.3.0.tar.gz", hash = "sha256:bc76d97d1a65bbd9842a6d722882098eb549ec8ee1081f9fb2e8ff29f0c300f1"},
+]
+
+[package.dependencies]
+Faker = ">=0.7.0"
+
+[package.extras]
+dev = ["Django", "Pillow", "SQLAlchemy", "coverage", "flake8", "isort", "mongoengine", "sqlalchemy-utils", "tox", "wheel (>=0.32.0)", "zest.releaser[recommended]"]
+doc = ["Sphinx", "sphinx-rtd-theme", "sphinxcontrib-spelling"]
+
+[[package]]
+name = "faker"
+version = "12.3.3"
+description = "Faker is a Python package that generates fake data for you."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "Faker-12.3.3-py3-none-any.whl", hash = "sha256:a7244b7f25503811072122d98918f445df276ea80c5e38448f51a3b765665ece"},
+    {file = "Faker-12.3.3.tar.gz", hash = "sha256:dc46ddaf9bd33998c49c69dc68273bb5b11e41820b38f05296d3241c7d681597"},
+]
+
+[package.dependencies]
+python-dateutil = ">=2.4"
+
+[[package]]
+name = "faker-biology"
+version = "0.6.0"
+description = "Fake data from biology"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "faker-biology-0.6.0.tar.gz", hash = "sha256:5226588f6b18038a9ada1976711cd01e5e97e201e605478075e35297cd521569"},
+    {file = "faker_biology-0.6.0-py3-none-any.whl", hash = "sha256:f771f505136e8bc965f55a33849e437c08f70a7795a35f7243b74d26378c4eb5"},
+]
+
+[package.dependencies]
+Faker = ">=12.3.0,<13.0.0"
+faker-python = ">=0.0.1,<0.0.2"
+
+[[package]]
+name = "faker-python"
+version = "0.0.1"
+description = "A Python library for generating fake data such as names, addresses, and phone numbers."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "faker-python-0.0.1.tar.gz", hash = "sha256:250ec5d0dfd713af04abae63c8bf215c084776ea5c6e4c033611aa266661ddad"},
+    {file = "faker_python-0.0.1-py3-none-any.whl", hash = "sha256:b7abd831197780c1f4ed139328667aed3bf13ca1ee33220a96307d717def6064"},
+]
+
+[[package]]
 name = "fastapi"
 version = "0.100.0"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -1102,13 +1160,13 @@ full = ["httpx (>=0.22.0)", "itsdangerous", "jinja2", "python-multipart", "pyyam
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.195.2"
+version = "0.195.3"
 description = "A library for creating GraphQL APIs"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "strawberry_graphql-0.195.2-py3-none-any.whl", hash = "sha256:559298d59da8632df0a3f45902d534af4b0b0f2a2704ab7b0ab2e4d1ceb25251"},
-    {file = "strawberry_graphql-0.195.2.tar.gz", hash = "sha256:9224e12c718e0ada0f07cf496d71296d79611bb90648cfacd0d47b4183e60956"},
+    {file = "strawberry_graphql-0.195.3-py3-none-any.whl", hash = "sha256:baba79ef5fc0ab1bd5f77019b081b8b9780e2a2b0e6e7dc0fcf15fdd458b3d0e"},
+    {file = "strawberry_graphql-0.195.3.tar.gz", hash = "sha256:bcae81e3d2a81f3db4ed1856c93bc0c3ef4c17579a07f8b4d1b7aa7a19ea9429"},
 ]
 
 [package.dependencies]
@@ -1123,7 +1181,7 @@ chalice = ["chalice (>=1.22,<2.0)"]
 channels = ["asgiref (>=3.2,<4.0)", "channels (>=3.0.5)"]
 cli = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "rich (>=12.0.0)", "typer (>=0.7.0)"]
 debug = ["libcst (>=0.4.7)", "rich (>=12.0.0)"]
-debug-server = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "python-multipart (>=0.0.5,<0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.7.0)", "uvicorn (>=0.11.6,<0.22.0)"]
+debug-server = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "python-multipart (>=0.0.5,<0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.7.0)", "uvicorn (>=0.11.6)"]
 django = ["Django (>=3.2)", "asgiref (>=3.2,<4.0)"]
 fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.5,<0.0.7)"]
 flask = ["flask (>=1.1)"]
@@ -1247,4 +1305,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ac35847937b6425829c7c856e12a9c6eaa92da8a1e71141352959b2b01e80f68"
+content-hash = "7dc8f5f0108be90220156ff4351fe0c69693ef0513735421fd45a418ca909876"
