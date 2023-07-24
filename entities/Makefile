@@ -27,6 +27,7 @@ local-init:
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
 	$(docker_compose) run entities make alembic-upgrade-head
+	$(MAKE) local-seed
 
 .PHONY: debugger
 debugger: ## Attach to the backend service (useful for pdb)
@@ -55,6 +56,10 @@ local-stop: ## Stop the local dev environment.
 .PHONY: local-clean
 local-clean: local-stop ## Remove everything related to the local dev environment (including db data!)
 	$(docker_compose) down
+
+.PHONY: local-seed
+local-seed: ## Seed the dev db with a reasonable set of starting data.
+	$(docker_compose) exec entities python3 scripts/seed.py
 
 .PHONY: local-logs
 local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=backend
