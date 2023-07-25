@@ -88,10 +88,10 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head:
-	alembic upgrade head # applies to local only
+	alembic upgrade head ## Run alembic migrations locally
 
-alembic-undo-migration:
+alembic-undo-migration: ## Downgrade the latest alembic migration
 	alembic downgrade -1
 
-alembic-autogenerate:
+alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
 	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
