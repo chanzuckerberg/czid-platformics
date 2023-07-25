@@ -78,7 +78,7 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 	$(docker_compose) exec backend poetry update
 
 .PHONY: local-tests
-local-tests: ## Run entities tests
+local-tests: local-seed ## Run entities tests
 	$(docker_compose) run --user postgres entities bash -c "poetry run pytest"
 
 ### GitHub Actions ###################################################
