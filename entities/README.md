@@ -9,6 +9,8 @@ To run a local development environment, clone this repo and run:
 make local-init
 ```
 
+Then, visit http://localhost:8008/graphql in your favorite web browser.
+
 To get a summary of other available `make` targets, run `make help`
 
 ### Making changes to the DB schema:
