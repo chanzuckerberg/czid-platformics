@@ -1,4 +1,3 @@
-import database.models as db
 from database.connect import init_sync_db
 from test_infra import factories as fa
 import factory.random
