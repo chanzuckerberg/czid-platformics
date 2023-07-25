@@ -1,3 +1,6 @@
+"""
+Example DB test
+"""
 import pytest
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
