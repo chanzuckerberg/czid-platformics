@@ -34,7 +34,7 @@ class Query:
     @strawberry.field
     async def get_workflow(self, id: int ) -> Workflow:
         result = await session.execute(sa.select(db.Workflow).where(db.Workflow.id == id))
-        return result.scalars()
+        return result.scalars().one()
     
     @strawberry.field
     async def get_workflows(self) -> typing.List[Workflow]:
