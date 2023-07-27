@@ -21,3 +21,12 @@ To get a summary of other available `make` targets, run `make help`
 4. Run `make alembic-upgrade-head` to apply migrations
 5. Test
 6. Open a PR for the updated files.
+
+### Using the CLI:
+```
+# Get a shell in the docker container:
+docker compose exec entities bash
+
+# Get a list of samples:
+./cli/gqlcli.py samples list
+```

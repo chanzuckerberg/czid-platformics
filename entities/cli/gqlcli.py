@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import logging
 
@@ -34,6 +35,7 @@ def cli(ctx, endpoint, debug):
 @cli.group()
 def samples():
     pass
+
 
 @samples.command("list")
 @click.pass_context
