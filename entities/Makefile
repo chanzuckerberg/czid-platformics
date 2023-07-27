@@ -82,7 +82,7 @@ local-tests: local-seed ## Run entities tests
 	$(docker_compose) run entities bash -c "poetry run pytest"
 
 .PHONY: local-gqlschema
-local-gqlschema: ## Run entities tests
+local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
 
 .PHONY: update-cli
