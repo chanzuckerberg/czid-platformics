@@ -1,12 +1,17 @@
 import typing
+import json
 import sqlalchemy as sa
 from fastapi import FastAPI
 import uvicorn
 
 import strawberry
-import database.models as db
 from strawberry.fastapi import GraphQLRouter
+
+import database.models as db
 from database.connect import init_async_db
+from config import load_workflow_runner
+
+
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
 
@@ -17,6 +22,11 @@ from strawberry_sqlalchemy_mapper import (
 app_db = init_async_db()
 session = app_db.session()
 
+###########
+# Plugins #
+###########
+
+workflow_runner = load_workflow_runner("local")
 
 ######################
 # Strawberry-GraphQL #
@@ -54,6 +64,16 @@ class Mutation:
         session.add(db_workflow)
         await session.commit()
         return db_workflow 
+
+    @strawberry.mutation
+    async def submit_workflow(self, workflow_inputs: str) -> str:
+        def runner(inputs_json):
+            workflow_runner.run_workflow(on_complete=lambda x: print(x), workflow_run_id=1, workflow_path="/workflows/test_workflows/minimap2.wdl", inputs=inputs_json)
+        inputs_json = json.loads(workflow_inputs)
+        import pdb; pdb.set_trace()
+        runner(inputs_json)
+        
+        return "{success: true}"
 
 def get_context():
     global session
