@@ -81,6 +81,15 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 local-tests: local-seed ## Run entities tests
 	$(docker_compose) run entities bash -c "poetry run pytest"
 
+.PHONY: local-gqlschema
+local-gqlschema: ## Export this app's GQL schema.
+	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
+
+.PHONY: update-cli
+update-cli:  ## Update the GQL types used by the CLI
+	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
+	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
+
 ### GitHub Actions ###################################################
 .PHONY: gha-setup
 gha-setup:
