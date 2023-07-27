@@ -49,14 +49,14 @@ class SyncDB():
         session = self.session
         return session()
 
-def get_db_uri(protocol: str="postgresql") -> str:
+def get_db_uri(protocol: str="postgresql", db_host: str=None, db_port: int=None, db_user: str=None, db_pass: str=None, db_name: str=None) -> str:
     db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
         protocol=protocol,
-        db_host=os.getenv("DB_USER"),
-        db_port=os.getenv("DB_PORT"),
-        db_user=os.getenv("DB_USER"),
-        db_pass=os.getenv("DB_PASS"),
-        db_name=os.getenv("DB_NAME"),
+        db_host=db_host or os.getenv("DB_HOST"),
+        db_port=db_port or os.getenv("DB_PORT"),
+        db_user=db_user or os.getenv("DB_USER"),
+        db_pass=db_pass or os.getenv("DB_PASS"),
+        db_name=db_name or os.getenv("DB_NAME"),
     )
     return db_uri
 
