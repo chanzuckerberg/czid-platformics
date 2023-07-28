@@ -26,7 +26,7 @@ def postgresql(test_db):
     ):
         engine = create_engine(
             get_db_uri(
-                db_host=pg_host, db_port=pg_port, db_user=pg_user, db_pass=pg_password
+                db_host=pg_host, db_port=pg_port, db_user=pg_user, db_pass=pg_password, db_name=pg_db
             )
         )
         Base.metadata.create_all(engine)
