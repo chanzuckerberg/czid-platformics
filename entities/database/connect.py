@@ -24,10 +24,6 @@ class AsyncDB():
             self._session_maker = session
         return self._session_maker
 
-    def make_session(self) -> AsyncSession:
-        session = self.session
-        return session()
-
 
 class SyncDB():
     def __init__(self, engine: Engine):
@@ -45,11 +41,8 @@ class SyncDB():
             self._session_maker = session
         return self._session_maker
 
-    def make_session(self) -> Session:
-        session = self.session
-        return session()
 
-def get_db_uri(protocol: str="postgresql", db_host: str=None, db_port: int=None, db_user: str=None, db_pass: str=None, db_name: str=None) -> str:
+def get_db_uri(protocol: str="postgresql+psycopg", db_host: Optional[str]=None, db_port: Optional[int]=None, db_user: Optional[str]=None, db_pass: Optional[str]=None, db_name: Optional[str]=None) -> str:
     db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
         protocol=protocol,
         db_host=db_host or os.getenv("DB_HOST"),
@@ -69,8 +62,8 @@ def init_async_db(db_uri: Optional[str] = None, **kwargs) -> AsyncDB:
     return AsyncDB(engine)
 
 
-def init_sync_db(db_uri: Optional[str] = None) -> SyncDB:
+def init_sync_db(db_uri: Optional[str] = None, **kwargs) -> SyncDB:
     if not db_uri:
-        db_uri = get_db_uri("postgresql")
-    engine = create_engine(db_uri)
+        db_uri = get_db_uri("postgresql+psycopg")
+    engine = create_engine(db_uri, **kwargs)
     return SyncDB(engine)

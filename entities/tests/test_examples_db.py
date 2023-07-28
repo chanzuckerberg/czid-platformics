@@ -3,8 +3,8 @@ from database.models import Sample
 from test_infra import factories as fa
 
 # Tests
-def test_samples(postgresql):
-    with postgresql() as session:
+def test_samples(sync_db):
+    with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
         factory.random.reseed_random(123)
         fa.SampleFactory.create_batch(2, location="San Francisco, CA")

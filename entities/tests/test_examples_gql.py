@@ -3,10 +3,22 @@ Example GraphQL test
 """
 
 import pytest
-from api.main import schema
+from httpx import AsyncClient
+from database.connect import SyncDB
+from test_infra import factories as fa
+
 
 @pytest.mark.asyncio
-async def test_graphql_query():
+async def test_graphql_query(
+    sync_db: SyncDB,
+    http_client: AsyncClient,
+):
+
+    with sync_db.session() as session:
+        fa.SessionStorage.set_session(session)
+        fa.SampleFactory.create_batch(2, location="San Francisco, CA")
+        fa.SampleFactory.create_batch(6, location="Mountain View, CA")
+
     query = """
         query MyQuery {
             getAllSamples {
@@ -15,7 +27,14 @@ async def test_graphql_query():
             }
         }
     """
-
-    result = await schema.execute(query)
-    assert result.errors is None
-    assert result.data["getAllSamples"][0] == { "id": 1, "location": "North Bonnie" }
+    request = {"operationName": "MyQuery", "query": query}
+    headers = {"content-type": "application/json", "accept": "application/json"}
+    result = await http_client.post(
+        "/graphql",
+        json=request,
+        headers=headers,
+    )
+    output = result.json()
+    assert output["data"]["getAllSamples"][0] == { "id": 1, "location": "San Francisco, CA" }
+    assert output["data"]["getAllSamples"][-1]["location"] == "Mountain View, CA"
+    assert len(output["data"]["getAllSamples"]) == 8
