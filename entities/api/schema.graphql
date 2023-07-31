@@ -7,13 +7,19 @@ type Query {
 
 type Sample {
   id: Int!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int
   name: String!
   location: String!
   sequencingReads: [SequencingRead!]!
 }
 
 type SequencingRead {
-  sequencingReadId: Int!
+  id: Int!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int
   nucleotide: String!
   sequence: String!
   protocol: String!
