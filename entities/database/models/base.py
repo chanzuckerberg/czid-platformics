@@ -27,6 +27,6 @@ class Entity(Base):
     # Type is what?
     type: Mapped[str]
 
-    # Example attributes for every entity (TODO: revisit nullable)
+    # Example attributes for every entity (TODO: revisit nullable columns later)
     producing_run_id = Column(Integer, nullable=True)
     owner_user_id = Column(Integer, nullable=True)
