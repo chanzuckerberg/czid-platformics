@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.orm import relationship, mapped_column
 from sqlalchemy import Column, ForeignKey, Integer, String
 from database.models.base import Entity
 

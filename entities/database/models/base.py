@@ -21,10 +21,9 @@ class Entity(Base):
         "polymorphic_on": "type"
     }
 
-    # Entity ID is used..
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    # Type is what?
+    # The "type" field distinguishes between subclasses (e.g. sample, sequencing_read, etc)
     type: Mapped[str]
 
     # Example attributes for every entity (TODO: revisit nullable columns later)
