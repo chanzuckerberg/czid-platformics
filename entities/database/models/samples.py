@@ -1,21 +1,27 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy import Column, ForeignKey, Integer, String
-from database.models.base import Base
+from database.models.base import Entity
 
-class Sample(Base):
+class Sample(Entity):
     __tablename__ = "sample"
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    __mapper_args__ = {
+        "polymorphic_identity": "sample"
+    }
 
+    id = mapped_column(ForeignKey("entity.id"), primary_key=True)
     name = Column(String, nullable=False)
     location = Column(String, nullable=False)
 
     sequencing_reads = relationship("SequencingRead", back_populates="sample")
 
 
-class SequencingRead(Base):
+class SequencingRead(Entity):
     __tablename__ = "sequencing_read"
-    sequencing_read_id = Column(Integer, primary_key=True, autoincrement=True)
+    __mapper_args__ = {
+        "polymorphic_identity": "sequencing_read"
+    }
 
+    id = mapped_column(ForeignKey("entity.id"), primary_key=True)
     nucleotide = Column(String, nullable=False)
     sequence = Column(String, nullable=False)
     protocol = Column(String, nullable=False)
