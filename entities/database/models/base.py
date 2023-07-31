@@ -1,5 +1,5 @@
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import MetaData
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import MetaData, Column, Integer
 
 meta = MetaData(
     naming_convention={
@@ -13,3 +13,20 @@ meta = MetaData(
 
 class Base(DeclarativeBase):
     metadata = meta
+
+class Entity(Base):
+    __tablename__ = "entity"
+    __mapper_args__ = {
+        "polymorphic_identity": "entity",
+        "polymorphic_on": "type"
+    }
+
+    # Entity ID is used..
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # Type is what?
+    type: Mapped[str]
+
+    # Example attributes for every entity (TODO: revisit nullable)
+    producing_run_id = Column(Integer, nullable=True)
+    owner_user_id = Column(Integer, nullable=True)
