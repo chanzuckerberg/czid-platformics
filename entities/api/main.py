@@ -38,7 +38,7 @@ class SequencingRead:
 class Query:
     @strawberry.field
     async def get_sample(self, id: strawberry.ID) -> Sample:
-        result = await session.execute(sa.select(db.Sample).where(db.Sample.id == id))
+        result = await session.execute(sa.select(db.Sample).where(db.Sample.entity_id == id))
         return result.scalars()
 
     @strawberry.field
@@ -48,7 +48,7 @@ class Query:
 
     @strawberry.field
     async def get_sequencing_read(self, id: strawberry.ID) -> SequencingRead:
-        result = await session.execute(sa.select(db.SequencingRead).where(db.SequencingRead.id == id))
+        result = await session.execute(sa.select(db.SequencingRead).where(db.SequencingRead.entity_id == id))
         return result.scalars().one()
 
 
