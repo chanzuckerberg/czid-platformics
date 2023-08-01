@@ -10,6 +10,7 @@ type Sample {
   type: String!
   producingRunId: Int
   ownerUserId: Int
+  entityId: Int!
   name: String!
   location: String!
   sequencingReads: [SequencingRead!]!
@@ -20,6 +21,7 @@ type SequencingRead {
   type: String!
   producingRunId: Int
   ownerUserId: Int
+  entityId: Int!
   nucleotide: String!
   sequence: String!
   protocol: String!

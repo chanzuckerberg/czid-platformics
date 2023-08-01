@@ -41,11 +41,12 @@ class Query(sgqlc.types.Type):
 
 class Sample(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ('id', 'type', 'producing_run_id', 'owner_user_id', 'name', 'location', 'sequencing_reads')
+    __field_names__ = ('id', 'type', 'producing_run_id', 'owner_user_id', 'entity_id', 'name', 'location', 'sequencing_reads')
     id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='id')
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='type')
     producing_run_id = sgqlc.types.Field(Int, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(Int, graphql_name='ownerUserId')
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='entityId')
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
     location = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='location')
     sequencing_reads = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('SequencingRead'))), graphql_name='sequencingReads')
@@ -53,11 +54,12 @@ class Sample(sgqlc.types.Type):
 
 class SequencingRead(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ('id', 'type', 'producing_run_id', 'owner_user_id', 'nucleotide', 'sequence', 'protocol', 'sample_id', 'sample')
+    __field_names__ = ('id', 'type', 'producing_run_id', 'owner_user_id', 'entity_id', 'nucleotide', 'sequence', 'protocol', 'sample_id', 'sample')
     id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='id')
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='type')
     producing_run_id = sgqlc.types.Field(Int, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(Int, graphql_name='ownerUserId')
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='entityId')
     nucleotide = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='nucleotide')
     sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='sequence')
     protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='protocol')

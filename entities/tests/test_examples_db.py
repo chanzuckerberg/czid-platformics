@@ -23,5 +23,5 @@ def test_reads(postgresql):
         fa.SequencingReadFactory.create_batch(2, sample=sample1, protocol="MNGS", nucleotide="DNA")
         fa.SequencingReadFactory.create_batch(3, sample=sample2, protocol="TARGETED", nucleotide="DNA")
 
-        assert session.query(SequencingRead).filter_by(sample_id=sample1.id).count() == 2
-        assert session.query(SequencingRead).filter_by(sample_id=sample2.id).count() == 3
+        assert session.query(SequencingRead).filter_by(sample_id=sample1.entity_id).count() == 2
+        assert session.query(SequencingRead).filter_by(sample_id=sample2.entity_id).count() == 3
