@@ -79,7 +79,16 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
-	$(docker_compose) run --user postgres entities bash -c "poetry run pytest"
+	$(docker_compose) run entities bash -c "poetry run pytest"
+
+.PHONY: local-gqlschema
+local-gqlschema: ## Export this app's GQL schema.
+	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
+
+.PHONY: update-cli
+update-cli:  ## Update the GQL types used by the CLI
+	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
+	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
 
 ### GitHub Actions ###################################################
 .PHONY: gha-setup
@@ -88,10 +97,10 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head:
-	alembic upgrade head # applies to local only
+	alembic upgrade head ## Run alembic migrations locally
 
-alembic-undo-migration:
+alembic-undo-migration: ## Downgrade the latest alembic migration
 	alembic downgrade -1
 
-alembic-autogenerate:
+alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
 	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
