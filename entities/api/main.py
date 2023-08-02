@@ -33,21 +33,21 @@ class SequencingRead:
 class Query:
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_sample(
-        self, id: strawberry.ID, session: str = Depends(get_db_session)
+        self, id: strawberry.ID, session: str = Depends(get_db_session, use_cache=False)
     ) -> Sample:
         result = await session.execute(sa.select(db.Sample).where(db.Sample.id == id))
         return result.scalars()
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_all_samples(
-        self, session: str = Depends(get_db_session)
+        self, session: str = Depends(get_db_session, use_cache=False)
     ) -> typing.List[Sample]:
         result = await session.execute(sa.select(db.Sample))
         return result.scalars()
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_sequencing_read(
-        self, id: strawberry.ID, session: str = Depends(get_db_session)
+        self, id: strawberry.ID, session: str = Depends(get_db_session, use_cache=False)
     ) -> SequencingRead:
         result = await session.execute(
             sa.select(db.SequencingRead).where(db.SequencingRead.id == id)
@@ -56,13 +56,15 @@ class Query:
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_all_sequencing_reads(
-        self, session: str = Depends(get_db_session)
+        self, session: str = Depends(get_db_session, use_cache=False)
     ) -> typing.List[SequencingRead]:
         result = await session.execute(sa.select(db.SequencingRead))
         return result.scalars()
 
 
-def get_context(session: str = Depends(get_db_session)):
+def get_context(
+    session: str = Depends(get_db_session, use_cache=False)
+):
     return {
         "sqlalchemy_loader": StrawberrySQLAlchemyLoader(bind=session),
     }
