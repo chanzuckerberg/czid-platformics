@@ -1,0 +1,54 @@
+version: '3.8'
+
+x-aws-variables: &aws-variables
+  ? AWS_ACCESS_KEY_ID
+  ? AWS_SECRET_ACCESS_KEY
+  ? AWS_SESSION_TOKEN
+  ? AWS_REGION
+  ? AWS_DEFAULT_REGION
+
+x-db-variables: &db-variables
+  ? DB_HOST=postgres.czidnet
+  ? DB_PORT=5432
+  ? DB_USER=postgres
+  ? DB_PASS=password_postgres
+  ? DB_NAME=workflows
+
+services:
+  postgres:
+    platform: linux/amd64
+    image: postgres:15
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password_postgres
+      - POSTGRES_DB=workflows
+      # The postgres image declares a mounted volume at /var/lib/postgresql/data
+      # by default, which means that the data in that directory is difficult to
+      # snapshot and export. Here, we're telling Postgres to use this (non-mounted)
+      # directory as its storage location instead so it works with our db snapshot
+      # workflow.
+      - PGDATA=/var/lib/platformics/data
+  workflows:
+    build:
+      context: .
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    restart: always
+    platform: linux/amd64
+    volumes:
+      - .:/workflows
+    ports:
+      - 8042:8042
+    stdin_open: true # Helps with pdb
+    tty: true # Helps with pdb
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8042
+    environment:
+      <<: [*aws-variables, *db-variables]
+networks:
+  default:
+    name: czidnet
+    driver: overlay
+    attachable: true
