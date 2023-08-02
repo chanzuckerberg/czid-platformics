@@ -26,6 +26,7 @@ faker-biology = "^0.6.0"
 sgqlc = "^16.3"
 pytest-asyncio = "^0.21.1"
 psycopg-binary = "^3.1.9"
+httpx = "^0.24.1"
 
 [build-system]
 requires = ["poetry-core"]
