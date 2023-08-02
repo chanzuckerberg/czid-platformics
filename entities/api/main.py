@@ -1,28 +1,24 @@
 import typing
-import sqlalchemy as sa
-from fastapi import FastAPI
-import uvicorn
 
-import strawberry
 import database.models as db
+import sqlalchemy as sa
+import strawberry
+import uvicorn
+from fastapi import Depends, FastAPI
+from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from database.connect import init_async_db
+from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
+                                          StrawberrySQLAlchemyMapper)
 
-# from strawberry_sqlalchemy_mapper import strawberry_dataclass_from_model
-from strawberry_sqlalchemy_mapper import (
-    StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
-
-############
-# Database #
-############
-app_db = init_async_db()
-session = app_db.session()
+from api.core.deps import get_db_session
+from api.core.strawberry_extensions import DependencyExtension
 
 ######################
 # Strawberry-GraphQL #
 ######################
 
 strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
+
 
 @strawberry_sqlalchemy_mapper.type(db.Sample)
 class Sample:
@@ -36,32 +32,47 @@ class SequencingRead:
 
 @strawberry.type
 class Query:
-    @strawberry.field
-    async def get_sample(self, id: strawberry.ID) -> Sample:
-        result = await session.execute(sa.select(db.Sample).where(db.Sample.entity_id == id))
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def get_sample(
+        self,
+        id: strawberry.ID,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> Sample:
+        result = await session.execute(
+            sa.select(db.Sample).where(db.Sample.entity_id == id)
+        )
         return result.scalars()
 
-    @strawberry.field
-    async def get_all_samples(self) -> typing.List[Sample]:
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def get_all_samples(
+        self, session: AsyncSession = Depends(get_db_session, use_cache=False)
+    ) -> typing.List[Sample]:
         result = await session.execute(sa.select(db.Sample))
         return result.scalars()
 
-    @strawberry.field
-    async def get_sequencing_read(self, id: strawberry.ID) -> SequencingRead:
-        result = await session.execute(sa.select(db.SequencingRead).where(db.SequencingRead.entity_id == id))
-        return result.scalars().one()
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def get_sequencing_read(
+        self,
+        id: strawberry.ID,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> SequencingRead:
+        await session.execute(
+            sa.select(db.SequencingRead).where(db.SequencingRead.entity_id == id)
+        )
 
-
-    @strawberry.field
-    async def get_all_sequencing_reads(self) -> typing.List[SequencingRead]:
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def get_all_sequencing_reads(
+        self, session: AsyncSession = Depends(get_db_session, use_cache=False)
+    ) -> typing.List[SequencingRead]:
         result = await session.execute(sa.select(db.SequencingRead))
         return result.scalars()
 
-def get_context():
-    global session
+
+def get_context(session: AsyncSession = Depends(get_db_session, use_cache=False)):
     return {
         "sqlalchemy_loader": StrawberrySQLAlchemyLoader(bind=session),
     }
+
 
 # call finalize() before using the schema:
 # (note that models that are related to models that are in the schema
@@ -73,21 +84,23 @@ additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
-#    mutation=Mutation,
-#    extensions=extensions,
+    #    mutation=Mutation,
+    #    extensions=extensions,
     types=additional_types,
 )
 
 
-graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+# Make sure tests can get their own instances of the app.
+def get_app() -> FastAPI:
+    graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+    _app = FastAPI()
+    _app.include_router(graphql_app, prefix="/graphql")
+    return _app
 
-app = FastAPI()
-app.include_router(graphql_app, prefix="/graphql")
+
+app = get_app()
 
 if __name__ == "__main__":
-    config = uvicorn.Config(
-        "example:app", host="0.0.0.0", port=8008, log_level="info"
-    )
+    config = uvicorn.Config("example:app", host="0.0.0.0", port=8008, log_level="info")
     server = uvicorn.Server(config)
     server.run()
-
