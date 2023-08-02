@@ -11,7 +11,6 @@ import database.models as db
 from database.connect import init_async_db
 from config import load_workflow_runner
 
-
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
 

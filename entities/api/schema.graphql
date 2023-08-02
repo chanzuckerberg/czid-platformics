@@ -1,0 +1,30 @@
+type Query {
+  getSample(id: ID!): Sample!
+  getAllSamples: [Sample!]!
+  getSequencingRead(id: ID!): SequencingRead!
+  getAllSequencingReads: [SequencingRead!]!
+}
+
+type Sample {
+  id: Int!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int
+  entityId: Int!
+  name: String!
+  location: String!
+  sequencingReads: [SequencingRead!]!
+}
+
+type SequencingRead {
+  id: Int!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int
+  entityId: Int!
+  nucleotide: String!
+  sequence: String!
+  protocol: String!
+  sampleId: Int!
+  sample: Sample!
+}

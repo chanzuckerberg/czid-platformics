@@ -19,4 +19,5 @@ ENV PYTHONPATH=.
 COPY . ./
 
 RUN poetry install
+
 RUN pip install  plugins/*/*
