@@ -35,7 +35,7 @@ class Query:
     async def get_sample(
         self, id: strawberry.ID, session: str = Depends(get_db_session, use_cache=False)
     ) -> Sample:
-        result = await session.execute(sa.select(db.Sample).where(db.Sample.id == id))
+        result = await session.execute(sa.select(db.Sample).where(db.Sample.entity_id == id))
         return result.scalars()
 
     @strawberry.field(extensions=[DependencyExtension()])
@@ -49,10 +49,7 @@ class Query:
     async def get_sequencing_read(
         self, id: strawberry.ID, session: str = Depends(get_db_session, use_cache=False)
     ) -> SequencingRead:
-        result = await session.execute(
-            sa.select(db.SequencingRead).where(db.SequencingRead.id == id)
-        )
-        return result.scalars().one()
+        await session.execute(sa.select(db.SequencingRead).where(db.SequencingRead.entity_id == id))
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_all_sequencing_reads(
