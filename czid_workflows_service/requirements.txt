@@ -1,0 +1,4 @@
+strawberry-graphql[debug-server]~=0.195.3
+strawberry-sqlalchemy-mapper~=0.1.1
+SQLAlchemy~=2.0.19
+psycopg2-binary~=2.9.6
