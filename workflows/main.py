@@ -25,7 +25,7 @@ session = app_db.session()
 # Plugins #
 ###########
 
-workflow_runner = load_workflow_runner("local")
+workflow_runner = load_workflow_runner("swipe")
 
 ######################
 # Strawberry-GraphQL #
@@ -66,13 +66,21 @@ class Mutation:
 
     @strawberry.mutation
     async def submit_workflow(self, workflow_inputs: str) -> str:
-        def runner(inputs_json):
-            workflow_runner.run_workflow(on_complete=lambda x: print(x), workflow_run_id=1, workflow_path="/workflows/test_workflows/minimap2.wdl", inputs=inputs_json)
-        inputs_json = json.loads(workflow_inputs)
-        import pdb; pdb.set_trace()
-        runner(inputs_json)
+        # TODO: create a workflow run
+        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
+        inputs_json = {
+            "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
+            "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
+            "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
+        }
+        response = workflow_runner.run_workflow(
+            on_complete=lambda x: print(x), # TODO: add the listener service here
+            workflow_run_id=1, # TODO: When we create the workflow run add the uuid here
+            workflow_path="s3://idseq-workflows/minimap2-v1.0.0/minimap2.wdl", # TODO: should come from the WorkflowVersion model
+            inputs=inputs_json
+            )
         
-        return "{success: true}"
+        return response
 
 def get_context():
     global session
