@@ -1,2 +1,74 @@
 ---
-# TODO
+name: ContactTestSuite
+description: Tests for verifying the contact resource policy
+
+principals:
+  bugs_bunny:
+    id: bugs_bunny
+    roles:
+      - user
+    attr:
+      beta_tester: True
+  daffy_duck:
+    id: daffy_duck
+    roles:
+      - user
+    attr:
+      beta_tester: True
+
+resources:
+  bugs_bunny_album:
+    kind: album:object
+    id: BUGS001
+    attr:
+      "owner": "bugs_bunny"
+      "public": False
+      "flagged": False
+
+  daffy_duck_album:
+    kind: album:object
+    id: DAFFY002
+    attr:
+      "owner": "daffy_duck"
+      "public": True
+      "flagged": False
+
+tests:
+  - name: Bugs bunny
+    input:
+      principals:
+        - daffy_duck
+        - bugs_bunny
+
+      resources:
+        - bugs_bunny_album
+        - daffy_duck_album
+
+      actions:
+        - view:public
+        - comment
+
+    expected:
+      - principal: bugs_bunny
+        resource: bugs_bunny_album
+        actions:
+          view:public: EFFECT_ALLOW
+          comment: EFFECT_ALLOW
+
+      - principal: bugs_bunny
+        resource: daffy_duck_album
+        actions:
+          view:public: EFFECT_ALLOW
+          comment: EFFECT_DENY
+
+      - principal: daffy_duck
+        resource: bugs_bunny_album
+        actions:
+          view:public: EFFECT_DENY
+          comment: EFFECT_DENY
+
+      - principal: daffy_duck
+        resource: daffy_duck_album
+        actions:
+          view:public: EFFECT_ALLOW
+          comment: EFFECT_ALLOW

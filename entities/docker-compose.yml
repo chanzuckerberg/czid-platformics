@@ -24,6 +24,7 @@ services:
       - "3593:3593"
     volumes:
       - ./cerbos/policies:/policies
+      - ./cerbos/test:/test
   entities:
     image: "platformics-entities"
     platform: linux/arm64
