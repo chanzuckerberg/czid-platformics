@@ -17,4 +17,4 @@ resourcePolicy:
         - user
       condition:
         match:
-          expr: request.resource.attr.public == true
+          expr: request.resource.attr.producing_run_id >= 4

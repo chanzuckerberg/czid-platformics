@@ -33,6 +33,7 @@ async def get_user_info():
         "bugs_bunny",
         roles=["user"],
         attr={
+            "user_id": 1,
             "beta_tester": True,
         },
     )
