@@ -3,7 +3,8 @@ import typing
 from database.connect import AsyncDB, init_async_db
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from cerbos.sdk.client import CerbosClient
+from cerbos.sdk.model import Principal
 
 async def get_engine() -> typing.AsyncGenerator[AsyncDB, None]:
     """Wrap resolvers in a DB engine"""
@@ -23,3 +24,15 @@ async def get_db_session(
         yield session
     finally:
         await session.close()  # type: ignore
+
+async def get_cerbos_client():
+    return CerbosClient(host="http://cerbos:3592")
+
+async def get_user_info():
+    return Principal(
+        "bugs_bunny",
+        roles=["user"],
+        attr={
+            "beta_tester": True,
+        },
+    )

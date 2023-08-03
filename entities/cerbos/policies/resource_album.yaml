@@ -4,14 +4,14 @@ resourcePolicy:
   version: "default"
   importDerivedRoles:
     - common_roles
-  resource: "album:object"
+  resource: "sample"
   rules:
     - actions: ['*']
       effect: EFFECT_ALLOW
       derivedRoles:
         - owner
 
-    - actions: ['view:public']
+    - actions: ['view']
       effect: EFFECT_ALLOW
       roles:
         - user

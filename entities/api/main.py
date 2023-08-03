@@ -9,8 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
                                           StrawberrySQLAlchemyMapper)
+from cerbos.sdk.client import CerbosClient
+from cerbos.sdk.model import Principal, Resource, ResourceAction, ResourceList
+from fastapi import HTTPException, status
 
-from api.core.deps import get_db_session
+from api.core.deps import get_db_session, get_cerbos_client, get_user_info
 from api.core.strawberry_extensions import DependencyExtension
 
 ######################
@@ -45,8 +48,23 @@ class Query:
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_all_samples(
-        self, session: AsyncSession = Depends(get_db_session, use_cache=False)
+        self,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        user_info: Principal = Depends(get_user_info),
     ) -> typing.List[Sample]:
+        resource = Resource(
+            "0001",
+            "sample",
+            attr={
+                "owner": "bugs_bunny",
+                "public": False
+            },
+        )
+
+        if not cerbos_client.is_allowed("view", user_info, resource):
+            raise Exception("Hell no")
+
         result = await session.execute(sa.select(db.Sample))
         return result.scalars()
 
