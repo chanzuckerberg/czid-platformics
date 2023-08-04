@@ -104,3 +104,7 @@ alembic-undo-migration: ## Downgrade the latest alembic migration
 
 alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
 	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
+
+### CERBOS #############################################
+cerbos-tests:
+	$(docker_compose) run cerbos compile --tests=/test/ /policies

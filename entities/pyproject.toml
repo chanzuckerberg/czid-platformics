@@ -27,6 +27,7 @@ sgqlc = "^16.3"
 pytest-asyncio = "^0.21.1"
 psycopg-binary = "^3.1.9"
 httpx = "^0.24.1"
+cerbos = "^0.10.0"
 
 [build-system]
 requires = ["poetry-core"]
