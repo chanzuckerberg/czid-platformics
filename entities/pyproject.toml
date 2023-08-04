@@ -28,7 +28,6 @@ pytest-asyncio = "^0.21.1"
 psycopg-binary = "^3.1.9"
 httpx = "^0.24.1"
 cerbos = "^0.10.0"
-cerbos-sqlalchemy = "^0.2.1"
 
 [build-system]
 requires = ["poetry-core"]

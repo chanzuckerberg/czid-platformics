@@ -54,7 +54,7 @@ class SequencingReadFactory(CommonFactory):
         model = SequencingRead
         sqlalchemy_get_or_create = ('nucleotide', 'sequence', 'protocol',)
 
-    sample = factory.SubFactory(SampleFactory)
+    sample = factory.SubFactory(SampleFactory, owner_user_id=123)
     nucleotide = fuzzy.FuzzyChoice(['RNA', 'DNA'])
     # Workaround for a bug in bioseq's handling of randomness and DNA string generation.
     sequence = fuzzy.FuzzyText(length=100, chars="ACTG")

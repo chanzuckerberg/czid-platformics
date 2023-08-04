@@ -9,12 +9,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
                                           StrawberrySQLAlchemyMapper)
-from cerbos_sqlalchemy import get_query
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, ResourceDesc
 
 from api.core.deps import get_db_session, get_cerbos_client, get_user_info
 from api.core.strawberry_extensions import DependencyExtension
+from api.core.cerbos_sqlalchemy import get_query
 
 ######################
 # Strawberry-GraphQL #
