@@ -28,7 +28,7 @@ async def get_db_session(
 async def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
-async def get_user_info():
+def get_user_info():
     return Principal(
         "bugs_bunny",
         roles=["user"],

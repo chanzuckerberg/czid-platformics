@@ -79,7 +79,7 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
-	$(docker_compose) run entities bash -c "poetry run pytest"
+	$(docker_compose) run entities bash -c "poetry run pytest -s"
 
 .PHONY: local-gqlschema
 local-gqlschema: ## Export this app's GQL schema.
