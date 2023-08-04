@@ -14,6 +14,9 @@ x-db-variables: &db-variables
   ? DB_PASS=password_postgres
   ? DB_NAME=workflows
 
+x-workflow-variables: &workflow-variables
+  ? ENVIRONMENT
+
 services:
   postgres:
     platform: linux/arm64
@@ -46,7 +49,9 @@ services:
     tty: true # Helps with pdb
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8042
     environment:
-      <<: [*aws-variables, *db-variables]
+      <<: [*aws-variables, *db-variables, *workflow-variables]
+    networks:
+      - czidnet
   motoserver:
     profiles: ["moto"]
     container_name: motoserver
