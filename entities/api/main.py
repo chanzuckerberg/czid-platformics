@@ -11,8 +11,7 @@ from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
                                           StrawberrySQLAlchemyMapper)
 from cerbos_sqlalchemy import get_query
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource, ResourceAction, ResourceList, ResourceDesc
-from fastapi import HTTPException, status
+from cerbos.sdk.model import Principal, ResourceDesc
 
 from api.core.deps import get_db_session, get_cerbos_client, get_user_info
 from api.core.strawberry_extensions import DependencyExtension
@@ -58,14 +57,10 @@ class Query:
 
         # Get the query plan for "read" action
         plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query(plan, db.Sample,
-            {
-                "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
-                "request.resource.attr.producing_run_id": db.Sample.producing_run_id
-            },
-            []
-            #[(db.Entity, db.Entity.id == db.Sample.entity_id)]
-        )
+        query = get_query(plan, db.Sample, {
+            "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
+            "request.resource.attr.producing_run_id": db.Sample.producing_run_id
+        }, [])
 
         result = await session.execute(query)
         return result.scalars()
