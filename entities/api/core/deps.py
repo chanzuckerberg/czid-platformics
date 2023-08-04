@@ -25,7 +25,7 @@ async def get_db_session(
     finally:
         await session.close()  # type: ignore
 
-async def get_cerbos_client():
+def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
 def get_user_info():
