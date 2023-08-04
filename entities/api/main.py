@@ -14,7 +14,7 @@ from cerbos.sdk.model import Principal, ResourceDesc
 
 from api.core.deps import get_db_session, get_cerbos_client, get_user_info
 from api.core.strawberry_extensions import DependencyExtension
-from api.core.cerbos_sqlalchemy import get_query
+from thirdparty.cerbos_sqlalchemy.query import get_query
 
 ######################
 # Strawberry-GraphQL #

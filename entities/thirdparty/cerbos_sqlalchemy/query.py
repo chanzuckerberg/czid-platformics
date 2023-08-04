@@ -1,6 +1,3 @@
-# Original: https://github.com/cerbos/query-plan-adapters/blob/815ab0cd16f8e9d1eb16b2a14d34fea2b46d70df/sqlalchemy/src/cerbos_sqlalchemy/query.py.
-# This file was modified to support our use of SQLAlchemy's table polymorphism feature (e.g. Sample inherits Entity's fields).
-# The only change is commenting lines 74-79 below.
 from types import MappingProxyType
 from typing import Any, Callable
 
@@ -71,12 +68,6 @@ def get_query(
             )
         for t, _ in table_mapping:
             required_tables.discard(_get_table_name(t))
-        # if len(required_tables):
-        #     raise TypeError(
-        #         "positional argument 'table_mapping' missing mapping for table(s): '{0}'".format(
-        #             "', '".join(required_tables)
-        #         )
-        #     )
 
     def get_operator_fn(op: str, c: GenericColumn, v: Any) -> GenericExpression:
         # Check to see if the client has overridden the function
