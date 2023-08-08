@@ -6,19 +6,23 @@ import pytest
 from httpx import AsyncClient
 from database.connect import SyncDB
 from test_infra import factories as fa
-
+from api.core.deps import get_user_info
 
 @pytest.mark.asyncio
 async def test_graphql_query(
     sync_db: SyncDB,
     http_client: AsyncClient,
 ):
+    # For now, use the hardcoded user_id for tests
+    user_id = get_user_info().attr["user_id"]
 
+    # Create mock data
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
-        fa.SampleFactory.create_batch(2, location="San Francisco, CA")
-        fa.SampleFactory.create_batch(6, location="Mountain View, CA")
+        fa.SampleFactory.create_batch(2, location="San Francisco, CA", owner_user_id=user_id)
+        fa.SampleFactory.create_batch(6, location="Mountain View, CA", owner_user_id=user_id)
 
+    # Fetch all samples
     query = """
         query MyQuery {
             getAllSamples {
