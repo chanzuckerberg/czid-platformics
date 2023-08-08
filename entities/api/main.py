@@ -14,9 +14,8 @@ from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, ResourceDesc
 
-from api.core.deps import get_cerbos_client, get_db_session, get_user_info
+from api.core.deps import get_cerbos_client, get_db_session, get_auth_principal
 from api.core.settings import APISettings
-from api.core.deps import get_db_session, get_cerbos_client, get_user_info
 from api.core.strawberry_extensions import DependencyExtension
 from thirdparty.cerbos_sqlalchemy.query import get_query
 
@@ -55,7 +54,7 @@ class Query:
         self,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        user_info: Principal = Depends(get_user_info),
+        user_info: Principal = Depends(get_auth_principal),
     ) -> typing.List[Sample]:
         rd = ResourceDesc("sample")
 

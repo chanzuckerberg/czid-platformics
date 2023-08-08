@@ -36,7 +36,7 @@ async def get_db_session(
 async def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
-async def get_user_info(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
+async def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
     auth_header = request.headers.get("authorization")
     parts = auth_header.split()
     if parts[0].lower() != "bearer":
