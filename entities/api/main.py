@@ -4,17 +4,17 @@ import database.models as db
 import sqlalchemy as sa
 import strawberry
 import uvicorn
+from cerbos.sdk.client import CerbosClient
+from cerbos.sdk.model import (Principal, ResourceDesc)
+from cerbos_sqlalchemy import get_query
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
                                           StrawberrySQLAlchemyMapper)
-from cerbos_sqlalchemy import get_query
-from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource, ResourceAction, ResourceList, ResourceDesc
-from fastapi import HTTPException, status
 
-from api.core.deps import get_db_session, get_cerbos_client, get_user_info
+from api.core.deps import get_cerbos_client, get_db_session, get_user_info
+from api.core.settings import APISettings
 from api.core.strawberry_extensions import DependencyExtension
 
 ######################
@@ -58,13 +58,15 @@ class Query:
 
         # Get the query plan for "read" action
         plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query(plan, db.Sample,
+        query = get_query(
+            plan,
+            db.Sample,
             {
                 "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
-                "request.resource.attr.producing_run_id": db.Sample.producing_run_id
+                "request.resource.attr.producing_run_id": db.Sample.producing_run_id,
             },
             []
-            #[(db.Entity, db.Entity.id == db.Sample.entity_id)]
+            # [(db.Entity, db.Entity.id == db.Sample.entity_id)]
         )
 
         result = await session.execute(query)
@@ -112,9 +114,19 @@ schema = strawberry.Schema(
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
+    settings = APISettings()
+
+    # Add a global settings object to the app that we can use as a dependency
     graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
-    _app = FastAPI()
+    _app = FastAPI(
+        title=settings.SERVICE_NAME,
+        debug=settings.DEBUG,
+    )
     _app.include_router(graphql_app, prefix="/graphql")
+
+    # Add a global settings object to the app that we can use as a dependency
+    _app.state.entities_settings = settings
+
     return _app
 
 

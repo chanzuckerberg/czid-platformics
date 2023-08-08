@@ -5,10 +5,18 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
+from starlette.requests import Request
+from api.core.settings import APISettings
+from security.token_auth import get_token_claims
 
-async def get_engine() -> typing.AsyncGenerator[AsyncDB, None]:
+
+async def get_settings(request: Request) -> APISettings:
+    """Get the settings object from the app state"""
+    return request.app.state.entities_settings
+
+async def get_engine(settings: APISettings = Depends(get_settings)) -> typing.AsyncGenerator[AsyncDB, None]:
     """Wrap resolvers in a DB engine"""
-    engine = init_async_db()
+    engine = init_async_db(settings.DB_URI)
     try:
         yield engine
     finally:
@@ -28,12 +36,23 @@ async def get_db_session(
 async def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
-async def get_user_info():
+async def get_user_info(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
+    auth_header = request.headers.get("authorization")
+    parts = auth_header.split()
+    if parts[0].lower() != "bearer":
+        raise Exception("Authorization header must start with Bearer")
+    elif len(parts) == 1:
+        raise Exception("Token not found")
+    elif len(parts) > 2:
+        raise Exception("Authorization header must be Bearer token")
+
+    claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
+    userid = int(claims['sub'])
+
     return Principal(
-        "bugs_bunny",
+        userid,
         roles=["user"],
         attr={
-            "user_id": 1,
-            "beta_tester": True,
+            "user_id": userid,
         },
     )
