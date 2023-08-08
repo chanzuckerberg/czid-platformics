@@ -30,7 +30,6 @@ httpx = "^0.24.1"
 cerbos = "^0.10.0"
 pydantic = "^2.1.1"
 pydantic-settings = "^2.0.2"
-cerbos-sqlalchemy = "^0.2.1"
 jwcrypto = "^1.5.0"
 
 [build-system]

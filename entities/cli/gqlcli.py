@@ -78,14 +78,20 @@ def auth():
 # TODO - this is just a temporary command to help us test the auth flow.
 @auth.command("generate-token")
 @click.argument("userid", required=True, type=int)
-@click.option("--projects", help="project_id:role associations to include in the header",
-              type=list[str], default=["123:admin", "123:member", "456:member"], multiple=True)
+@click.option("--project", help="project_id:role associations to include in the header",
+              type=str, default=["123:admin", "123:member", "456:member"], multiple=True)
 @click.pass_context
-def generate_token(ctx, userid, projects):
+def generate_token(ctx, userid: int, project: list[str]):
     settings = Settings()
     private_key = settings.JWK_PRIVATE_KEY
 
-    token = create_token(private_key, userid, projects)
+    project_dict = {}
+    for item in project:
+        project_id, role = item.split(":")
+        if int(project_id) not in project_dict:
+            project_dict[int(project_id)] = []
+        project_dict[int(project_id)].append(role)
+    token = create_token(private_key, userid, project_dict)
     print(token)
 
 

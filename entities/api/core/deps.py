@@ -47,12 +47,11 @@ async def get_user_info(request: Request, settings: APISettings = Depends(get_se
         raise Exception("Authorization header must be Bearer token")
 
     claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
-    userid = int(claims['sub'])
 
     return Principal(
-        userid,
+        claims["sub"],
         roles=["user"],
         attr={
-            "user_id": userid,
+            "user_id": int(claims["sub"]),
         },
     )

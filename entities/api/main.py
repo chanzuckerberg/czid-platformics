@@ -6,7 +6,6 @@ import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import (Principal, ResourceDesc)
-from cerbos_sqlalchemy import get_query
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
