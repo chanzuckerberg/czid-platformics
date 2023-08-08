@@ -10,7 +10,7 @@ from api.core.settings import APISettings
 from security.token_auth import get_token_claims
 
 
-async def get_settings(request: Request) -> APISettings:
+def get_settings(request: Request) -> APISettings:
     """Get the settings object from the app state"""
     return request.app.state.entities_settings
 
@@ -33,10 +33,10 @@ async def get_db_session(
     finally:
         await session.close()  # type: ignore
 
-async def get_cerbos_client():
+def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
-async def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
+def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
     auth_header = request.headers.get("authorization")
     parts = auth_header.split()
     if parts[0].lower() != "bearer":
