@@ -28,4 +28,5 @@ class Entity(Base):
 
     # Example attributes for every entity (TODO: revisit nullable columns later)
     producing_run_id = Column(Integer, nullable=True)
-    owner_user_id = Column(Integer, nullable=True)
+    owner_user_id = Column(Integer, nullable=False)
+    collection_id = Column(Integer, nullable=False)

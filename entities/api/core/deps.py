@@ -39,14 +39,15 @@ def get_cerbos_client():
 def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
     auth_header = request.headers.get("authorization")
     parts = auth_header.split()
+    if not auth_header or len(parts) != 2:
+        raise Exception("Authorization bearer token is required")
     if parts[0].lower() != "bearer":
         raise Exception("Authorization header must start with Bearer")
-    elif len(parts) == 1:
-        raise Exception("Token not found")
-    elif len(parts) > 2:
-        raise Exception("Authorization header must be Bearer token")
 
-    claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
+    try:
+        claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
+    except:
+        raise Exception("Invalid token")
 
     return Principal(
         claims["sub"],

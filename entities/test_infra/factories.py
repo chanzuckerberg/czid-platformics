@@ -24,6 +24,8 @@ class SessionStorage:
 
 
 class CommonFactory(factory.alchemy.SQLAlchemyModelFactory):
+    owner_user_id = fuzzy.FuzzyInteger(1, 1000)
+    collection_id = fuzzy.FuzzyInteger(1, 1000)
     class Meta:
         sqlalchemy_session_factory = SessionStorage.get_session
         sqlalchemy_session_persistence = "commit"
@@ -54,7 +56,7 @@ class SequencingReadFactory(CommonFactory):
         model = SequencingRead
         sqlalchemy_get_or_create = ('nucleotide', 'sequence', 'protocol',)
 
-    sample = factory.SubFactory(SampleFactory, owner_user_id=factory.SelfAttribute("..owner_user_id"))
+    sample = factory.SubFactory(SampleFactory, owner_user_id=factory.SelfAttribute("..owner_user_id"), collection_id=factory.SelfAttribute("..collection_id"))
     nucleotide = fuzzy.FuzzyChoice(['RNA', 'DNA'])
     # Workaround for a bug in bioseq's handling of randomness and DNA string generation.
     sequence = fuzzy.FuzzyText(length=100, chars="ACTG")
