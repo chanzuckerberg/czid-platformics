@@ -1,9 +1,11 @@
 from database.connect import init_sync_db
 from test_infra import factories as fa
 import factory.random
+from api.core.settings import CLISettings
 
 def use_factoryboy():
-    app_db = init_sync_db()
+    settings = CLISettings()
+    app_db = init_sync_db(settings.SYNC_DB_URI)
     session = app_db.session()
     fa.SessionStorage.set_session(session)
     factory.random.reseed_random(1234567)

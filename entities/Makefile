@@ -85,6 +85,15 @@ local-tests: ## Run entities tests
 local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
 
+.PHONY: fix-poetry-lock
+fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
+	git checkout --theirs poetry.lock
+	$(docker_compose) run entities poetry lock --no-update
+
+.PHONY: fix-lint
+fix-lint: ## Apply linting rules to the code in this directory.
+	$(docker_compose) run entities ruff check --fix .
+
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json

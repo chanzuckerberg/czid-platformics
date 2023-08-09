@@ -3,72 +3,70 @@ name: ContactTestSuite
 description: Tests for verifying the contact resource policy
 
 principals:
-  bugs_bunny:
-    id: bugs_bunny
+  user1:
+    id: "1"
     roles:
       - user
     attr:
+      user_id: 1
       beta_tester: True
-  daffy_duck:
-    id: daffy_duck
+  user2:
+    id: "2"
     roles:
       - user
     attr:
+      user_id: 2
       beta_tester: True
 
 resources:
-  bugs_bunny_album:
-    kind: album:object
+  user1_sample:
+    kind: sample
     id: BUGS001
     attr:
-      "owner": "bugs_bunny"
-      "public": False
-      "flagged": False
+      "owner_user_id": 1
 
-  daffy_duck_album:
-    kind: album:object
+  user2_sample:
+    kind: sample
     id: DAFFY002
     attr:
-      "owner": "daffy_duck"
-      "public": True
-      "flagged": False
+      "owner_user_id": 2
 
 tests:
   - name: Bugs bunny
     input:
       principals:
-        - daffy_duck
-        - bugs_bunny
+        - user1
+        - user2
 
       resources:
-        - bugs_bunny_album
-        - daffy_duck_album
+        - user1_sample
+        - user2_sample
 
       actions:
-        - view:public
+        - view
         - comment
 
     expected:
-      - principal: bugs_bunny
-        resource: bugs_bunny_album
+      - principal: user1
+        resource: user1_sample
         actions:
-          view:public: EFFECT_ALLOW
+          view: EFFECT_ALLOW
           comment: EFFECT_ALLOW
 
-      - principal: bugs_bunny
-        resource: daffy_duck_album
+      - principal: user1
+        resource: user2_sample
         actions:
-          view:public: EFFECT_ALLOW
+          view: EFFECT_DENY
           comment: EFFECT_DENY
 
-      - principal: daffy_duck
-        resource: bugs_bunny_album
+      - principal: user2
+        resource: user1_sample
         actions:
-          view:public: EFFECT_DENY
+          view: EFFECT_DENY
           comment: EFFECT_DENY
 
-      - principal: daffy_duck
-        resource: daffy_duck_album
+      - principal: user2
+        resource: user2_sample
         actions:
-          view:public: EFFECT_ALLOW
+          view: EFFECT_ALLOW
           comment: EFFECT_ALLOW
