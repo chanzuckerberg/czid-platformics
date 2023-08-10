@@ -21,7 +21,9 @@ graceful_timeout = int(os.getenv("GRACEFUL_TIMEOUT", "120"))
 timeout = int(os.getenv("TIMEOUT", "120"))
 keepalive = int(os.getenv("KEEP_ALIVE", "5"))
 # TODO - this is broken, per https://github.com/encode/uvicorn/issues/527
-access_log_format = 'entitites %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+access_log_format = (
+    'entitites %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+)
 
 # For debugging and testing
 log_data = {

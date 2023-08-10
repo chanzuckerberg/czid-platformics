@@ -64,20 +64,19 @@ class Settings(BaseSettings):
 
     @cached_property
     def SYNC_DB_URI(self) -> str:
-        db_uri = (
-            "postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
-                db_host=self.DB_HOST,
-                db_port=self.DB_PORT,
-                db_user=self.DB_USER,
-                db_pass=self.DB_PASS,
-                db_name=self.DB_NAME,
-            )
+        db_uri = "postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
+            db_host=self.DB_HOST,
+            db_port=self.DB_PORT,
+            db_user=self.DB_USER,
+            db_pass=self.DB_PASS,
+            db_name=self.DB_NAME,
         )
         return db_uri
 
 
 class APISettings(Settings):
     ...
+
 
 class CLISettings(Settings):
     ...

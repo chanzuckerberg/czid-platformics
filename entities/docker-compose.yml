@@ -23,8 +23,9 @@ services:
       - "3592:3592"
       - "3593:3593"
     volumes:
-      - ./cerbos/policies:/policies
-      - ./cerbos/test:/test
+      - ./cerbos:/entities
+    command:
+      ["server", "--config", "/entities/config/config.yaml"]
   entities:
     image: "platformics-entities"
     platform: linux/arm64

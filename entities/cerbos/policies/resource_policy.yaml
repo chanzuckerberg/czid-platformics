@@ -1,4 +1,4 @@
----
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
 apiVersion: api.cerbos.dev/v1
 resourcePolicy:
   version: "default"
@@ -9,12 +9,12 @@ resourcePolicy:
     - actions: ['*']
       effect: EFFECT_ALLOW
       derivedRoles:
-        - owner
+        - project_member
 
-    - actions: ['view']
+    - actions: ['download']
       effect: EFFECT_ALLOW
-      roles:
-        - user
-      condition:
-        match:
-          expr: request.resource.attr.producing_run_id >= 4
+      derivedRoles:
+        - owner
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
