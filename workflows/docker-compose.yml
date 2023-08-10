@@ -43,6 +43,8 @@ services:
     platform: linux/amd64
     volumes:
       - .:/workflows
+      # enable docker in docker
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8042:8042
     stdin_open: true # Helps with pdb

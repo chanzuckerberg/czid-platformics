@@ -79,11 +79,21 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
-	$(docker_compose) run entities bash -c "poetry run pytest"
+	$(docker_compose) run entities bash -c "poetry run pytest -s"
 
 .PHONY: local-gqlschema
 local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
+
+.PHONY: fix-poetry-lock
+fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
+	git checkout --theirs poetry.lock
+	$(docker_compose) run entities poetry lock --no-update
+
+.PHONY: fix-lint
+fix-lint: ## Apply linting rules to the code in this directory.
+	$(docker_compose) run entities black .
+	$(docker_compose) run entities ruff check --fix .
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
@@ -107,4 +117,4 @@ alembic-autogenerate: ## Create new alembic migrations files based on SA schema 
 
 ### CERBOS #############################################
 cerbos-tests:
-	$(docker_compose) run cerbos compile --tests=/test/ /policies
+	$(docker_compose) run cerbos compile --tests=/entities/test/ /entities/policies

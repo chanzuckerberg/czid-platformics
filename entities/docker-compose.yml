@@ -23,8 +23,9 @@ services:
       - "3592:3592"
       - "3593:3593"
     volumes:
-      - ./cerbos/policies:/policies
-      - ./cerbos/test:/test
+      - ./cerbos:/entities
+    command:
+      ["server", "--config", "/entities/config/config.yaml"]
   entities:
     image: "platformics-entities"
     platform: linux/arm64
@@ -43,6 +44,9 @@ services:
       - DB_USER=postgres
       - DB_PASS=password_postgres
       - DB_NAME=entities
+      # TODO - these are keypairs for testing only! Do not use in prod!!
+      - JWK_PUBLIC_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/public_key.pem
+      - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
     volumes:
       - ./:/czid-platformics/entities
 networks:

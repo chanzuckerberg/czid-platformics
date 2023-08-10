@@ -1,44 +1,41 @@
 """
-Example GraphQL test
+Authorization spot-checks
 """
 
 import pytest
 from httpx import AsyncClient
 from database.connect import SyncDB
-import json
 from test_infra import factories as fa
+import json
 
 
 @pytest.mark.asyncio
-async def test_graphql_query(
+@pytest.mark.parametrize(
+    "project_ids,num_results,cities",
+    [([], 0, ()), ([333], 2, {"City1"}), ([333, 555], 4, {"City1", "City3"})],
+)
+async def test_collection_authorization(
+    project_ids: list[int],
+    num_results: int,
+    cities: tuple[str],
     sync_db: SyncDB,
     http_client: AsyncClient,
 ):
     # For now, use the hardcoded user_id for tests
+    owner_user_id = 333
     user_id = 12345
-    secondary_user_id = 67890
-    project_id = 123
 
     # Create mock data
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
         fa.SampleFactory.create_batch(
-            2,
-            location="San Francisco, CA",
-            owner_user_id=user_id,
-            collection_id=project_id,
+            2, location="City1", owner_user_id=owner_user_id, collection_id=333
         )
         fa.SampleFactory.create_batch(
-            6,
-            location="Mountain View, CA",
-            owner_user_id=user_id,
-            collection_id=project_id,
+            2, location="City2", owner_user_id=owner_user_id, collection_id=444
         )
         fa.SampleFactory.create_batch(
-            4,
-            location="Phoenix, AZ",
-            owner_user_id=secondary_user_id,
-            collection_id=9999,
+            2, location="City3", owner_user_id=owner_user_id, collection_id=555
         )
 
     # Fetch all samples
@@ -54,18 +51,17 @@ async def test_graphql_query(
     headers = {
         "content-type": "application/json",
         "accept": "application/json",
-        "member_projects": json.dumps([project_id]),
         "user_id": str(user_id),
+        "member_projects": json.dumps(project_ids),
     }
+
     result = await http_client.post(
         "/graphql",
         json=request,
         headers=headers,
     )
     output = result.json()
-    assert output["data"]["getAllSamples"][0] == {
-        "id": 1,
-        "location": "San Francisco, CA",
-    }
-    assert output["data"]["getAllSamples"][-1]["location"] == "Mountain View, CA"
-    assert len(output["data"]["getAllSamples"]) == 8
+    assert len(output["data"]["getAllSamples"]) == num_results
+    assert {sample["location"] for sample in output["data"]["getAllSamples"]} == set(
+        cities
+    )

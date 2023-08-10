@@ -1,9 +1,12 @@
-import os
 from typing import Optional, Union
 
 from sqlalchemy.engine import Engine, create_engine
-from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
-                                    async_sessionmaker, create_async_engine)
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.orm import Session, sessionmaker
 
 
@@ -41,38 +44,13 @@ class SyncDB:
         return self._session_maker
 
 
-def get_db_uri(
-    protocol: Optional[str] = None,
-    db_host: Optional[str] = None,
-    db_port: Optional[int] = None,
-    db_user: Optional[str] = None,
-    db_pass: Optional[str] = None,
-    db_name: Optional[str] = None,
-) -> str:
-    if not protocol:
-        protocol = "postgresql+psycopg"
-    db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
-        protocol=protocol,
-        db_host=db_host or os.getenv("DB_HOST"),
-        db_port=db_port or os.getenv("DB_PORT"),
-        db_user=db_user or os.getenv("DB_USER"),
-        db_pass=db_pass or os.getenv("DB_PASS"),
-        db_name=db_name or os.getenv("DB_NAME"),
-    )
-    return db_uri
-
-
-def init_async_db(db_uri: Optional[str] = None, **kwargs) -> AsyncDB:
-    if not db_uri:
-        db_uri = get_db_uri("postgresql+asyncpg")
+def init_async_db(db_uri: str, **kwargs) -> AsyncDB:
     engine = create_async_engine(
         db_uri, echo=False, pool_size=5, max_overflow=5, future=True, **kwargs
     )
     return AsyncDB(engine)
 
 
-def init_sync_db(db_uri: Optional[str] = None, **kwargs) -> SyncDB:
-    if not db_uri:
-        db_uri = get_db_uri("postgresql+psycopg")
+def init_sync_db(db_uri: str, **kwargs) -> SyncDB:
     engine = create_engine(db_uri, **kwargs)
     return SyncDB(engine)
