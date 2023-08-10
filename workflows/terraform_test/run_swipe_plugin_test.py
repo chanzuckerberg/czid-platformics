@@ -22,7 +22,9 @@ class TestSFNWDL(unittest.TestCase):
             
 
     def test_simple_swipe_workflow(self):
+        """ A simple test to test whether the SWIPE plugin works"""
         workflow_runner = SwipeWorkflowRunner(f"s3://{self.wdl_obj.bucket_name}/")
+        # TODO: Add listener function + workflow run when available
         workflow_output = workflow_runner.run_workflow(
              on_complete= lambda x: print(x),
              workflow_run_id = 1,
@@ -33,16 +35,14 @@ class TestSFNWDL(unittest.TestCase):
                 }
         )
         workflow_json = json.loads(workflow_output)
-
         sfn = boto3.client("stepfunctions", endpoint_url="http://sfn.czidnet:8083")
-        logs = boto3.client("logs", endpoint_url="http://czidnet:5000")
-        batch = boto3.client("batch", endpoint_url="http://czidnet:5000")
         arn = workflow_json["response"]["executionArn"]
         breakout = 0
         while sfn.describe_execution(executionArn=arn)["status"] not in ["SUCCEEDED", "FAILED"]:
             time.sleep(1)
             breakout += 1
-            if breakout == 20:
+            if breakout == 60:
+                 # make sure weird conditions don't hang the tests
                  break
 
         self.assertEqual(sfn.describe_execution(executionArn=arn)["status"], "SUCCEEDED")

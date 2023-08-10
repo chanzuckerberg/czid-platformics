@@ -54,7 +54,7 @@ services:
       - czidnet
   motoserver:
     profiles: ["moto"]
-    container_name: motoserver
+    container_name: motoserver_workflows
     image: motoserver/moto:3.0.4
     environment:
       - MOTO_DOCKER_NETWORK_NAME=czidnet
@@ -69,7 +69,7 @@ services:
           - czidnet
   stepfunctions_local:
     profiles: ["moto"]
-    container_name: stepfunctions_local
+    container_name: stepfunctions_local_workflows
     image: amazon/aws-stepfunctions-local
     environment:
       - BATCH_ENDPOINT=http://czidnet:5000
