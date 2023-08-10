@@ -1,15 +1,15 @@
 """add tables to workflow schema
 
-Revision ID: 20230809_185607
+Revision ID: 20230810_235656
 Revises: 20230724_215129
-Create Date: 2023-08-09 19:16:04.022788
+Create Date: 2023-08-10 23:57:31.583905
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = '20230809_185607'
+revision = '20230810_235656'
 down_revision = '20230724_215129'
 branch_labels = None
 depends_on = None
@@ -38,7 +38,7 @@ def upgrade() -> None:
     sa.Column('execution_id', sa.String(), nullable=False),
     sa.Column('inputs_json', sa.String(), nullable=False),
     sa.Column('outputs_json', sa.String(), nullable=True),
-    sa.Column('status', sa.Enum('STARTED', 'SUCCEEDED', 'FAILED', name='runstatus'), nullable=False),
+    sa.Column('status', sa.Enum('PENDING', 'STARTED', 'RUNNING', 'SUCCEEDED', 'FAILED', name='runstatus'), nullable=False),
     sa.Column('workflow_version_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['workflow_version_id'], ['workflow_version.id'], name=op.f('fk_run_workflow_version_id_workflow_version')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_run'))
@@ -74,7 +74,7 @@ def upgrade() -> None:
     sa.Column('run_id', sa.Integer(), nullable=False),
     sa.Column('started_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('ended_at', sa.DateTime(), nullable=True),
-    sa.Column('status', sa.Enum('STARTED', 'SUCCEEDED', 'FAILED', name='runstatus'), nullable=False),
+    sa.Column('status', sa.Enum('SUCCEEDED', 'FAILED', name='runstepstatus'), nullable=True),
     sa.ForeignKeyConstraint(['run_id'], ['run.id'], name=op.f('fk_run_step_run_id_run')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_run_step'))
     )

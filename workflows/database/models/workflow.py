@@ -34,7 +34,9 @@ class WorkflowVersion(Base):
 
 @strawberry.enum
 class RunStatus(enum.Enum):
+    PENDING = 'PENDING'
     STARTED = 'STARTED'
+    RUNNING = 'RUNNING'
     SUCCEEDED = 'SUCCEEDED'
     FAILED = 'FAILED'
 
@@ -60,6 +62,10 @@ class Run(Base):
     run_steps = relationship('RunStep', back_populates='run')
     run_entity_inputs = relationship('RunEntityInput', back_populates='run')
 
+@strawberry.enum
+class RunStepStatus(enum.Enum):
+    SUCCEEDED = 'SUCCEEDED'
+    FAILED = 'FAILED'
 
 class RunStep(Base):
     __tablename__ = 'run_step'
@@ -69,7 +75,7 @@ class RunStep(Base):
     run = relationship('Run', back_populates='run_steps')
     started_at = Column(DateTime, nullable=False, server_default=func.now())
     ended_at = Column(DateTime)
-    status = Column(Enum(RunStatus), nullable=False, default=RunStatus.STARTED, name='status')
+    status = Column(Enum(RunStepStatus), name='status')
 
 
 class WorkflowVersionInput(Base):
