@@ -3,6 +3,7 @@ from test_infra import factories as fa
 import factory.random
 from api.core.settings import CLISettings
 
+
 def use_factoryboy():
     settings = CLISettings()
     app_db = init_sync_db(settings.SYNC_DB_URI)
@@ -18,8 +19,12 @@ def use_factoryboy():
     sa1 = fa.SampleFactory(owner_user_id=222, collection_id=555)
     sa2 = fa.SampleFactory(owner_user_id=333, collection_id=666)
 
-    fa.SequencingReadFactory.create_batch(3, sample=sa1, owner_user_id=sa1.owner_user_id, collection_id=sa1.collection_id)
-    fa.SequencingReadFactory.create_batch(2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id)
+    fa.SequencingReadFactory.create_batch(
+        3, sample=sa1, owner_user_id=sa1.owner_user_id, collection_id=sa1.collection_id
+    )
+    fa.SequencingReadFactory.create_batch(
+        2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id
+    )
 
     session.commit()
 

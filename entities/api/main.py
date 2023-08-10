@@ -5,12 +5,14 @@ import sqlalchemy as sa
 import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import (Principal, ResourceDesc)
+from cerbos.sdk.model import Principal, ResourceDesc
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
-                                          StrawberrySQLAlchemyMapper)
+from strawberry_sqlalchemy_mapper import (
+    StrawberrySQLAlchemyLoader,
+    StrawberrySQLAlchemyMapper,
+)
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, ResourceDesc
 
@@ -60,10 +62,15 @@ class Query:
 
         # Get the query plan for "read" action
         plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query(plan, db.Sample, {
-            "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
-            "request.resource.attr.producing_run_id": db.Sample.producing_run_id
-        }, [])
+        query = get_query(
+            plan,
+            db.Sample,
+            {
+                "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
+                "request.resource.attr.collection_id": db.Sample.collection_id,
+            },
+            [],
+        )
 
         result = await session.execute(query)
         return result.scalars()

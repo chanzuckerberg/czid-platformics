@@ -32,7 +32,7 @@ class DependencyExtension(FieldExtension):
     ) -> typing.Any:
         request = info.context["request"]
         try:
-           if "dependency_cache" not in request.context:
+            if "dependency_cache" not in request.context:
                 request.context["dependency_cache"] = {}
         except AttributeError:
             request.context = {"dependency_cache": {}}

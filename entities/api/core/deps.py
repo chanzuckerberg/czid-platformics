@@ -14,7 +14,10 @@ def get_settings(request: Request) -> APISettings:
     """Get the settings object from the app state"""
     return request.app.state.entities_settings
 
-async def get_engine(settings: APISettings = Depends(get_settings)) -> typing.AsyncGenerator[AsyncDB, None]:
+
+async def get_engine(
+    settings: APISettings = Depends(get_settings),
+) -> typing.AsyncGenerator[AsyncDB, None]:
     """Wrap resolvers in a DB engine"""
     engine = init_async_db(settings.DB_URI)
     try:
@@ -33,10 +36,14 @@ async def get_db_session(
     finally:
         await session.close()  # type: ignore
 
+
 def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
-def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
+
+def get_auth_principal(
+    request: Request, settings: APISettings = Depends(get_settings)
+) -> Principal:
     auth_header = request.headers.get("authorization")
     parts = auth_header.split()
     if not auth_header or len(parts) != 2:
@@ -49,10 +56,19 @@ def get_auth_principal(request: Request, settings: APISettings = Depends(get_set
     except:
         raise Exception("Invalid token")
 
+    # role_map is a bit brute-force to make cerbos-sqlalchemy happy, but it's fine for now.
+    role_map = {}
+    for project in claims["projects"]:
+        for role in project["roles"]:
+            if role not in role_map:
+                role_map[role] = []
+            role_map[role].append(project["project_id"])
     return Principal(
         claims["sub"],
         roles=["user"],
         attr={
             "user_id": int(claims["sub"]),
+            "admin_projects": role_map.get("admin", []),
+            "member_projects": role_map.get("member", []),
         },
     )

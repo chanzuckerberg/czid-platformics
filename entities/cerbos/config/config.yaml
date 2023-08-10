@@ -1,0 +1,20 @@
+---
+server:
+  httpListenAddr: ":3592"
+  grpcListenAddr: ":3593"
+
+engine:
+  defaultPolicyVersion: "default"
+
+schemas:
+  enforcement: reject
+
+auxData:
+  jwt:
+    disableVerification: true
+
+storage:
+  driver: "disk"
+  disk:
+    directory: "/entities/policies"
+    watchForChanges: true

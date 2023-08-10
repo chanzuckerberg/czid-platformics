@@ -9,14 +9,16 @@ principals:
       - user
     attr:
       user_id: 1
-      beta_tester: True
+      admin_projects: [100]
+      member_projects: [100]
   user2:
     id: "2"
     roles:
       - user
     attr:
       user_id: 2
-      beta_tester: True
+      admin_projects: [200]
+      member_projects: [300]
 
 resources:
   user1_sample:
@@ -24,12 +26,14 @@ resources:
     id: BUGS001
     attr:
       "owner_user_id": 1
+      "collection_id": 100
 
   user2_sample:
     kind: sample
     id: DAFFY002
     attr:
       "owner_user_id": 2
+      "collection_id": 200
 
 tests:
   - name: Bugs bunny

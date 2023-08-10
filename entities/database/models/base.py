@@ -11,15 +11,14 @@ meta = MetaData(
     },
 )
 
+
 class Base(DeclarativeBase):
     metadata = meta
 
+
 class Entity(Base):
     __tablename__ = "entity"
-    __mapper_args__ = {
-        "polymorphic_identity": "entity",
-        "polymorphic_on": "type"
-    }
+    __mapper_args__ = {"polymorphic_identity": "entity", "polymorphic_on": "type"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
 

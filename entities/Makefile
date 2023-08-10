@@ -92,6 +92,7 @@ fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproje
 
 .PHONY: fix-lint
 fix-lint: ## Apply linting rules to the code in this directory.
+	$(docker_compose) run entities black .
 	$(docker_compose) run entities ruff check --fix .
 
 .PHONY: update-cli
@@ -116,4 +117,4 @@ alembic-autogenerate: ## Create new alembic migrations files based on SA schema 
 
 ### CERBOS #############################################
 cerbos-tests:
-	$(docker_compose) run cerbos compile --tests=/test/ /policies
+	$(docker_compose) run cerbos compile --tests=/entities/test/ /entities/policies
