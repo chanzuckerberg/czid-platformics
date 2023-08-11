@@ -11,15 +11,14 @@ meta = MetaData(
     },
 )
 
+
 class Base(DeclarativeBase):
     metadata = meta
 
+
 class Entity(Base):
     __tablename__ = "entity"
-    __mapper_args__ = {
-        "polymorphic_identity": "entity",
-        "polymorphic_on": "type"
-    }
+    __mapper_args__ = {"polymorphic_identity": "entity", "polymorphic_on": "type"}
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
@@ -28,4 +27,5 @@ class Entity(Base):
 
     # Example attributes for every entity (TODO: revisit nullable columns later)
     producing_run_id = Column(Integer, nullable=True)
-    owner_user_id = Column(Integer, nullable=True)
+    owner_user_id = Column(Integer, nullable=False)
+    collection_id = Column(Integer, nullable=False)
