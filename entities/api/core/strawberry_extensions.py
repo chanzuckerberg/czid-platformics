@@ -53,6 +53,6 @@ class DependencyExtension(FieldExtension):
         ) = solved_result
 
         request.context["dependency_cache"].update(new_cache)
-        kwargs.update(solved_values)
+        kwargs = solved_values | kwargs  # solved_values has None values that need to be overridden by kwargs
         res = await next_(source, info, **kwargs)
         return res
