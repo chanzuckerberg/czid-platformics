@@ -45,7 +45,8 @@ def get_auth_principal(
     request: Request, settings: APISettings = Depends(get_settings)
 ) -> Principal:
     auth_header = request.headers.get("authorization")
-    parts = auth_header.split()
+    if auth_header:
+        parts = auth_header.split()
     if not auth_header or len(parts) != 2:
         raise Exception("Authorization bearer token is required")
     if parts[0].lower() != "bearer":

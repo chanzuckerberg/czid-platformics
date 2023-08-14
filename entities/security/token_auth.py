@@ -25,14 +25,17 @@ def get_token_claims(private_key: JWK, token: str) -> dict:
 # TODO - this isn't going to be part of the entities service over the long term,
 # it's just in our app for now to help us test the auth flow.
 def create_token(
-    private_key: JWK, userid: int, project_claims: list[ProjectRole]
+    private_key: JWK,
+    userid: int,
+    project_claims: list[ProjectRole],
+    expiration: int = 3600,
 ) -> str:
     # Create a JWT that's signed by our private key. This proves *who wrote the message*
     jwt_payload = {
         "sub": str(userid),
         "iat": int(time.time()),
         "nbf": int(time.time()),
-        "exp": int(time.time()) + 3600,  # 1 hour from now
+        "exp": int(time.time()) + expiration,
         "iss": "https://api.example.com",
         "projects": project_claims,
     }
