@@ -28,6 +28,6 @@ To get a summary of other available `make` targets, run `make help`
 docker compose exec entities bash
 
 # Get a list of samples:
-export PLATFORMICS_AUTH_TOKEN=$(./cli/gqlcli.py auth generate-token 111 --project 444:admin)
+export PLATFORMICS_AUTH_TOKEN=$(./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 3600)
 ./cli/gqlcli.py samples list
 ```

@@ -1,7 +1,6 @@
 import typing
 
 import database.models as db
-import sqlalchemy as sa
 import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
@@ -38,58 +37,80 @@ class SequencingRead:
     sample: "Sample"
 
 
+# Shared "get_query()" utilities
+def get_query_samples(plan):
+    return get_query(
+        plan,
+        db.Sample,
+        {
+            "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
+            "request.resource.attr.collection_id": db.Sample.collection_id,
+        },
+        [],
+    )
+
+def get_query_sequencing_read(plan):
+    return get_query(
+        plan,
+        db.SequencingRead,
+        {
+            "request.resource.attr.owner_user_id": db.SequencingRead.owner_user_id,
+            "request.resource.attr.collection_id": db.SequencingRead.collection_id,
+        },
+        [],
+    )
+
+
 @strawberry.type
 class Query:
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_sample(
-        self,
         id: strawberry.ID,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        user_info: Principal = Depends(get_auth_principal),
     ) -> Sample:
-        result = await session.execute(
-            sa.select(db.Sample).where(db.Sample.entity_id == id)
-        )
-        return result.scalars()
+        rd = ResourceDesc(db.Sample.__tablename__)
+        plan = cerbos_client.plan_resources("view", user_info, rd)
+        query = get_query_samples(plan).where(db.Sample.entity_id == int(id))
+        result = await session.execute(query)
+        return result.scalar()
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_all_samples(
-        self,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         user_info: Principal = Depends(get_auth_principal),
     ) -> typing.List[Sample]:
-        rd = ResourceDesc("sample")
-
-        # Get the query plan for "read" action
+        rd = ResourceDesc(db.Sample.__tablename__)
         plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query(
-            plan,
-            db.Sample,
-            {
-                "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
-                "request.resource.attr.collection_id": db.Sample.collection_id,
-            },
-            [],
-        )
-
+        query = get_query_samples(plan)
         result = await session.execute(query)
         return result.scalars()
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_sequencing_read(
-        self,
         id: strawberry.ID,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        user_info: Principal = Depends(get_auth_principal),
     ) -> SequencingRead:
-        await session.execute(
-            sa.select(db.SequencingRead).where(db.SequencingRead.entity_id == id)
-        )
+        rd = ResourceDesc(db.SequencingRead.__tablename__)
+        plan = cerbos_client.plan_resources("view", user_info, rd)
+        query = get_query_sequencing_read(plan).where(db.SequencingRead.entity_id == int(id))
+        result = await session.execute(query)
+        return result.scalar()
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_all_sequencing_reads(
-        self, session: AsyncSession = Depends(get_db_session, use_cache=False)
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        user_info: Principal = Depends(get_auth_principal),
     ) -> typing.List[SequencingRead]:
-        result = await session.execute(sa.select(db.SequencingRead))
+        rd = ResourceDesc(db.SequencingRead.__tablename__)
+        plan = cerbos_client.plan_resources("view", user_info, rd)
+        query = get_query_sequencing_read(plan)
+        result = await session.execute(query)
         return result.scalars()
 
 
