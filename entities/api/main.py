@@ -10,9 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from thirdparty.cerbos_sqlalchemy.query import get_query
 from thirdparty.strawberry_sqlalchemy_mapper import (
-    StrawberrySQLAlchemyLoader,
     StrawberrySQLAlchemyMapper,
 )
+from api.core.gql_loaders import EntityLoader
 
 from api.core.deps import get_auth_principal, get_cerbos_client, get_db_session
 from api.core.settings import APISettings
@@ -120,9 +120,15 @@ class Query:
         return result.scalars()
 
 
-def get_context(session: AsyncSession = Depends(get_db_session, use_cache=False)):
+def get_context(
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(get_auth_principal),
+):
     return {
-        "sqlalchemy_loader": StrawberrySQLAlchemyLoader(bind=session),
+        "sqlalchemy_loader": EntityLoader(
+            bind=session, cerbos_client=cerbos_client, principal=principal
+        ),
     }
 
 
