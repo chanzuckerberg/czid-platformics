@@ -49,6 +49,7 @@ def get_query_samples(plan):
         [],
     )
 
+
 def get_query_sequencing_read(plan):
     return get_query(
         plan,
@@ -97,7 +98,9 @@ class Query:
     ) -> SequencingRead:
         rd = ResourceDesc(db.SequencingRead.__tablename__)
         plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query_sequencing_read(plan).where(db.SequencingRead.entity_id == int(id))
+        query = get_query_sequencing_read(plan).where(
+            db.SequencingRead.entity_id == int(id)
+        )
         result = await session.execute(query)
         return result.scalar()
 
