@@ -1,6 +1,6 @@
-from sqlalchemy.orm import relationship, mapped_column
-from sqlalchemy import Column, ForeignKey, Integer, String
 from database.models.base import Entity
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 class Sample(Entity):
@@ -11,10 +11,10 @@ class Sample(Entity):
     name = Column(String, nullable=False)
     location = Column(String, nullable=False)
 
-    sequencing_reads = relationship(
+    sequencing_reads: Mapped[list["SequencingRead"]] = relationship(
         "SequencingRead",
         back_populates="sample",
-        foreign_keys="SequencingRead.entity_id",
+        foreign_keys="SequencingRead.sample_id",
     )
 
 
@@ -28,6 +28,6 @@ class SequencingRead(Entity):
     protocol = Column(String, nullable=False)
 
     sample_id = Column(Integer, ForeignKey("sample.entity_id"), nullable=False)
-    sample = relationship(
+    sample: Mapped[Sample] = relationship(
         "Sample", back_populates="sequencing_reads", foreign_keys=sample_id
     )

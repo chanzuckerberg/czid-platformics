@@ -85,6 +85,10 @@ local-tests: ## Run entities tests
 local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
 
+.PHONY: local-token
+local-token: ## Copy an auth token for this local dev env to the system clipboard
+	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo $$TOKEN | pbcopy; echo $$TOKEN
+
 .PHONY: fix-poetry-lock
 fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
 	git checkout --theirs poetry.lock

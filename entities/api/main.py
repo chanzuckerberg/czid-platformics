@@ -8,17 +8,15 @@ from cerbos.sdk.model import Principal, ResourceDesc
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import (
+from thirdparty.cerbos_sqlalchemy.query import get_query
+from thirdparty.strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyLoader,
     StrawberrySQLAlchemyMapper,
 )
-from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, ResourceDesc
 
-from api.core.deps import get_cerbos_client, get_db_session, get_auth_principal
+from api.core.deps import get_auth_principal, get_cerbos_client, get_db_session
 from api.core.settings import APISettings
 from api.core.strawberry_extensions import DependencyExtension
-from thirdparty.cerbos_sqlalchemy.query import get_query
 
 ######################
 # Strawberry-GraphQL #
@@ -27,14 +25,19 @@ from thirdparty.cerbos_sqlalchemy.query import get_query
 strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
 
 
+@strawberry_sqlalchemy_mapper.interface(db.Entity)
+class EntityInterface:
+    pass
+
+
 @strawberry_sqlalchemy_mapper.type(db.Sample)
 class Sample:
-    sequencing_reads: typing.List["SequencingRead"]
+    pass
 
 
 @strawberry_sqlalchemy_mapper.type(db.SequencingRead)
 class SequencingRead:
-    sample: "Sample"
+    pass
 
 
 # Shared "get_query()" utilities
