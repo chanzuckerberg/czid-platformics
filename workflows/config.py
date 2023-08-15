@@ -15,4 +15,4 @@ def load_plugin(group: str, name: str):
     raise ValueError(f"Plugin {name} not found in group {group}")
 
 def load_plugin_apps():
-    return { plugin.name: plugin.load() for plugin in entry_points(group=f"czid.plugin.app") }
+    return { plugin.name: plugin.load() for plugin in entry_points(group="czid.plugin.app") }
