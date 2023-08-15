@@ -16,9 +16,11 @@ class EntityLoader:
 
     _loaders: Dict[RelationshipProperty, DataLoader]
 
-    def __init__(self, bind, cerbos_client: CerbosClient, principal: Principal) -> None:
+    def __init__(
+        self, engine, cerbos_client: CerbosClient, principal: Principal
+    ) -> None:
         self._loaders = {}
-        self.bind = bind
+        self.engine = engine
         self.cerbos_client = cerbos_client
         self.principal = principal
 
@@ -49,21 +51,22 @@ class EntityLoader:
                         *[remote for _, remote in relationship.local_remote_pairs]
                     ).in_(keys)
                 )
-                if relationship.order_by:
-                    query = query.order_by(*relationship.order_by)
-                rows = (await self.bind.execute(query)).scalars().all()
+                async with self.engine.session() as session:
+                    if relationship.order_by:
+                        query = query.order_by(*relationship.order_by)
+                    rows = (await session.execute(query)).scalars().all()
 
-                def group_by_remote_key(row: Any) -> Tuple:
-                    return tuple(
-                        [
-                            getattr(row, remote.key)
-                            for _, remote in relationship.local_remote_pairs
-                        ]
-                    )
+                    def group_by_remote_key(row: Any) -> Tuple:
+                        return tuple(
+                            [
+                                getattr(row, remote.key)
+                                for _, remote in relationship.local_remote_pairs
+                            ]
+                        )
 
-                grouped_keys: Mapping[Tuple, List[Any]] = defaultdict(list)
-                for row in rows:
-                    grouped_keys[group_by_remote_key(row)].append(row)
+                    grouped_keys: Mapping[Tuple, List[Any]] = defaultdict(list)
+                    for row in rows:
+                        grouped_keys[group_by_remote_key(row)].append(row)
                 if relationship.uselist:
                     return [grouped_keys[key] for key in keys]
                 else:

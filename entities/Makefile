@@ -26,7 +26,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 local-init:
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
-	$(docker_compose) run entities make alembic-upgrade-head
+	$(docker_compose) run entities alembic upgrade head
 	$(MAKE) local-seed
 
 .PHONY: debugger

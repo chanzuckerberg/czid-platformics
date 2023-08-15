@@ -1,4 +1,5 @@
 import typing
+from database.connect import AsyncDB
 
 import database.models as db
 import strawberry
@@ -14,7 +15,13 @@ from thirdparty.strawberry_sqlalchemy_mapper import (
 )
 from api.core.gql_loaders import EntityLoader
 
-from api.core.deps import require_auth_principal, get_auth_principal, get_cerbos_client, get_db_session
+from api.core.deps import (
+    require_auth_principal,
+    get_auth_principal,
+    get_cerbos_client,
+    get_db_session,
+    get_engine,
+)
 from api.core.settings import APISettings
 from api.core.strawberry_extensions import DependencyExtension
 
@@ -96,13 +103,13 @@ class Query:
 
 
 def get_context(
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    engine: AsyncDB = Depends(get_engine),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(get_auth_principal),
 ):
     return {
         "sqlalchemy_loader": EntityLoader(
-            bind=session, cerbos_client=cerbos_client, principal=principal
+            engine=engine, cerbos_client=cerbos_client, principal=principal
         ),
     }
 
