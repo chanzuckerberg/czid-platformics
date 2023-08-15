@@ -1,8 +1,6 @@
 import typing
-import json
 import sqlalchemy as sa
 from fastapi import FastAPI
-import uvicorn
 
 import strawberry
 from strawberry.fastapi import GraphQLRouter
@@ -36,6 +34,16 @@ strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
 @strawberry_sqlalchemy_mapper.type(db.Workflow)
 class Workflow:
     pass
+
+@strawberry_sqlalchemy_mapper.type(db.WorkflowVersion)
+class WorkflowVersion:
+    pass
+
+@strawberry_sqlalchemy_mapper.type(db.Run)
+class Run:
+    pass
+
+
     
 
 @strawberry.type
@@ -49,6 +57,17 @@ class Query:
     async def get_workflows(self) -> typing.List[Workflow]:
         result = await session.execute(sa.select(db.Workflow))
         return result.scalars()
+
+    @strawberry.field
+    async def get_workflow_versions(self) -> typing.List[WorkflowVersion]:
+        result = await session.execute(sa.select(db.WorkflowVersion))
+        return result.scalars()
+
+    @strawberry.field
+    async def get_runs(self) -> typing.List[Run]:
+        result = await session.execute(sa.select(db.Run))
+        return result.scalars()
+
 
 
 @strawberry.type
