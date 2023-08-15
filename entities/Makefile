@@ -26,7 +26,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 local-init:
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
-	$(docker_compose) run entities make alembic-upgrade-head
+	$(docker_compose) run entities alembic upgrade head
 	$(MAKE) local-seed
 
 .PHONY: debugger
@@ -85,6 +85,10 @@ local-tests: ## Run entities tests
 local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
 
+.PHONY: local-token
+local-token: ## Copy an auth token for this local dev env to the system clipboard
+	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo $$TOKEN | pbcopy; echo $$TOKEN
+
 .PHONY: fix-poetry-lock
 fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
 	git checkout --theirs poetry.lock
@@ -107,13 +111,13 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head:
-	alembic upgrade head ## Run alembic migrations locally
+	$(docker_compose) exec entities alembic upgrade head ## Run alembic migrations locally
 
 alembic-undo-migration: ## Downgrade the latest alembic migration
-	alembic downgrade -1
+	$(docker_compose) exec entities alembic downgrade -1
 
 alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
-	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
+	$(docker_compose) exec entities alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
 
 ### CERBOS #############################################
 cerbos-tests:

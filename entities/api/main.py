@@ -1,4 +1,5 @@
 import typing
+from database.connect import AsyncDB
 
 import database.models as db
 import strawberry
@@ -8,17 +9,21 @@ from cerbos.sdk.model import Principal, ResourceDesc
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import (
-    StrawberrySQLAlchemyLoader,
+from thirdparty.cerbos_sqlalchemy.query import get_query
+from thirdparty.strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper,
 )
-from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, ResourceDesc
+from api.core.gql_loaders import EntityLoader
 
-from api.core.deps import get_cerbos_client, get_db_session, get_auth_principal
+from api.core.deps import (
+    require_auth_principal,
+    get_auth_principal,
+    get_cerbos_client,
+    get_db_session,
+    get_engine,
+)
 from api.core.settings import APISettings
 from api.core.strawberry_extensions import DependencyExtension
-from thirdparty.cerbos_sqlalchemy.query import get_query
 
 ######################
 # Strawberry-GraphQL #
@@ -27,96 +32,85 @@ from thirdparty.cerbos_sqlalchemy.query import get_query
 strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
 
 
+@strawberry_sqlalchemy_mapper.interface(db.Entity)
+class EntityInterface:
+    pass
+
+
 @strawberry_sqlalchemy_mapper.type(db.Sample)
 class Sample:
-    sequencing_reads: typing.List["SequencingRead"]
+    pass
 
 
 @strawberry_sqlalchemy_mapper.type(db.SequencingRead)
 class SequencingRead:
-    sample: "Sample"
+    pass
 
 
-# Shared "get_query()" utilities
-def get_query_samples(plan):
-    return get_query(
+async def get_base_entities(
+    model: db.Entity,
+    session: AsyncSession,
+    cerbos_client: CerbosClient,
+    principal: Principal,
+    filters: typing.List[typing.Any] = [],
+):
+    rd = ResourceDesc(model.__tablename__)
+    plan = cerbos_client.plan_resources("view", principal, rd)
+    query = get_query(
         plan,
-        db.Sample,
+        model,
         {
-            "request.resource.attr.owner_user_id": db.Sample.owner_user_id,
-            "request.resource.attr.collection_id": db.Sample.collection_id,
+            "request.resource.attr.owner_user_id": model.owner_user_id,
+            "request.resource.attr.collection_id": model.collection_id,
         },
         [],
     )
-
-def get_query_sequencing_read(plan):
-    return get_query(
-        plan,
-        db.SequencingRead,
-        {
-            "request.resource.attr.owner_user_id": db.SequencingRead.owner_user_id,
-            "request.resource.attr.collection_id": db.SequencingRead.collection_id,
-        },
-        [],
-    )
+    if filters:
+        query = query.filter(*filters)
+    result = await session.execute(query)
+    return result.scalars().all()
 
 
 @strawberry.type
 class Query:
     @strawberry.field(extensions=[DependencyExtension()])
-    async def get_sample(
-        id: strawberry.ID,
+    async def samples(
+        id: typing.Optional[strawberry.ID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        user_info: Principal = Depends(get_auth_principal),
-    ) -> Sample:
-        rd = ResourceDesc(db.Sample.__tablename__)
-        plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query_samples(plan).where(db.Sample.entity_id == int(id))
-        result = await session.execute(query)
-        return result.scalar()
-
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def get_all_samples(
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        user_info: Principal = Depends(get_auth_principal),
+        principal: Principal = Depends(require_auth_principal),
     ) -> typing.List[Sample]:
-        rd = ResourceDesc(db.Sample.__tablename__)
-        plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query_samples(plan)
-        result = await session.execute(query)
-        return result.scalars()
+        filters = []
+        if id:
+            filters.append(db.Sample.entity_id == int(id))
+        return await get_base_entities(
+            db.Sample, session, cerbos_client, principal, filters
+        )
 
     @strawberry.field(extensions=[DependencyExtension()])
-    async def get_sequencing_read(
-        id: strawberry.ID,
+    async def sequencing_reads(
+        id: typing.Optional[strawberry.ID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        user_info: Principal = Depends(get_auth_principal),
-    ) -> SequencingRead:
-        rd = ResourceDesc(db.SequencingRead.__tablename__)
-        plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query_sequencing_read(plan).where(db.SequencingRead.entity_id == int(id))
-        result = await session.execute(query)
-        return result.scalar()
-
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def get_all_sequencing_reads(
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        user_info: Principal = Depends(get_auth_principal),
+        principal: Principal = Depends(require_auth_principal),
     ) -> typing.List[SequencingRead]:
-        rd = ResourceDesc(db.SequencingRead.__tablename__)
-        plan = cerbos_client.plan_resources("view", user_info, rd)
-        query = get_query_sequencing_read(plan)
-        result = await session.execute(query)
-        return result.scalars()
+        filters = []
+        if id:
+            filters.append(db.SequencingRead.entity_id == int(id))
+        return await get_base_entities(
+            db.SequencingRead, session, cerbos_client, principal, filters
+        )
 
 
-def get_context(session: AsyncSession = Depends(get_db_session, use_cache=False)):
+def get_context(
+    engine: AsyncDB = Depends(get_engine),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(get_auth_principal),
+):
     return {
-        "sqlalchemy_loader": StrawberrySQLAlchemyLoader(bind=session),
+        "sqlalchemy_loader": EntityLoader(
+            engine=engine, cerbos_client=cerbos_client, principal=principal
+        ),
     }
 
 
