@@ -9,12 +9,10 @@ def use_factoryboy():
     factory.random.reseed_random(1234567)
 
     wf.WorkflowFactory.create_batch(4)
-    # Create some samples with one SequencingRead each
 
     wf.WorkflowVersionFactory.create()
 
     wf.RunFactory.create_batch(5)
-    # create some samples with multiple SequencingReads
     session.commit()
 
 
