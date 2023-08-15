@@ -4,7 +4,7 @@ import typing
 
 import pytest
 import pytest_asyncio
-from api.core.deps import get_db_session, get_auth_principal
+from api.core.deps import get_db_session, require_auth_principal
 from api.main import get_app, get_context
 from database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
 from database.models.base import Base
@@ -104,7 +104,7 @@ async def api(
     api = get_app()
     api.dependency_overrides[get_db_session] = patched_session
     api.dependency_overrides[get_context] = patched_context
-    api.dependency_overrides[get_auth_principal] = patched_authprincipal
+    api.dependency_overrides[require_auth_principal] = patched_authprincipal
     return api
 
 

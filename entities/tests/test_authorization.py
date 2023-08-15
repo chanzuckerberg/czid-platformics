@@ -41,7 +41,7 @@ async def test_collection_authorization(
     # Fetch all samples
     query = """
         query MyQuery {
-            getAllSamples {
+            samples {
                 id,
                 location
             }
@@ -61,7 +61,5 @@ async def test_collection_authorization(
         headers=headers,
     )
     output = result.json()
-    assert len(output["data"]["getAllSamples"]) == num_results
-    assert {sample["location"] for sample in output["data"]["getAllSamples"]} == set(
-        cities
-    )
+    assert len(output["data"]["samples"]) == num_results
+    assert {sample["location"] for sample in output["data"]["samples"]} == set(cities)
