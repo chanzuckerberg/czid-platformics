@@ -1,0 +1,3 @@
+This folder contains a copy of the strawberry sqlalchemy mapper code that's customized for this application's needs.
+
+Right now the only change is that the packaged dataloader has been modified to support async sqlalchemy sessions, but we plan to add filtering capabilities to it soon.
