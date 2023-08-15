@@ -2016,6 +2016,17 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "uuid6"
+version = "2023.5.2"
+description = "New time-based UUID formats which are suited for use as a database key"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "uuid6-2023.5.2-py3-none-any.whl", hash = "sha256:9a8125a621426f24d3e4811f9885e7c0c6567ed3cc47f68fe8d41112e603bf85"},
+    {file = "uuid6-2023.5.2.tar.gz", hash = "sha256:03cb97f25ca7b0ac4bea2b3a205f66bfe7f58d3b179bb0f76e1d7946446b6133"},
+]
+
+[[package]]
 name = "uvicorn"
 version = "0.23.1"
 description = "The lightning-fast ASGI server."
@@ -2135,4 +2146,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4b88376bb6c316c72d9266ca6d7972780eeef8b9666c3c973bec986611d0e0c6"
+content-hash = "f089de04e47747b6c6f8180ce5c06406f54b6ab18810767e60c54b1dd72c0b43"
