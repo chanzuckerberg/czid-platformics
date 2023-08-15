@@ -14,7 +14,7 @@ from thirdparty.strawberry_sqlalchemy_mapper import (
 )
 from api.core.gql_loaders import EntityLoader
 
-from api.core.deps import get_auth_principal, get_cerbos_client, get_db_session
+from api.core.deps import require_auth_principal, get_auth_principal, get_cerbos_client, get_db_session
 from api.core.settings import APISettings
 from api.core.strawberry_extensions import DependencyExtension
 
@@ -71,7 +71,7 @@ class Query:
         id: typing.Optional[strawberry.ID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(get_auth_principal),
+        principal: Principal = Depends(require_auth_principal),
     ) -> typing.List[Sample]:
         filters = []
         if id:
@@ -85,7 +85,7 @@ class Query:
         id: typing.Optional[strawberry.ID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(get_auth_principal),
+        principal: Principal = Depends(require_auth_principal),
     ) -> typing.List[SequencingRead]:
         filters = []
         if id:

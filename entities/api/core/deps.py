@@ -48,14 +48,14 @@ def get_auth_principal(
     if auth_header:
         parts = auth_header.split()
     if not auth_header or len(parts) != 2:
-        raise Exception("Authorization bearer token is required")
+        return None
     if parts[0].lower() != "bearer":
-        raise Exception("Authorization header must start with Bearer")
+        return None
 
     try:
         claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
     except:
-        raise Exception("Invalid token")
+        return None
 
     # role_map is a bit brute-force to make cerbos-sqlalchemy happy, but it's fine for now.
     role_map = {}
@@ -73,3 +73,11 @@ def get_auth_principal(
             "member_projects": role_map.get("member", []),
         },
     )
+
+
+def require_auth_principal(
+    principal=Depends(get_auth_principal),
+) -> Principal:
+    if not principal:
+        raise Exception("Unauthorized")
+    return principal

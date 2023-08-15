@@ -111,13 +111,13 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head:
-	alembic upgrade head ## Run alembic migrations locally
+	$(docker_compose) exec entities alembic upgrade head ## Run alembic migrations locally
 
 alembic-undo-migration: ## Downgrade the latest alembic migration
-	alembic downgrade -1
+	$(docker_compose) exec entities alembic downgrade -1
 
 alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
-	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
+	$(docker_compose) exec entities alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
 
 ### CERBOS #############################################
 cerbos-tests:
