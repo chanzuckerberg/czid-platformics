@@ -72,6 +72,14 @@ from strawberry_sqlalchemy_mapper.exc import (
     UnsupportedDescriptorType,
 )
 
+@strawberry.input
+class StrQuery:
+    _eq: Optional[str] = None
+
+@strawberry.input
+class QueryParams:
+    id: Optional[StrQuery] = None
+
 BaseModelType = TypeVar("BaseModelType")
 
 SkipTypeSentinelT = NewType("SkipType", object)
@@ -375,13 +383,13 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         connection_type = self._connection_type_for(type_name)
         edge_type = self._edge_type_for(type_name)
 
-        async def wrapper(self, info: Info):
+        async def wrapper(self, info: Info, **kwargs: Optional[QueryParams]):
             return connection_type(
                 edges=[
                     edge_type(
                         node=related_object,
                     )
-                    for related_object in await resolver(self, info)
+                    for related_object in await resolver(self, info, **kwargs)
                 ]
             )
 
@@ -397,7 +405,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         so as to avoid n+1 query problem.
         """
 
-        async def resolve(self, info: Info):
+        async def resolve(self, info: Info, **kwargs: Optional[QueryParams]):
             instance_state = cast(InstanceState, inspect(self))
             if relationship.key not in instance_state.unloaded:
                 related_objects = getattr(self, relationship.key)
@@ -418,7 +426,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
                 else:
                     loader = info.context.sqlalchemy_loader
                 related_objects = await loader.loader_for(relationship).load(
-                    relationship_key
+                    relationship_key, **kwargs
                 )
             return related_objects
 
@@ -469,7 +477,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         edge_type = self._edge_type_for(end_type_name)
         is_multiple = self._is_connection_type(strawberry_type)
 
-        async def resolve(self, info: Info):
+        async def resolve(self, info: Info, kwargs: Optional[QueryParams]):
             in_between_objects = await in_between_resolver(self, info)
             if in_between_objects is None:
                 if is_multiple:
@@ -602,6 +610,19 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
                 field = strawberry.field(
                     resolver=self.connection_resolver_for(relationship)
                 )
+                # Remove the kwargs argument from our gql map
+                field.arguments = [item for item in field.arguments if item.python_name != "kwargs"]
+                # Add a custom argument to all mapped types.
+                field.arguments.append(strawberry.arguments.StrawberryArgument(
+                    python_name="where",
+                    graphql_name=None,
+                    type_annotation=StrawberryAnnotation(Optional[int]),
+                    default=None,
+                    directives=(),
+                    metadata={},
+                    description="Filter results",
+                ))
+                # field.arguments = {}
                 assert not field.init
                 setattr(
                     type_,

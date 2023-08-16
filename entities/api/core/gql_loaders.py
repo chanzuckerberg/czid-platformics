@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Mapping, Tuple
 
 from sqlalchemy import tuple_
 from sqlalchemy.orm import RelationshipProperty
-from strawberry.dataloader import DataLoader
+from thirdparty.strawberry_sqlalchemy_mapper.dataloader import DataLoader
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, ResourceDesc
 from thirdparty.cerbos_sqlalchemy.query import get_query
@@ -33,9 +33,10 @@ class EntityLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
-            async def load_fn(keys: List[Tuple]) -> List[Any]:
+            async def load_fn(keys: List[Tuple], **kwargs) -> List[Any]:
                 rd = ResourceDesc(related_model.__tablename__)
                 plan = self.cerbos_client.plan_resources("view", self.principal, rd)
+                print(f"WHERE IS {kwargs}")
 
                 query = get_query(
                     plan,
