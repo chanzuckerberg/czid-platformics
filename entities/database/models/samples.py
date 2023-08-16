@@ -1,6 +1,7 @@
 from database.models.base import Entity
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 
 class Sample(Entity):
@@ -27,7 +28,7 @@ class SequencingRead(Entity):
     sequence = Column(String, nullable=False)
     protocol = Column(String, nullable=False)
 
-    sample_id = Column(Integer, ForeignKey("sample.entity_id"), nullable=False)
+    sample_id = Column(UUID, ForeignKey("sample.entity_id"), nullable=False)
     sample: Mapped[Sample] = relationship(
         "Sample", back_populates="sequencing_reads", foreign_keys=sample_id
     )

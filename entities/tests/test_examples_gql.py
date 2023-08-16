@@ -44,7 +44,7 @@ async def test_graphql_query(
     # Fetch all samples
     query = """
         query MyQuery {
-            getAllSamples {
+            samples {
                 id,
                 location
             }
@@ -63,9 +63,6 @@ async def test_graphql_query(
         headers=headers,
     )
     output = result.json()
-    assert output["data"]["getAllSamples"][0] == {
-        "id": 1,
-        "location": "San Francisco, CA",
-    }
-    assert output["data"]["getAllSamples"][-1]["location"] == "Mountain View, CA"
-    assert len(output["data"]["getAllSamples"]) == 8
+    assert output["data"]["samples"][0]["location"] == "San Francisco, CA"
+    assert output["data"]["samples"][-1]["location"] == "Mountain View, CA"
+    assert len(output["data"]["samples"]) == 8

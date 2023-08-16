@@ -14,6 +14,7 @@ from thirdparty.strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper,
 )
 from api.core.gql_loaders import EntityLoader
+import uuid
 
 from api.core.deps import (
     require_auth_principal,
@@ -75,28 +76,28 @@ async def get_base_entities(
 class Query:
     @strawberry.field(extensions=[DependencyExtension()])
     async def samples(
-        id: typing.Optional[strawberry.ID] = None,
+        id: typing.Optional[uuid.UUID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
     ) -> typing.List[Sample]:
         filters = []
         if id:
-            filters.append(db.Sample.entity_id == int(id))
+            filters.append(db.Sample.entity_id == id)
         return await get_base_entities(
             db.Sample, session, cerbos_client, principal, filters
         )
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def sequencing_reads(
-        id: typing.Optional[strawberry.ID] = None,
+        id: typing.Optional[uuid.UUID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
     ) -> typing.List[SequencingRead]:
         filters = []
         if id:
-            filters.append(db.SequencingRead.entity_id == int(id))
+            filters.append(db.SequencingRead.entity_id == id)
         return await get_base_entities(
             db.SequencingRead, session, cerbos_client, principal, filters
         )

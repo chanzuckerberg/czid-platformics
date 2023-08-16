@@ -1,5 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped
 from sqlalchemy import MetaData, Column, Integer
+import uuid6
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 
 meta = MetaData(
     naming_convention={
@@ -20,7 +23,9 @@ class Entity(Base):
     __tablename__ = "entity"
     __mapper_args__ = {"polymorphic_identity": "entity", "polymorphic_on": "type"}
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[uuid.UUID] = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7
+    )
 
     # The "type" field distinguishes between subclasses (e.g. sample, sequencing_read, etc)
     type: Mapped[str]
