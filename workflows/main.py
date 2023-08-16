@@ -43,8 +43,21 @@ class WorkflowVersion:
 class Run:
     pass
 
+@strawberry_sqlalchemy_mapper.type(db.RunStep)
+class RunStep:
+    pass
 
-    
+@strawberry_sqlalchemy_mapper.type(db.WorkflowVersionInput)
+class WorkflowVersionInput:
+    pass
+
+@strawberry_sqlalchemy_mapper.type(db.WorkflowVersionOutput)
+class WorkflowVersionOutput:
+    pass
+
+@strawberry_sqlalchemy_mapper.type(db.RunEntityInput)
+class RunEntityInput:
+    pass
 
 @strawberry.type
 class Query:
@@ -59,24 +72,72 @@ class Query:
         return result.scalars()
 
     @strawberry.field
+    async def get_workflow_version(self) -> WorkflowVersion:
+        result = await session.execute(sa.select(db.WorkflowVersion).where(db.WorkflowVersion.id == id))
+        return result.scalars().one()
+    
+    @strawberry.field
     async def get_workflow_versions(self) -> typing.List[WorkflowVersion]:
         result = await session.execute(sa.select(db.WorkflowVersion))
         return result.scalars()
-
+    
+    @strawberry.field
+    async def get_run(self) -> Run:
+        result = await session.execute(sa.select(db.Run).where(db.Run.id == id))
+        return result.scalars().one()
+    
     @strawberry.field
     async def get_runs(self) -> typing.List[Run]:
         result = await session.execute(sa.select(db.Run))
         return result.scalars()
-
-
+    
+    @strawberry.field
+    async def get_run_step(self) -> RunStep:
+        result = await session.execute(sa.select(db.RunStep).where(db.RunStep.id == id))
+        return result.scalars().one()
+    
+    @strawberry.field
+    async def get_run_steps(self) -> typing.List[RunStep]:
+        result = await session.execute(sa.select(db.RunStep))
+        return result.scalars()
+    
+    @strawberry.field
+    async def get_workflow_version_input(self) -> WorkflowVersionInput:
+        result = await session.execute(sa.select(db.WorkflowVersionInput).where(db.WorkflowVersionInput.id == id))
+        return result.scalars().one()
+    
+    @strawberry.field
+    async def get_workflow_version_inputs(self) -> typing.List[WorkflowVersionInput]:
+        result = await session.execute(sa.select(db.WorkflowVersionInput))
+        return result.scalars()
+    
+    @strawberry.field
+    async def get_workflow_version_output(self) -> WorkflowVersionOutput:
+        result = await session.execute(sa.select(db.WorkflowVersionOutput).where(db.WorkflowVersionOutput.id == id))
+        return result.scalars().one()
+    
+    @strawberry.field
+    async def get_workflow_version_outputs(self) -> typing.List[WorkflowVersionOutput]:
+        result = await session.execute(sa.select(db.WorkflowVersionOutput))
+        return result.scalars()
+    
+    @strawberry.field
+    async def get_run_entity_input(self) -> RunEntityInput:
+        result = await session.execute(sa.select(db.RunEntityInput).where(db.RunEntityInput.id == id))
+        return result.scalars().one()
+    
+    @strawberry.field
+    async def get_run_entity_inputs(self) -> typing.List[RunEntityInput]:
+        result = await session.execute(sa.select(db.RunEntityInput))
+        return result.scalars()
 
 @strawberry.type
 class Mutation:
     @strawberry.mutation
-    async def add_workflow(self, name: str, version: str, minimum_supported_version: str) -> Workflow:
+    async def add_workflow(self, name: str, default_version: str, minimum_supported_version: str) -> Workflow:
         db_workflow = db.Workflow(
             name = name,
-            version = version,
+            default_version = default_version,
             minimum_supported_version = minimum_supported_version
         )
         session.add(db_workflow)
