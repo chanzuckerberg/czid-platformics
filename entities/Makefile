@@ -99,6 +99,10 @@ fix-lint: ## Apply linting rules to the code in this directory.
 	$(docker_compose) run entities black .
 	$(docker_compose) run entities ruff check --fix .
 
+.PHONY: local-mypy
+local-mypy: ## Run type checking
+	$(docker_compose) run entities -- 'cd .. && mypy -p entities --ignore-missing-imports'
+
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
