@@ -60,7 +60,7 @@ def list_samples(ctx):
     op = Operation(schema.Query)  # note 'schema.'
 
     # fetch all samples and all sample fields
-    samples = op.get_all_samples()
+    samples = op.samples()
     samples.id()
     samples.name()
     samples.location()
@@ -70,7 +70,7 @@ def list_samples(ctx):
 
     # Call the endpoint:
     data = endpoint(op, extra_headers=get_headers(ctx))
-    print(json.dumps(data["data"]["getAllSamples"], indent=4))
+    print(json.dumps(data["data"]["samples"], indent=4))
 
 
 @cli.group()
