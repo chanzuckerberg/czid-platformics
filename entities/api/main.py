@@ -1,6 +1,5 @@
 import typing
 from database.connect import AsyncDB
-
 import database.models as db
 import strawberry
 import uvicorn
@@ -47,6 +46,34 @@ class Query:
     samples: typing.List[Sample] = get_base_loader(db.Sample, Sample)
     sequencing_reads: typing.List[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
 
+@strawberry.type
+class Mutation:
+    # @strawberry.mutation(extensions=[DependencyExtension()])
+    # async def add_sample(
+    #     self,
+    #     name: str,
+    #     location: str,
+    #     collection_id: int,
+    #     test: any = Depends(test),
+    #     session: AsyncSession = Depends(get_db_session, use_cache=False),
+    #     principal: Principal = Depends(require_auth_principal),
+    # ) -> Sample:
+    #     print("test", test)
+
+    #     params = dict(name=name, location=location, owner_user_id=int(principal.id), collection_id=collection_id)
+    #     sample = db.Sample(**params)
+    #     session.add(sample)
+    #     await session.commit()
+
+    #     params = {
+    #         **params,
+    #         "id": sample.entity_id,
+    #         "type": sample.type,
+    #         "producing_run_id": sample.producing_run_id,
+    #         "entity_id": sample.entity_id,
+    #     }
+    #     print("new_row", params)
+    #     return Sample(**params)
 
 def get_context(
     engine: AsyncDB = Depends(get_engine),
@@ -68,8 +95,7 @@ additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
-    #    mutation=Mutation,
-    #    extensions=extensions,
+    mutation=Mutation,
     types=additional_types,
 )
 
