@@ -32,7 +32,7 @@ export PLATFORMICS_AUTH_TOKEN=$(./cli/gqlcli.py auth generate-token 111 --projec
 ./cli/gqlcli.py samples list
 ```
 
-# Debugging in VSCode:
+### Debugging in VSCode:
 - Install the 'Dev Containers' and 'Docker' VSCode extensions
 - Open VSCode at the entities directory
 - Click "reopen in container" when VSCode suggests it.
