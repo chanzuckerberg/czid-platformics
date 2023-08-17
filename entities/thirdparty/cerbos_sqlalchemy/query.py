@@ -1,3 +1,4 @@
+# ruff: noqa
 from types import MappingProxyType
 from typing import Any, Callable
 

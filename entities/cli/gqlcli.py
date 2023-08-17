@@ -94,7 +94,7 @@ def generate_token(ctx, userid: int, project: list[str], expiration: int):
     settings = Settings()
     private_key = settings.JWK_PRIVATE_KEY
 
-    project_dict = {}
+    project_dict: dict[int, list[str]] = {}
     for item in project:
         project_id, role = item.split(":")
         if int(project_id) not in project_dict:

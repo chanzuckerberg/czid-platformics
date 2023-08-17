@@ -37,9 +37,12 @@ debugger: ## Attach to the backend service (useful for pdb)
 local-status: ## Show the status of the containers in the dev environment.
 	docker ps -a | grep --color=no -e 'CONTAINER\|entities'
 
-.PHONY: local-rebuild
-local-rebuild: ## Rebuild local dev without re-importing data
+.PHONY: local-build
+local-build: ## Build images
 	$(docker_compose) build
+
+.PHONY: local-rebuild
+local-rebuild: local-build ## Rebuild local dev without re-importing data
 	$(docker_compose) up -d
 
 .PHONY: local-sync
@@ -98,6 +101,16 @@ fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproje
 fix-lint: ## Apply linting rules to the code in this directory.
 	$(docker_compose) run entities black .
 	$(docker_compose) run entities ruff check --fix .
+
+.PHONY: check-lint
+check-lint: ## Check for bad linting
+	$(docker_compose) run entities black --check .
+	$(docker_compose) run entities ruff check .
+	$(docker_compose) run -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
+
+.PHONY: local-mypy
+local-mypy: ## Run type checking
+	$(docker_compose) exec -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
