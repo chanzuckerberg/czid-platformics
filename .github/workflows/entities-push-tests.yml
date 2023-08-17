@@ -22,7 +22,6 @@ jobs:
           make check-lint
   py-test:
     runs-on: ubuntu-22.04
-      - name: Lint Python
     steps:
         run: |
           # Set up a local dev env and run tests
