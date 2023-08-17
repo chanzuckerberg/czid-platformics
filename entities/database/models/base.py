@@ -23,9 +23,7 @@ class Entity(Base):
     __tablename__ = "entity"
     __mapper_args__ = {"polymorphic_identity": "entity", "polymorphic_on": "type"}
 
-    id: Column[uuid.UUID] = Column(
-        UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7
-    )
+    id: Column[uuid.UUID] = Column(UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7)
 
     # The "type" field distinguishes between subclasses (e.g. sample,
     # sequencing_read, etc)

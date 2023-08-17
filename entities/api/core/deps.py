@@ -41,9 +41,7 @@ def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
 
-def get_auth_principal(
-    request: Request, settings: APISettings = Depends(get_settings)
-) -> Principal:
+def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
     auth_header = request.headers.get("authorization")
     if auth_header:
         parts = auth_header.split()

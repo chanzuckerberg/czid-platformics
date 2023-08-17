@@ -16,9 +16,7 @@ def get_token_claims(private_key: JWK, token: str) -> dict:
     unpacked_token.decrypt(private_key)
     decrypted_payload = unpacked_token.payload.decode("utf-8")
     required_claims = {"exp": None, "iat": None, "nbf": None}
-    decoded_jwt = jwt.JWT(
-        key=private_key, jwt=decrypted_payload, check_claims=required_claims
-    )
+    decoded_jwt = jwt.JWT(key=private_key, jwt=decrypted_payload, check_claims=required_claims)
     return json.loads(decoded_jwt.claims)
 
 

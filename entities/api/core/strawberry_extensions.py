@@ -19,11 +19,7 @@ class DependencyExtension(FieldExtension):
         )
         # Remove fastapi Depends arguments from the list that strawberry tries
         # to resolve
-        field.arguments = [
-            item
-            for item in field.arguments
-            if not isinstance(item.default, DependsClass)
-        ]
+        field.arguments = [item for item in field.arguments if not isinstance(item.default, DependsClass)]
 
     async def resolve_async(
         self,
@@ -56,8 +52,6 @@ class DependencyExtension(FieldExtension):
         ) = solved_result
 
         request.context["dependency_cache"].update(new_cache)
-        kwargs = (
-            solved_values | kwargs
-        )  # solved_values has None values that need to be overridden by kwargs
+        kwargs = solved_values | kwargs  # solved_values has None values that need to be overridden by kwargs
         res = await next_(source, info, **kwargs)
         return res

@@ -1,8 +1,7 @@
 class UnsupportedColumnType(Exception):
     def __init__(self, key, type):
         super().__init__(
-            f"Unsupported column type: `{type}` on column: `{key}`. "
-            + "Possible fix: exclude this column"
+            f"Unsupported column type: `{type}` on column: `{key}`. " + "Possible fix: exclude this column"
         )
 
 
@@ -16,18 +15,12 @@ class UnsupportedAssociationProxyTarget(Exception):
 
 class HybridPropertyNotAnnotated(Exception):
     def __init__(self, key):
-        super().__init__(
-            f"Descriptor `{key}` is a hybrid property, but does not have an "
-            + "annotated return type"
-        )
+        super().__init__(f"Descriptor `{key}` is a hybrid property, but does not have an " + "annotated return type")
 
 
 class UnsupportedDescriptorType(Exception):
     def __init__(self, key):
-        super().__init__(
-            f"Descriptor `{key}` is expected to be a column, relationship, "
-            + "or association proxy."
-        )
+        super().__init__(f"Descriptor `{key}` is expected to be a column, relationship, " + "or association proxy.")
 
 
 class InterfaceModelNotPolymorphic(Exception):
