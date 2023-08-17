@@ -60,7 +60,7 @@ class Mutation:
         name: str,
         location: str,
         collection_id: int,
-        create_entity: any = Depends(create_entity),
+        create_entity: typing.Callable = Depends(create_entity),
     ) -> Sample:
         if not name or not location:
             raise Exception("Fields cannot be empty")
@@ -76,7 +76,7 @@ class Mutation:
         protocol: str,
         sample_id: uuid.UUID,
         collection_id: int,
-        create_entity: any = Depends(create_entity),
+        create_entity: typing.Callable = Depends(create_entity),
     ) -> SequencingRead:
         params = dict(
             nucleotide=nucleotide,
