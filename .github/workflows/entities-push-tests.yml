@@ -15,6 +15,7 @@ jobs:
   py-lint:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
+      - uses: actions/checkout@v3
       # Build images and run linters
       - name: Lint Python
         working-directory: entities
@@ -25,6 +26,7 @@ jobs:
   py-test:
     runs-on: [ARM64, self-hosted, Linux]
     steps:
+      - uses: actions/checkout@v3
       # Set up a local dev env and run tests
       - name: Run tests
         working-directory: entities
