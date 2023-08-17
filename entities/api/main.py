@@ -8,11 +8,10 @@ from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
-from api.core.gql_loaders import EntityLoader, get_base_loader
-from api.core.deps import get_auth_principal, get_cerbos_client, get_engine, get_db_session, require_auth_principal
+from api.core.gql_loaders import EntityLoader, get_base_loader, create_entity
+from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from api.core.settings import APISettings
 from api.core.strawberry_extensions import DependencyExtension
-from sqlalchemy.ext.asyncio import AsyncSession
 
 ######################
 # Strawberry-GraphQL #
@@ -52,31 +51,6 @@ class Query:
 # --------------------
 
 
-# Utility function to create a new entity
-async def create_entity(
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    principal: Principal = Depends(require_auth_principal),
-):
-    async def create(entity_model, gql_type, params):
-        # Save to DB
-        params["owner_user_id"] = int(principal.id)
-        new_entity = entity_model(**params)
-        session.add(new_entity)
-        await session.commit()
-
-        # Return GQL object to client
-        params = {
-            **params,
-            "id": new_entity.entity_id,
-            "type": new_entity.type,
-            "producing_run_id": new_entity.producing_run_id,
-            "entity_id": new_entity.entity_id,
-        }
-        return gql_type(**params)
-
-    return create
-
-
 @strawberry.type
 class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
@@ -87,7 +61,7 @@ class Mutation:
         collection_id: int,
         create_entity: any = Depends(create_entity),
     ) -> Sample:
-        return await create_entity(db.Sample, Sample, dict(name=name, location=location, collection_id=collection_id))
+        return await create_entity(db.Sample, Sample, collection_id=collection_id, params=dict(name=name, location=location))
 
 
 # --------------------
