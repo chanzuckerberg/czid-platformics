@@ -13,16 +13,8 @@ on:
 
 jobs:
   py-lint:
-    runs-on: ubuntu-22.04
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
-      - uses: actions/checkout@v3
-      # Enable ARM
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       # Build images and run linters
       - name: Lint Python
         working-directory: entities
@@ -31,16 +23,8 @@ jobs:
           make local-build
           make check-lint
   py-test:
-    runs-on: ubuntu-22.04
+    runs-on: [ARM64, self-hosted, Linux]
     steps:
-      - uses: actions/checkout@v3
-      # Enable ARM
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: arm64
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       # Set up a local dev env and run tests
       - name: Run tests
         working-directory: entities
