@@ -48,7 +48,8 @@ def create_token(
     jwt_token.make_signed_token(private_key)
     jwe_payload = jwt_token.serialize(compact=True)
 
-    # Ok, now we want to *encrypt* that jwt with a JWE wrapper so that only the intended recipient can read it.
+    # Ok, now we want to *encrypt* that jwt with a JWE wrapper so that only the intended
+    # recipient can read it.
     protected_header = {
         "alg": "ECDH-ES",
         "enc": "A256CBC-HS512",

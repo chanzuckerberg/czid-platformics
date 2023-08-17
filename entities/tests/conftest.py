@@ -28,7 +28,7 @@ def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
 
 
 @pytest.fixture()
-def sync_db(test_db) -> typing.AsyncGenerator[SyncDB, None]:
+def sync_db(test_db) -> typing.Generator[SyncDB, None, None]:
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user
@@ -75,6 +75,8 @@ async def async_db(sync_db: SyncDB, test_db) -> typing.AsyncGenerator[AsyncDB, N
 
 async def patched_authprincipal(request: Request) -> Principal:
     user_id = request.headers.get("user_id")
+    if not user_id:
+        raise Exception("user_id not found in request headers")
     principal = Principal(
         user_id,
         roles=["user"],

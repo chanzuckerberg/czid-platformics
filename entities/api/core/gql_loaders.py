@@ -1,6 +1,7 @@
 from collections import defaultdict
-from typing import Any, Dict, List, Mapping, Tuple, Optional
+from typing import Any, Mapping, Tuple, Optional
 
+from database.models import Base
 from sqlalchemy import tuple_
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.dataloader import DataLoader
@@ -14,11 +15,7 @@ import typing
 
 import database.models as db
 import strawberry
-from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, ResourceDesc
-from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from thirdparty.cerbos_sqlalchemy.query import get_query
 import uuid
 
 from api.core.deps import (
@@ -35,8 +32,8 @@ async def get_entities(
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
-    filters: Optional[typing.List[ColumnExpressionArgument]],
-    order_by: Optional[typing.List[ColumnElement]],
+    filters: Optional[list[ColumnExpressionArgument]],
+    order_by: Optional[list[tuple[ColumnElement[Any], ...]]],
 ):
     rd = ResourceDesc(model.__tablename__)
     plan = cerbos_client.plan_resources("view", principal, rd)
@@ -62,7 +59,7 @@ class EntityLoader:
     Creates DataLoader instances on-the-fly for SQLAlchemy relationships
     """
 
-    _loaders: Dict[RelationshipProperty, DataLoader]
+    _loaders: dict[RelationshipProperty, DataLoader]
 
     def __init__(
         self, engine, cerbos_client: CerbosClient, principal: Principal
@@ -81,33 +78,38 @@ class EntityLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
-            async def load_fn(keys: List[Tuple]) -> List[Any]:
+            async def load_fn(keys: list[Tuple]) -> list[Any]:
+                if not relationship.local_remote_pairs:
+                    raise Exception("invalid relationship")
                 filters = [
                     tuple_(
                         *[remote for _, remote in relationship.local_remote_pairs]
                     ).in_(keys)
                 ]
-                order_by = []
+                order_by: list[tuple[ColumnElement[Any], ...]] = []
                 if relationship.order_by:
-                    order_by = relationship.order_by
+                    order_by = [relationship.order_by]
                 rows = await get_entities(
                     related_model,
                     self.engine.session(),
                     self.cerbos_client,
                     self.principal,
-                    filters,
+                    filters,  # type: ignore
                     order_by,
                 )
 
                 def group_by_remote_key(row: Any) -> Tuple:
+                    if not relationship.local_remote_pairs:
+                        raise Exception("invalid relationship")
                     return tuple(
                         [
                             getattr(row, remote.key)
                             for _, remote in relationship.local_remote_pairs
+                            if remote.key
                         ]
                     )
 
-                grouped_keys: Mapping[Tuple, List[Any]] = defaultdict(list)
+                grouped_keys: Mapping[Tuple, list[Any]] = defaultdict(list)
                 for row in rows:
                     grouped_keys[group_by_remote_key(row)].append(row)
                 if relationship.uselist:
@@ -129,7 +131,7 @@ def get_base_loader(entity_model, gql_type):
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
-    ) -> typing.List[gql_type]:
+    ) -> list[Base]:
         filters = []
         if id:
             filters.append(entity_model.entity_id == id)
