@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Lint Python
-        working-directory: ./entities
+        working-directory: entities
         run: |
           # Build images and run linters
           make local-build
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Run tests
-        working-directory: ./entities
+        working-directory: entities
         run: |
           # Set up a local dev env and run tests
           make local-init
