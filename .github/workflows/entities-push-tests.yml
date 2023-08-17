@@ -23,6 +23,7 @@ jobs:
   py-test:
     runs-on: ubuntu-22.04
     steps:
+      - name: Run tests
         run: |
           # Set up a local dev env and run tests
           make local-init
