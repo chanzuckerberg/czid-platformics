@@ -61,9 +61,7 @@ class EntityLoader:
 
     _loaders: dict[RelationshipProperty, DataLoader]
 
-    def __init__(
-        self, engine, cerbos_client: CerbosClient, principal: Principal
-    ) -> None:
+    def __init__(self, engine, cerbos_client: CerbosClient, principal: Principal) -> None:
         self._loaders = {}
         self.engine = engine
         self.cerbos_client = cerbos_client
@@ -81,11 +79,7 @@ class EntityLoader:
             async def load_fn(keys: list[Tuple]) -> list[Any]:
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
-                filters = [
-                    tuple_(
-                        *[remote for _, remote in relationship.local_remote_pairs]
-                    ).in_(keys)
-                ]
+                filters = [tuple_(*[remote for _, remote in relationship.local_remote_pairs]).in_(keys)]
                 order_by: list[tuple[ColumnElement[Any], ...]] = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
@@ -102,11 +96,7 @@ class EntityLoader:
                     if not relationship.local_remote_pairs:
                         raise Exception("invalid relationship")
                     return tuple(
-                        [
-                            getattr(row, remote.key)
-                            for _, remote in relationship.local_remote_pairs
-                            if remote.key
-                        ]
+                        [getattr(row, remote.key) for _, remote in relationship.local_remote_pairs if remote.key]
                     )
 
                 grouped_keys: Mapping[Tuple, list[Any]] = defaultdict(list)
@@ -115,10 +105,7 @@ class EntityLoader:
                 if relationship.uselist:
                     return [grouped_keys[key] for key in keys]
                 else:
-                    return [
-                        grouped_keys[key][0] if grouped_keys[key] else None
-                        for key in keys
-                    ]
+                    return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
             self._loaders[relationship] = DataLoader(load_fn=load_fn)
             return self._loaders[relationship]
@@ -135,8 +122,6 @@ def get_base_loader(entity_model, gql_type):
         filters = []
         if id:
             filters.append(entity_model.entity_id == id)
-        return await get_entities(
-            entity_model, session, cerbos_client, principal, filters, []
-        )
+        return await get_entities(entity_model, session, cerbos_client, principal, filters, [])
 
     return resolve_entity

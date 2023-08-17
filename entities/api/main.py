@@ -45,9 +45,7 @@ class SequencingRead:
 @strawberry.type
 class Query:
     samples: typing.List[Sample] = get_base_loader(db.Sample, Sample)
-    sequencing_reads: typing.List[SequencingRead] = get_base_loader(
-        db.SequencingRead, SequencingRead
-    )
+    sequencing_reads: typing.List[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
 
 
 def get_context(
@@ -56,9 +54,7 @@ def get_context(
     principal: Principal = Depends(get_auth_principal),
 ):
     return {
-        "sqlalchemy_loader": EntityLoader(
-            engine=engine, cerbos_client=cerbos_client, principal=principal
-        ),
+        "sqlalchemy_loader": EntityLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
     }
 
 
@@ -83,9 +79,7 @@ def get_app() -> FastAPI:
     settings = APISettings()
 
     # Add a global settings object to the app that we can use as a dependency
-    graphql_app: GraphQLRouter = GraphQLRouter(
-        schema, context_getter=get_context, graphiql=True
-    )
+    graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
     _app = FastAPI(
         title=settings.SERVICE_NAME,
         debug=settings.DEBUG,

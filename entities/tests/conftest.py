@@ -17,9 +17,7 @@ from cerbos.sdk.model import Principal
 from starlette.requests import Request
 
 
-test_db = factories.postgresql_noproc(
-    host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS")
-)
+test_db = factories.postgresql_noproc(host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS"))
 
 
 def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
@@ -35,9 +33,7 @@ def sync_db(test_db) -> typing.Generator[SyncDB, None, None]:
     pg_password = test_db.password
     pg_db = test_db.dbname
 
-    with DatabaseJanitor(
-        pg_user, pg_host, pg_port, pg_db, test_db.version, pg_password
-    ):
+    with DatabaseJanitor(pg_user, pg_host, pg_port, pg_db, test_db.version, pg_password):
         db: SyncDB = init_sync_db(
             get_db_uri(
                 "postgresql+psycopg",

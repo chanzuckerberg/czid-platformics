@@ -47,10 +47,7 @@ def get_query(
     table_mapping: list[tuple[GenericTable, GenericExpression]] | None = None,
     operator_override_fns: OperatorFnMap | None = None,
 ) -> Select:
-    if (
-        query_plan.filter is None
-        or query_plan.filter.kind == PlanResourcesFilterKind.ALWAYS_DENIED
-    ):
+    if query_plan.filter is None or query_plan.filter.kind == PlanResourcesFilterKind.ALWAYS_DENIED:
         return select(table).where(False)
     if query_plan.filter.kind == PlanResourcesFilterKind.ALWAYS_ALLOWED:
         return select(table)
@@ -64,18 +61,13 @@ def get_query(
 
     if len(required_tables):
         if table_mapping is None:
-            raise TypeError(
-                "get_query() missing 1 required positional argument: 'table_mapping'"
-            )
+            raise TypeError("get_query() missing 1 required positional argument: 'table_mapping'")
         for t, _ in table_mapping:
             required_tables.discard(_get_table_name(t))
 
     def get_operator_fn(op: str, c: GenericColumn, v: Any) -> GenericExpression:
         # Check to see if the client has overridden the function
-        if (
-            operator_override_fns
-            and (override_fn := operator_override_fns.get(op)) is not None
-        ):
+        if operator_override_fns and (override_fn := operator_override_fns.get(op)) is not None:
             return override_fn(c, v)
 
         # Otherwise, fall back to default handlers
@@ -109,16 +101,12 @@ def get_query(
         try:
             column = attr_map[variable]
         except KeyError:
-            raise KeyError(
-                f"Attribute does not exist in the attribute column map: {variable}"
-            )
+            raise KeyError(f"Attribute does not exist in the attribute column map: {variable}")
 
         # the operator handlers here are the leaf nodes of the recursion
         return get_operator_fn(operator, column, value)
 
-    q = select(table).where(
-        traverse_and_map_operands(query_plan.filter.condition.to_dict())
-    )
+    q = select(table).where(traverse_and_map_operands(query_plan.filter.condition.to_dict()))
 
     if table_mapping:
         q = q.select_from(table)
