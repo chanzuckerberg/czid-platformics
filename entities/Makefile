@@ -30,7 +30,7 @@ local-init:
 	$(MAKE) local-seed
 
 .PHONY: debugger
-debugger: ## Attach to the backend service (useful for pdb)
+debugger: ## Attach to the gql service (useful for pdb)
 	docker attach $$($(docker_compose) ps | grep entities | cut -d ' ' -f 1 | head -n 1)
 
 .PHONY: local-status
@@ -65,7 +65,7 @@ local-seed: ## Seed the dev db with a reasonable set of starting data.
 	$(docker_compose) exec entities python3 scripts/seed.py
 
 .PHONY: local-logs
-local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=backend
+local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=entities
 	$(docker_compose) logs -f $(CONTAINER)
 
 .PHONY: local-shell
@@ -76,9 +76,9 @@ local-shell: ## Open a command shell in one of the dev containers. ex: make loca
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
-.PHONY: local-update-backend-deps
-local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
-	$(docker_compose) exec backend poetry update
+.PHONY: local-update-deps
+local-update-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
+	$(docker_compose) exec entities poetry update
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
