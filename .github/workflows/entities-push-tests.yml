@@ -1,0 +1,30 @@
+name: Entities tests
+
+on:
+  push:
+    branches:
+      - trunk
+    paths:
+      - "entities/**"
+  pull_request:
+    branches: "**"
+    paths:
+      - "entities/**"
+
+jobs:
+  py-lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Lint Python
+        run: |
+          # Build images and run linters
+          make local-build
+          make check-lint
+  py-test:
+    runs-on: ubuntu-22.04
+      - name: Lint Python
+    steps:
+        run: |
+          # Set up a local dev env and run tests
+          make local-init
+          make local-tests
