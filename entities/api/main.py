@@ -1,23 +1,17 @@
 import typing
-from database.connect import AsyncDB
 
 import database.models as db
 import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
+from database.connect import AsyncDB
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
-from thirdparty.strawberry_sqlalchemy_mapper import (
-    StrawberrySQLAlchemyMapper,
-)
-from api.core.gql_loaders import EntityLoader, get_base_loader
+from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
-from api.core.deps import (
-    get_auth_principal,
-    get_cerbos_client,
-    get_engine,
-)
+from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from api.core.gql_loaders import EntityLoader, get_base_loader
 from api.core.settings import APISettings
 
 ######################
@@ -95,6 +89,6 @@ def get_app() -> FastAPI:
 app = get_app()
 
 if __name__ == "__main__":
-    config = uvicorn.Config("example:app", host="0.0.0.0", port=8008, log_level="info")
+    config = uvicorn.Config("api.main:app", host="0.0.0.0", port=8008, log_level="info")
     server = uvicorn.Server(config)
     server.run()
