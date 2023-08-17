@@ -83,7 +83,9 @@ def get_app() -> FastAPI:
     settings = APISettings()
 
     # Add a global settings object to the app that we can use as a dependency
-    graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+    graphql_app: GraphQLRouter = GraphQLRouter(
+        schema, context_getter=get_context, graphiql=True
+    )
     _app = FastAPI(
         title=settings.SERVICE_NAME,
         debug=settings.DEBUG,

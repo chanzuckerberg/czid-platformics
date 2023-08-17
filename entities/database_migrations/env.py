@@ -18,7 +18,7 @@ fileConfig(str(config.config_file_name))
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-target_metadata = [meta]
+target_metadata = meta
 
 
 def run_migrations_offline():
