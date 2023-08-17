@@ -27,6 +27,7 @@ jobs:
       - name: Lint Python
         working-directory: entities
         run: |
+          make gha-setup
           make local-build
           make check-lint
   py-test:
@@ -44,5 +45,6 @@ jobs:
       - name: Run tests
         working-directory: entities
         run: |
+          make gha-setup
           make local-init
           make local-tests
