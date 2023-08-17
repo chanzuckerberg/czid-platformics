@@ -47,17 +47,26 @@ async def get_entities(
 # Returns function that helps create entities
 async def create_entity(
     principal: Principal = Depends(require_auth_principal),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
     session: AsyncSession = Depends(get_db_session, use_cache=False),
 ):
-    async def create(entity_model, gql_type, collection_id, params):
+    async def create(entity_model, gql_type, params):
+        # Auth
+        params["owner_user_id"] = int(principal.id)
+        allowed_collections = principal.attr["admin_projects"] + principal.attr["member_projects"]
+
         # User must have permissions to the collection
-        if not (collection_id in principal.attr["admin_projects"] or collection_id in principal.attr["member_projects"]):
+        collection_id = params.get("collection_id")
+        if not collection_id:
+            raise Exception("Missing collection ID")
+        if collection_id not in allowed_collections:
             raise Exception("Unauthorized")
 
+        # TODO: User must have permissions to the sample
+        # sample_id = params.get("sample_id")
+        # if sample_id and sample_id not in allowed_samples:
+        #     raise Exception("Unauthorized")
+
         # Save to DB
-        params["owner_user_id"] = int(principal.id)
-        params["collection_id"] = collection_id
         new_entity = entity_model(**params)
         session.add(new_entity)
         await session.commit()

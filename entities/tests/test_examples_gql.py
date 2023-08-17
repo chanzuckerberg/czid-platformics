@@ -78,5 +78,5 @@ async def test_graphql_create_sample(
         if project_id == project_id_allowed:
             assert output["data"]["createSample"]["location"] == "San Francisco, CA"
         else:
-            assert output["data"] == None
+            assert output["data"] is None
             assert output["errors"][0]["message"] == "Unauthorized"

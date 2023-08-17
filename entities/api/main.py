@@ -1,3 +1,4 @@
+import uuid
 import typing
 from database.connect import AsyncDB
 import database.models as db
@@ -54,14 +55,37 @@ class Query:
 @strawberry.type
 class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
-    async def add_sample(
+    async def create_sample(
         self,
         name: str,
         location: str,
         collection_id: int,
         create_entity: any = Depends(create_entity),
     ) -> Sample:
-        return await create_entity(db.Sample, Sample, collection_id=collection_id, params=dict(name=name, location=location))
+        if not name or not location:
+            raise Exception("Fields cannot be empty")
+        params = dict(name=name, location=location, collection_id=collection_id)
+        return await create_entity(entity_model=db.Sample, gql_type=Sample, params=params)
+
+    # FIXME: add auth in gql_loaders.py
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def create_sequencing_read(
+        self,
+        nucleotide: str,
+        sequence: str,
+        protocol: str,
+        sample_id: uuid.UUID,
+        collection_id: int,
+        create_entity: any = Depends(create_entity),
+    ) -> SequencingRead:
+        params = dict(
+            nucleotide=nucleotide,
+            sequence=sequence,
+            protocol=protocol,
+            sample_id=sample_id,
+            collection_id=collection_id,
+        )
+        return await create_entity(entity_model=db.SequencingRead, gql_type=SequencingRead, params=params)
 
 
 # --------------------
