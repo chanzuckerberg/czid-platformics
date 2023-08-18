@@ -8,6 +8,7 @@ from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
 from sqlalchemy.orm import RelationshipProperty
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.dataloader import DataLoader
+from strawberry.arguments import StrawberryArgument
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc
 from fastapi import Depends
@@ -45,12 +46,16 @@ async def get_entities(
 
 
 # Returns function that helps create entities
-async def create_entity(
-    principal: Principal = Depends(require_auth_principal),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-):
-    async def create(entity_model, gql_type, params):
+def create_entity(entity_model, gql_type, arguments: typing.List[StrawberryArgument] = []):
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def create_fn(
+        principal: Principal = Depends(require_auth_principal),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        **kwargs: dict,
+    ) -> gql_type:
+        params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
+
         # Validate that user can create entity in this collection
         attr = {"collection_id": params.get("collection_id")}
         resource = Resource(id="NEW_ID", kind=entity_model.__tablename__, attr=attr)
@@ -75,7 +80,9 @@ async def create_entity(
         }
         return gql_type(**params)
 
-    return create
+    # Add Strawberry arguments
+    create_fn.arguments = arguments
+    return create_fn
 
 
 class EntityLoader:
