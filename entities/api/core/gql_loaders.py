@@ -9,7 +9,7 @@ from sqlalchemy.orm import RelationshipProperty
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.dataloader import DataLoader
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, ResourceDesc
+from cerbos.sdk.model import Principal, Resource, ResourceDesc
 from fastapi import Depends
 from database.models import Base
 from thirdparty.cerbos_sqlalchemy.query import get_query
@@ -47,26 +47,20 @@ async def get_entities(
 # Returns function that helps create entities
 async def create_entity(
     principal: Principal = Depends(require_auth_principal),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
     session: AsyncSession = Depends(get_db_session, use_cache=False),
 ):
     async def create(entity_model, gql_type, params):
-        # Auth
-        params["owner_user_id"] = int(principal.id)
-        allowed_collections = principal.attr["admin_projects"] + principal.attr["member_projects"]
-
-        # User must have permissions to the collection
-        collection_id = params.get("collection_id")
-        if not collection_id:
-            raise Exception("Missing collection ID")
-        if collection_id not in allowed_collections:
+        # Validate that user can create entity in this collection
+        attr = {"collection_id": params.get("collection_id")}
+        resource = Resource(id="NEW_ID", kind=entity_model.__tablename__, attr=attr)
+        if not cerbos_client.is_allowed("create", principal, resource):
             raise Exception("Unauthorized")
 
         # TODO: User must have permissions to the sample
-        # sample_id = params.get("sample_id")
-        # if sample_id and sample_id not in allowed_samples:
-        #     raise Exception("Unauthorized")
 
         # Save to DB
+        params["owner_user_id"] = int(principal.id)
         new_entity = entity_model(**params)
         session.add(new_entity)
         await session.commit()
