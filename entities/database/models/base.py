@@ -29,7 +29,7 @@ class Entity(Base):
     # sequencing_read, etc)
     type: Mapped[str]
 
-    # Example attributes for every entity (TODO: revisit nullable columns later)
+    # Attributes for each entity
     producing_run_id = Column(Integer, nullable=True)
     owner_user_id = Column(Integer, nullable=False)
     collection_id = Column(Integer, nullable=False)

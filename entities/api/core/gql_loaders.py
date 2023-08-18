@@ -1,30 +1,20 @@
+import uuid
+import typing
+import strawberry
+import database.models as db
 from collections import defaultdict
 from typing import Any, Mapping, Tuple, Optional
-
-from database.models import Base
-from sqlalchemy import tuple_
+from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
 from sqlalchemy.orm import RelationshipProperty
+from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.dataloader import DataLoader
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, ResourceDesc
-from thirdparty.cerbos_sqlalchemy.query import get_query
-
+from cerbos.sdk.model import Principal, Resource, ResourceDesc
 from fastapi import Depends
-
-import typing
-
-import database.models as db
-import strawberry
-from sqlalchemy.ext.asyncio import AsyncSession
-import uuid
-
-from api.core.deps import (
-    require_auth_principal,
-    get_cerbos_client,
-    get_db_session,
-)
+from database.models import Base
+from thirdparty.cerbos_sqlalchemy.query import get_query
+from api.core.deps import require_auth_principal, get_cerbos_client, get_db_session
 from api.core.strawberry_extensions import DependencyExtension
-from sqlalchemy import ColumnExpressionArgument, ColumnElement
 
 
 async def get_entities(
@@ -32,8 +22,8 @@ async def get_entities(
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
-    filters: Optional[list[ColumnExpressionArgument]],
-    order_by: Optional[list[tuple[ColumnElement[Any], ...]]],
+    filters: Optional[list[ColumnExpressionArgument]] = [],
+    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
 ):
     rd = ResourceDesc(model.__tablename__)
     plan = cerbos_client.plan_resources("view", principal, rd)
@@ -52,6 +42,40 @@ async def get_entities(
         query = query.order_by(*order_by)
     result = await session.execute(query)
     return result.scalars().all()
+
+
+# Returns function that helps create entities
+async def create_entity(
+    principal: Principal = Depends(require_auth_principal),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+):
+    async def create(entity_model, gql_type, params):
+        # Validate that user can create entity in this collection
+        attr = {"collection_id": params.get("collection_id")}
+        resource = Resource(id="NEW_ID", kind=entity_model.__tablename__, attr=attr)
+        if not cerbos_client.is_allowed("create", principal, resource):
+            raise Exception("Unauthorized")
+
+        # TODO: User must have permissions to the sample
+
+        # Save to DB
+        params["owner_user_id"] = int(principal.id)
+        new_entity = entity_model(**params)
+        session.add(new_entity)
+        await session.commit()
+
+        # Return GQL object to client (FIXME: is there a better way to convert `new_entity` to `gql_type`?)
+        params = {
+            **params,
+            "id": new_entity.entity_id,
+            "type": new_entity.type,
+            "producing_run_id": new_entity.producing_run_id,
+            "entity_id": new_entity.entity_id,
+        }
+        return gql_type(**params)
+
+    return create
 
 
 class EntityLoader:
