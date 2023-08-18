@@ -52,25 +52,26 @@ class Query:
 # Mutations
 # --------------------
 
+# Define parameters; middle argument is None so the graphQL variable name is inferred by Strawberry
 params_sample = [
-    StrawberryArgument(python_name="name", graphql_name=None, type_annotation=StrawberryAnnotation(str)),
-    StrawberryArgument(python_name="location", graphql_name=None, type_annotation=StrawberryAnnotation(str)),
-    StrawberryArgument(python_name="collection_id", graphql_name=None, type_annotation=StrawberryAnnotation(int)),
+    StrawberryArgument("name", None, StrawberryAnnotation(str)),
+    StrawberryArgument("location", None, StrawberryAnnotation(str)),
+    StrawberryArgument("collection_id", None, StrawberryAnnotation(int)),
 ]
 
 params_sequencing_read = [
-    StrawberryArgument(python_name="nucleotide", graphql_name=None, type_annotation=StrawberryAnnotation(str)),
-    StrawberryArgument(python_name="sequence", graphql_name=None, type_annotation=StrawberryAnnotation(str)),
-    StrawberryArgument(python_name="protocol", graphql_name=None, type_annotation=StrawberryAnnotation(str)),
-    StrawberryArgument(python_name="sample_id", graphql_name=None, type_annotation=StrawberryAnnotation(uuid.UUID)),
-    StrawberryArgument(python_name="collection_id", graphql_name=None, type_annotation=StrawberryAnnotation(int)),
+    StrawberryArgument("nucleotide", None, StrawberryAnnotation(str)),
+    StrawberryArgument("sequence", None, StrawberryAnnotation(str)),
+    StrawberryArgument("protocol", None, StrawberryAnnotation(str)),
+    StrawberryArgument("sample_id", None, StrawberryAnnotation(uuid.UUID)),
+    StrawberryArgument("collection_id", None, StrawberryAnnotation(int)),
 ]
 
 
 @strawberry.type
 class Mutation:
     create_sample: Sample = create_entity(db.Sample, Sample, params_sample)
-    create_sequencing_read = create_entity(db.SequencingRead, SequencingRead, params_sequencing_read)
+    create_sequencing_read: SequencingRead = create_entity(db.SequencingRead, SequencingRead, params_sequencing_read)
 
 
 # --------------------

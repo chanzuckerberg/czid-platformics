@@ -52,7 +52,7 @@ def create_entity(entity_model, gql_type, arguments: typing.List[StrawberryArgum
         principal: Principal = Depends(require_auth_principal),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-        **kwargs: dict,
+        **kwargs: typing.Any,
     ) -> gql_type:
         params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
 
