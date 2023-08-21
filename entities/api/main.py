@@ -1,4 +1,3 @@
-import uuid
 import typing
 import strawberry
 import uvicorn
@@ -7,8 +6,6 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
-from strawberry.arguments import StrawberryArgument
-from strawberry.annotation import StrawberryAnnotation
 from database.connect import AsyncDB
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 from api.core.gql_loaders import EntityLoader, get_base_loader, create_entity
@@ -52,26 +49,13 @@ class Query:
 # Mutations
 # --------------------
 
-# Define parameters; middle argument is None so the graphQL variable name is inferred by Strawberry
-params_sample = [
-    StrawberryArgument("name", None, StrawberryAnnotation(str)),
-    StrawberryArgument("location", None, StrawberryAnnotation(str)),
-    StrawberryArgument("collection_id", None, StrawberryAnnotation(int)),
-]
-
-params_sequencing_read = [
-    StrawberryArgument("nucleotide", None, StrawberryAnnotation(str)),
-    StrawberryArgument("sequence", None, StrawberryAnnotation(str)),
-    StrawberryArgument("protocol", None, StrawberryAnnotation(str)),
-    StrawberryArgument("sample_id", None, StrawberryAnnotation(uuid.UUID)),
-    StrawberryArgument("collection_id", None, StrawberryAnnotation(int)),
-]
-
 
 @strawberry.type
 class Mutation:
-    create_sample: Sample = create_entity(db.Sample, Sample, params_sample)
-    create_sequencing_read: SequencingRead = create_entity(db.SequencingRead, SequencingRead, params_sequencing_read)
+    create_sample: Sample = create_entity(db.Sample, Sample, ["name", "location", "collection_id"])
+    create_sequencing_read: SequencingRead = create_entity(
+        db.SequencingRead, SequencingRead, ["nucleotide", "sequence", "protocol", "sample_id", "collection_id"]
+    )
 
 
 # --------------------

@@ -46,7 +46,7 @@ async def get_entities(
 
 
 # Returns function that helps create entities
-def create_entity(entity_model, gql_type, arguments: typing.List[StrawberryArgument] = []):
+def create_entity(entity_model, gql_type, fields: typing.List[str] = []):
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def create_fn(
         principal: Principal = Depends(require_auth_principal),
@@ -80,7 +80,14 @@ def create_entity(entity_model, gql_type, arguments: typing.List[StrawberryArgum
         }
         return gql_type(**params)
 
-    # Add Strawberry arguments
+    # Infer Strawberry arguments from GraphQL type
+    arguments = []
+    for f in fields:
+        field = gql_type._type_definition.get_field(f)
+        if field:
+            argument = StrawberryArgument(field.name, field.graphql_name, field.type_annotation)
+            arguments.append(argument)
+
     create_fn.arguments = arguments
     return create_fn
 
