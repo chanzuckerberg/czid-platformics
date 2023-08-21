@@ -52,10 +52,8 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    create_sample: Sample = create_entity(db.Sample, Sample, ["name", "location", "collection_id"])
-    create_sequencing_read: SequencingRead = create_entity(
-        db.SequencingRead, SequencingRead, ["nucleotide", "sequence", "protocol", "sample_id", "collection_id"]
-    )
+    create_sample: Sample = create_entity(db.Sample, Sample)
+    create_sequencing_read: SequencingRead = create_entity(db.SequencingRead, SequencingRead)
 
 
 # --------------------
