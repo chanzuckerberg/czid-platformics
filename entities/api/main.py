@@ -1,4 +1,3 @@
-import uuid
 import typing
 import strawberry
 import uvicorn
@@ -12,7 +11,6 @@ from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 from api.core.gql_loaders import EntityLoader, get_base_loader, create_entity
 from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from api.core.settings import APISettings
-from api.core.strawberry_extensions import DependencyExtension
 
 ######################
 # Strawberry-GraphQL #
@@ -54,38 +52,8 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry.mutation(extensions=[DependencyExtension()])
-    async def create_sample(
-        self,
-        name: str,
-        location: str,
-        collection_id: int,
-        create_entity: typing.Callable = Depends(create_entity),
-    ) -> Sample:
-        if not name or not location:
-            raise Exception("Fields cannot be empty")
-        params = dict(name=name, location=location, collection_id=collection_id)
-        return await create_entity(entity_model=db.Sample, gql_type=Sample, params=params)
-
-    # FIXME: add auth in gql_loaders.py
-    @strawberry.mutation(extensions=[DependencyExtension()])
-    async def create_sequencing_read(
-        self,
-        nucleotide: str,
-        sequence: str,
-        protocol: str,
-        sample_id: uuid.UUID,
-        collection_id: int,
-        create_entity: typing.Callable = Depends(create_entity),
-    ) -> SequencingRead:
-        params = dict(
-            nucleotide=nucleotide,
-            sequence=sequence,
-            protocol=protocol,
-            sample_id=sample_id,
-            collection_id=collection_id,
-        )
-        return await create_entity(entity_model=db.SequencingRead, gql_type=SequencingRead, params=params)
+    create_sample: Sample = create_entity(db.Sample, Sample)
+    create_sequencing_read: SequencingRead = create_entity(db.SequencingRead, SequencingRead)
 
 
 # --------------------
