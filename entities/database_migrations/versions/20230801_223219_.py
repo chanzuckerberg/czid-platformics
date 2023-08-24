@@ -29,9 +29,7 @@ def upgrade():
         sa.Column("entity_id", UUID(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("location", sa.String(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["entity_id"], ["entity.id"], name=op.f("fk_sample_entity_id_entity")
-        ),
+        sa.ForeignKeyConstraint(["entity_id"], ["entity.id"], name=op.f("fk_sample_entity_id_entity")),
         sa.PrimaryKeyConstraint("entity_id", name=op.f("pk_sample")),
     )
     op.create_table(

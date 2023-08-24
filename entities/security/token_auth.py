@@ -16,9 +16,7 @@ def get_token_claims(private_key: JWK, token: str) -> dict:
     unpacked_token.decrypt(private_key)
     decrypted_payload = unpacked_token.payload.decode("utf-8")
     required_claims = {"exp": None, "iat": None, "nbf": None}
-    decoded_jwt = jwt.JWT(
-        key=private_key, jwt=decrypted_payload, check_claims=required_claims
-    )
+    decoded_jwt = jwt.JWT(key=private_key, jwt=decrypted_payload, check_claims=required_claims)
     return json.loads(decoded_jwt.claims)
 
 
@@ -48,7 +46,8 @@ def create_token(
     jwt_token.make_signed_token(private_key)
     jwe_payload = jwt_token.serialize(compact=True)
 
-    # Ok, now we want to *encrypt* that jwt with a JWE wrapper so that only the intended recipient can read it.
+    # Ok, now we want to *encrypt* that jwt with a JWE wrapper so that only the intended
+    # recipient can read it.
     protected_header = {
         "alg": "ECDH-ES",
         "enc": "A256CBC-HS512",

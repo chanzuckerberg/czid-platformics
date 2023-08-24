@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "stopservices",
+            "command": "supervisorctl",
+            "args": ["-c", "/czid-platformics/entities/etc/supervisord.conf", "stop", "all"]
+        },
+        {
+            "label": "startservices",
+            "command": "supervisorctl",
+            "args": ["-c", "/czid-platformics/entities/etc/supervisord.conf", "start", "all"]
+        }
+    ]
+}

@@ -2,6 +2,7 @@ import typing
 
 from fastapi.dependencies import utils as deputils
 from fastapi.params import Depends as DependsClass
+from fastapi.dependencies.models import Dependant
 from strawberry.extensions import FieldExtension
 from strawberry.field import StrawberryField
 from strawberry.types import Info
@@ -13,15 +14,12 @@ class DependencyExtension(FieldExtension):
         self.strawberry_field_names = ["self"]
 
     def apply(self, field: StrawberryField) -> None:
-        self.dependant = deputils.get_dependant(
-            path="/", call=field.base_resolver.wrapped_func
+        self.dependant: Dependant = deputils.get_dependant(
+            path="/", call=field.base_resolver.wrapped_func  # type: ignore
         )
-        # Remove fastapi Depends arguments from the list that strawberry tries to resolve
-        field.arguments = [
-            item
-            for item in field.arguments
-            if not isinstance(item.default, DependsClass)
-        ]
+        # Remove fastapi Depends arguments from the list that strawberry tries
+        # to resolve
+        field.arguments = [item for item in field.arguments if not isinstance(item.default, DependsClass)]
 
     async def resolve_async(
         self,
@@ -46,15 +44,14 @@ class DependencyExtension(FieldExtension):
         )
         (
             solved_values,
-            _,  # solver_errors. It shouldn't be possible for it to contain anything relevant to this extension.
+            _,  # solver_errors. It shouldn't be possible for it to contain
+            # anything relevant to this extension.
             _,  # background tasks
             _,  # the subdependency returns the same response we have
             new_cache,  # sub_dependency_cache
         ) = solved_result
 
         request.context["dependency_cache"].update(new_cache)
-        kwargs = (
-            solved_values | kwargs
-        )  # solved_values has None values that need to be overridden by kwargs
+        kwargs = solved_values | kwargs  # solved_values has None values that need to be overridden by kwargs
         res = await next_(source, info, **kwargs)
         return res

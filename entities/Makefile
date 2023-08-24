@@ -30,16 +30,19 @@ local-init:
 	$(MAKE) local-seed
 
 .PHONY: debugger
-debugger: ## Attach to the backend service (useful for pdb)
+debugger: ## Attach to the gql service (useful for pdb)
 	docker attach $$($(docker_compose) ps | grep entities | cut -d ' ' -f 1 | head -n 1)
 
 .PHONY: local-status
 local-status: ## Show the status of the containers in the dev environment.
 	docker ps -a | grep --color=no -e 'CONTAINER\|entities'
 
-.PHONY: local-rebuild
-local-rebuild: ## Rebuild local dev without re-importing data
+.PHONY: local-build
+local-build: ## Build images
 	$(docker_compose) build
+
+.PHONY: local-rebuild
+local-rebuild: local-build ## Rebuild local dev without re-importing data
 	$(docker_compose) up -d
 
 .PHONY: local-sync
@@ -62,7 +65,7 @@ local-seed: ## Seed the dev db with a reasonable set of starting data.
 	$(docker_compose) exec entities python3 scripts/seed.py
 
 .PHONY: local-logs
-local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=backend
+local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=entities
 	$(docker_compose) logs -f $(CONTAINER)
 
 .PHONY: local-shell
@@ -73,9 +76,9 @@ local-shell: ## Open a command shell in one of the dev containers. ex: make loca
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
-.PHONY: local-update-backend-deps
-local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
-	$(docker_compose) exec backend poetry update
+.PHONY: local-update-deps
+local-update-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
+	$(docker_compose) exec entities poetry update
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
@@ -87,7 +90,7 @@ local-gqlschema: ## Export this app's GQL schema.
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo $$TOKEN | pbcopy; echo $$TOKEN
+	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
 
 .PHONY: fix-poetry-lock
 fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
@@ -98,6 +101,16 @@ fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproje
 fix-lint: ## Apply linting rules to the code in this directory.
 	$(docker_compose) run entities black .
 	$(docker_compose) run entities ruff check --fix .
+
+.PHONY: check-lint
+check-lint: ## Check for bad linting
+	$(docker_compose) run entities black --check .
+	$(docker_compose) run entities ruff check .
+	$(docker_compose) run -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
+
+.PHONY: local-mypy
+local-mypy: ## Run type checking
+	$(docker_compose) exec -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI

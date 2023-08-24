@@ -41,9 +41,7 @@ def get_cerbos_client():
     return CerbosClient(host="http://cerbos:3592")
 
 
-def get_auth_principal(
-    request: Request, settings: APISettings = Depends(get_settings)
-) -> Principal:
+def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
     auth_header = request.headers.get("authorization")
     if auth_header:
         parts = auth_header.split()
@@ -54,11 +52,12 @@ def get_auth_principal(
 
     try:
         claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
-    except:
+    except:  # noqa
         return None
 
-    # role_map is a bit brute-force to make cerbos-sqlalchemy happy, but it's fine for now.
-    role_map = {}
+    # role_map is a bit brute-force to make cerbos-sqlalchemy happy, but it's fine
+    # for now.
+    role_map: dict[str, list[int]] = {}
     for project in claims["projects"]:
         for role in project["roles"]:
             if role not in role_map:
