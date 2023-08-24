@@ -6,7 +6,7 @@ resourcePolicy:
     - common_roles
   resource: "sample"
   rules:
-    - actions: ['view', 'create']
+    - actions: ['view', 'create', 'update']
       effect: EFFECT_ALLOW
       derivedRoles:
         - project_member
