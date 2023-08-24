@@ -145,6 +145,36 @@ class Mutation:
         return db_workflow 
 
     @strawberry.mutation
+    async def add_workflow_version(self, workflow_id: int, version: str, type: str, package_uri: str, beta: bool, deprecated: bool, graph_json: str) -> WorkflowVersion:
+        db_workflow_version = db.WorkflowVersion(
+            workflow_id = workflow_id,
+            version = version,
+            type = type,
+            package_uri = package_uri,
+            beta = beta,
+            deprecated = deprecated,
+            graph_json = graph_json
+        )
+        session.add(db_workflow_version)
+        await session.commit()
+        return db_workflow_version
+    
+    @strawberry.mutation
+    async def add_run(self, user_id: int, project_id: int, execution_id: str, inputs_json: str, outputs_json: str, status: str, workflow_version_id: int) -> Run:
+        db_run = db.Run(
+            user_id = user_id,
+            project_id = project_id,
+            execution_id = execution_id,
+            inputs_json = inputs_json,
+            outputs_json = outputs_json,
+            status = status,
+            workflow_version_id = workflow_version_id
+        )
+        session.add(db_run)
+        await session.commit()
+        return db_run
+
+    @strawberry.mutation
     async def submit_workflow(self, workflow_inputs: str) -> str:
         # TODO: create a workflow run
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
@@ -161,6 +191,54 @@ class Mutation:
             )
         
         return response
+
+    @strawberry.mutation
+    async def add_run_step(self, run_id: int, step_name: str, status: str, start_time: str, end_time: str) -> RunStep:
+        db_run_step = db.RunStep(
+            run_id = run_id,
+            step_name = step_name,
+            status = status,
+            start_time = start_time,
+            end_time = end_time
+        )
+        session.add(db_run_step)
+        await session.commit()
+        return db_run_step
+    
+    @strawberry.mutation
+    async def add_workflow_version_input(self, workflow_version_id: int, name: str, type: str, description: str) -> WorkflowVersionInput:
+        db_workflow_version_input = db.WorkflowVersionInput(
+            workflow_version_id = workflow_version_id,
+            name = name,
+            type = type,
+            description = description
+        )
+        session.add(db_workflow_version_input)
+        await session.commit()
+        return db_workflow_version_input
+    
+    @strawberry.mutation
+    async def add_workflow_version_output(self, workflow_version_id: int, name: str, type: str, description: str) -> WorkflowVersionOutput:
+        db_workflow_version_output = db.WorkflowVersionOutput(
+            workflow_version_id = workflow_version_id,
+            name = name,
+            type = type,
+            description = description
+        )
+        session.add(db_workflow_version_output)
+        await session.commit()
+        return db_workflow_version_output
+    
+    @strawberry.mutation
+    async def add_run_entity_input(self, run_id: int, workflow_version_input_id: int, entity_id: int) -> RunEntityInput:
+        db_run_entity_input = db.RunEntityInput(
+            run_id = run_id,
+            workflow_version_input_id = workflow_version_input_id,
+            entity_id = entity_id
+        )
+        session.add(db_run_entity_input)
+        await session.commit()
+        return db_run_entity_input
 
 def get_context():
     global session
