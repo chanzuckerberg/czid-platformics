@@ -105,8 +105,8 @@ async def test_nested_query(
         user2_id: len(seq3),
         user3_id: len(seq2),
     }
-    actual_samples_by_owner = defaultdict(int)
-    actual_sequences_by_owner = defaultdict(int)
+    actual_samples_by_owner: dict[int, int] = defaultdict(int)
+    actual_sequences_by_owner: dict[int, int] = defaultdict(int)
     for sample in results["samples"]:
         assert sample["collectionId"] == project1_id
         actual_samples_by_owner[sample["ownerUserId"]] += 1
