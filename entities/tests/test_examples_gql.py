@@ -8,13 +8,10 @@ from httpx import AsyncClient
 from database.connect import SyncDB
 from test_infra import factories as fa
 
+
 # Utility function for making GQL HTTP queries
 @pytest.mark.asyncio
-async def query_gql(
-    query: str,
-    http_client: AsyncClient,
-    headers: dict = {}
-):
+async def query_gql(query: str, http_client: AsyncClient, headers: dict = {}):
     gql_headers = {
         "content-type": "application/json",
         "accept": "application/json",
@@ -23,6 +20,7 @@ async def query_gql(
     }
     result = await http_client.post("/graphql", json={"query": query}, headers=gql_headers)
     return result.json()
+
 
 # Test that we can only fetch samples from the database that we have access to
 @pytest.mark.asyncio
@@ -61,7 +59,7 @@ async def test_graphql_query(
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "projects_allowed",
-    [([123]), ([123])],
+    [[123], [456]],
 )
 async def test_graphql_mutations(
     projects_allowed: list[int],
@@ -69,7 +67,7 @@ async def test_graphql_mutations(
 ):
     project_id = 123
     query = """
-        mutation myMutation {
+        mutation createOneSample {
             createSample(name: "Test Sample", location: "San Francisco, CA", collectionId: 123) {
                 id,
                 location
@@ -78,11 +76,23 @@ async def test_graphql_mutations(
     """
     output = await query_gql(query, http_client, headers={"member_projects": json.dumps(projects_allowed)})
 
-    # Create sample
-    if project_id in projects_allowed:
-        print("project_id", project_id, projects_allowed, "allowed", output["data"])
-        assert output["data"]["createSample"]["location"] == "San Francisco, CA"
-    else:
-        print("project_id", project_id, projects_allowed, "NOTallowed", output["data"])
+    # Make sure unauthorized users can't create samples in this collection
+    if project_id not in projects_allowed:
         assert output["data"] is None
         assert "Unauthorized" in output["errors"][0]["message"]
+
+    # Otherwise, modify the sample we created (note the {{ so we don't treat them as variables)
+    else:
+        assert output["data"]["createSample"]["location"] == "San Francisco, CA"
+
+        new_location = "Chicago, IL"
+        query = f"""
+            mutation modifyOneSample {{
+                updateSample(entityId: "{output["data"]["createSample"]["id"]}", location: "{new_location}") {{
+                    id,
+                    location
+                }}
+            }}
+        """
+        output = await query_gql(query, http_client, headers={"member_projects": json.dumps(projects_allowed)})
+        assert output["data"]["updateSample"]["location"] == new_location
