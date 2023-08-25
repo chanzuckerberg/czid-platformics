@@ -79,14 +79,16 @@ class EntityLoader:
                 order_by: list[tuple[ColumnElement[Any], ...]] = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
+                db_session = self.engine.session()
                 rows = await get_entities(
                     related_model,
-                    self.engine.session(),
+                    db_session,
                     self.cerbos_client,
                     self.principal,
                     filters,  # type: ignore
                     order_by,
                 )
+                await db_session.close()
 
                 def group_by_remote_key(row: Any) -> Tuple:
                     if not relationship.local_remote_pairs:
