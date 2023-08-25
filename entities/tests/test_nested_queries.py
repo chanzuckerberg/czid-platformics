@@ -9,7 +9,10 @@ import json
 from collections import defaultdict
 from test_infra import factories as fa
 
-async def get_gql_results(http_client: AsyncClient, query: str, project_ids: list[int], user_id: int, query_name: str="MyQuery"):
+
+async def get_gql_results(
+    http_client: AsyncClient, query: str, project_ids: list[int], user_id: int, query_name: str = "MyQuery"
+):
     request = {"operationName": query_name, "query": query}
     headers = {
         "content-type": "application/json",
@@ -24,6 +27,7 @@ async def get_gql_results(http_client: AsyncClient, query: str, project_ids: lis
     )
     output = result.json()
     return output["data"]
+
 
 @pytest.mark.asyncio
 async def test_nested_query(
@@ -49,10 +53,16 @@ async def test_nested_query(
             3, sample=sa1, owner_user_id=sa1.owner_user_id, collection_id=sa1.collection_id
         )
         seq2 = fa.SequencingReadFactory.create_batch(
-            2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id, 
+            2,
+            sample=sa2,
+            owner_user_id=sa2.owner_user_id,
+            collection_id=sa2.collection_id,
         )
         seq3 = fa.SequencingReadFactory.create_batch(
-            2, sample=sa3, owner_user_id=sa3.owner_user_id, collection_id=sa3.collection_id, 
+            2,
+            sample=sa3,
+            owner_user_id=sa3.owner_user_id,
+            collection_id=sa3.collection_id,
         )
 
     # Fetch samples and nested sequencing reads AND nested samples again!
@@ -82,7 +92,7 @@ async def test_nested_query(
           }
         }
     """
-    
+
     # Make sure user1 can only see samples from project1
     results = await get_gql_results(http_client, query, [project1_id], user1_id)
     expected_samples_by_owner = {
