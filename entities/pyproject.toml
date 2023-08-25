@@ -32,10 +32,16 @@ pydantic = "^2.1.1"
 pydantic-settings = "^2.0.2"
 jwcrypto = "^1.5.0"
 black = "^23.7.0"
+uuid6 = "^2023.5.2"
+mypy = "^1.5.1"
+types-requests = "^2.31.0.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
@@ -72,7 +78,7 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 88
+line-length = 120
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

@@ -1,30 +1,53 @@
+interface EntityInterface {
+  id: UUID!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+}
+
+type Mutation {
+  createSample(name: String!, location: String!, collectionId: Int!): Sample!
+  createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sampleId: UUID!, collectionId: Int!): SequencingRead!
+}
+
 type Query {
-  getSample(id: ID!): Sample!
-  getAllSamples: [Sample!]!
-  getSequencingRead(id: ID!): SequencingRead!
-  getAllSequencingReads: [SequencingRead!]!
+  samples(id: UUID = null): [Sample!]!
+  sequencingReads(id: UUID = null): [SequencingRead!]!
 }
 
 type Sample {
-  id: Int!
+  id: UUID!
   type: String!
   producingRunId: Int
-  ownerUserId: Int
-  entityId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  entityId: UUID!
   name: String!
   location: String!
-  sequencingReads: [SequencingRead!]!
+  sequencingReads: SequencingReadConnection!
 }
 
 type SequencingRead {
-  id: Int!
+  id: UUID!
   type: String!
   producingRunId: Int
-  ownerUserId: Int
-  entityId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  entityId: UUID!
   nucleotide: String!
   sequence: String!
   protocol: String!
-  sampleId: Int!
+  sampleId: UUID!
   sample: Sample!
 }
+
+type SequencingReadConnection {
+  edges: [SequencingReadEdge!]!
+}
+
+type SequencingReadEdge {
+  node: SequencingRead!
+}
+
+scalar UUID

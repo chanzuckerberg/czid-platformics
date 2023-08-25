@@ -60,7 +60,7 @@ def list_samples(ctx):
     op = Operation(schema.Query)  # note 'schema.'
 
     # fetch all samples and all sample fields
-    samples = op.get_all_samples()
+    samples = op.samples()
     samples.id()
     samples.name()
     samples.location()
@@ -70,7 +70,7 @@ def list_samples(ctx):
 
     # Call the endpoint:
     data = endpoint(op, extra_headers=get_headers(ctx))
-    print(json.dumps(data["data"]["getAllSamples"], indent=4))
+    print(json.dumps(data["data"]["samples"], indent=4))
 
 
 @cli.group()
@@ -94,15 +94,13 @@ def generate_token(ctx, userid: int, project: list[str], expiration: int):
     settings = Settings()
     private_key = settings.JWK_PRIVATE_KEY
 
-    project_dict = {}
+    project_dict: dict[int, list[str]] = {}
     for item in project:
         project_id, role = item.split(":")
         if int(project_id) not in project_dict:
             project_dict[int(project_id)] = []
         project_dict[int(project_id)].append(role)
-    project_schema = [
-        ProjectRole(project_id=k, roles=v) for k, v in project_dict.items()
-    ]
+    project_schema = [ProjectRole(project_id=k, roles=v) for k, v in project_dict.items()]
     token = create_token(private_key, userid, project_schema, expiration)
     print(token)
 

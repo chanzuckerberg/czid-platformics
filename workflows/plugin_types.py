@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, List, TypedDict, Literal, Optional, Coroutine, Any
+from typing import Callable, TypedDict, Literal, Optional, Coroutine, Any
 
 class WorkflowStatusMessage(TypedDict):
     runner_id: str

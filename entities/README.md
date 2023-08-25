@@ -31,3 +31,12 @@ docker compose exec entities bash
 export PLATFORMICS_AUTH_TOKEN=$(./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 3600)
 ./cli/gqlcli.py samples list
 ```
+
+### Debugging in VSCode:
+- Install the 'Dev Containers' and 'Docker' VSCode extensions
+- Open VSCode at the entities directory
+- Click "reopen in container" when VSCode suggests it.
+- You're now editing code directly in the container! This is handy because all of the python packages used by the app are installed in the container and type checking will work properly.
+- You can set breakpoints and click the "debug/play" icon in VSCode to step through your code. 
+  - **Note** that you'll generally have to make a request (via cli/browser/???) to actually trigger the section of code you're debugging.
+

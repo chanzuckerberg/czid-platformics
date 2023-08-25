@@ -5,7 +5,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Pydantic Settings object - do not instantiate it directly, please use get_settings() as a dependency where possible"""
+    """Pydantic Settings object - do not instantiate it directly,
+    please use get_settings() as a dependency where possible"""
 
     SERVICE_NAME: str = "Platformics Entities"
 
@@ -16,9 +17,10 @@ class Settings(BaseSettings):
     DB_ECHO: bool = False
     DEBUG: bool = False
 
-    # Pydantic automatically tries to load settings with matching names from the environment if available.
-    # It also supports creating more methods of fetching secrets (ex: secrets manager, disk, etc) but we
-    # don't need that just yet.
+    # Pydantic automatically tries to load settings with matching names from
+    # the environment if available.
+    # It also supports creating more methods of fetching secrets (ex: secrets
+    # manager, disk, etc) but we don't need that just yet.
 
     # Properties usually read from env vars
     DB_HOST: str
@@ -29,7 +31,7 @@ class Settings(BaseSettings):
     JWK_PUBLIC_KEY_FILE: str
     JWK_PRIVATE_KEY_FILE: str
 
-    ####################################################################################
+    ############################################################################
     # Computed properties
 
     @cached_property
@@ -50,15 +52,13 @@ class Settings(BaseSettings):
 
     @cached_property
     def DB_URI(self) -> str:
-        db_uri = (
-            "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
-                protocol=self.DB_DRIVER,
-                db_host=self.DB_HOST,
-                db_port=self.DB_PORT,
-                db_user=self.DB_USER,
-                db_pass=self.DB_PASS,
-                db_name=self.DB_NAME,
-            )
+        db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
+            protocol=self.DB_DRIVER,
+            db_host=self.DB_HOST,
+            db_port=self.DB_PORT,
+            db_user=self.DB_USER,
+            db_pass=self.DB_PASS,
+            db_name=self.DB_NAME,
         )
         return db_uri
 

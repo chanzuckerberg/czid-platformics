@@ -28,20 +28,14 @@ async def test_collection_authorization(
     # Create mock data
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
-        fa.SampleFactory.create_batch(
-            2, location="City1", owner_user_id=owner_user_id, collection_id=333
-        )
-        fa.SampleFactory.create_batch(
-            2, location="City2", owner_user_id=owner_user_id, collection_id=444
-        )
-        fa.SampleFactory.create_batch(
-            2, location="City3", owner_user_id=owner_user_id, collection_id=555
-        )
+        fa.SampleFactory.create_batch(2, location="City1", owner_user_id=owner_user_id, collection_id=333)
+        fa.SampleFactory.create_batch(2, location="City2", owner_user_id=owner_user_id, collection_id=444)
+        fa.SampleFactory.create_batch(2, location="City3", owner_user_id=owner_user_id, collection_id=555)
 
     # Fetch all samples
     query = """
         query MyQuery {
-            getAllSamples {
+            samples {
                 id,
                 location
             }
@@ -61,7 +55,5 @@ async def test_collection_authorization(
         headers=headers,
     )
     output = result.json()
-    assert len(output["data"]["getAllSamples"]) == num_results
-    assert {sample["location"] for sample in output["data"]["getAllSamples"]} == set(
-        cities
-    )
+    assert len(output["data"]["samples"]) == num_results
+    assert {sample["location"] for sample in output["data"]["samples"]} == set(cities)

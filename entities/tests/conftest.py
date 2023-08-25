@@ -4,7 +4,7 @@ import typing
 
 import pytest
 import pytest_asyncio
-from api.core.deps import get_db_session, get_auth_principal
+from api.core.deps import get_db_session, require_auth_principal
 from api.main import get_app, get_context
 from database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
 from database.models.base import Base
@@ -17,9 +17,7 @@ from cerbos.sdk.model import Principal
 from starlette.requests import Request
 
 
-test_db = factories.postgresql_noproc(
-    host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS")
-)
+test_db = factories.postgresql_noproc(host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS"))
 
 
 def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
@@ -28,16 +26,14 @@ def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
 
 
 @pytest.fixture()
-def sync_db(test_db) -> typing.AsyncGenerator[SyncDB, None]:
+def sync_db(test_db) -> typing.Generator[SyncDB, None, None]:
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user
     pg_password = test_db.password
     pg_db = test_db.dbname
 
-    with DatabaseJanitor(
-        pg_user, pg_host, pg_port, pg_db, test_db.version, pg_password
-    ):
+    with DatabaseJanitor(pg_user, pg_host, pg_port, pg_db, test_db.version, pg_password):
         db: SyncDB = init_sync_db(
             get_db_uri(
                 "postgresql+psycopg",
@@ -75,6 +71,8 @@ async def async_db(sync_db: SyncDB, test_db) -> typing.AsyncGenerator[AsyncDB, N
 
 async def patched_authprincipal(request: Request) -> Principal:
     user_id = request.headers.get("user_id")
+    if not user_id:
+        raise Exception("user_id not found in request headers")
     principal = Principal(
         user_id,
         roles=["user"],
@@ -104,7 +102,7 @@ async def api(
     api = get_app()
     api.dependency_overrides[get_db_session] = patched_session
     api.dependency_overrides[get_context] = patched_context
-    api.dependency_overrides[get_auth_principal] = patched_authprincipal
+    api.dependency_overrides[require_auth_principal] = patched_authprincipal
     return api
 
 
