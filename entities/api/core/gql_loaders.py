@@ -190,6 +190,7 @@ def get_base_updater(sql_model, gql_type):
 
     return update
 
+
 # Infer Strawberry arguments from SQLAlchemy columns
 def generate_strawberry_arguments(action, sql_model, gql_type):
     sql_columns = [column.name for column in sql_model.__table__.columns]
