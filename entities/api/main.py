@@ -8,7 +8,7 @@ from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
 from database.connect import AsyncDB
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
-from api.core.gql_loaders import EntityLoader, get_base_loader, create_entity
+from api.core.gql_loaders import EntityLoader, get_base_loader, get_base_updater, get_base_creator
 from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from api.core.settings import APISettings
 
@@ -52,8 +52,12 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    create_sample: Sample = create_entity(db.Sample, Sample)
-    create_sequencing_read: SequencingRead = create_entity(db.SequencingRead, SequencingRead)
+    # Create
+    create_sample: Sample = get_base_creator(db.Sample, Sample)
+    create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)
+
+    # Update
+    update_sample: Sample = get_base_updater(db.Sample, Sample)
 
 
 # --------------------
