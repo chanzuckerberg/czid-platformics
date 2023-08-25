@@ -133,7 +133,7 @@ def get_base_creator(sql_model, gql_type):
         attr = {"collection_id": params.get("collection_id")}
         resource = Resource(id="NEW_ID", kind=sql_model.__tablename__, attr=attr)
         if not cerbos_client.is_allowed("create", principal, resource):
-            raise Exception("Unauthorized")
+            raise Exception("Unauthorized: Cannot create entity in this collection")
 
         # TODO: User must have permissions to the sample
 

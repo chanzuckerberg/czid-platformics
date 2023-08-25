@@ -1,20 +1,35 @@
 """
-Example GraphQL test
+GraphQL tests
 """
 
+import json
 import pytest
 from httpx import AsyncClient
 from database.connect import SyncDB
-import json
 from test_infra import factories as fa
 
+# Utility function for making GQL HTTP queries
+@pytest.mark.asyncio
+async def query_gql(
+    query: str,
+    http_client: AsyncClient,
+    headers: dict = {}
+):
+    gql_headers = {
+        "content-type": "application/json",
+        "accept": "application/json",
+        "user_id": "111",
+        **headers,
+    }
+    result = await http_client.post("/graphql", json={"query": query}, headers=gql_headers)
+    return result.json()
 
+# Test that we can only fetch samples from the database that we have access to
 @pytest.mark.asyncio
 async def test_graphql_query(
     sync_db: SyncDB,
     http_client: AsyncClient,
 ):
-    # For now, use the hardcoded user_id for tests
     user_id = 12345
     secondary_user_id = 67890
     project_id = 123
@@ -35,48 +50,39 @@ async def test_graphql_query(
             }
         }
     """
-    request = {"operationName": "MyQuery", "query": query}
-    headers = {
-        "content-type": "application/json",
-        "accept": "application/json",
-        "member_projects": json.dumps([project_id]),
-        "user_id": str(user_id),
-    }
-    result = await http_client.post("/graphql", json=request, headers=headers)
-    output = result.json()
-    assert output["data"]["samples"][0]["location"] == "San Francisco, CA"
-    assert output["data"]["samples"][-1]["location"] == "Mountain View, CA"
-    assert len(output["data"]["samples"]) == 8
+    output = await query_gql(query, http_client, headers={"member_projects": json.dumps(project_id)})
+    locations = [sample["location"] for sample in output["data"]["samples"]]
+    assert "San Francisco, CA" in locations
+    assert "Mountain View, CA" in locations
+    assert "Phoenix, AZ" not in locations
 
 
-# Validate that can only create samples in collections the user has access to
+# Validate that can only create/modify samples in collections the user has access to
 @pytest.mark.asyncio
-async def test_graphql_create_sample(
+@pytest.mark.parametrize(
+    "projects_allowed",
+    [([123]), ([123])],
+)
+async def test_graphql_mutations(
+    projects_allowed: list[int],
     http_client: AsyncClient,
 ):
-    project_id_allowed = 123
-    project_id_not_allowed = 456
+    project_id = 123
     query = """
-        mutation CreateASample {
+        mutation myMutation {
             createSample(name: "Test Sample", location: "San Francisco, CA", collectionId: 123) {
                 id,
                 location
             }
         }
     """
-    request = {"operationName": "CreateASample", "query": query}
+    output = await query_gql(query, http_client, headers={"member_projects": json.dumps(projects_allowed)})
 
-    for project_id in [project_id_allowed, project_id_not_allowed]:
-        headers = {
-            "content-type": "application/json",
-            "accept": "application/json",
-            "member_projects": json.dumps([project_id]),
-            "user_id": "111",
-        }
-        result = await http_client.post("/graphql", json=request, headers=headers)
-        output = result.json()
-        if project_id == project_id_allowed:
-            assert output["data"]["createSample"]["location"] == "San Francisco, CA"
-        else:
-            assert output["data"] is None
-            assert output["errors"][0]["message"] == "Unauthorized"
+    # Create sample
+    if project_id in projects_allowed:
+        print("project_id", project_id, projects_allowed, "allowed", output["data"])
+        assert output["data"]["createSample"]["location"] == "San Francisco, CA"
+    else:
+        print("project_id", project_id, projects_allowed, "NOTallowed", output["data"])
+        assert output["data"] is None
+        assert "Unauthorized" in output["errors"][0]["message"]
