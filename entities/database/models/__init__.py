@@ -3,5 +3,6 @@
 
 from database.models.base import Base, meta, Entity  # noqa: F401
 from database.models.samples import Sample, SequencingRead  # noqa: F401
+from database.models.files import File  # noqa: F401
 
 # configure_mappers()

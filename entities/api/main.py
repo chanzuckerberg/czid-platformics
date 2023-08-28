@@ -1,15 +1,23 @@
 import typing
+
+import database.models as db
 import strawberry
 import uvicorn
-import database.models as db
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
+from database.connect import AsyncDB
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
-from database.connect import AsyncDB
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
-from api.core.gql_loaders import EntityLoader, get_base_loader, get_base_updater, get_base_creator
+
 from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from api.core.gql_loaders import (
+    EntityLoader,
+    get_base_creator,
+    get_base_loader,
+    get_base_updater,
+    get_file_loader,
+)
 from api.core.settings import APISettings
 
 ######################
@@ -24,6 +32,11 @@ class EntityInterface:
     pass
 
 
+@strawberry_sqlalchemy_mapper.type(db.Entity)
+class Entity:
+    pass
+
+
 @strawberry_sqlalchemy_mapper.type(db.Sample)
 class Sample:
     pass
@@ -34,6 +47,11 @@ class SequencingRead:
     pass
 
 
+@strawberry_sqlalchemy_mapper.type(db.File)
+class File:
+    pass
+
+
 # --------------------
 # Queries
 # --------------------
@@ -41,8 +59,10 @@ class SequencingRead:
 
 @strawberry.type
 class Query:
+    entity: typing.List[Sample] = get_base_loader(db.Entity, EntityInterface)
     samples: typing.List[Sample] = get_base_loader(db.Sample, Sample)
     sequencing_reads: typing.List[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
+    files: typing.List[File] = get_file_loader(db.File, File)
 
 
 # --------------------
