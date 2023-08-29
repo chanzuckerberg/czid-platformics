@@ -1,8 +1,14 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped
-from sqlalchemy import MetaData, Column, Integer
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import MetaData, Column, Integer, String
 import uuid6
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from database.models.files import File
+else:
+    File = "File"
 
 meta = MetaData(
     naming_convention={
@@ -27,9 +33,10 @@ class Entity(Base):
 
     # The "type" field distinguishes between subclasses (e.g. sample,
     # sequencing_read, etc)
-    type: Mapped[str]
+    type: Mapped[str] = mapped_column(String, nullable=False)
 
     # Attributes for each entity
-    producing_run_id = Column(Integer, nullable=True)
-    owner_user_id = Column(Integer, nullable=False)
-    collection_id = Column(Integer, nullable=False)
+    producing_run_id: Mapped[uuid.UUID] = mapped_column(Integer, nullable=True)
+    owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    collection_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    files: Mapped[list[File]] = relationship(File, back_populates="entity", foreign_keys="File.entity_id")

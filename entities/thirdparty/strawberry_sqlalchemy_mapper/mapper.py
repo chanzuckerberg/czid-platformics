@@ -602,6 +602,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
 
             if make_interface:
                 mapped_type = strawberry.interface(type_)
+                self.mapped_interfaces[type_.__name__] = mapped_type
             elif use_federation:
                 mapped_type = strawberry.federation.type(type_)
             else:

@@ -1,22 +1,23 @@
-import uuid
 import typing
-import strawberry
-import database.models as db
+import uuid
 from collections import defaultdict
-from typing import Any, Mapping, Tuple, Optional
-from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
-from sqlalchemy.orm import RelationshipProperty
-from sqlalchemy.ext.asyncio import AsyncSession
-from strawberry.type import StrawberryType
-from strawberry.dataloader import DataLoader
-from strawberry.arguments import StrawberryArgument
+from typing import Any, Mapping, Optional, Tuple
+
+import database.models as db
+import strawberry
+from api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc
-from fastapi import Depends
 from database.models import Base
+from fastapi import Depends
+from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import RelationshipProperty
+from strawberry.arguments import StrawberryArgument
+from strawberry.dataloader import DataLoader
+from strawberry.type import StrawberryType
 from thirdparty.cerbos_sqlalchemy.query import get_query
-from api.core.deps import require_auth_principal, get_cerbos_client, get_db_session
-from api.core.strawberry_extensions import DependencyExtension
 
 CERBOS_ACTION_VIEW = "view"
 CERBOS_ACTION_CREATE = "create"
@@ -50,6 +51,33 @@ async def get_entities(
     return result.scalars().all()
 
 
+async def get_files(
+    model: db.File,
+    session: AsyncSession,
+    cerbos_client: CerbosClient,
+    principal: Principal,
+    filters: Optional[list[ColumnExpressionArgument]] = [],
+    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
+):
+    rd = ResourceDesc(model.__tablename__)
+    plan = cerbos_client.plan_resources(CERBOS_ACTION_VIEW, principal, rd)
+    query = get_query(
+        plan,
+        model,
+        {
+            "request.resource.attr.owner_user_id": db.Entity.owner_user_id,
+            "request.resource.attr.collection_id": db.Entity.collection_id,
+        },
+        [(db.Entity, model.entity_id == db.Entity.id)],
+    )
+    if filters:
+        query = query.filter(*filters)
+    if order_by:
+        query = query.order_by(*order_by)
+    result = await session.execute(query)
+    return result.scalars().all()
+
+
 class EntityLoader:
     """
     Creates DataLoader instances on-the-fly for SQLAlchemy relationships
@@ -72,6 +100,11 @@ class EntityLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
+            if type(related_model) == db.File:
+                load_method = get_files
+            else:
+                load_method = get_entities
+
             async def load_fn(keys: list[Tuple]) -> list[Any]:
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
@@ -80,7 +113,7 @@ class EntityLoader:
                 if relationship.order_by:
                     order_by = [relationship.order_by]
                 db_session = self.engine.session()
-                rows = await get_entities(
+                rows = await load_method(
                     related_model,
                     db_session,
                     self.cerbos_client,
@@ -123,6 +156,22 @@ def get_base_loader(sql_model, gql_type):
         return await get_entities(sql_model, session, cerbos_client, principal, filters, [])
 
     return resolve_entity
+
+
+def get_file_loader(sql_model, gql_type):
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def resolve_file(
+        id: typing.Optional[uuid.UUID] = None,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+    ) -> list[Base]:
+        filters = []
+        if id:
+            filters.append(sql_model.entity_id == id)
+        return await get_files(sql_model, session, cerbos_client, principal, filters, [])
+
+    return resolve_file
 
 
 def get_base_creator(sql_model, gql_type):

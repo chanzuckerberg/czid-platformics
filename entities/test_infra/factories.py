@@ -1,9 +1,8 @@
 import factory
+from database.models import File, Sample, SequencingRead
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
-
-from database.models import Sample, SequencingRead
 
 Faker.add_provider(Bioseq)
 Faker.add_provider(Organ)
@@ -32,6 +31,27 @@ class CommonFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_factory = SessionStorage.get_session
         sqlalchemy_session_persistence = "commit"
         sqlalchemy_session = None  # workaround for a bug in factoryboy
+
+
+class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        sqlalchemy_session_factory = SessionStorage.get_session
+        sqlalchemy_session_persistence = "commit"
+        sqlalchemy_session = None  # workaround for a bug in factoryboy
+        model = File
+        # What fields do we try to match to existing db rows to determine whether we
+        # should create a new row or not?
+        sqlalchemy_get_or_create = ("namespace", "path")
+        # exclude = ("sample_organ",)
+
+    status = fuzzy.FuzzyChoice(["awaiting_upload", "error", "success"])
+    protocol = fuzzy.FuzzyChoice(["S3", "GCP"])
+    namespace = fuzzy.FuzzyChoice(["bucket_1", "bucket_2"])
+    # path = factory.LazyAttribute(lambda o: {factory.Faker("file_path", depth=3, extension=o.file_format)})
+    path = factory.Faker("file_path", depth=3)
+    file_format = fuzzy.FuzzyChoice(["fasta", "fastq", "bam"])
+    compression_type = fuzzy.FuzzyChoice(["gz", "bz2", "xz"])
+    size = fuzzy.FuzzyInteger(1024, 1024 * 1024 * 1024)  # Between 1k and 1G
 
 
 class SampleFactory(CommonFactory):
@@ -73,3 +93,10 @@ class SequencingReadFactory(CommonFactory):
     sequence = fuzzy.FuzzyText(length=100, chars="ACTG")
     # sequence = factory.Faker('dna', length=100)
     protocol = fuzzy.FuzzyChoice(["TARGETED", "MNGS", "MSSPE"])
+
+    sequencing_read_file = factory.RelatedFactory(
+        FileFactory,
+        factory_related_name="entity",
+        entity_field_name="sequence_file",
+        file_format="fastq",
+    )
