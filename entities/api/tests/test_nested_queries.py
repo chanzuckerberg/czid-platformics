@@ -3,36 +3,16 @@ Tests for nested queries + authorization
 """
 
 import pytest
-from httpx import AsyncClient
 from database.connect import SyncDB
-import json
 from collections import defaultdict
 from test_infra import factories as fa
-
-
-async def get_gql_results(
-    http_client: AsyncClient, query: str, project_ids: list[int], user_id: int, query_name: str = "MyQuery"
-):
-    request = {"operationName": query_name, "query": query}
-    headers = {
-        "content-type": "application/json",
-        "accept": "application/json",
-        "member_projects": json.dumps(project_ids),
-        "user_id": str(user_id),
-    }
-    result = await http_client.post(
-        "/graphql",
-        json=request,
-        headers=headers,
-    )
-    output = result.json()
-    return output["data"]
+from api.conftest import GQLTestClient
 
 
 @pytest.mark.asyncio
 async def test_nested_query(
     sync_db: SyncDB,
-    http_client: AsyncClient,
+    gql_client: GQLTestClient,
 ):
     # For now, use the hardcoded user_id for tests
     user1_id = 111
@@ -94,7 +74,7 @@ async def test_nested_query(
     """
 
     # Make sure user1 can only see samples from project1
-    results = await get_gql_results(http_client, query, [project1_id], user1_id)
+    results = await gql_client.query(query, user_id=user1_id, member_projects=[project1_id])
     expected_samples_by_owner = {
         user1_id: 1,
         user2_id: 1,
@@ -107,7 +87,7 @@ async def test_nested_query(
     }
     actual_samples_by_owner: dict[int, int] = defaultdict(int)
     actual_sequences_by_owner: dict[int, int] = defaultdict(int)
-    for sample in results["samples"]:
+    for sample in results["data"]["samples"]:
         assert sample["collectionId"] == project1_id
         actual_samples_by_owner[sample["ownerUserId"]] += 1
         actual_sequences_by_owner[sample["ownerUserId"]] = len(sample["sequencingReads"]["edges"])

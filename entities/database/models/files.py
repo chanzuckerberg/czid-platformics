@@ -20,7 +20,7 @@ class File(Base):
     # more useful.
     entity_id = mapped_column(ForeignKey("entity.id"))
     entity_field_name = Column(String)
-    entity: Mapped[Entity] = relationship(Entity, back_populates="files", foreign_keys=entity_id)
+    entity: Mapped[Entity] = relationship(Entity, foreign_keys=entity_id)
 
     status = mapped_column(String, nullable=False)
     protocol = mapped_column(String, nullable=False)

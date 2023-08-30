@@ -1,3 +1,11 @@
+type Entity implements EntityInterface {
+  id: UUID!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+}
+
 interface EntityInterface {
   id: UUID!
   type: String!
@@ -6,17 +14,33 @@ interface EntityInterface {
   collectionId: Int!
 }
 
+type File {
+  id: UUID!
+  entityId: UUID
+  entityFieldName: String
+  status: String!
+  protocol: String!
+  namespace: String!
+  path: String!
+  fileFormat: String!
+  compressionType: String!
+  size: Int!
+  entity: EntityInterface
+}
+
 type Mutation {
   createSample(name: String!, location: String!, collectionId: Int!): Sample!
-  createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sampleId: UUID!, collectionId: Int!): SequencingRead!
+  createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
+  updateSample(entityId: UUID!, name: String!, location: String!): Sample!
 }
 
 type Query {
   samples(id: UUID = null): [Sample!]!
   sequencingReads(id: UUID = null): [SequencingRead!]!
+  files(id: UUID = null): [File!]!
 }
 
-type Sample {
+type Sample implements EntityInterface {
   id: UUID!
   type: String!
   producingRunId: Int
@@ -28,7 +52,7 @@ type Sample {
   sequencingReads: SequencingReadConnection!
 }
 
-type SequencingRead {
+type SequencingRead implements EntityInterface {
   id: UUID!
   type: String!
   producingRunId: Int
@@ -38,7 +62,9 @@ type SequencingRead {
   nucleotide: String!
   sequence: String!
   protocol: String!
+  sequenceFileId: UUID
   sampleId: UUID!
+  sequenceFile: File
   sample: Sample!
 }
 

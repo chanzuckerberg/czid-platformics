@@ -1,4 +1,4 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import MetaData, Column, Integer, String
 import uuid6
 import uuid
@@ -39,4 +39,3 @@ class Entity(Base):
     producing_run_id: Mapped[uuid.UUID] = mapped_column(Integer, nullable=True)
     owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
     collection_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    files: Mapped[list[File]] = relationship(File, back_populates="entity", foreign_keys="File.entity_id")
