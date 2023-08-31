@@ -1,3 +1,4 @@
+import configparser
 import typing
 import sqlalchemy as sa
 from fastapi import FastAPI
@@ -7,7 +8,8 @@ from strawberry.fastapi import GraphQLRouter
 
 import database.models as db
 from database.connect import init_async_db
-from config import load_workflow_runner
+from config import load_workflow_runners
+from plugin_types import WorkflowRunner as WorkflowRunnerPlugin
 
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
@@ -23,7 +25,11 @@ session = app_db.session()
 # Plugins #
 ###########
 
-workflow_runner = load_workflow_runner("swipe")
+config = configparser.ConfigParser()
+config.read("defaults.cfg")
+default_workflow_runner_name = config.get("plugins", "default_workflow_runner")
+
+workflow_runners = load_workflow_runners()
 
 ######################
 # Strawberry-GraphQL #
@@ -58,6 +64,13 @@ class WorkflowVersionOutput:
 @strawberry_sqlalchemy_mapper.type(db.RunEntityInput)
 class RunEntityInput:
     pass
+
+@strawberry.type
+class WorkflowRunner:
+    name: str
+    supported_workflow_types: typing.List[str]
+    description: str
+
 
 @strawberry.type
 class Query:
@@ -131,6 +144,14 @@ class Query:
         result = await session.execute(sa.select(db.RunEntityInput))
         return result.scalars()
 
+    @strawberry.field
+    async def get_workflow_runners(self) -> typing.List[WorkflowRunner]:
+        return [WorkflowRunner(
+            name=runner_name,
+            supported_workflow_types=runner.supported_workflow_types(),
+            description=runner.description()
+        ) for runner_name, runner in workflow_runners.items()]
+
 @strawberry.type
 class Mutation:
     @strawberry.mutation
@@ -175,7 +196,7 @@ class Mutation:
         return db_run
 
     @strawberry.mutation
-    async def submit_workflow(self, workflow_inputs: str) -> str:
+    async def submit_workflow(self, workflow_inputs: str, workflow_runner: str = default_workflow_runner_name) -> str:
         # TODO: create a workflow run
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
         inputs_json = {
@@ -183,6 +204,9 @@ class Mutation:
             "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
             "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
         }
+        assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
+        workflow_runner = workflow_runners[workflow_runner]
+        assert "WDL" in workflow_runner.supported_workflow_types(), f"Workflow runner {workflow_runner} does not support WDL"
         response = workflow_runner.run_workflow(
             on_complete=lambda x: print(x), # TODO: add the listener service here
             workflow_run_id=1, # TODO: When we create the workflow run add the uuid here
