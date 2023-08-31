@@ -26,6 +26,8 @@ def use_factoryboy():
         2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id
     )
 
+    fa.FileFactory.update_file_ids()
+
     session.commit()
 
 

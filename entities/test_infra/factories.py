@@ -1,4 +1,5 @@
 import factory
+import sqlalchemy as sa
 from database.models import File, Sample, SequencingRead
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -52,6 +53,17 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
     file_format = fuzzy.FuzzyChoice(["fasta", "fastq", "bam"])
     compression_type = fuzzy.FuzzyChoice(["gz", "bz2", "xz"])
     size = fuzzy.FuzzyInteger(1024, 1024 * 1024 * 1024)  # Between 1k and 1G
+
+    @classmethod
+    def update_file_ids(cls):
+        session = SessionStorage.get_session()
+        session.execute(
+            sa.text(
+                "UPDATE sequencing_read SET sequence_file_id = file.id "
+                "FROM file WHERE sequencing_read.entity_id = file.entity_id",
+            )
+        )
+        session.commit()
 
 
 class SampleFactory(CommonFactory):

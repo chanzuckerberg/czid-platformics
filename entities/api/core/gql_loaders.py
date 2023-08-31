@@ -100,7 +100,7 @@ class EntityLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
-            if type(related_model) == db.File:
+            if related_model == db.File:
                 load_method = get_files
             else:
                 load_method = get_entities

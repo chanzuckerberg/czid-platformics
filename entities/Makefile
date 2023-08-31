@@ -109,11 +109,11 @@ fix-lint: ## Apply linting rules to the code in this directory.
 check-lint: ## Check for bad linting
 	$(docker_compose) run entities black --check .
 	$(docker_compose) run entities ruff check .
-	$(docker_compose) run -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
+	$(docker_compose) run entities mypy .
 
 .PHONY: local-mypy
 local-mypy: ## Run type checking
-	$(docker_compose) exec -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
+	$(docker_compose) exec entities mypy .
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
