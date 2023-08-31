@@ -13,7 +13,7 @@ x-db-variables: &db-variables
   ? DB_USER=postgres
   ? DB_PASS=password_postgres
   ? DB_NAME=workflows
-
+  
 services:
   postgres:
     platform: linux/arm64
@@ -41,6 +41,7 @@ services:
     volumes:
       - .:/workflows
       # enable docker in docker
+      - $PWD/test_workflows:$PWD/test_workflows
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8042:8042
@@ -49,6 +50,7 @@ services:
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8042
     environment:
       <<: [*aws-variables, *db-variables]
+      LOCAL_RUNNER_FOLDER: ${PWD}/test_workflows
 networks:
   default:
     name: czidnet
