@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
@@ -39,11 +39,11 @@ class SyncDB:
         return self._session_maker
 
 
-def init_async_db(db_uri: str, **kwargs) -> AsyncDB:
+def init_async_db(db_uri: str, **kwargs: dict[str, Any]) -> AsyncDB:
     engine = create_async_engine(db_uri, echo=False, pool_size=5, max_overflow=5, future=True, **kwargs)
     return AsyncDB(engine)
 
 
-def init_sync_db(db_uri: str, **kwargs) -> SyncDB:
+def init_sync_db(db_uri: str, **kwargs: dict[str, Any]) -> SyncDB:
     engine = create_engine(db_uri, **kwargs)
     return SyncDB(engine)

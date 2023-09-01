@@ -13,7 +13,7 @@ from api.conftest import GQLTestClient
 async def test_nested_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
-):
+) -> None:
     # For now, use the hardcoded user_id for tests
     user1_id = 111
     user2_id = 222

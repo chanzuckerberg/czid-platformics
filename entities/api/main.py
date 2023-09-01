@@ -24,7 +24,7 @@ from api.core.settings import APISettings
 # Strawberry-GraphQL #
 ######################
 
-strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
+strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry_sqlalchemy_mapper.interface(db.Entity)
@@ -54,9 +54,9 @@ class SequencingRead(EntityInterface):
 
 @strawberry.type
 class Query:
-    samples: typing.List[Sample] = get_base_loader(db.Sample, Sample)
-    sequencing_reads: typing.List[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
-    files: typing.List[File] = get_file_loader(db.File, File)
+    samples: typing.Sequence[Sample] = get_base_loader(db.Sample, Sample)
+    sequencing_reads: typing.Sequence[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
+    files: typing.Sequence[File] = get_file_loader(db.File, File)
 
 
 # --------------------
@@ -67,11 +67,11 @@ class Query:
 @strawberry.type
 class Mutation:
     # Create
-    create_sample: Sample = get_base_creator(db.Sample, Sample)
-    create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)
+    create_sample: Sample = get_base_creator(db.Sample, Sample)  # type: ignore
+    create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)  # type: ignore
 
     # Update
-    update_sample: Sample = get_base_updater(db.Sample, Sample)
+    update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
 
 
 # --------------------
@@ -83,7 +83,7 @@ def get_context(
     engine: AsyncDB = Depends(get_engine),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(get_auth_principal),
-):
+) -> dict[str, typing.Any]:
     return {
         "sqlalchemy_loader": EntityLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
     }
@@ -106,7 +106,7 @@ schema = strawberry.Schema(
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
-    settings = APISettings()
+    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     # Add a global settings object to the app that we can use as a dependency
     graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)

@@ -4,8 +4,8 @@ import factory.random
 from api.core.settings import CLISettings
 
 
-def use_factoryboy():
-    settings = CLISettings()
+def use_factoryboy() -> None:
+    settings = CLISettings.parse_obj({})
     app_db = init_sync_db(settings.SYNC_DB_URI)
     session = app_db.session()
     fa.SessionStorage.set_session(session)

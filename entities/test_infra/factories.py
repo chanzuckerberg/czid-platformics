@@ -16,11 +16,11 @@ class SessionStorage:
     session = None
 
     @classmethod
-    def set_session(cls, session):
+    def set_session(cls, session: sa.orm.Session) -> None:
         cls.session = session
 
     @classmethod
-    def get_session(cls):
+    def get_session(cls) -> sa.orm.Session | None:
         return cls.session
 
 
@@ -55,8 +55,10 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
     size = fuzzy.FuzzyInteger(1024, 1024 * 1024 * 1024)  # Between 1k and 1G
 
     @classmethod
-    def update_file_ids(cls):
+    def update_file_ids(cls) -> None:
         session = SessionStorage.get_session()
+        if not session:
+            raise Exception("No session found")
         session.execute(
             sa.text(
                 "UPDATE sequencing_read SET sequence_file_id = file.id "

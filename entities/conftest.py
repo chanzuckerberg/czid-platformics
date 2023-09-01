@@ -7,18 +7,28 @@ from database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
 from database.models.base import Base
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
+from pytest_postgresql.executor_noop import NoopExecutor
 
 
-test_db = factories.postgresql_noproc(host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS"))
+test_db: NoopExecutor = factories.postgresql_noproc(
+    host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS")
+)  # type: ignore
 
 
-def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
+def get_db_uri(
+    protocol: typing.Optional[str],
+    db_user: typing.Optional[str],
+    db_pass: typing.Optional[str],
+    db_host: typing.Optional[str],
+    db_port: typing.Optional[int],
+    db_name: typing.Optional[str],
+) -> str:
     db_uri = f"{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
     return db_uri
 
 
 @pytest.fixture()
-def sync_db(test_db) -> typing.Generator[SyncDB, None, None]:
+def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user
@@ -41,7 +51,7 @@ def sync_db(test_db) -> typing.Generator[SyncDB, None, None]:
 
 
 @pytest_asyncio.fixture()
-async def async_db(sync_db: SyncDB, test_db) -> typing.AsyncGenerator[AsyncDB, None]:
+async def async_db(sync_db: SyncDB, test_db: NoopExecutor) -> typing.AsyncGenerator[AsyncDB, None]:
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user

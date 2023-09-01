@@ -13,7 +13,7 @@ from test_infra import factories as fa
 async def test_file_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
-):
+) -> None:
     user1_id = 12345
     user2_id = 67890
     user3_id = 87654
@@ -56,7 +56,7 @@ async def test_file_query(
 async def test_nested_files(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
-):
+) -> None:
     user1_id = 12345
     user2_id = 67890
     user3_id = 87654

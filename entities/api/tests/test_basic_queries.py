@@ -13,7 +13,7 @@ from api.conftest import GQLTestClient
 async def test_graphql_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
-):
+) -> None:
     user_id = 12345
     secondary_user_id = 67890
     project_id = 123
@@ -50,7 +50,7 @@ async def test_graphql_query(
 async def test_graphql_mutations(
     projects_allowed: list[int],
     gql_client: GQLTestClient,
-):
+) -> None:
     project_id = 123
     query = """
         mutation createOneSample {

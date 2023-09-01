@@ -25,7 +25,7 @@ class GQLTestClient:
         user_id: Optional[int] = None,
         member_projects: Optional[list[int]] = None,
         admin_projects: Optional[list[int]] = None,
-    ):
+    ) -> dict[str, typing.Any]:
         if not user_id:
             user_id = 111
         if not admin_projects:
