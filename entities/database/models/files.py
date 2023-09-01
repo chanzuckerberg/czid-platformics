@@ -5,6 +5,12 @@ from database.models.base import Base, Entity
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from database.models.samples import SequencingRead
+else:
+    SequencingRead = "SequencingRead"
 
 
 class File(Base):

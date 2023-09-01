@@ -9,7 +9,7 @@ from strawberry.types import Info
 
 
 class DependencyExtension(FieldExtension):
-    def __init__(self):
+    def __init__(self) -> None:
         self.dependency_args: list[typing.Any] = []
         self.strawberry_field_names = ["self"]
 
@@ -26,7 +26,7 @@ class DependencyExtension(FieldExtension):
         next_: typing.Callable[..., typing.Any],
         source: typing.Any,
         info: Info,
-        **kwargs,
+        **kwargs: dict[str, typing.Any],
     ) -> typing.Any:
         request = info.context["request"]
         try:

@@ -34,8 +34,8 @@ class SequencingRead(Entity):
     nucleotide: Mapped[str] = mapped_column(String, nullable=False)
     sequence: Mapped[str] = mapped_column(String, nullable=False)
     protocol: Mapped[str] = mapped_column(String, nullable=False)
-    sequence_file_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("file.id"), nullable=True)
-    sequence_file: Mapped[File] = relationship("File", foreign_keys=sequence_file_id)
+    sequence_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    sequence_file: Mapped[File] = relationship(File, foreign_keys=sequence_file_id)
 
     sample_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sample.entity_id"), nullable=False)
-    sample: Mapped[Sample] = relationship("Sample", back_populates="sequencing_reads", foreign_keys=sample_id)
+    sample: Mapped[Sample] = relationship(Sample, back_populates="sequencing_reads", foreign_keys=sample_id)

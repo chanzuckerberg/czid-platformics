@@ -1,11 +1,3 @@
-type Entity implements EntityInterface {
-  id: UUID!
-  type: String!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-}
-
 interface EntityInterface {
   id: UUID!
   type: String!

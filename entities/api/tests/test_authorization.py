@@ -19,7 +19,7 @@ async def test_collection_authorization(
     cities: tuple[str],
     sync_db: SyncDB,
     gql_client: GQLTestClient,
-):
+) -> None:
     # For now, use the hardcoded user_id for tests
     owner_user_id = 333
     user_id = 12345

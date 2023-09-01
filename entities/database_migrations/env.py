@@ -21,7 +21,7 @@ fileConfig(str(config.config_file_name))
 target_metadata = meta
 
 
-def run_migrations_offline():
+def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -33,7 +33,7 @@ def run_migrations_offline():
     script output.
 
     """
-    settings = CLISettings()
+    settings = CLISettings.parse_obj({})
     context.configure(
         url=settings.SYNC_DB_URI,
         target_metadata=target_metadata,
@@ -46,14 +46,14 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
-    settings = CLISettings()
+    settings = CLISettings.parse_obj({})
     connectable = create_engine(settings.SYNC_DB_URI)
 
     with connectable.connect() as connection:

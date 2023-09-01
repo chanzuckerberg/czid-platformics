@@ -145,11 +145,6 @@ class SequencingReadEdge(sgqlc.types.Type):
     node = sgqlc.types.Field(sgqlc.types.non_null("SequencingRead"), graphql_name="node")
 
 
-class Entity(sgqlc.types.Type, EntityInterface):
-    __schema__ = gql_schema
-    __field_names__ = ()
-
-
 class Sample(sgqlc.types.Type, EntityInterface):
     __schema__ = gql_schema
     __field_names__ = ("entity_id", "name", "location", "sequencing_reads")
