@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  localstack:
+    image: localstack/localstack:2.2.0
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # External services port range
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - S3_BUCKET_DEV=s3://local-bucket
+    volumes:
+      - ".volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./bin/init_aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
