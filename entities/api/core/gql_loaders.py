@@ -257,7 +257,7 @@ def generate_strawberry_arguments(action, sql_model, gql_type):
             continue
 
         # Get GQL field
-        field = gql_type._type_definition.get_field(sql_column)
+        field = gql_type.__strawberry_definition__.get_field(sql_column)
         if field:
             # When updating an entity, only entity ID is required
             is_optional_field = action == CERBOS_ACTION_UPDATE and field.name != "entity_id"

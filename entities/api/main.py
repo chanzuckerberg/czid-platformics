@@ -32,23 +32,18 @@ class EntityInterface:
     pass
 
 
-@strawberry_sqlalchemy_mapper.type(db.Entity)
-class Entity:
+@strawberry_sqlalchemy_mapper.type(db.File)
+class File:
     pass
 
 
 @strawberry_sqlalchemy_mapper.type(db.Sample)
-class Sample:
+class Sample(EntityInterface):
     pass
 
 
 @strawberry_sqlalchemy_mapper.type(db.SequencingRead)
-class SequencingRead:
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.File)
-class File:
+class SequencingRead(EntityInterface):
     pass
 
 
@@ -59,7 +54,6 @@ class File:
 
 @strawberry.type
 class Query:
-    entity: typing.List[Sample] = get_base_loader(db.Entity, EntityInterface)
     samples: typing.List[Sample] = get_base_loader(db.Sample, Sample)
     sequencing_reads: typing.List[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
     files: typing.List[File] = get_file_loader(db.File, File)

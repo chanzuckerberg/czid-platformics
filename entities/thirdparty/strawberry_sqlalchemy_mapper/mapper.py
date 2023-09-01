@@ -645,7 +645,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
             self.edge_types.values(),
             self.connection_types.values(),
         ):
-            for field in mapped_type._type_definition.fields:
+            for field in mapped_type.__strawberry_definition__.fields:
                 if field.name in getattr(mapped_type, _GENERATED_FIELD_KEYS_KEY):
                     namespace = {}
                     if hasattr(mapped_type, _ORIGINAL_TYPE_KEY):
