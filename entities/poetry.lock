@@ -20,6 +20,21 @@ typing-extensions = ">=4"
 tz = ["python-dateutil"]
 
 [[package]]
+name = "alembic-postgresql-enum"
+version = "0.1.5"
+description = "Alembic autogenerate support for creation, alteration and deletion of enums"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "alembic_postgresql_enum-0.1.5-py3-none-any.whl", hash = "sha256:31f3d3df2e466011965d17d3d66198d265b0ff97423f93a35042fe283b56c44c"},
+    {file = "alembic_postgresql_enum-0.1.5.tar.gz", hash = "sha256:55c85e87fbd5b9348ab8f58ae7eb24a579eca26e536b0da2e68261724eb50710"},
+]
+
+[package.dependencies]
+alembic = ">=1.7"
+SQLAlchemy = ">=1.4"
+
+[[package]]
 name = "annotated-types"
 version = "0.5.0"
 description = "Reusable constraint types to use with typing.Annotated"
@@ -2230,4 +2245,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e97e280d8a46cb7f0bf8623c886d3e2719c297cd8aaf307f06759ef8a26327bf"
+content-hash = "7904a6f6ded69c64245999e51598f72446b9cd36e9c437acf44cf795a5af8c2f"

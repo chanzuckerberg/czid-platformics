@@ -1,10 +1,10 @@
 from logging.config import fileConfig
 
+import alembic_postgresql_enum  # noqa
 from alembic import context
-from sqlalchemy import create_engine
-
-from database.models import meta
 from api.core.settings import CLISettings
+from database.models import meta
+from sqlalchemy import create_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
