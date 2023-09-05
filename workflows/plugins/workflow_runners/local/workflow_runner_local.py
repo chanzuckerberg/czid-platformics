@@ -8,7 +8,7 @@ from typing import Callable, Coroutine, Any, List
 from uuid import uuid4
 import re
 
-from plugin_types import WorkflowRunner, WorkflowStatusMessage
+from plugin_types import EventListener, WorkflowRunner, WorkflowStatusMessage, WorkflowSucceededMessage
 
 local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
 
@@ -29,6 +29,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         workflow_path: str,
         inputs: dict,
         workflow_runner_id: str,
+        listener: EventListener,
     ):
         local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
         with tempfile.TemporaryDirectory(dir=local_runner_folder) as tmpdir:
@@ -52,7 +53,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                         }
                     )
                 )
-                print(outputs)
+                listener.send(WorkflowSucceededMessage(runner_id=workflow_runner_id))
             except subprocess.CalledProcessError as e:
                 print(e)
                 asyncio.run(
@@ -81,6 +82,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         workflow_run_id: str,
         workflow_path: str,
         inputs: dict,
+        listener: EventListener,
     ) -> str:
         runner_id = str(uuid4())
         # Running docker-in-docker requires the paths to files and outputs to be the same between 

@@ -37,6 +37,10 @@ class WorkflowRunner(ABC):
 
 class EventListener:
     @abstractmethod
+    async def send(message: WorkflowStatusMessage) -> None:
+        pass
+
+    @abstractmethod
     async def poll() -> List[WorkflowStatusMessage]:
         pass
 
