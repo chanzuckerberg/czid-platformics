@@ -163,23 +163,25 @@ class Query:
 class Mutation:
     @strawberry.mutation
     async def test_connection(self) -> str:
-        endpoint = HTTPEndpoint(os.getenv("ENTITY_SERVICE_URL"))
-        op = Operation(schema.Query)
+        entity_service_url = os.getenv("ENTITY_SERVICE_URL")
+        entity_service_auth_token = os.getenv("ENTITY_SERVICE_AUTH_TOKEN")
+        headers = {"Authorization": f"Bearer {entity_service_auth_token}"}
+        endpoint = HTTPEndpoint(entity_service_url)
 
+        # Create query to list all samples
+        op = Operation(schema.Query)
         samples = op.samples()
         samples.id()
         samples.name()
         samples.location()
-
-        data = endpoint(op, extra_headers={"Authorization": f"Bearer {os.getenv('ENTITY_SERVICE_AUTH_TOKEN')}"})
+        data = endpoint(op, extra_headers=headers)
         print(json.dumps(data["data"]["samples"], indent=4))
 
-        # Mutation
+        # Create a sample
         op = Operation(schema.Mutation)
         op.create_sample(name="test", location="test", collection_id=444)
-        data = endpoint(op, extra_headers={"Authorization": f"Bearer {os.getenv('ENTITY_SERVICE_AUTH_TOKEN')}"})
+        data = endpoint(op, extra_headers=headers)
         print(json.dumps(data, indent=4))
-
 
         return "Hello World"
         
