@@ -16,8 +16,8 @@ WORKDIR /workflows
 
 ENV PYTHONPATH=.
 
+COPY pyproject.toml poetry.lock ./
+RUN poetry install
 COPY . ./
 
-RUN poetry install
-
-RUN pip install  plugins/*/*
+RUN pip install plugins/*/*
