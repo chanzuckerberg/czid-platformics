@@ -1,6 +1,5 @@
 version: "3.8"
 
-
 services:
   localstack:
     image: localstack/localstack:2.2.0
