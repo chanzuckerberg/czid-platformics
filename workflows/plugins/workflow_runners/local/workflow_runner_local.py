@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 import tempfile
 import os
 import asyncio
@@ -7,7 +8,7 @@ from typing import Callable, Coroutine, Any, List
 from uuid import uuid4
 import re
 
-from plugin_types import WorkflowRunner, WorkflowStatusMessage
+from plugin_types import EventListener, WorkflowRunner, WorkflowStatusMessage, WorkflowSucceededMessage
 
 local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
 
@@ -21,8 +22,6 @@ class LocalWorkflowRunner(WorkflowRunner):
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows locally using miniWDL"
 
-    def _run_workflow_blocking(self, on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]], workflow_run_id: str, workflow_path: str, inputs: dict, workflow_runner_id: str):
-        with tempfile.TemporaryDirectory() as tmpdir:
     def _run_workflow_blocking(
         self,
         on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],
@@ -30,8 +29,9 @@ class LocalWorkflowRunner(WorkflowRunner):
         workflow_path: str,
         inputs: dict,
         workflow_runner_id: str,
+        listener: EventListener,
     ):
-        local_runner_folder = os.environ("LOCAL_RUNNER_FOLDER")
+        local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
         with tempfile.TemporaryDirectory(dir=local_runner_folder) as tmpdir:
             try:
                 p = subprocess.run(
@@ -53,7 +53,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                         }
                     )
                 )
-                print(outputs)
+                listener.send(WorkflowSucceededMessage(runner_id=workflow_runner_id))
             except subprocess.CalledProcessError as e:
                 print(e)
                 asyncio.run(
@@ -82,6 +82,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         workflow_run_id: str,
         workflow_path: str,
         inputs: dict,
+        listener: EventListener,
     ) -> str:
         runner_id = str(uuid4())
         # Running docker-in-docker requires the paths to files and outputs to be the same between 
@@ -97,7 +98,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                 while True:
                     line = p.stderr.readline().decode()
                     self.detect_task_output(line)
-                    print(line)
+                    print(line, file=sys.stderr)
                     if not line: break
 
 

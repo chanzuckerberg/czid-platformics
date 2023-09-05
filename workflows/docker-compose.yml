@@ -16,7 +16,6 @@ x-db-variables: &db-variables
   
 services:
   postgres:
-    platform: linux/arm64
     image: postgres:15
     restart: always
     ports:
