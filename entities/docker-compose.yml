@@ -1,12 +1,10 @@
 version: "3.8"
 
 services:
-  postgres:
+  entities-db:
     platform: linux/arm64
     image: postgres:15
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password_postgres
@@ -39,7 +37,7 @@ services:
     ports:
       - "8008:8008"
     environment:
-      - DB_HOST=postgres.czidnet
+      - DB_HOST=entities-db.czidnet
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASS=password_postgres
@@ -49,8 +47,3 @@ services:
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
     volumes:
       - ./:/czid-platformics/entities
-networks:
-  default:
-    name: czidnet
-    driver: overlay
-    attachable: true

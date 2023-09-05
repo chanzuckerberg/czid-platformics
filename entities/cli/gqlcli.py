@@ -59,7 +59,7 @@ def list_samples(ctx: click.Context) -> None:
     endpoint = HTTPEndpoint(ctx.obj["endpoint"])
     op = Operation(schema.Query)  # note 'schema.'
 
-    # fetch all samples and all sample fields
+    # create the GQL query to fetch all samples and all sample fields
     samples = op.samples()
     samples.id()
     samples.name()
