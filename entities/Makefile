@@ -24,7 +24,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 ### DOCKER LOCAL DEV #########################################
 .PHONY: local-setup
 local-setup: ## Load db tables and seed data
-	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
+	while [ -z "$$($(docker_compose) exec -T entities-db psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
 	$(docker_compose) run entities alembic upgrade head
 	$(MAKE) local-seed
 
