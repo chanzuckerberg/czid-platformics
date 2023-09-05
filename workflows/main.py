@@ -13,7 +13,7 @@ from sgqlc.operation import Operation
 import database.models as db
 from database.connect import init_async_db, init_sync_db
 from config import load_workflow_runners
-import entity_gql_schema as schema
+import entity_gql_schema as entity_schema
 
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
@@ -169,7 +169,7 @@ class Mutation:
         endpoint = HTTPEndpoint(entity_service_url)
 
         # Create query to list all samples
-        op = Operation(schema.Query)
+        op = Operation(entity_schema.Query)
         samples = op.samples()
         samples.id()
         samples.name()
@@ -178,7 +178,7 @@ class Mutation:
         print(json.dumps(data["data"]["samples"], indent=4))
 
         # Create a sample
-        op = Operation(schema.Mutation)
+        op = Operation(entity_schema.Mutation)
         op.create_sample(name="test", location="test", collection_id=444)
         data = endpoint(op, extra_headers=headers)
         print(json.dumps(data, indent=4))
