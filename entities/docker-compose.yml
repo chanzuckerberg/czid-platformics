@@ -47,3 +47,9 @@ services:
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
     volumes:
       - ./:/czid-platformics/entities
+networks:
+  default:
+    name: czidnet
+    driver: overlay
+    attachable: true
+    external: true
