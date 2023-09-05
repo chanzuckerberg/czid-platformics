@@ -3,7 +3,7 @@ SHELL := /bin/bash
 ### DOCKER ENVIRONMENTAL VARS #################################################
 export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
-export docker_compose:=docker compose -p czid-platformics
+export docker_compose:=docker compose
 
 ### DATABASE VARIABLES #################################################
 LOCAL_DB_NAME = entities

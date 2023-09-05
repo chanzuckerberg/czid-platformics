@@ -1,8 +1,5 @@
 version: "3.8"
 
-include:
-  - entities/docker-compose.yml
-  - workflows/docker-compose.yml
 
 services:
   localstack:
