@@ -2,32 +2,18 @@
 GraphQL tests
 """
 
-import json
 import pytest
-from httpx import AsyncClient
 from database.connect import SyncDB
 from test_infra import factories as fa
-
-
-# Utility function for making GQL HTTP queries
-@pytest.mark.asyncio
-async def query_gql(query: str, http_client: AsyncClient, headers: dict = {}):
-    gql_headers = {
-        "content-type": "application/json",
-        "accept": "application/json",
-        "user_id": "111",
-        **headers,
-    }
-    result = await http_client.post("/graphql", json={"query": query}, headers=gql_headers)
-    return result.json()
+from api.conftest import GQLTestClient
 
 
 # Test that we can only fetch samples from the database that we have access to
 @pytest.mark.asyncio
 async def test_graphql_query(
     sync_db: SyncDB,
-    http_client: AsyncClient,
-):
+    gql_client: GQLTestClient,
+) -> None:
     user_id = 12345
     secondary_user_id = 67890
     project_id = 123
@@ -48,7 +34,7 @@ async def test_graphql_query(
             }
         }
     """
-    output = await query_gql(query, http_client, headers={"member_projects": json.dumps(project_id)})
+    output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
     locations = [sample["location"] for sample in output["data"]["samples"]]
     assert "San Francisco, CA" in locations
     assert "Mountain View, CA" in locations
@@ -63,8 +49,8 @@ async def test_graphql_query(
 )
 async def test_graphql_mutations(
     projects_allowed: list[int],
-    http_client: AsyncClient,
-):
+    gql_client: GQLTestClient,
+) -> None:
     project_id = 123
     query = """
         mutation createOneSample {
@@ -74,7 +60,7 @@ async def test_graphql_mutations(
             }
         }
     """
-    output = await query_gql(query, http_client, headers={"member_projects": json.dumps(projects_allowed)})
+    output = await gql_client.query(query, member_projects=projects_allowed)
 
     # Make sure unauthorized users can't create samples in this collection
     if project_id not in projects_allowed:
@@ -94,5 +80,5 @@ async def test_graphql_mutations(
                 }}
             }}
         """
-        output = await query_gql(query, http_client, headers={"member_projects": json.dumps(projects_allowed)})
+        output = await gql_client.query(query, member_projects=projects_allowed)
         assert output["data"]["updateSample"]["location"] == new_location

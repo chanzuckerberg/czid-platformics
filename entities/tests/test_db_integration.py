@@ -1,10 +1,11 @@
 import factory.random
 from database.models import Sample, SequencingRead
 from test_infra import factories as fa
+from database.connect import SyncDB
 
 
 # Tests
-def test_samples(sync_db):
+def test_samples(sync_db: SyncDB) -> None:
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
         factory.random.reseed_random(123)
@@ -15,7 +16,7 @@ def test_samples(sync_db):
 
 
 # Test linking SequencingReads to Samples
-def test_reads(sync_db):
+def test_reads(sync_db: SyncDB) -> None:
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
         factory.random.reseed_random(123)

@@ -3,10 +3,9 @@ Authorization spot-checks
 """
 
 import pytest
-from httpx import AsyncClient
 from database.connect import SyncDB
 from test_infra import factories as fa
-import json
+from api.conftest import GQLTestClient
 
 
 @pytest.mark.asyncio
@@ -19,8 +18,8 @@ async def test_collection_authorization(
     num_results: int,
     cities: tuple[str],
     sync_db: SyncDB,
-    http_client: AsyncClient,
-):
+    gql_client: GQLTestClient,
+) -> None:
     # For now, use the hardcoded user_id for tests
     owner_user_id = 333
     user_id = 12345
@@ -41,19 +40,6 @@ async def test_collection_authorization(
             }
         }
     """
-    request = {"operationName": "MyQuery", "query": query}
-    headers = {
-        "content-type": "application/json",
-        "accept": "application/json",
-        "user_id": str(user_id),
-        "member_projects": json.dumps(project_ids),
-    }
-
-    result = await http_client.post(
-        "/graphql",
-        json=request,
-        headers=headers,
-    )
-    output = result.json()
+    output = await gql_client.query(query, user_id=user_id, member_projects=project_ids)
     assert len(output["data"]["samples"]) == num_results
     assert {sample["location"] for sample in output["data"]["samples"]} == set(cities)

@@ -37,11 +37,11 @@ async def get_db_session(
         await session.close()  # type: ignore
 
 
-def get_cerbos_client():
+def get_cerbos_client() -> CerbosClient:
     return CerbosClient(host="http://cerbos:3592")
 
 
-def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> Principal:
+def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> typing.Optional[Principal]:
     auth_header = request.headers.get("authorization")
     if auth_header:
         parts = auth_header.split()
@@ -75,7 +75,7 @@ def get_auth_principal(request: Request, settings: APISettings = Depends(get_set
 
 
 def require_auth_principal(
-    principal=Depends(get_auth_principal),
+    principal: typing.Optional[Principal] = Depends(get_auth_principal),
 ) -> Principal:
     if not principal:
         raise Exception("Unauthorized")

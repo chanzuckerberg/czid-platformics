@@ -32,7 +32,7 @@ from cli import gql_schema as schema
     envvar="PLATFORMICS_AUTH_TOKEN",
 )
 @click.pass_context
-def cli(ctx, endpoint, debug, token):
+def cli(ctx: click.Context, endpoint: str, debug: bool, token: str) -> None:
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     if debug:
@@ -42,20 +42,20 @@ def cli(ctx, endpoint, debug, token):
     ctx.obj["auth_token"] = token
 
 
-def get_headers(ctx):
+def get_headers(ctx: click.Context) -> dict[str, str]:
     if ctx.obj["auth_token"]:
         return {"Authorization": f"Bearer {ctx.obj['auth_token']}"}
     return {}
 
 
 @cli.group()
-def samples():
+def samples() -> None:
     pass
 
 
 @samples.command("list")
 @click.pass_context
-def list_samples(ctx):
+def list_samples(ctx: click.Context) -> None:
     endpoint = HTTPEndpoint(ctx.obj["endpoint"])
     op = Operation(schema.Query)  # note 'schema.'
 
@@ -74,7 +74,7 @@ def list_samples(ctx):
 
 
 @cli.group()
-def auth():
+def auth() -> None:
     pass
 
 
@@ -90,8 +90,8 @@ def auth():
     multiple=True,
 )
 @click.pass_context
-def generate_token(ctx, userid: int, project: list[str], expiration: int):
-    settings = Settings()
+def generate_token(ctx: click.Context, userid: int, project: list[str], expiration: int) -> None:
+    settings = Settings.parse_obj({})
     private_key = settings.JWK_PRIVATE_KEY
 
     project_dict: dict[int, list[str]] = {}

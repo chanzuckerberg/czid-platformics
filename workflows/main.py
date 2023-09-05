@@ -1,3 +1,4 @@
+import configparser
 import typing
 import sqlalchemy as sa
 from fastapi import FastAPI
@@ -7,7 +8,8 @@ from strawberry.fastapi import GraphQLRouter
 
 import database.models as db
 from database.connect import init_async_db
-from config import load_workflow_runner
+from config import load_workflow_runners
+from plugin_types import WorkflowRunner as WorkflowRunnerPlugin
 
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
@@ -23,7 +25,11 @@ session = app_db.session()
 # Plugins #
 ###########
 
-workflow_runner = load_workflow_runner("swipe")
+config = configparser.ConfigParser()
+config.read("defaults.cfg")
+default_workflow_runner_name = config.get("plugins", "default_workflow_runner")
+
+workflow_runners = load_workflow_runners()
 
 ######################
 # Strawberry-GraphQL #
@@ -58,6 +64,13 @@ class WorkflowVersionOutput:
 @strawberry_sqlalchemy_mapper.type(db.RunEntityInput)
 class RunEntityInput:
     pass
+
+@strawberry.type
+class WorkflowRunner:
+    name: str
+    supported_workflow_types: typing.List[str]
+    description: str
+
 
 @strawberry.type
 class Query:
@@ -131,6 +144,14 @@ class Query:
         result = await session.execute(sa.select(db.RunEntityInput))
         return result.scalars()
 
+    @strawberry.field
+    async def get_workflow_runners(self) -> typing.List[WorkflowRunner]:
+        return [WorkflowRunner(
+            name=runner_name,
+            supported_workflow_types=runner.supported_workflow_types(),
+            description=runner.description()
+        ) for runner_name, runner in workflow_runners.items()]
+
 @strawberry.type
 class Mutation:
     @strawberry.mutation
@@ -145,7 +166,37 @@ class Mutation:
         return db_workflow 
 
     @strawberry.mutation
-    async def submit_workflow(self, workflow_inputs: str) -> str:
+    async def add_workflow_version(self, workflow_id: int, version: str, type: str, package_uri: str, beta: bool, deprecated: bool, graph_json: str) -> WorkflowVersion:
+        db_workflow_version = db.WorkflowVersion(
+            workflow_id = workflow_id,
+            version = version,
+            type = type,
+            package_uri = package_uri,
+            beta = beta,
+            deprecated = deprecated,
+            graph_json = graph_json
+        )
+        session.add(db_workflow_version)
+        await session.commit()
+        return db_workflow_version
+    
+    @strawberry.mutation
+    async def add_run(self, user_id: int, project_id: int, execution_id: str, inputs_json: str, outputs_json: str, status: str, workflow_version_id: int) -> Run:
+        db_run = db.Run(
+            user_id = user_id,
+            project_id = project_id,
+            execution_id = execution_id,
+            inputs_json = inputs_json,
+            outputs_json = outputs_json,
+            status = status,
+            workflow_version_id = workflow_version_id
+        )
+        session.add(db_run)
+        await session.commit()
+        return db_run
+
+    @strawberry.mutation
+    async def submit_workflow(self, workflow_inputs: str, workflow_runner: str = default_workflow_runner_name) -> str:
         # TODO: create a workflow run
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
         inputs_json = {
@@ -153,6 +204,9 @@ class Mutation:
             "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
             "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
         }
+        assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
+        workflow_runner = workflow_runners[workflow_runner]
+        assert "WDL" in workflow_runner.supported_workflow_types(), f"Workflow runner {workflow_runner} does not support WDL"
         response = workflow_runner.run_workflow(
             on_complete=lambda x: print(x), # TODO: add the listener service here
             workflow_run_id=1, # TODO: When we create the workflow run add the uuid here
@@ -161,6 +215,54 @@ class Mutation:
             )
         
         return response
+
+    @strawberry.mutation
+    async def add_run_step(self, run_id: int, step_name: str, status: str, start_time: str, end_time: str) -> RunStep:
+        db_run_step = db.RunStep(
+            run_id = run_id,
+            step_name = step_name,
+            status = status,
+            start_time = start_time,
+            end_time = end_time
+        )
+        session.add(db_run_step)
+        await session.commit()
+        return db_run_step
+    
+    @strawberry.mutation
+    async def add_workflow_version_input(self, workflow_version_id: int, name: str, type: str, description: str) -> WorkflowVersionInput:
+        db_workflow_version_input = db.WorkflowVersionInput(
+            workflow_version_id = workflow_version_id,
+            name = name,
+            type = type,
+            description = description
+        )
+        session.add(db_workflow_version_input)
+        await session.commit()
+        return db_workflow_version_input
+    
+    @strawberry.mutation
+    async def add_workflow_version_output(self, workflow_version_id: int, name: str, type: str, description: str) -> WorkflowVersionOutput:
+        db_workflow_version_output = db.WorkflowVersionOutput(
+            workflow_version_id = workflow_version_id,
+            name = name,
+            type = type,
+            description = description
+        )
+        session.add(db_workflow_version_output)
+        await session.commit()
+        return db_workflow_version_output
+    
+    @strawberry.mutation
+    async def add_run_entity_input(self, run_id: int, workflow_version_input_id: int, entity_id: int) -> RunEntityInput:
+        db_run_entity_input = db.RunEntityInput(
+            run_id = run_id,
+            workflow_version_input_id = workflow_version_input_id,
+            entity_id = entity_id
+        )
+        session.add(db_run_entity_input)
+        await session.commit()
+        return db_run_entity_input
 
 def get_context():
     global session

@@ -2,9 +2,8 @@ import json
 import subprocess
 import tempfile
 import os
-import threading
 import asyncio
-from typing import Callable, Coroutine, Any
+from typing import Callable, Coroutine, Any, List
 from uuid import uuid4
 import re
 
@@ -14,6 +13,16 @@ local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
 
 
 class LocalWorkflowRunner(WorkflowRunner):
+    def supported_workflow_types(self) -> List[str]:
+        """Returns the supported workflow types, ie ["WDL"]"""
+        return ["WDL"]
+    
+    def description(self) -> str:
+        """Returns a description of the workflow runner"""
+        return "Runs WDL workflows locally using miniWDL"
+
+    def _run_workflow_blocking(self, on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]], workflow_run_id: str, workflow_path: str, inputs: dict, workflow_runner_id: str):
+        with tempfile.TemporaryDirectory() as tmpdir:
     def _run_workflow_blocking(
         self,
         on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],
