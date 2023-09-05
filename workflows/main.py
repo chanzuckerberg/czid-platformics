@@ -1,4 +1,5 @@
-import asyncio
+import os
+import json
 import configparser
 import typing
 import sqlalchemy as sa
@@ -6,10 +7,13 @@ from fastapi import FastAPI
 from database.models.base import Base
 import strawberry
 from strawberry.fastapi import GraphQLRouter
+from sgqlc.endpoint.http import HTTPEndpoint
+from sgqlc.operation import Operation
 
 import database.models as db
 from database.connect import init_async_db, init_sync_db
 from config import load_workflow_runners
+import entity_gql_schema as schema
 
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
@@ -157,6 +161,29 @@ class Query:
 
 @strawberry.type
 class Mutation:
+    @strawberry.mutation
+    async def test_connection(self) -> str:
+        endpoint = HTTPEndpoint(os.getenv("ENTITY_SERVICE_URL"))
+        op = Operation(schema.Query)
+
+        samples = op.samples()
+        samples.id()
+        samples.name()
+        samples.location()
+
+        data = endpoint(op, extra_headers={"Authorization": f"Bearer {os.getenv('ENTITY_SERVICE_AUTH_TOKEN')}"})
+        print(json.dumps(data["data"]["samples"], indent=4))
+
+        # Mutation
+        op = Operation(schema.Mutation)
+        op.create_sample(name="test", location="test", collection_id=444)
+        data = endpoint(op, extra_headers={"Authorization": f"Bearer {os.getenv('ENTITY_SERVICE_AUTH_TOKEN')}"})
+        print(json.dumps(data, indent=4))
+
+
+        return "Hello World"
+        
+
     @strawberry.mutation
     async def add_workflow(self, name: str, default_version: str, minimum_supported_version: str) -> Workflow:
         db_workflow = db.Workflow(
