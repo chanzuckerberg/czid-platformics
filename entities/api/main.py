@@ -11,8 +11,11 @@ from strawberry.fastapi import GraphQLRouter
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from api.core.gql_loaders import EntityLoader, get_base_creator, get_base_loader, get_base_updater, get_file_loader
+from api.core.gql_loaders import (EntityLoader, get_base_creator,
+                                  get_base_loader, get_base_updater,
+                                  get_file_loader)
 from api.core.settings import APISettings
+from api.files import update as file_update_field
 
 ######################
 # Strawberry-GraphQL #
@@ -69,6 +72,7 @@ class Mutation:
 
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
+    update_file: File = file_update_field.get_base_updater(db.File, File)  # type: ignore
 
 
 # --------------------
