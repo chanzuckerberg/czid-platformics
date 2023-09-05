@@ -1,15 +1,15 @@
+import asyncio
 import configparser
 import typing
 import sqlalchemy as sa
 from fastapi import FastAPI
-
+from database.models.base import Base
 import strawberry
 from strawberry.fastapi import GraphQLRouter
 
 import database.models as db
-from database.connect import init_async_db
+from database.connect import init_async_db, init_sync_db
 from config import load_workflow_runners
-from plugin_types import WorkflowRunner as WorkflowRunnerPlugin
 
 from strawberry_sqlalchemy_mapper import (
     StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
@@ -18,6 +18,9 @@ from strawberry_sqlalchemy_mapper import (
 ############
 # Database #
 ############
+app_db = init_sync_db()
+Base.metadata.create_all(app_db.engine)
+
 app_db = init_async_db()
 session = app_db.session()
 
@@ -140,9 +143,9 @@ class Query:
         return result.scalars().one()
     
     @strawberry.field
-    async def get_run_entity_inputs(self) -> typing.List[RunEntityInput]:
+    async def get_run_entity_inputs(self) -> typing.Sequence[RunEntityInput]:
         result = await session.execute(sa.select(db.RunEntityInput))
-        return result.scalars()
+        return result.scalars().all()
 
     @strawberry.field
     async def get_workflow_runners(self) -> typing.List[WorkflowRunner]:
@@ -199,10 +202,13 @@ class Mutation:
     async def submit_workflow(self, workflow_inputs: str, workflow_runner: str = default_workflow_runner_name) -> str:
         # TODO: create a workflow run
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
+        # inputs_json = {
+        #     "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
+        #     "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
+        #     "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
+        # }
         inputs_json = {
-            "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
-            "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
-            "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
+            "sequences": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
         }
         assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
         workflow_runner = workflow_runners[workflow_runner]

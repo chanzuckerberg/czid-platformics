@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 import tempfile
 import os
 import asyncio
@@ -21,8 +22,6 @@ class LocalWorkflowRunner(WorkflowRunner):
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows locally using miniWDL"
 
-    def _run_workflow_blocking(self, on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]], workflow_run_id: str, workflow_path: str, inputs: dict, workflow_runner_id: str):
-        with tempfile.TemporaryDirectory() as tmpdir:
     def _run_workflow_blocking(
         self,
         on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],
@@ -31,7 +30,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         inputs: dict,
         workflow_runner_id: str,
     ):
-        local_runner_folder = os.environ("LOCAL_RUNNER_FOLDER")
+        local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
         with tempfile.TemporaryDirectory(dir=local_runner_folder) as tmpdir:
             try:
                 p = subprocess.run(
@@ -97,7 +96,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                 while True:
                     line = p.stderr.readline().decode()
                     self.detect_task_output(line)
-                    print(line)
+                    print(line, file=sys.stderr)
                     if not line: break
 
 

@@ -1,0 +1,40 @@
+name: minimap2
+version: 0.0.1
+type: WDL
+beta: false
+deprecated: false
+description: Run the minimap2 aligner on a fastq file and a pre-built index
+inputs:
+- name: query_0
+  entity_type: fastq
+  workflow_type: file
+  required: true
+  description: "fastq file to ge the stats of"
+- name: query_1
+  entity_type: fastq
+  workflow_type: file
+  required: false
+  description: "fastq file to ge the stats of"
+- name: extra_args
+  workflow_type: string
+  required: false
+  description: "fastq file to ge the stats of"
+- name: db_chunk
+  entity_type: file
+  workflow_type: file
+  required: true
+  description: "fastq file to ge the stats of"
+- name: docker_image_id
+  workflow_type: string
+  required: true
+  description: "docker image id to use for the whole pipeline"
+outputs:
+- name: chunks
+  version: file
+entities:
+- name: fastq
+  type: file
+  outputs:
+  - name: chunks
+    type: fastq
+    version: 123

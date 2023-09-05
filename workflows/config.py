@@ -11,8 +11,3 @@ def load_workflow_runners() -> Dict[str, WorkflowRunner]:
         workflow_runners_by_name[plugin.name] = workflow_runner
     return workflow_runners_by_name
 
-def load_plugin(group: str, name: str):
-    for plugin in entry_points(group=f"czid.plugin.{group}"):
-        if plugin.name == name:
-            return plugin.load()
-    raise ValueError(f"Plugin {name} not found in group {group}")
