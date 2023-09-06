@@ -13,3 +13,9 @@ services:
       - ".volume:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./bin/init_aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
+
+networks:
+  default:
+    name: czidnet
+    driver: overlay
+    attachable: true

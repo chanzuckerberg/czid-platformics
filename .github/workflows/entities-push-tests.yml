@@ -17,10 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # Build images and run linters
+      - name: Set up deps
+        run: |
+          make gha-setup
       - name: Lint Python
         working-directory: entities
         run: |
-          make gha-setup
           make local-build
           make check-lint
   py-test:
@@ -28,9 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # Set up a local dev env and run tests
+      - name: Set up deps
+        run: |
+          make gha-setup
       - name: Run tests
         working-directory: entities
         run: |
-          make gha-setup
           make local-init
           make local-tests

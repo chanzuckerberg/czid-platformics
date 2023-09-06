@@ -15,6 +15,6 @@ RUN poetry config virtualenvs.create false
 
 ENV PYTHONPATH=.
 
-COPY . .
 RUN poetry install
+COPY . .
 CMD ["/usr/local/bin/supervisord", "-c", "/czid-platformics/entities/etc/supervisord.conf"]
