@@ -27,6 +27,7 @@ faker-biology = "^0.6.0"
 boto3 = "^1.28.12"
 semver = "^3.0.1"
 sgqlc = "^16.3"
+psycopg-binary = "^3.1.10"
 
 
 [build-system]

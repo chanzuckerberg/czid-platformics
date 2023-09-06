@@ -14,6 +14,9 @@ x-db-variables: &db-variables
   ? DB_PASS=password_postgres
   ? DB_NAME=workflows
   
+x-workflow-variables: &workflow-variables
+  ? ENVIRONMENT
+
 services:
   postgres:
     image: postgres:15
@@ -48,11 +51,39 @@ services:
     tty: true # Helps with pdb
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8042
     environment:
-      <<: [*aws-variables, *db-variables]
+      <<: [*aws-variables, *db-variables, *workflow-variables]
       LOCAL_RUNNER_FOLDER: ${PWD}/test_workflows
       ENTITY_SERVICE_URL: http://entities.czidnet:8008/graphql
       ENTITY_SERVICE_AUTH_TOKEN: "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6Ik5Nc3ZKbXVuYnBXY0VsdVlJTmRVeVVIcUkzbjZCR2VQd2V3ajRXS0pVdEt0QXhmUUtrVE81M2kzQ2dSZkZYVEQiLCJ5IjoiYmp6TkJuZjExWjRIV3dBVm95UVpSOGRWSERicW9wTjhvQkJZYnIxQlBiU1llZHdaWkVuYzJqS21rY0xxcloxTiJ9LCJraWQiOiItQmx2bF9wVk5LU2JRQ2N5dGV4UzNfMk5MaHBia2J6LVk5VFFjbkY5S1drIiwidHlwIjoiSldFIn0..Ymjmtj6nXp8r8AFe8AgI1g.e_39w7OXGJaOVKL_QkP38rvlcEeSgFQsxT0rTdCgI5E-b328zlVHagLSFZ_Iqvqiy6Z8KcU4pLJ3NTaW3Ys_YQsnUn6yUEvwqOY2KESB0mT0Bp3qpNYRBZJVA8PW43YAbOnO7h7ZTwQZJfwMzwhcaaYeZW8pN9rvcNtQX3rgBubSuR-LHKL6k4uAMPh9A8ZxXKZgpI6tpJPxE-uspvYi-foW8VyjZtwOUMvMp3lfZPyL1oQIv_rEUhOGNO_lfi339QcT6F7DwBjXK6C_7U65F-dFZScnReLnVczPfHhJ7z3NnVt46sFcddgZpLIpQyzA6puCcDoRm5ZZCVvm8h-LHVy-9dGWLVxBRhGRdBwBhbiVu2O_CNeVabXl8JhAs3oeV2zDgYfOj_-kkHWsbgHZ0y-tc-HtgoXzsUqaRP1IXQ3g3VDES7UjsaKsfxgURH5EIsrdWwFrWHGoLNfGwwPSwTBI5Mul7LT10-Pg_uBBCiHfQIDqerRQeADRFhV_07GYatBDt-RxwNL4bO59V8ewCzhpdCYRpL363HGldT1Pic-SpTk2NsY2t8MA6__FhJU9JSKYwJpeKMaGLUHA_40PEQ.gb5q-WZTU-ZKpV7WYFbMGMEF2CZIBrFlCUeaZ5ffPDU"
-
+  motoserver:
+    profiles: ["moto"]
+    container_name: motoserver_workflows
+    image: motoserver/moto:3.0.4
+    environment:
+      - MOTO_DOCKER_NETWORK_NAME=czidnet
+      - MOTO_DOCKER_NETWORK_MODE=overlay
+    ports:
+      - "9000:5000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      default:
+        aliases:
+          - czidnet
+  stepfunctions_local:
+    profiles: ["moto"]
+    container_name: stepfunctions_local_workflows
+    image: amazon/aws-stepfunctions-local
+    environment:
+      - BATCH_ENDPOINT=http://czidnet:5000
+      - LAMBDA_ENDPOINT=http://czidnet:5000
+      - AWS_ACCOUNT_ID=123456789012
+    ports:
+      - "8083:8083"
+    networks:
+      default:
+        aliases:
+          - sfn.czidnet
 networks:
   default:
     name: czidnet
