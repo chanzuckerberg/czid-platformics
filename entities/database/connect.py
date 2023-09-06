@@ -1,12 +1,7 @@
-from typing import Optional, Union
+from typing import Any, Optional
 
 from sqlalchemy.engine import Engine, create_engine
-from sqlalchemy.ext.asyncio import (
-    AsyncEngine,
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 
@@ -16,7 +11,7 @@ class AsyncDB:
         self._session_maker: Optional[async_sessionmaker[AsyncSession]] = None
 
     @property
-    def engine(self) -> Union[Engine, AsyncEngine]:
+    def engine(self) -> AsyncEngine:
         return self._engine
 
     @property
@@ -44,11 +39,11 @@ class SyncDB:
         return self._session_maker
 
 
-def init_async_db(db_uri: str, **kwargs) -> AsyncDB:
+def init_async_db(db_uri: str, **kwargs: dict[str, Any]) -> AsyncDB:
     engine = create_async_engine(db_uri, echo=False, pool_size=5, max_overflow=5, future=True, **kwargs)
     return AsyncDB(engine)
 
 
-def init_sync_db(db_uri: str, **kwargs) -> SyncDB:
+def init_sync_db(db_uri: str, **kwargs: dict[str, Any]) -> SyncDB:
     engine = create_engine(db_uri, **kwargs)
     return SyncDB(engine)

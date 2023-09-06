@@ -22,12 +22,14 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 	find . -name '__pycache__' | xargs rm -rf
 
 ### DOCKER LOCAL DEV #########################################
-.PHONY: local-init
-local-init:
-	$(docker_compose) up -d
-	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
+.PHONY: local-setup
+local-setup: ## Load db tables and seed data
+	while [ -z "$$($(docker_compose) exec -T entities-db psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
 	$(docker_compose) run entities alembic upgrade head
 	$(MAKE) local-seed
+
+.PHONY: local-init
+local-init: local-start local-setup ## Setup a working local-dev environment
 
 .PHONY: debugger
 debugger: ## Attach to the gql service (useful for pdb)
@@ -83,6 +85,7 @@ local-update-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
 .PHONY: local-tests
 local-tests: ## Run entities tests
 	$(docker_compose) run entities bash -c "poetry run pytest -s"
+	$(MAKE) cerbos-tests
 
 .PHONY: local-gqlschema
 local-gqlschema: ## Export this app's GQL schema.
@@ -106,16 +109,17 @@ fix-lint: ## Apply linting rules to the code in this directory.
 check-lint: ## Check for bad linting
 	$(docker_compose) run entities black --check .
 	$(docker_compose) run entities ruff check .
-	$(docker_compose) run -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
+	$(docker_compose) run entities mypy .
 
 .PHONY: local-mypy
 local-mypy: ## Run type checking
-	$(docker_compose) exec -w /czid-platformics/ entities mypy -p entities --ignore-missing-imports --exclude thirdparty --check-untyped-defs
+	$(docker_compose) exec entities mypy .
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
+	cp cli/gql_schema.py ../workflows/entity_gql_schema.py
 
 ### GitHub Actions ###################################################
 .PHONY: gha-setup

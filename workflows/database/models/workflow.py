@@ -49,7 +49,7 @@ class Run(Base):
     project_id = Column(Integer, nullable=False)
     started_at = Column(DateTime, nullable=False, server_default=func.now())
     ended_at = Column(DateTime)
-    execution_id = Column(String, nullable=False)
+    runner_assigned_id = Column(String, nullable=False)
     # TODO: add this back in when we add JSONB to strawberry-sqlalchemy-mapper
     # inputs_json = Column(JSONB, nullable=False)
     inputs_json = Column(String, nullable=False)

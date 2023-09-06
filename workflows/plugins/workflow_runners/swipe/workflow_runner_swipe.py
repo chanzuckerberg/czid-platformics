@@ -1,5 +1,5 @@
 import json
-from typing import Callable, Coroutine, Any
+from typing import Callable, Coroutine, Any, List
 from uuid import uuid4
 import boto3
 import os
@@ -28,7 +28,14 @@ class SwipeWorkflowRunner(WorkflowRunner):
     def __init__(self, output_path=None):
         # TODO: remove this
         self.output_path = output_path or "s3://idseq-samples-development/rlim-test/test-nxtg/"
+        
+    def supported_workflow_types(self) -> List[str]:
+        """Returns the supported workflow types"""
+        return ["WDL"]
 
+    def description(self) -> str:
+        """Returns a description of the workflow runner"""
+        return "Runs WDL workflows on SWIPE infrastructure, using AWS Step Functions and Batch"
 
     def get_account_id(self):
         """Returns the account id"""

@@ -12,7 +12,7 @@ class AsyncDB():
         self._session_maker: Optional[async_sessionmaker[AsyncSession]] = None
     
     @property
-    def engine(self) -> Union[Engine, AsyncEngine]:
+    def engine(self) -> AsyncEngine:
         return self._engine
 
     @property

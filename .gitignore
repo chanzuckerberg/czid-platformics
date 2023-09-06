@@ -302,3 +302,6 @@ static
 
 # VS Code
 .vscode
+
+# LocalStack
+.volume

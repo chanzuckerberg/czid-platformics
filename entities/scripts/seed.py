@@ -4,8 +4,8 @@ import factory.random
 from api.core.settings import CLISettings
 
 
-def use_factoryboy():
-    settings = CLISettings()
+def use_factoryboy() -> None:
+    settings = CLISettings.parse_obj({})
     app_db = init_sync_db(settings.SYNC_DB_URI)
     session = app_db.session()
     fa.SessionStorage.set_session(session)
@@ -25,6 +25,8 @@ def use_factoryboy():
     fa.SequencingReadFactory.create_batch(
         2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id
     )
+
+    fa.FileFactory.update_file_ids()
 
     session.commit()
 

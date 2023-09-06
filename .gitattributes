@@ -1,0 +1,4 @@
+entities/api/schema.json	linguist-generated=true
+entities/api/schema.graphql	linguist-generated=true
+entities/cli/gql_schema.py	linguist-generated=true
+workflows/entity_gql_schema.py	linguist-generated=true

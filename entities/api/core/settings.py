@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     @cached_property
     def JWK_PRIVATE_KEY(self) -> jwk.JWK:
         key = None
+        if not self.JWK_PRIVATE_KEY_FILE:
+            raise Exception("JWK_PRIVATE_KEY_FILE not set")
         with open(self.JWK_PRIVATE_KEY_FILE) as fh:
             key = fh.read().strip()
         private_key = jwk.JWK.from_pem(key.encode("utf-8"))
@@ -45,6 +47,8 @@ class Settings(BaseSettings):
     @cached_property
     def JWK_PUBLIC_KEY(self) -> jwk.JWK:
         key = None
+        if not self.JWK_PUBLIC_KEY_FILE:
+            raise Exception("JWK_PUBLIC_KEY_FILE not set")
         with open(self.JWK_PUBLIC_KEY_FILE) as fh:
             key = fh.read().strip()
         public_key = jwk.JWK.from_pem(key.encode("utf-8"))
