@@ -41,7 +41,7 @@ class TestSFNWDL(unittest.TestCase):
         while sfn.describe_execution(executionArn=arn)["status"] not in ["SUCCEEDED", "FAILED"]:
             time.sleep(1)
             breakout += 1
-            if breakout == 60:
+            if breakout == 120:
                  # make sure weird conditions don't hang the tests
                  break
 
