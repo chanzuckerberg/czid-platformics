@@ -24,9 +24,6 @@ from api.files import update as file_update_field
 strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
-strawberry.enum(db.FileStatus)
-
-
 @strawberry_sqlalchemy_mapper.interface(db.Entity)
 class EntityInterface:
     pass
@@ -72,7 +69,7 @@ class Mutation:
 
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
-    update_file: File = file_update_field.get_base_updater(db.File, File)  # type: ignore
+    update_file: File = file_update_field.file_update
 
 
 # --------------------

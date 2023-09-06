@@ -36,6 +36,8 @@ uuid6 = "^2023.5.2"
 mypy = "^1.5.1"
 types-requests = "^2.31.0.2"
 alembic-postgresql-enum = "^0.1.5"
+greenlet = "3.0.0rc1"
+typing-extensions = "^4.7.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -94,7 +96,7 @@ line-length = 120
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.11.
+# Assume Python 3.12.
 target-version = "py311"
 
 [tool.ruff.mccabe]
