@@ -6,31 +6,23 @@ import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from database.connect import AsyncDB
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
-from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
+from strawberry.schema.config import StrawberryConfig
 
-from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from api.core.gql_loaders import (EntityLoader, get_base_creator,
-                                  get_base_loader, get_base_updater,
-                                  get_file_loader)
+from api.core.deps import strawberry_sqlalchemy_mapper, get_auth_principal, get_cerbos_client, get_engine
+from api.core.gql_loaders import EntityLoader, get_base_creator, get_base_loader, get_base_updater, get_file_loader
 from api.core.settings import APISettings
-from api.files import update as file_update_field
+from api.files.update import File, FileUpdated, file_update
 
 ######################
 # Strawberry-GraphQL #
 ######################
 
-strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
-
 
 @strawberry_sqlalchemy_mapper.interface(db.Entity)
 class EntityInterface:
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.File)
-class File:
     pass
 
 
@@ -69,7 +61,7 @@ class Mutation:
 
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
-    update_file: File = file_update_field.file_update
+    update_file: FileUpdated = file_update
 
 
 # --------------------
@@ -95,10 +87,21 @@ strawberry_sqlalchemy_mapper.finalize()
 additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # strawberry graphql schema
 # start server with strawberry server app
+
+
+# Arg/Field names that start with _ are not camel-cased
+class CustomNameConverter(NameConverter):
+    def get_graphql_name(self, obj: HasGraphQLName) -> str:
+        if obj.python_name.startswith("_"):
+            return obj.python_name
+        return super().get_graphql_name(obj)
+
+
 schema = strawberry.Schema(
     query=Query,
     mutation=Mutation,
     types=additional_types,
+    config=StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter()),
 )
 
 

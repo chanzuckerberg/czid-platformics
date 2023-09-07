@@ -8,6 +8,10 @@ from cerbos.sdk.model import Principal
 from starlette.requests import Request
 from api.core.settings import APISettings
 from security.token_auth import get_token_claims
+from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
+
+# TODO this initialize-on-import is gross but we can refactor it later :'(
+strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 def get_settings(request: Request) -> APISettings:

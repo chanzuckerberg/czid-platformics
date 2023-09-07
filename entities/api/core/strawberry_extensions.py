@@ -55,3 +55,30 @@ class DependencyExtension(FieldExtension):
         kwargs = solved_values | kwargs  # solved_values has None values that need to be overridden by kwargs
         res = await next_(source, info, **kwargs)
         return res
+
+
+# Makes sure any fields that start with _ are NOT camel-case'd!!
+class CaseFixingExtension(FieldExtension):
+    def __init__(self) -> None:
+        self.dependency_args: list[typing.Any] = []
+        self.strawberry_field_names = ["self"]
+
+    def apply(self, field: StrawberryField) -> None:
+        self.dependant: Dependant = deputils.get_dependant(
+            path="/", call=field.base_resolver.wrapped_func  # type: ignore
+        )
+        if field.python_name.startswith("_"):
+            field.graphql_name = field.python_name
+        for arg in field.arguments:
+            if arg.python_name.startswith("_"):
+                arg.graphql_name = arg.python_name
+
+    async def resolve_async(
+        self,
+        next_: typing.Callable[..., typing.Any],
+        source: typing.Any,
+        info: Info,
+        **kwargs: dict[str, typing.Any],
+    ) -> typing.Any:
+        res = await next_(source, info, **kwargs)
+        return res

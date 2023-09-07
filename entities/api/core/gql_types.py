@@ -1,4 +1,4 @@
-import typing
+from typing import Optional, Generic
 import uuid
 from typing import TypeVar
 from typing_extensions import TypedDict
@@ -6,69 +6,74 @@ import strawberry
 
 T = TypeVar("T")
 
-@strawberry.input
-class EnumComparators(TypedDict, typing.Generic[T]):
-    _eq: T
-    _neq: T
-    _in_: list[T]
-    _nin: list[T]
-    _gt: T
-    _gte: T
-    _lt: T
-    _lte: T
-    _is_null: T
+
+@strawberry.input()
+class EnumComparators(TypedDict, Generic[T]):
+    _eq: Optional[T]
+    _neq: Optional[T]
+    _in: Optional[list[T]]
+    _nin: Optional[list[T]]
+    _gt: Optional[T]
+    _gte: Optional[T]
+    _lt: Optional[T]
+    _lte: Optional[T]
+    _is_null: Optional[T]
+
 
 @strawberry.input
 class BoolComparators(TypedDict):
-    _eq: int
-    _neq: int
-    _in_: list[int]
-    _nin: list[int]
-    _gt: int
-    _gte: int
-    _lt: int
-    _lte: int
-    _is_null: int
+    _eq: Optional[int]
+    _neq: Optional[int]
+    _in: Optional[list[int]]
+    _nin: Optional[list[int]]
+    _gt: Optional[int]
+    _gte: Optional[int]
+    _lt: Optional[int]
+    _lte: Optional[int]
+    _is_null: Optional[int]
+
 
 @strawberry.input
 class IntComparators(TypedDict):
-    _eq: int
-    _neq: int
-    _in_: list[int]
-    _nin: list[int]
-    _gt: int
-    _gte: int
-    _lt: int
-    _lte: int
-    _is_null: int
+    _eq: Optional[int]
+    _neq: Optional[int]
+    _in: Optional[list[int]]
+    _nin: Optional[list[int]]
+    _gt: Optional[int]
+    _gte: Optional[int]
+    _lt: Optional[int]
+    _lte: Optional[int]
+    _is_null: Optional[int]
+
 
 @strawberry.input
 class UUIDComparators(TypedDict):
-    _eq: uuid.UUID
-    _neq: uuid.UUID
-    _in_: list[uuid.UUID]
-    _nin: list[uuid.UUID]
-    _gt: uuid.UUID
-    _gte: uuid.UUID
-    _lt: uuid.UUID
-    _lte: uuid.UUID
+    _eq: Optional[uuid.UUID]
+    _neq: Optional[uuid.UUID]
+    _in: Optional[list[uuid.UUID]]
+    _nin: Optional[list[uuid.UUID]]
+    _gt: Optional[uuid.UUID]
+    _gte: Optional[uuid.UUID]
+    _lt: Optional[uuid.UUID]
+    _lte: Optional[uuid.UUID]
+
 
 @strawberry.input
 class StrComparators(TypedDict):
-    _eq: str
-    _neq: str
-    _in_: list[str]
-    _nin: list[str]
-    _is_null: int
-    _gt: str
-    _gte: str
-    _lt: str
-    _lte: str
-    _like: str
-    _nlike: str
-    _ilike: str
-    _nilike: str
-    _regex: str
-    _nregex: str
-    _iregex: str
-    _niregex: str
+    _eq: Optional[str]
+    _neq: Optional[str]
+    _in: Optional[list[str]]
+    _nin: Optional[list[str]]
+    _is_null: Optional[int]
+    _gt: Optional[str]
+    _gte: Optional[str]
+    _lt: Optional[str]
+    _lte: Optional[str]
+    _like: Optional[str]
+    _nlike: Optional[str]
+    _ilike: Optional[str]
+    _nilike: Optional[str]
+    _regex: Optional[str]
+    _nregex: Optional[str]
+    _iregex: Optional[str]
+    _niregex: Optional[str]
