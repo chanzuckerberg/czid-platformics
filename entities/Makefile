@@ -76,7 +76,7 @@ local-shell: ## Open a command shell in one of the dev containers. ex: make loca
 
 .PHONY: local-pgconsole
 local-pgconsole: ## Connect to the local postgres database.
-	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
+	$(docker_compose) exec entities-db psql "$(LOCAL_DB_CONN_STRING)"
 
 .PHONY: local-update-deps
 local-update-deps: ## Update poetry.lock to reflect pyproject.toml file changes.

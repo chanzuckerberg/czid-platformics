@@ -9,7 +9,13 @@ from cerbos.sdk.client import CerbosClient
 from database.models import FileStatus
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from api.core.gql_types import UUIDComparators, StrComparators, IntComparators, EnumComparators
+from api.core.gql_to_sql import (
+    UUIDComparators,
+    StrComparators,
+    IntComparators,
+    EnumComparators,
+    convert_where_clauses_to_sql,
+)
 from thirdparty.cerbos_sqlalchemy.query import get_query
 from cerbos.sdk.model import Principal, ResourceDesc
 
@@ -52,40 +58,8 @@ class FileUpdated:
     returning: list[File]
 
 
-operator_map = {
-    "_eq": "__eq__",
-    "_neq": "__ne__",
-    "_in_": "in_",
-    "_nin": "not_in",
-    "_is_null": "SPECIAL",
-    "_gt": "__gt__",
-    "_gte": "__ge__",
-    "_lt": "__lt__",
-    "_lte": "__le__",
-    "_like": "like",
-    "_nlike": "notlike",
-    "_ilike": "ilike",
-    "_nilike": "notilike",
-    "_regex": "regexp_match",
-    # "_nregex": Optional[str] # TODO
-    # "_iregex": Optional[str]# TODO
-    # "_niregex": Optional[str]# TODO
-}
-
-
-def convert_where_clauses_to_sql(query, sa_model, whereClause):
-    for k, v in whereClause.items():
-        for comparator, value in v.items():
-            sa_comparator = operator_map[comparator]
-            if sa_comparator == "SPECIAL":
-                query = query.filter(getattr(sa_model, k).is_(None))
-            else:
-                query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
-    return query
-
-
 @strawberry.field(extensions=[DependencyExtension()])
-async def file_update(
+async def update_one_file(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -104,8 +78,53 @@ async def file_update(
         },
         [(db.Entity, model_cls.entity_id == db.Entity.id)],  # type: ignore
     )
+    # TODO - we should switch to doing this directly with update/where queries
+    # for better perf. For now this is a little easier to debug and we're not
+    # expecting huge bulk updates <yet>.
     query = convert_where_clauses_to_sql(query, model_cls, where)
     rows = await session.execute(query)
-    print(query)
-    res = FileUpdated(returning=rows.scalars().all())
+    res = []
+    items = rows.scalars().one()
+    for row in items:
+        res.append(row)
+        for k, v in _set.items():
+            setattr(row, k, v)
+    await session.commit()
+    res = FileUpdated(returning=res)
+    return res
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def update_many_files(
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: FileWhereClause = {},
+    _set: FileSetParams = {},
+) -> FileUpdated:
+    model_cls = db.File
+    rd = ResourceDesc(model_cls.__tablename__)
+    plan = cerbos_client.plan_resources(CERBOS_ACTION_UPDATE, principal, rd)
+    query = get_query(
+        plan,
+        model_cls,  # type: ignore
+        {
+            "request.resource.attr.owner_user_id": db.Entity.owner_user_id,
+            "request.resource.attr.collection_id": db.Entity.collection_id,
+        },
+        [(db.Entity, model_cls.entity_id == db.Entity.id)],  # type: ignore
+    )
+    # TODO - we should switch to doing this directly with update/where queries
+    # for better perf. For now this is a little easier to debug and we're not
+    # expecting huge bulk updates <yet>.
+    query = convert_where_clauses_to_sql(query, model_cls, where)
+    rows = await session.execute(query)
+    res = []
+    items = rows.scalars().all()
+    for row in items:
+        res.append(row)
+        for k, v in _set.items():
+            setattr(row, k, v)
+    await session.commit()
+    res = FileUpdated(returning=res)
     return res

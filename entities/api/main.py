@@ -14,7 +14,7 @@ from strawberry.schema.config import StrawberryConfig
 from api.core.deps import strawberry_sqlalchemy_mapper, get_auth_principal, get_cerbos_client, get_engine
 from api.core.gql_loaders import EntityLoader, get_base_creator, get_base_loader, get_base_updater, get_file_loader
 from api.core.settings import APISettings
-from api.files.update import File, FileUpdated, file_update
+from api.files.update import File, FileUpdated, update_one_file, update_many_files
 
 ######################
 # Strawberry-GraphQL #
@@ -60,8 +60,9 @@ class Mutation:
     create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)  # type: ignore
 
     # Update
-    update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
-    update_file: FileUpdated = file_update
+    update_one_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
+    update_one_file: FileUpdated = update_one_file  # type: ignore
+    update_many_files: FileUpdated = update_many_files  # type: ignore
 
 
 # --------------------
