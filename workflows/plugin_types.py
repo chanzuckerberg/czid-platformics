@@ -10,15 +10,19 @@ class WorkflowStartedMessage(TypedDict):
     runner_id: str
     status: Literal["WORKFLOW_STARTED"]
 
+
 class WorkflowSucceededMessage(TypedDict):
     runner_id: str
     status: Literal["WORKFLOW_SUCCESS"]
+
 
 class WorkflowFailedMessage(TypedDict):
     runner_id: str
     status: Literal["WORKFLOW_FAILURE"]
 
+
 WorkflowStatusMessage = WorkflowStartedMessage | WorkflowSucceededMessage | WorkflowFailedMessage
+
 
 class WorkflowRunner(ABC):
     @abstractmethod
@@ -32,8 +36,15 @@ class WorkflowRunner(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def run_workflow(self, on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]], workflow_run_id: str, workflow_path: str, inputs: dict) -> str:
+    async def run_workflow(
+        self,
+        on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],
+        workflow_run_id: str,
+        workflow_path: str,
+        inputs: dict,
+    ) -> str:
         raise NotImplementedError()
+
 
 class EventListener:
     @abstractmethod
@@ -43,6 +54,7 @@ class EventListener:
     @abstractmethod
     async def poll() -> List[WorkflowStatusMessage]:
         pass
+
 
 class LoaderInput(NamedTuple):
     output_or_type: Literal["output", "type"]
@@ -62,11 +74,10 @@ class Loader(ABC):
     def constraints(self) -> List[LoaderInputConstraint]:
         raise NotImplementedError()
 
-    
     def satisfies(self, inputs: List[LoaderInput]) -> bool:
         if len(inputs) != len(self.constraints()):
             return False
-        
+
         for input, constraint in zip(inputs, self.constraints()):
             if input.output_or_type != constraint.output_or_type:
                 return False
@@ -78,7 +89,6 @@ class Loader(ABC):
                 return False
 
         return True
-    
 
     @abstractmethod
     async def load(self, *args) -> List[List[Entity]]:

@@ -17,7 +17,7 @@ class LocalWorkflowRunner(WorkflowRunner):
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
         return ["WDL"]
-    
+
     def description(self) -> str:
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows locally using miniWDL"
@@ -66,6 +66,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                         }
                     )
                 )
+
     def detect_task_output(self, line):
         if "INFO output :: job:" in line:
             task = re.search(r"job: (.*),", line).group(1)
@@ -74,7 +75,6 @@ class LocalWorkflowRunner(WorkflowRunner):
             print(f"task complete: {task}")
             for key, output in outputs.items():
                 print(f"{key}: {output}")
-
 
     def run_workflow(
         self,
@@ -85,7 +85,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         listener: EventListener,
     ) -> str:
         runner_id = str(uuid4())
-        # Running docker-in-docker requires the paths to files and outputs to be the same between 
+        # Running docker-in-docker requires the paths to files and outputs to be the same between
         with tempfile.TemporaryDirectory(dir=local_runner_folder) as tmpdir:
             try:
                 p = subprocess.Popen(
@@ -93,14 +93,14 @@ class LocalWorkflowRunner(WorkflowRunner):
                     + [f"{k}={v}" for k, v in inputs.items()],
                     cwd=tmpdir,
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
+                    stderr=subprocess.PIPE,
                 )
                 while True:
                     line = p.stderr.readline().decode()
                     self.detect_task_output(line)
                     print(line, file=sys.stderr)
-                    if not line: break
-
+                    if not line:
+                        break
 
             except subprocess.CalledProcessError as e:
                 print(e.output)

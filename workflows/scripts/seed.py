@@ -2,6 +2,7 @@ from database.connect import init_sync_db
 from factoryboy import workflow_factory as wf
 import factory.random
 
+
 def use_factoryboy():
     app_db = init_sync_db()
     session = app_db.session()

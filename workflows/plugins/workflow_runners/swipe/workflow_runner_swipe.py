@@ -10,7 +10,7 @@ from plugin_types import WorkflowRunner, WorkflowStatusMessage
 # TODO: maybe split out these decisions into another module, or a YAML file??
 if os.environ.get("ENVIRONMENT", None) == "test":
     sfn = boto3.client("stepfunctions", endpoint_url="http://sfn.czidnet:8083")
-    sts = boto3.client("sts", endpoint_url= "http://czidnet:5000")
+    sts = boto3.client("sts", endpoint_url="http://czidnet:5000")
     REGION = "us-east-1"
     SFN_NAME = "swipe-test-default-wdl"
 else:
@@ -28,7 +28,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
     def __init__(self, output_path=None):
         # TODO: remove this
         self.output_path = output_path or "s3://idseq-samples-development/rlim-test/test-nxtg/"
-        
+
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types"""
         return ["WDL"]
@@ -47,9 +47,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
 
     def execution_id(self):
         """Returns the state machine name to run. Modify SFN_NAME to change"""
-        return (
-            f"arn:aws:states:{REGION}:{self.get_account_id()}:stateMachine:{SFN_NAME}"
-        )
+        return f"arn:aws:states:{REGION}:{self.get_account_id()}:stateMachine:{SFN_NAME}"
 
     def start_execution(self, inputs_json: dict):
         """Kicks off Step Function"""
@@ -83,9 +81,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
 
         """
         runner_id = str(uuid4())
-        inputs_json = self.format_inputs_json(
-            workflow_path=workflow_path, inputs=inputs
-        )
+        inputs_json = self.format_inputs_json(workflow_path=workflow_path, inputs=inputs)
         exc_response = self.start_execution(inputs_json=inputs_json)
         return json.dumps(
             {

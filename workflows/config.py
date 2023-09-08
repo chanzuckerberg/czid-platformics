@@ -10,4 +10,3 @@ def load_workflow_runners() -> Dict[str, WorkflowRunner]:
         assert isinstance(workflow_runner, WorkflowRunner)
         workflow_runners_by_name[plugin.name] = workflow_runner
     return workflow_runners_by_name
-
