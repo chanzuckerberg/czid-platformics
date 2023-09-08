@@ -6,6 +6,7 @@ gha-setup:
 .PHONY: init
 init: gha-setup
 	docker compose -f workflows/docker-compose.yml up -d
+	./bin/init_aws.sh
 	$(MAKE) -C entities local-init
 
 .PHONY: clean

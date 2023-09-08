@@ -42,6 +42,8 @@ services:
       - DB_USER=postgres
       - DB_PASS=password_postgres
       - DB_NAME=entities
+      - MOTO_SERVICE_URL=http://localhost:3000
+      - MOTO_SERVICE_REGION=us-west-1
       # TODO - these are keypairs for testing only! Do not use in prod!!
       - JWK_PUBLIC_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/public_key.pem
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem

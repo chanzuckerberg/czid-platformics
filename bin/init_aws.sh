@@ -4,5 +4,10 @@
 # Initialize mock AWS services
 # ------------------------------------------------------------------------------
 
-# Create dev bucket (vars defined in docker-compose file)
-awslocal s3 mb "$S3_BUCKET_DEV"
+# Can't use `alias` unless in Bash's interactive mode, so using a function instead
+function awslocal() {
+    aws --endpoint-url=http://localhost:4000 "$@"
+}
+
+# Create dev bucket
+awslocal s3 mb "s3://local-bucket"
