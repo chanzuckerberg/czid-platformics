@@ -1,10 +1,22 @@
 from typing import Optional, Generic
 import uuid
-from typing import TypeVar
+from typing import TypeVar, Any
 from typing_extensions import TypedDict
 import strawberry
+from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper, SSAPlugin
+from strawberry import input
+from strawberry.arguments import StrawberryArgument
+from strawberry.field import StrawberryField
+import types
+from sqlalchemy.orm import (
+    Mapper,
+    RelationshipProperty,
+)
+from strawberry.annotation import StrawberryAnnotation
+
 
 T = TypeVar("T")
+
 
 operator_map = {
     "_eq": "__eq__",
@@ -108,3 +120,61 @@ class StrComparators(TypedDict):
     _nregex: Optional[str]
     _iregex: Optional[str]
     _niregex: Optional[str]
+
+
+class WhereClauseBuilder(SSAPlugin):
+    def __init__(self):
+        self._cached_where_args: dict[str, Any] = {}
+        self._todo_where_args: list[Any] = []
+
+    def build_where_argument(
+        self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper, sa_mapper: Mapper, mapped_type: Any
+    ):
+        try:
+            return self._cached_where_args[mapped_type.__name__]
+        except KeyError:
+            pass
+        where_type = types.new_class(f"{mapped_type.__name__}WhereFilter", (TypedDict,), {})
+        for item in sa_mapper.columns:
+            # Generate new where clause thingie
+            key = item.key
+            setattr(where_type, key, None)
+            where_type.__annotations__[key] = Optional[StrComparators]
+        self._cached_where_args[mapped_type.__name__] = input(where_type)
+        return self._cached_where_args[mapped_type.__name__]
+
+    def on_type_definition(
+        self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper, sa_mapper: Mapper, mapped_type: T
+    ) -> T:
+        self.build_where_argument(strawberry_sqlalchemy_mapper, sa_mapper, mapped_type)
+        return mapped_type
+
+    def mutate_connection_type(
+        self,
+        strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper,
+        strawberry_type,
+        field: StrawberryField,
+        relationship: RelationshipProperty,
+    ) -> None:
+        relationship_model = relationship.entity.entity
+        type_name = strawberry_sqlalchemy_mapper.model_to_type_or_interface_name(relationship_model)
+        try:
+            whereclause = self._cached_where_args[type_name]
+            field.arguments.append(
+                StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), None)
+            )
+        except KeyError:
+            self._todo_where_args.append((type_name, field))
+
+    def finalize(self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper):
+        for type_name, field in self._todo_where_args:
+            whereclause = self._cached_where_args[type_name]
+            field.arguments.append(
+                StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), None)
+            )
+
+
+# TODO this initialize-on-import is gross but we can refactor it later :'(
+strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper(
+    global_plugins=[WhereClauseBuilder()]
+)

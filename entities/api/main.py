@@ -11,7 +11,8 @@ from fastapi import Depends, FastAPI
 from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.config import StrawberryConfig
 
-from api.core.deps import strawberry_sqlalchemy_mapper, get_auth_principal, get_cerbos_client, get_engine
+from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from api.core.gql_loaders import EntityLoader, get_base_creator, get_base_loader, get_base_updater, get_file_loader
 from api.core.settings import APISettings
 from api.files.update import File, FileUpdated, update_one_file, update_many_files

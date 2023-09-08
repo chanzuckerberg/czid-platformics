@@ -156,7 +156,6 @@ def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]
         if id:
             filters.append(sql_model.id == id)
         return await get_entities(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-
     return typing.cast(typing.Sequence[T], resolve_entity)
 
 
@@ -172,7 +171,6 @@ def get_file_loader(sql_model: type[db.File], gql_type: type[T]) -> typing.Seque
         if id:
             filters.append(sql_model.id == id)
         return await get_files(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-
     return typing.cast(typing.Sequence[T], resolve_file)
 
 

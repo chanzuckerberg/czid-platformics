@@ -3,7 +3,8 @@ from typing_extensions import TypedDict
 
 import database.models as db
 import strawberry
-from api.core.deps import strawberry_sqlalchemy_mapper, get_cerbos_client, get_db_session, require_auth_principal
+from api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from database.models import FileStatus

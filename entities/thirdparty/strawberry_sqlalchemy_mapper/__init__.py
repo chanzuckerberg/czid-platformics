@@ -17,6 +17,6 @@ finally:
 
 
 from .loader import StrawberrySQLAlchemyLoader
-from .mapper import StrawberrySQLAlchemyMapper
+from .mapper import StrawberrySQLAlchemyMapper, SSAPlugin
 
-__all__ = ["__version__", "StrawberrySQLAlchemyLoader", "StrawberrySQLAlchemyMapper"]
+__all__ = ["__version__", "StrawberrySQLAlchemyLoader", "StrawberrySQLAlchemyMapper", "SSAPlugin"]
