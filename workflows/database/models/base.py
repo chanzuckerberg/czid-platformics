@@ -11,5 +11,6 @@ meta = MetaData(
     },
 )
 
+
 class Base(DeclarativeBase):
     metadata = meta

@@ -22,16 +22,19 @@ def load_output_loaders() -> List[Loader]:
 
 
 loaders = load_output_loaders()
-listener: EventListener 
+listener: EventListener
+
 
 class WorkflowOutput:
     name: str
     output_type_version: Version
 
+
 class EntityOutput:
     workflow_outputs: List[str]
     entity_type: str
     loader_inputs: List[LoaderInput]
+
 
 class LoaderDriver:
     session: AsyncSession
@@ -58,15 +61,12 @@ class LoaderDriver:
         for entities in entities_lists:
             await create_entities(entities)
 
-
     async def main(self):
         while True:
             for event in await listener.poll():
                 if isinstance(event, WorkflowSucceededMessage):
                     _event: WorkflowSucceededMessage = event
-                    run = (await self.session.execute(
-                        select(Run).where(Run.runner_assigned_id == _event.runner_id)
-                    )).scalar_one()
+                    run = (
+                        await self.session.execute(select(Run).where(Run.runner_assigned_id == _event.runner_id))
+                    ).scalar_one()
                     await self.process_workflow_completed(run.workflow_version)
-
-

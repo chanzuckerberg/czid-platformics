@@ -5,16 +5,16 @@ from factoryboy import workflow_factory as wf
 import pytest
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
-import os 
+import os
 
 
-test_db = factories.postgresql_noproc(
-    host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS")
-)
+test_db = factories.postgresql_noproc(host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS"))
+
 
 def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
     db_uri = f"{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
     return db_uri
+
 
 @pytest.fixture()
 def sync_db(test_db):
@@ -24,9 +24,7 @@ def sync_db(test_db):
     pg_password = test_db.password
     pg_db = test_db.dbname
 
-    with DatabaseJanitor(
-        pg_user, pg_host, pg_port, pg_db, test_db.version, pg_password
-    ):
+    with DatabaseJanitor(pg_user, pg_host, pg_port, pg_db, test_db.version, pg_password):
         db = init_sync_db(
             get_db_uri(
                 "postgresql+psycopg",
@@ -40,21 +38,19 @@ def sync_db(test_db):
         Base.metadata.create_all(db.engine)
         yield db
 
+
 def test_workflow_creation(sync_db):
     with sync_db.session() as session:
         wf.SessionStorage.set_session(session)
         wf.WorkflowFactory.create_batch(2, name="test-workflow-name")
         wf.WorkflowFactory.create_batch(2, name="test-workflow-name2")
-        assert(
-            session.query(db.Workflow).filter_by(name="test-workflow-name").count() == 2
-        )
-    
+        assert session.query(db.Workflow).filter_by(name="test-workflow-name").count() == 2
+
+
 def test_run_creation(sync_db):
     with sync_db.session() as session:
         wf.SessionStorage.set_session(session)
-        wf.RunFactory.create_batch(2, status = db.RunStatus["FAILED"])
-        wf.RunFactory.create_batch(3, status = db.RunStatus["SUCCEEDED"])
+        wf.RunFactory.create_batch(2, status=db.RunStatus["FAILED"])
+        wf.RunFactory.create_batch(3, status=db.RunStatus["SUCCEEDED"])
 
-        assert(
-            session.query(db.Run).filter_by(status=db.RunStatus["SUCCEEDED"]).count() == 3
-        )
+        assert session.query(db.Run).filter_by(status=db.RunStatus["SUCCEEDED"]).count() == 3

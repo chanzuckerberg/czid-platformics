@@ -4,6 +4,7 @@ from typing import List
 class Entity:
     pass
 
+
 class String(Entity):
     value: str
 
@@ -16,6 +17,7 @@ class Sequence(Entity):
 
     def __init__(self, value: str):
         self.value = value
+
 
 async def create_entities(entities: List[Entity]):
     for entity in entities:
