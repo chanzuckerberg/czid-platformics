@@ -1,29 +1,26 @@
-import os
-import json
 import configparser
+import json
+import os
 import typing
+
 import sqlalchemy as sa
-from fastapi import FastAPI
-from database.models.base import Base
 import strawberry
-from strawberry.fastapi import GraphQLRouter
+from fastapi import FastAPI
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
+from strawberry.fastapi import GraphQLRouter
+from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
+                                          StrawberrySQLAlchemyMapper)
 
 import database.models as db
-from database.connect import init_async_db, init_sync_db
-from config import load_workflow_runners
 import entity_gql_schema as entity_schema
-
-from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader
-
+from config import load_workflow_runners
+from database.connect import init_async_db, init_sync_db
+from database.models.base import Base
 
 ############
 # Database #
 ############
-app_db = init_sync_db()
-Base.metadata.create_all(app_db.engine)
-
 app_db = init_async_db()
 session = app_db.session()
 
