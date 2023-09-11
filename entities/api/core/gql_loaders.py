@@ -93,7 +93,7 @@ class EntityLoader:
         self.cerbos_client = cerbos_client
         self.principal = principal
 
-    def loader_for(self, relationship: RelationshipProperty) -> DataLoader:
+    def loader_for(self, relationship: RelationshipProperty, where) -> DataLoader:
         """
         Retrieve or create a DataLoader for the given relationship
         """
@@ -107,7 +107,11 @@ class EntityLoader:
             else:
                 load_method = get_entities  # type: ignore
 
+            print("====")
+            print(f"RUNNING LOADER FOR!!! {where}")
+            print("====")
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
+                print(f"LOAD_FN WHERE IS {where}")
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
                 filters = [tuple_(*[remote for _, remote in relationship.local_remote_pairs]).in_(keys)]

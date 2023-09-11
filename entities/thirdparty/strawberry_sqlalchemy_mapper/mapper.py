@@ -362,7 +362,8 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         connection_type = self._connection_type_for(type_name)
         edge_type = self._edge_type_for(type_name)
 
-        async def wrapper(self, info: Info):
+        async def wrapper(self, info: Info, where: strawberry.Private[str]):
+            print(f"where is {where}")
             return connection_type(
                 edges=[
                     edge_type(

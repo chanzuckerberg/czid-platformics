@@ -1,18 +1,26 @@
-from typing import Optional, Generic
 import uuid
-from typing import TypeVar, Any
+from typing import TypeVar, Any, cast, Optional, Generic
 from typing_extensions import TypedDict
 import strawberry
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper, SSAPlugin
+from thirdparty.strawberry_sqlalchemy_mapper.mapper import _IS_GENERATED_RESOLVER_KEY
 from strawberry import input
 from strawberry.arguments import StrawberryArgument
 from strawberry.field import StrawberryField
+from strawberry.types import Info
 import types
+from sqlalchemy import inspect
+from sqlalchemy.orm.state import InstanceState
 from sqlalchemy.orm import (
     Mapper,
     RelationshipProperty,
 )
 from strawberry.annotation import StrawberryAnnotation
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+)
 
 
 T = TypeVar("T")
@@ -122,8 +130,74 @@ class StrComparators(TypedDict):
     _niregex: Optional[str]
 
 
+class FancySQLAlchemyMapper(StrawberrySQLAlchemyMapper):
+    def __init__(self, **kwargs: Any):
+        super().__init__(**kwargs)
+
+    def make_connection_wrapper_resolver(
+        self, resolver: Callable[..., Awaitable[Any]], type_name: str
+    ) -> Callable[..., Awaitable[Any]]:
+        """
+        Wrap a resolver that returns an array of model types to return
+        a Connection instead.
+        """
+        connection_type = self._connection_type_for(type_name)
+        edge_type = self._edge_type_for(type_name)
+        try:
+            print(f"got live where clause type {type_name}")
+            where_clause = self.where_clause_builder._cached_where_args[type_name]
+        except KeyError:
+            print(f"bbb where key error sadface {type_name}")
+            where_clause = str
+
+        async def wrapper(self, info: Info, where: Optional[str] = strawberry.UNSET):
+            return connection_type(
+                edges=[
+                    edge_type(
+                        node=related_object,
+                    )
+                    for related_object in await resolver(self, info, where)
+                ]
+            )
+
+        setattr(wrapper, _IS_GENERATED_RESOLVER_KEY, True)
+
+        return wrapper
+
+    def relationship_resolver_for(self, relationship: RelationshipProperty) -> Callable[..., Awaitable[Any]]:
+        """
+        Return an async field resolver for the given relationship,
+        so as to avoid n+1 query problem.
+        """
+        type_name = self.model_to_type_or_interface_name(relationship.entity.entity),
+        where_clause = str
+
+        async def resolve(self, info: Info, where: Optional[str] = strawberry.UNSET):
+            print(f"WHERE DATA IS {where}")
+            instance_state = cast(InstanceState, inspect(self))
+            if relationship.key not in instance_state.unloaded:
+                related_objects = getattr(self, relationship.key)
+            else:
+                relationship_key = tuple([getattr(self, local.key) for local, _ in relationship.local_remote_pairs])
+                if any(item is None for item in relationship_key):
+                    if relationship.uselist:
+                        return []
+                    else:
+                        return None
+                if isinstance(info.context, dict):
+                    loader = info.context["sqlalchemy_loader"]
+                else:
+                    loader = info.context.sqlalchemy_loader
+                related_objects = await loader.loader_for(relationship, where).load(relationship_key)
+            return related_objects
+
+        setattr(resolve, _IS_GENERATED_RESOLVER_KEY, True)
+
+        return resolve
+
 class WhereClauseBuilder(SSAPlugin):
-    def __init__(self):
+    def __init__(self, **kwargs: Any):
+        super().__init__(**kwargs)
         self._cached_where_args: dict[str, Any] = {}
         self._todo_where_args: list[Any] = []
 
@@ -175,6 +249,8 @@ class WhereClauseBuilder(SSAPlugin):
 
 
 # TODO this initialize-on-import is gross but we can refactor it later :'(
-strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper(
-    global_plugins=[WhereClauseBuilder()]
+where_clause_builder = WhereClauseBuilder()
+strawberry_sqlalchemy_mapper: FancySQLAlchemyMapper = FancySQLAlchemyMapper(
+    global_plugins=[where_clause_builder]
 )
+strawberry_sqlalchemy_mapper.where_clause_builder = where_clause_builder
