@@ -1,9 +1,11 @@
 import enum
-from sqlalchemy.orm import relationship
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, func, Integer, String
-from database.models.base import Base
-from sqlalchemy.dialects.postgresql import UUID
+
 import strawberry
+from database.models.base import Base
+from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Integer,
+                        String, func)
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 
 class Workflow(Base):
@@ -52,7 +54,7 @@ class Run(Base):
     project_id = Column(Integer, nullable=False)
     started_at = Column(DateTime, nullable=False, server_default=func.now())
     ended_at = Column(DateTime)
-    runner_assigned_id = Column(String, nullable=False)
+    execution_id = Column(String, nullable=False)
     # TODO: add this back in when we add JSONB to strawberry-sqlalchemy-mapper
     # inputs_json = Column(JSONB, nullable=False)
     inputs_json = Column(String, nullable=False)
