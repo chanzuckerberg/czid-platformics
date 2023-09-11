@@ -5,7 +5,7 @@ import typing
 
 import sqlalchemy as sa
 import strawberry
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 from strawberry.fastapi import GraphQLRouter
@@ -317,27 +317,36 @@ def get_context():
     }
 
 
-# call finalize() before using the schema:
-# (note that models that are related to models that are in the schema
-# are automatically mapped at this stage
-strawberry_sqlalchemy_mapper.finalize()
-# only needed if you have polymorphic types
-additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
-# strawberry graphql schema
-# start server with strawberry server app
-schema = strawberry.Schema(
-    query=Query,
-    mutation=Mutation,
-    #    extensions=extensions,
-    types=additional_types,
-)
-
-graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
-
-app = FastAPI()
-app.include_router(graphql_app, prefix="/graphql")
+root_router = APIRouter()
 
 
-@app.get("/")
+@root_router.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+# Make sure tests can get their own instances of the app.
+def get_app() -> FastAPI:
+    # call finalize() before using the schema:
+    # (note that models that are related to models that are in the schema
+    # are automatically mapped at this stage
+    strawberry_sqlalchemy_mapper.finalize()
+    # only needed if you have polymorphic types
+    additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
+    # strawberry graphql schema
+    # start server with strawberry server app
+    schema = strawberry.Schema(
+        query=Query,
+        mutation=Mutation,
+        #    extensions=extensions,
+        types=additional_types,
+    )
+
+    _app = FastAPI()
+    graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+    _app.include_router(root_router)
+    _app.include_router(graphql_app, prefix="/graphql")
+    return _app
+
+
+app = get_app()
