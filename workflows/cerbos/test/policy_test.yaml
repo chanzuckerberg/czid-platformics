@@ -23,15 +23,15 @@ resources:
     kind: sample
     id: SAMPLE001
     attr:
-      owner_user_id: 1
-      collection_id: 100
+      user_id: 1
+      project_id: 100
 
   user2_sample:
     kind: sample
     id: SAMPLE002
     attr:
-      owner_user_id: 2
-      collection_id: 200
+      user_id: 2
+      project_id: 200
 
 tests:
   - name: Sample policies
