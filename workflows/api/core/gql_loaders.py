@@ -48,7 +48,6 @@ async def db_rows(
 ) -> typing.Sequence[db.Base]:
     print(principal)
     rd = ResourceDesc(model_cls.__tablename__)
-    print("
     plan = cerbos_client.plan_resources(CERBOS_ACTION_VIEW, principal, rd)
     print(plan)
     authz_map, extra_models = get_authz_map(model_cls)

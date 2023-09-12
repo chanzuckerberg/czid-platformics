@@ -4,13 +4,12 @@ resourcePolicy:
   version: "default"
   importDerivedRoles:
     - common_roles
-  resource: "workflow"
+  resource: "run_entity_input"
   rules:
-    - actions: ['view']
+    - actions: ['*']
       effect: EFFECT_ALLOW
-      roles:
-        - user
-
+      derivedRoles:
+        - project_member
   schemas:
     principalSchema:
       ref: cerbos:///principal.json

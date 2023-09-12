@@ -37,8 +37,8 @@ async def get_db_session(
         await session.close()  # type: ignore
 
 
-def get_cerbos_client() -> CerbosClient:
-    return CerbosClient(host="http://cerbos:3592")
+def get_cerbos_client(settings: APISettings = Depends(get_settings)) -> CerbosClient:
+    return CerbosClient(host=settings.CERBOS_URL)
 
 
 def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> typing.Optional[Principal]:
