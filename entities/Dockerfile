@@ -10,11 +10,12 @@ RUN python3 -m pip install --no-cache-dir poetry==$POETRY_VERSION supervisor
 RUN mkdir -p /czid-platformics/entities
 WORKDIR /czid-platformics/entities
 
-COPY pyproject.toml poetry.lock ./
+COPY entities/pyproject.toml entities/poetry.lock ./
 RUN poetry config virtualenvs.create false
 
 ENV PYTHONPATH=.
 
 RUN poetry install
-COPY . .
+COPY common ./common
+COPY entities/ .
 CMD ["/usr/local/bin/supervisord", "-c", "/czid-platformics/entities/etc/supervisord.conf"]
