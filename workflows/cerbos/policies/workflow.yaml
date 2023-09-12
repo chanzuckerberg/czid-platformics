@@ -7,7 +7,6 @@ resourcePolicy:
     - actions: ['view']
       effect: EFFECT_ALLOW
       roles: ['user']
-
   schemas:
     principalSchema:
       ref: cerbos:///principal.json

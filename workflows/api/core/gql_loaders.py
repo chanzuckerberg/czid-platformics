@@ -28,14 +28,20 @@ T = typing.TypeVar("T")
 
 
 def get_authz_map(model_cls: type[db.Base]) -> tuple[dict[str, ColumnElement], list[type[db.Base]]]:
-    if model_cls in [db.Workflow, db.WorkflowVersion, db.WorkflowVersionInput, db.WorkflowVersionOutput]:
-        # These don't apply authorization rules, they just require authentication.
-        return {}, []
     if model_cls == db.Run:
         return {
             "request.resource.attr.user_id": model_cls.user_id,
             "request.resource.attr.project_id": model_cls.project_id,
         }, []
+    if model_cls in [db.RunStep, db.RunEntityInput]:
+        return {
+            "request.resource.attr.user_id": db.Run.user_id,
+            "request.resource.attr.project_id": db.Run.project_id,
+        }, [
+            (db.Run, model_cls.run_id == db.Run.id)  # type: ignore
+        ]
+    # The rest don't apply authorization rules, they just require authentication.
+    return {}, []
 
 
 async def db_rows(
@@ -46,10 +52,8 @@ async def db_rows(
     filters: Optional[list[ColumnExpressionArgument]] = [],
     order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
 ) -> typing.Sequence[db.Base]:
-    print(principal)
     rd = ResourceDesc(model_cls.__tablename__)
     plan = cerbos_client.plan_resources(CERBOS_ACTION_VIEW, principal, rd)
-    print(plan)
     authz_map, extra_models = get_authz_map(model_cls)
     query = get_query(
         plan,

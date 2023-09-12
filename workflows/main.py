@@ -92,17 +92,16 @@ class WorkflowRunner:
 @strawberry.type
 class Query:
     workflows: typing.Sequence[Workflow] = get_base_loader(db.Workflow, Workflow)
-    workflows_versions: typing.Sequence[WorkflowVersion] = get_base_loader(db.WorkflowVersion, WorkflowVersion)
     runs: typing.Sequence[Run] = get_base_loader(db.Run, Run)
     workflow_versions: typing.Sequence[WorkflowVersion] = get_base_loader(db.WorkflowVersion, WorkflowVersion)
-    workflow_run_steps: typing.Sequence[WorkflowVersion] = get_base_loader(db.RunStep, RunStep)
-    workflow_version_inputs: typing.Sequence[WorkflowVersion] = get_base_loader(
+    run_steps: typing.Sequence[RunStep] = get_base_loader(db.RunStep, RunStep)
+    workflow_version_inputs: typing.Sequence[WorkflowVersionInput] = get_base_loader(
         db.WorkflowVersionInput, WorkflowVersionInput
     )
-    workflow_version_outputs: typing.Sequence[WorkflowVersion] = get_base_loader(
+    workflow_version_outputs: typing.Sequence[WorkflowVersionOutput] = get_base_loader(
         db.WorkflowVersionOutput, WorkflowVersionOutput
     )
-    workflow_run_entity_inputs: typing.Sequence[WorkflowVersion] = get_base_loader(db.RunEntityInput, RunEntityInput)
+    run_entity_inputs: typing.Sequence[RunEntityInput] = get_base_loader(db.RunEntityInput, RunEntityInput)
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_workflow_runners(self) -> typing.List[WorkflowRunner]:
