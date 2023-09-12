@@ -5,7 +5,9 @@ import typing
 
 import sqlalchemy as sa
 import strawberry
-from fastapi import APIRouter, FastAPI
+from cerbos.sdk.client import CerbosClient
+from cerbos.sdk.model import Principal
+from fastapi import APIRouter, Depends, FastAPI
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 from strawberry.fastapi import GraphQLRouter
@@ -14,8 +16,12 @@ from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
 
 import database.models as db
 import entity_gql_schema as entity_schema
+from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from api.core.gql_loaders import WorkflowLoader, get_base_loader
+from api.core.settings import APISettings
+from api.core.strawberry_extensions import DependencyExtension
 from config import load_workflow_runners
-from database.connect import init_async_db, init_sync_db
+from database.connect import AsyncDB, init_async_db
 from database.models.base import Base
 
 ############
@@ -85,77 +91,20 @@ class WorkflowRunner:
 
 @strawberry.type
 class Query:
-    @strawberry.field
-    async def get_workflow(self, id: int) -> Workflow:
-        result = await session.execute(sa.select(db.Workflow).where(db.Workflow.id == id))
-        return result.scalars().one()
+    workflows: typing.Sequence[Workflow] = get_base_loader(db.Workflow, Workflow)
+    workflows_versions: typing.Sequence[WorkflowVersion] = get_base_loader(db.WorkflowVersion, WorkflowVersion)
+    runs: typing.Sequence[Run] = get_base_loader(db.Run, Run)
+    workflow_versions: typing.Sequence[WorkflowVersion] = get_base_loader(db.WorkflowVersion, WorkflowVersion)
+    workflow_run_steps: typing.Sequence[WorkflowVersion] = get_base_loader(db.RunStep, RunStep)
+    workflow_version_inputs: typing.Sequence[WorkflowVersion] = get_base_loader(
+        db.WorkflowVersionInput, WorkflowVersionInput
+    )
+    workflow_version_outputs: typing.Sequence[WorkflowVersion] = get_base_loader(
+        db.WorkflowVersionOutput, WorkflowVersionOutput
+    )
+    workflow_run_entity_inputs: typing.Sequence[WorkflowVersion] = get_base_loader(db.RunEntityInput, RunEntityInput)
 
-    @strawberry.field
-    async def get_workflows(self) -> typing.List[Workflow]:
-        result = await session.execute(sa.select(db.Workflow))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_workflow_version(self) -> WorkflowVersion:
-        result = await session.execute(sa.select(db.WorkflowVersion).where(db.WorkflowVersion.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_workflow_versions(self) -> typing.List[WorkflowVersion]:
-        result = await session.execute(sa.select(db.WorkflowVersion))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_run(self) -> Run:
-        result = await session.execute(sa.select(db.Run).where(db.Run.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_runs(self) -> typing.List[Run]:
-        result = await session.execute(sa.select(db.Run))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_run_step(self) -> RunStep:
-        result = await session.execute(sa.select(db.RunStep).where(db.RunStep.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_run_steps(self) -> typing.List[RunStep]:
-        result = await session.execute(sa.select(db.RunStep))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_workflow_version_input(self) -> WorkflowVersionInput:
-        result = await session.execute(sa.select(db.WorkflowVersionInput).where(db.WorkflowVersionInput.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_workflow_version_inputs(self) -> typing.List[WorkflowVersionInput]:
-        result = await session.execute(sa.select(db.WorkflowVersionInput))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_workflow_version_output(self) -> WorkflowVersionOutput:
-        result = await session.execute(sa.select(db.WorkflowVersionOutput).where(db.WorkflowVersionOutput.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_workflow_version_outputs(self) -> typing.List[WorkflowVersionOutput]:
-        result = await session.execute(sa.select(db.WorkflowVersionOutput))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_run_entity_input(self) -> RunEntityInput:
-        result = await session.execute(sa.select(db.RunEntityInput).where(db.RunEntityInput.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_run_entity_inputs(self) -> typing.Sequence[RunEntityInput]:
-        result = await session.execute(sa.select(db.RunEntityInput))
-        return result.scalars().all()
-
-    @strawberry.field
+    @strawberry.field(extensions=[DependencyExtension()])
     async def get_workflow_runners(self) -> typing.List[WorkflowRunner]:
         return [
             WorkflowRunner(
@@ -310,10 +259,13 @@ class Mutation:
         return db_run_entity_input
 
 
-def get_context():
-    global session
+def get_context(
+    engine: AsyncDB = Depends(get_engine),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(get_auth_principal),
+) -> dict[str, typing.Any]:
     return {
-        "sqlalchemy_loader": StrawberrySQLAlchemyLoader(bind=session),
+        "sqlalchemy_loader": WorkflowLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
     }
 
 
@@ -327,6 +279,8 @@ async def root():
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
+    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+
     # call finalize() before using the schema:
     # (note that models that are related to models that are in the schema
     # are automatically mapped at this stage
@@ -343,6 +297,9 @@ def get_app() -> FastAPI:
     )
 
     _app = FastAPI()
+    # Add a global settings object to the app that we can use as a dependency
+    _app.state.entities_settings = settings
+
     graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
     _app.include_router(root_router)
     _app.include_router(graphql_app, prefix="/graphql")

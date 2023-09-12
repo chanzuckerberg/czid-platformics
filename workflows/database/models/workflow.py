@@ -5,7 +5,7 @@ from database.models.base import Base
 from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Integer,
                         String, func)
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
 
 class Workflow(Base):
@@ -31,7 +31,7 @@ class WorkflowVersion(Base):
     # graph_json = Column(JSONB)
     graph_json = Column(String)
     workflow_id = Column(Integer, ForeignKey("workflow.id"), nullable=False)
-    workflow = relationship("Workflow", back_populates="versions")
+    workflow: Mapped[Workflow] = relationship(Workflow, foreign_keys=workflow_id, back_populates="versions")
     runs = relationship("Run", back_populates="workflow_version")
     workflow_version_inputs = relationship("WorkflowVersionInput", back_populates="workflow_version")
     workflow_version_outputs = relationship("WorkflowVersionOutput", back_populates="workflow_version")

@@ -138,3 +138,7 @@ local-swipe-plugin-deploy-mock: local-swipe-plugin-start
 .PHONY: local-swipe-plugin-tests
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
 	docker compose exec workflows sh -c 'pytest terraform_test/'
+
+.PHONY: local-token
+local-token: ## Copy an auth token for this local dev env to the system clipboard
+	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
