@@ -14,9 +14,14 @@ from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
 
 import database.models as db
 import entity_gql_schema as entity_schema
-from config import load_workflow_runners
-from database.connect import init_async_db, init_sync_db
-from database.models.base import Base
+from database.connect import init_async_db
+from config import load_event_buses, load_workflow_runners
+
+from strawberry_sqlalchemy_mapper import (
+    StrawberrySQLAlchemyMapper, StrawberrySQLAlchemyLoader)
+
+from loader import LoaderDriver
+
 
 ############
 # Database #
@@ -33,6 +38,7 @@ config.read("defaults.cfg")
 default_workflow_runner_name = config.get("plugins", "default_workflow_runner")
 
 workflow_runners = load_workflow_runners()
+event_buses = load_event_buses()
 
 ######################
 # Strawberry-GraphQL #
@@ -60,17 +66,6 @@ class Run:
 class RunStep:
     pass
 
-
-@strawberry_sqlalchemy_mapper.type(db.WorkflowVersionInput)
-class WorkflowVersionInput:
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.WorkflowVersionOutput)
-class WorkflowVersionOutput:
-    pass
-
-
 @strawberry_sqlalchemy_mapper.type(db.RunEntityInput)
 class RunEntityInput:
     pass
@@ -91,9 +86,9 @@ class Query:
         return result.scalars().one()
 
     @strawberry.field
-    async def get_workflows(self) -> typing.List[Workflow]:
+    async def get_workflows(self) -> typing.Sequence[Workflow]:
         result = await session.execute(sa.select(db.Workflow))
-        return result.scalars()
+        return result.scalars().all()
 
     @strawberry.field
     async def get_workflow_version(self) -> WorkflowVersion:
@@ -101,50 +96,30 @@ class Query:
         return result.scalars().one()
 
     @strawberry.field
-    async def get_workflow_versions(self) -> typing.List[WorkflowVersion]:
+    async def get_workflow_versions(self) -> typing.Sequence[WorkflowVersion]:
         result = await session.execute(sa.select(db.WorkflowVersion))
-        return result.scalars()
-
+        return result.scalars().all()
+    
     @strawberry.field
     async def get_run(self) -> Run:
         result = await session.execute(sa.select(db.Run).where(db.Run.id == id))
         return result.scalars().one()
 
     @strawberry.field
-    async def get_runs(self) -> typing.List[Run]:
+    async def get_runs(self) -> typing.Sequence[Run]:
         result = await session.execute(sa.select(db.Run))
-        return result.scalars()
-
+        return result.scalars().all()
+    
     @strawberry.field
     async def get_run_step(self) -> RunStep:
         result = await session.execute(sa.select(db.RunStep).where(db.RunStep.id == id))
         return result.scalars().one()
 
     @strawberry.field
-    async def get_run_steps(self) -> typing.List[RunStep]:
+    async def get_run_steps(self) -> typing.Sequence[RunStep]:
         result = await session.execute(sa.select(db.RunStep))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_workflow_version_input(self) -> WorkflowVersionInput:
-        result = await session.execute(sa.select(db.WorkflowVersionInput).where(db.WorkflowVersionInput.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_workflow_version_inputs(self) -> typing.List[WorkflowVersionInput]:
-        result = await session.execute(sa.select(db.WorkflowVersionInput))
-        return result.scalars()
-
-    @strawberry.field
-    async def get_workflow_version_output(self) -> WorkflowVersionOutput:
-        result = await session.execute(sa.select(db.WorkflowVersionOutput).where(db.WorkflowVersionOutput.id == id))
-        return result.scalars().one()
-
-    @strawberry.field
-    async def get_workflow_version_outputs(self) -> typing.List[WorkflowVersionOutput]:
-        result = await session.execute(sa.select(db.WorkflowVersionOutput))
-        return result.scalars()
-
+        return result.scalars().all()
+    
     @strawberry.field
     async def get_run_entity_input(self) -> RunEntityInput:
         result = await session.execute(sa.select(db.RunEntityInput).where(db.RunEntityInput.id == id))
@@ -253,20 +228,18 @@ class Mutation:
         #     "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
         # }
         inputs_json = {
-            "sequences": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
+            "sequences": "/home/todd/czid-platformics/workflows/test_workflows/foo.fa",
         }
         assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
-        workflow_runner = workflow_runners[workflow_runner]
-        assert (
-            "WDL" in workflow_runner.supported_workflow_types()
-        ), f"Workflow runner {workflow_runner} does not support WDL"
-        response = workflow_runner.run_workflow(
-            on_complete=lambda x: print(x),  # TODO: add the listener service here
-            workflow_run_id=1,  # TODO: When we create the workflow run add the uuid here
-            workflow_path="s3://idseq-workflows/minimap2-v1.0.0/minimap2.wdl",  # TODO: should come from the WorkflowVersion model
-            inputs=inputs_json,
+        _workflow_runner = workflow_runners[workflow_runner]
+        assert "WDL" in _workflow_runner.supported_workflow_types(), f"Workflow runner {workflow_runner} does not support WDL"
+        response = await _workflow_runner.run_workflow(
+            event_bus=event_buses["local"],
+            workflow_run_id='1', # TODO: When we create the workflow run add the uuid here
+            workflow_path="/home/todd/czid-platformics/workflows/test_workflows/first_sequence/first_sequence.wdl", # TODO: should come from the WorkflowVersion model
+            inputs=inputs_json
         )
-
+        
         return response
 
     @strawberry.mutation
@@ -277,28 +250,6 @@ class Mutation:
         session.add(db_run_step)
         await session.commit()
         return db_run_step
-
-    @strawberry.mutation
-    async def add_workflow_version_input(
-        self, workflow_version_id: int, name: str, type: str, description: str
-    ) -> WorkflowVersionInput:
-        db_workflow_version_input = db.WorkflowVersionInput(
-            workflow_version_id=workflow_version_id, name=name, type=type, description=description
-        )
-        session.add(db_workflow_version_input)
-        await session.commit()
-        return db_workflow_version_input
-
-    @strawberry.mutation
-    async def add_workflow_version_output(
-        self, workflow_version_id: int, name: str, type: str, description: str
-    ) -> WorkflowVersionOutput:
-        db_workflow_version_output = db.WorkflowVersionOutput(
-            workflow_version_id=workflow_version_id, name=name, type=type, description=description
-        )
-        session.add(db_workflow_version_output)
-        await session.commit()
-        return db_workflow_version_output
 
     @strawberry.mutation
     async def add_run_entity_input(self, run_id: int, workflow_version_input_id: int, entity_id: int) -> RunEntityInput:
@@ -337,6 +288,14 @@ graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
 app = FastAPI()
 app.include_router(graphql_app, prefix="/graphql")
 
+loader = LoaderDriver(session, event_buses["local"])
+
+# call main in it's own thread
+async def main():
+    await loader.main()
+
+loop = asyncio.get_event_loop()
+loop.create_task(main())
 
 @app.get("/")
 async def root():

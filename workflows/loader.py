@@ -1,72 +1,84 @@
 import asyncio
-from typing import Any, Dict, List
+from typing import Dict, List, Literal, Tuple, Type, TypeVar
 from importlib.metadata import entry_points
 
 from sqlalchemy import select
-from workflows.database.models.workflow import WorkflowVersion, Run
+from database.models.workflow import Run
 
 from semver import Version
 from sqlalchemy.ext.asyncio import AsyncSession
-from workflows.entity_interface import create_entities
+from entity_interface import create_entities
 
-from workflows.plugin_types import EventListener, Loader, LoaderInput, WorkflowSucceededMessage
+from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
+from version import WorkflowVersion, first_sequence
 
-
-def load_output_loaders() -> List[Loader]:
-    loaders: List[Loader] = []
-    for plugin in entry_points(group="czid.plugin.loader"):
+T = TypeVar('T', bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
+def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> Dict[str, List[Tuple[Version, T]]]:
+    loaders: Dict[str, List[Tuple[Version, T]]] = {}
+    for plugin in entry_points(group=f"czid.plugin.entity_{input_or_output}_loader"):
+        assert plugin.dist, "Plugin distribution not found"
+        name = plugin.name
+        vesion =  Version.parse(plugin.dist.version)
         loader = plugin.load()()
-        assert isinstance(loader, Loader)
-        loaders.append(loader)
+        assert isinstance(loader, cls)
+        if name not in loaders:
+            loaders[name] = []
+        loaders[name].append((vesion, loader))
     return loaders
 
+input_loaders = load_loader_plugins("input", EntityInputLoader)
+def resolve_entity_input_loaders(workflow_version: WorkflowVersion) -> List[EntityInputLoader]:
+    resolved_loaders = []
+    for loader_reference in workflow_version.input_loaders:
+        name = loader_reference.name
+        if name not in input_loaders:
+            raise Exception(f"Could not find loader named '{name}'")
+        versons = input_loaders[loader_reference.name]
+        # TODO: version constrants, for now pick latest version
+        _, latest = max(versons, key=lambda x: x[0])
+        resolved_loaders.append(latest)
+    return resolved_loaders
 
-loaders = load_output_loaders()
-listener: EventListener
-
-
-class WorkflowOutput:
-    name: str
-    output_type_version: Version
-
-
-class EntityOutput:
-    workflow_outputs: List[str]
-    entity_type: str
-    loader_inputs: List[LoaderInput]
+output_loaders = load_loader_plugins("output", EntityOutputLoader)
+# TODO: DRY with above but make the types work poperly
+def resolve_entity_output_loaders(workflow_version: WorkflowVersion) -> List[EntityOutputLoader]:
+    resolved_loaders = []
+    for loader_reference in workflow_version.output_loaders:
+        name = loader_reference.name
+        if name not in output_loaders:
+            raise Exception(f"Could not find loader named '{name}'")
+        versons = output_loaders[loader_reference.name]
+        # TODO: version constrants, for now pick latest version
+        _, latest = max(versons, key=lambda x: x[0])
+        resolved_loaders.append(latest)
+    return resolved_loaders
 
 
 class LoaderDriver:
     session: AsyncSession
-    loader_cache: Dict[Any, List[Loader]] = {}
+    bus: EventBus
 
-    def resolve_loaders(self, workflow_version: WorkflowVersion) -> List[Loader]:
-        if workflow_version.id in self.loader_cache:
-            return self.loader_cache[workflow_version.id]
+    def __init__(self, session: AsyncSession, bus: EventBus) -> None:
+        self.session = session
+        self.bus = bus
 
-        loaders = []
-        for entity in workflow_version.entity_outputs:
-            for loader in loaders:
-                if loader.satisfies(entity.loader_inputs):
-                    loaders.append(loader)
-                    break
-            else:
-                raise Exception(f"Could not find loader for {entity.loader_inputs}")
-        self.loader_cache[workflow_version.id] = loaders
-        return loaders
-
-    async def process_workflow_completed(self, workflow_version: WorkflowVersion):
-        loaders = self.resolve_loaders(workflow_version)
-        entities_lists = await asyncio.gather(*[loader.load() for loader in loaders])
+    async def process_workflow_completed(self, workflow_version: WorkflowVersion, outputs: Dict[str, str]):
+        loaders = resolve_entity_output_loaders(workflow_version)
+        loader_futures = []
+        for loader_reference, loader in zip(workflow_version.output_loaders, loaders):
+            outputs = {k: outputs[f'{workflow_version.name}.{k}'] for k in loader_reference.workflow_outputs}
+            loader_futures.append(loader.load(outputs))
+        entities_lists = await asyncio.gather(*loader_futures)
         for entities in entities_lists:
             await create_entities(entities)
 
     async def main(self):
         while True:
-            for event in await listener.poll():
+            for event in await self.bus.poll():
                 if isinstance(event, WorkflowSucceededMessage):
                     _event: WorkflowSucceededMessage = event
-                    run = (
-                        await self.session.execute(select(Run).where(Run.runner_assigned_id == _event.runner_id))
-                    ).scalar_one()
-                    await self.process_workflow_completed(run.workflow_version)
+                    # run = (await self.session.execute(
+                    #     select(Run).where(Run.runner_assigned_id == _event.runner_id)
+                    # )).scalar_one()
+                    await self.process_workflow_completed(first_sequence, _event.outputs)
+            await asyncio.sleep(1)
