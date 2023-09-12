@@ -36,6 +36,20 @@ class EntityInterface(sgqlc.types.Interface):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
+class ContigConnection(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("edges",)
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("ContigEdge"))), graphql_name="edges"
+    )
+
+
+class ContigEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("node",)
+    node = sgqlc.types.Field(sgqlc.types.non_null("Contig"), graphql_name="node")
+
+
 class File(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
@@ -66,7 +80,7 @@ class File(sgqlc.types.Type):
 
 class Mutation(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("create_sample", "create_sequencing_read", "update_sample")
+    __field_names__ = ("create_sample", "create_sequencing_read", "create_contig", "update_sample")
     create_sample = sgqlc.types.Field(
         sgqlc.types.non_null("Sample"),
         graphql_name="createSample",
@@ -98,6 +112,23 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    create_contig = sgqlc.types.Field(
+        sgqlc.types.non_null("Contig"),
+        graphql_name="createContig",
+        args=sgqlc.types.ArgDict(
+            (
+                ("sequence", sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="sequence", default=None)),
+                (
+                    "sequencing_read_id",
+                    sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="sequencingReadId", default=None),
+                ),
+                (
+                    "collection_id",
+                    sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="collectionId", default=None),
+                ),
+            )
+        ),
+    )
     update_sample = sgqlc.types.Field(
         sgqlc.types.non_null("Sample"),
         graphql_name="updateSample",
@@ -113,7 +144,7 @@ class Mutation(sgqlc.types.Type):
 
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("samples", "sequencing_reads", "files")
+    __field_names__ = ("samples", "sequencing_reads", "contigs", "files")
     samples = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Sample"))),
         graphql_name="samples",
@@ -122,6 +153,11 @@ class Query(sgqlc.types.Type):
     sequencing_reads = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequencingRead"))),
         graphql_name="sequencingReads",
+        args=sgqlc.types.ArgDict((("id", sgqlc.types.Arg(UUID, graphql_name="id", default=None)),)),
+    )
+    contigs = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Contig"))),
+        graphql_name="contigs",
         args=sgqlc.types.ArgDict((("id", sgqlc.types.Arg(UUID, graphql_name="id", default=None)),)),
     )
     files = sgqlc.types.Field(
@@ -145,6 +181,15 @@ class SequencingReadEdge(sgqlc.types.Type):
     node = sgqlc.types.Field(sgqlc.types.non_null("SequencingRead"), graphql_name="node")
 
 
+class Contig(sgqlc.types.Type, EntityInterface):
+    __schema__ = gql_schema
+    __field_names__ = ("entity_id", "sequence", "sequencing_read_id", "sequencing_read")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="entityId")
+    sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
+    sequencing_read_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="sequencingReadId")
+    sequencing_read = sgqlc.types.Field(sgqlc.types.non_null("SequencingRead"), graphql_name="sequencingRead")
+
+
 class Sample(sgqlc.types.Type, EntityInterface):
     __schema__ = gql_schema
     __field_names__ = ("entity_id", "name", "location", "sequencing_reads")
@@ -165,6 +210,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface):
         "sample_id",
         "sequence_file",
         "sample",
+        "contigs",
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="entityId")
     nucleotide = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="nucleotide")
@@ -174,6 +220,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface):
     sample_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="sampleId")
     sequence_file = sgqlc.types.Field(File, graphql_name="sequenceFile")
     sample = sgqlc.types.Field(sgqlc.types.non_null(Sample), graphql_name="sample")
+    contigs = sgqlc.types.Field(sgqlc.types.non_null(ContigConnection), graphql_name="contigs")
 
 
 ########################################################################

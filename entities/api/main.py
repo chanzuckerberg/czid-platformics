@@ -11,13 +11,7 @@ from strawberry.fastapi import GraphQLRouter
 from thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from api.core.gql_loaders import (
-    EntityLoader,
-    get_base_creator,
-    get_base_loader,
-    get_base_updater,
-    get_file_loader,
-)
+from api.core.gql_loaders import EntityLoader, get_base_creator, get_base_loader, get_base_updater, get_file_loader
 from api.core.settings import APISettings
 
 ######################
@@ -47,6 +41,11 @@ class SequencingRead(EntityInterface):
     pass
 
 
+@strawberry_sqlalchemy_mapper.type(db.Contig)
+class Contig(EntityInterface):
+    pass
+
+
 # --------------------
 # Queries
 # --------------------
@@ -56,6 +55,7 @@ class SequencingRead(EntityInterface):
 class Query:
     samples: typing.Sequence[Sample] = get_base_loader(db.Sample, Sample)
     sequencing_reads: typing.Sequence[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
+    contigs: typing.Sequence[Contig] = get_base_loader(db.Contig, Contig)
     files: typing.Sequence[File] = get_file_loader(db.File, File)
 
 
@@ -69,6 +69,7 @@ class Mutation:
     # Create
     create_sample: Sample = get_base_creator(db.Sample, Sample)  # type: ignore
     create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)  # type: ignore
+    create_contig: Contig = get_base_creator(db.Contig, Contig)  # type: ignore
 
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
