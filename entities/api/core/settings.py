@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # manager, disk, etc) but we don't need that just yet.
 
     # Properties usually read from env vars
+    CERBOS_URL: str
     DB_HOST: str
     DB_PORT: str
     DB_USER: str

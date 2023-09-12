@@ -37,6 +37,7 @@ services:
     ports:
       - "8008:8008"
     environment:
+      - CERBOS_URL=http://cerbos:3592
       - DB_HOST=entities-db.czidnet
       - DB_PORT=5432
       - DB_USER=postgres
