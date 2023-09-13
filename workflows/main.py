@@ -197,7 +197,7 @@ class Mutation:
         return db_workflow_version
 
     @strawberry.mutation
-    async def add_run(
+    async def submit_workflow(
         self,
         user_id: int,
         project_id: int,
@@ -206,23 +206,9 @@ class Mutation:
         outputs_json: str,
         status: str,
         workflow_version_id: int,
+        workflow_inputs: str,
+        workflow_runner: str = default_workflow_runner_name
     ) -> Run:
-        db_run = db.Run(
-            user_id=user_id,
-            project_id=project_id,
-            execution_id=execution_id,
-            inputs_json=inputs_json,
-            outputs_json=outputs_json,
-            status=status,
-            workflow_version_id=workflow_version_id,
-        )
-        session.add(db_run)
-        await session.commit()
-        return db_run
-
-    @strawberry.mutation
-    async def submit_workflow(self, workflow_inputs: str, workflow_runner: str = default_workflow_runner_name) -> str:
-        # TODO: create a workflow run
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
         # inputs_json = {
         #     "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
@@ -242,7 +228,21 @@ class Mutation:
             inputs={}
         )
         
-        return "foo"
+        # creates a workflow run in the db
+        # TODO: remove hardcoding
+        db_run = db.Run(
+            user_id=111,
+            project_id=444,
+            execution_id=response,
+            inputs_json="{}",
+            outputs_json=outputs_json,
+            status="STARTED",
+            workflow_version_id=1,
+        )
+        session.add(db_run)
+        await session.commit()
+
+        return db_run
 
     @strawberry.mutation
     async def add_run_step(self, run_id: int, step_name: str, status: str, start_time: str, end_time: str) -> RunStep:
