@@ -28,7 +28,8 @@ services:
     image: "platformics-entities"
     platform: linux/arm64
     build:
-      context: "."
+      context: ".."
+      dockerfile: "entities/Dockerfile"
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
@@ -48,6 +49,7 @@ services:
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
     volumes:
       - ./:/czid-platformics/entities
+      - ../common:/czid-platformics/entities/common
 networks:
   default:
     name: czidnet

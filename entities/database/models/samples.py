@@ -1,9 +1,10 @@
+import uuid
+from typing import TYPE_CHECKING
+
 from database.models.base import Entity
 from sqlalchemy import ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
-from typing import TYPE_CHECKING
-import uuid
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.files import File
@@ -39,3 +40,22 @@ class SequencingRead(Entity):
 
     sample_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sample.entity_id"), nullable=False)
     sample: Mapped[Sample] = relationship(Sample, back_populates="sequencing_reads", foreign_keys=sample_id)
+
+    contigs: Mapped[list["Contig"]] = relationship(
+        "Contig",
+        back_populates="sequencing_read",
+        foreign_keys="Contig.sequencing_read_id",
+    )
+
+
+class Contig(Entity):
+    __tablename__ = "contig"
+    __mapper_args__ = {"polymorphic_identity": __tablename__}
+
+    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
+    sequence: Mapped[str] = mapped_column(String, nullable=False)
+
+    sequencing_read_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sequencing_read.entity_id"), nullable=False)
+    sequencing_read: Mapped[Sample] = relationship(
+        SequencingRead, back_populates="contigs", foreign_keys=sequencing_read_id
+    )
