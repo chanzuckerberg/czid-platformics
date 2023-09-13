@@ -1,0 +1,64 @@
+{
+    "name":"first_sequence",
+    "version": "1.0.0",
+    "type":"WDL",
+    "deprecated": false,
+    "description":"A workflow that takes a sequence and returns the first base",
+    "entity_inputs":[
+        {
+            "name": "fasta",
+            "entity_type":"fasta",
+            "description":"A fasta file"
+        }
+    ],
+    "workflow_inputs":[
+        {  "name":"sequences",
+           "workflow_data_type":"File",
+           "description":"A fasta file",
+           "version":"1.0.0",
+           "type_annotation": {
+               "name":"fasta",
+               "version":"1.0.0"
+           }
+        }
+    ],
+    "input_loaders":[{
+            "name":"fasta",
+            "version":"1.0.0",
+            "workflow_input":"workflow_inputs.sequences",
+            "entity_inputs":{
+                "fasta": "inputs.entities.fasta"
+            }
+        }
+    ],
+    "workflow_outputs":[
+        { 
+          "name": "id",
+          "workflow_data_type":"String",
+          "description":"The id of the first sequence"
+        },
+        {
+            "name": "sequence",
+            "workflow_data_type":"String",
+            "description":"The first sequence"
+        }
+    ],
+    "entity_outputs":[
+        {
+            "name": "sequence",
+            "entity_type":"Sequence",
+            "version":"1.0.0"
+        }
+    ],
+    "output_loaders":[
+        {
+            "name":"sequence",
+            "version":"1.0.0",
+            "entity_output":"entity_outputs.sequence",
+            "workflow_outputs":{
+                "id": "outputs.workflow_outputs.id",
+                "sequence": "outputs.workflow_outputs.sequence"
+            }
+        }
+    ]
+}

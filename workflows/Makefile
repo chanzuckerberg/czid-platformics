@@ -31,7 +31,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 local-init:
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
-	$(docker_compose) run $(FOLDER) make alembic-upgrade-head
+	$(docker_compose) run $(FOLDER) alembic upgrade head
 	$(MAKE) local-seed
 
 .PHONY: debugger
@@ -111,13 +111,13 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head:
-	alembic upgrade head ## Run alembic migrations locally
+	$(docker_compose) exec workflows alembic upgrade head ## Run alembic migrations locally
 
 alembic-undo-migration: ## Downgrade the latest alembic migration
-	alembic downgrade -1
+	$(docker_compose) exec workflows alembic downgrade -1
 
 alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
-	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
+	$(docker_compose) exec workflows alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
 
 ### SWIPE Plugin Tests
 

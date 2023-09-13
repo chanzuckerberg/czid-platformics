@@ -32,6 +32,7 @@ class WorkflowVersion(Base):
     workflow_id = Column(Integer, ForeignKey('workflow.id'), nullable=False)
     workflow = relationship('Workflow', back_populates='versions')
     runs = relationship('Run', back_populates='workflow_version')
+    manifest = Column(String, nullable=False)
     # workflow_version_inputs = relationship('WorkflowVersionInput', back_populates='workflow_version')
     # workflow_version_outputs = relationship('WorkflowVersionOutput', back_populates='workflow_version')
 
@@ -91,3 +92,4 @@ class RunEntityInput(Base):
     # workflow_version_input_id = Column(Integer, ForeignKey('workflow_version_input.id'), nullable=False)
     # workflow_version_input = relationship('WorkflowVersionInput', back_populates='run_entity_inputs')
     entity_id = Column(Integer, nullable=False)
+    field_name = Column(String, nullable=False)
