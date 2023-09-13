@@ -1,11 +1,7 @@
 import json
 from pydantic import BaseModel, conlist
 import semver
-from dataclasses import dataclass
-from typing import Any, Callable
 
-from pydantic_core import CoreSchema, core_schema
-from typing_extensions import Annotated
 
 class PydanticVersion(semver.Version):
     @classmethod
@@ -80,15 +76,11 @@ class Manifest(ManifestModel):
     workflow_inputs: list[WorkflowInput]
     input_loaders: list[InputLoader]
     workflow_outputs: list[WorkflowOutput]
-    entity_outputs: conlist(EntityOutput)
+    entity_outputs: list[EntityOutput]
     output_loaders: list[OutputLoader]
 
 
-def load_manifest(manifest_json: str):
+def load_manifest(manifest_json: str) -> Manifest:
     manifest_dict = json.loads(manifest_json)
     manifest = Manifest.model_validate(manifest_dict)
     return manifest
-
-if __name__ == "__main__":
-    pydantic_model = load_manifest(open("first_workflow_manifest.json").read())
-    print(pydantic_model.model_dump_json())
