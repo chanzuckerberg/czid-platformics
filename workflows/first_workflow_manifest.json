@@ -16,19 +16,20 @@
            "workflow_data_type":"File",
            "description":"A fasta file",
            "version":"1.0.0",
-           "type_annotation": {
+           "type_annotations": [{
                "name":"fasta",
                "version":"1.0.0"
-           }
+           }]
         }
     ],
     "input_loaders":[{
             "name":"fasta",
             "version":"1.0.0",
             "workflow_input":"workflow_inputs.sequences",
-            "entity_inputs":{
-                "fasta": "inputs.entities.fasta"
-            }
+            "entity_inputs":[{
+                "name": "fasta",
+                "value": "inputs.entities.fasta"
+            }]
         }
     ],
     "workflow_outputs":[
@@ -55,10 +56,10 @@
             "name":"sequence",
             "version":"1.0.0",
             "entity_output":"entity_outputs.sequence",
-            "workflow_outputs":{
+            "workflow_outputs":[{
                 "id": "outputs.workflow_outputs.id",
                 "sequence": "outputs.workflow_outputs.sequence"
-            }
+            }]
         }
     ]
 }

@@ -29,6 +29,7 @@ semver = "^3.0.1"
 sgqlc = "^16.3"
 psycopg-binary = "^3.1.10"
 gql = {extras = ["all"], version = "^3.4.1"}
+pydantic = "^2.3.0"
 
 
 [build-system]
