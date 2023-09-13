@@ -1,3 +1,4 @@
+import asyncio
 import configparser
 import json
 import os
@@ -291,11 +292,8 @@ app.include_router(graphql_app, prefix="/graphql")
 loader = LoaderDriver(session, event_buses["local"])
 
 # call main in it's own thread
-async def main():
-    await loader.main()
-
 loop = asyncio.get_event_loop()
-loop.create_task(main())
+loop.create_task(loader.main())
 
 @app.get("/")
 async def root():
