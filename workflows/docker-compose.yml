@@ -42,7 +42,8 @@ services:
     volumes:
       - .:/workflows
       # enable docker in docker
-      - $PWD/test_workflows:$PWD/test_workflows
+      # - $PWD/test_workflows:$PWD/test_workflows
+      - /tmp:/tmp
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8042:8042

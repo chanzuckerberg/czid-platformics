@@ -238,7 +238,7 @@ class Mutation:
         response = await _workflow_runner.run_workflow(
             event_bus=event_buses["local"],
             workflow_run_id='1', # TODO: When we create the workflow run add the uuid here
-            workflow_path=f"{os.environ['LOCAL_RUNNER_FOLDER']}/static_sample/static_sample.wdl", # TODO: should come from the WorkflowVersion model
+            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl", # TODO: should come from the WorkflowVersion model
             inputs={}
         )
         

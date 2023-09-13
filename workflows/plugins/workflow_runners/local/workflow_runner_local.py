@@ -3,14 +3,12 @@ import subprocess
 import sys
 import tempfile
 import os
-import asyncio
 from typing import List
 from uuid import uuid4
 import re
 
 from plugin_types import EventBus, WorkflowFailedMessage, WorkflowRunner, WorkflowStartedMessage, WorkflowStatusMessage, WorkflowSucceededMessage
 
-local_runner_folder = os.environ["LOCAL_RUNNER_FOLDER"]
 
 def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
     match = re.search(pattern, string)
@@ -47,7 +45,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         runner_id = str(uuid4())
         await event_bus.send(WorkflowStartedMessage(runner_id, "WORKFLOW_STARTED"))
         # Running docker-in-docker requires the paths to files and outputs to be the same between 
-        with tempfile.TemporaryDirectory(dir=local_runner_folder) as tmpdir:
+        with tempfile.TemporaryDirectory(dir='/tmp') as tmpdir:
             try:
                 p = subprocess.Popen(
                     ["miniwdl", "run", "--verbose", os.path.abspath(workflow_path)]
