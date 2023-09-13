@@ -29,7 +29,7 @@ task echo {
     >>>
 
     output {
-        String out = stdout()
+        String out = read_string(stdout())
     }
 
     runtime {

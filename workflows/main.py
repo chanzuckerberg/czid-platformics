@@ -238,11 +238,11 @@ class Mutation:
         response = await _workflow_runner.run_workflow(
             event_bus=event_buses["local"],
             workflow_run_id='1', # TODO: When we create the workflow run add the uuid here
-            workflow_path="/home/todd/czid-platformics/workflows/test_workflows/static_sample/static_sample.wdl", # TODO: should come from the WorkflowVersion model
+            workflow_path=f"{os.environ['LOCAL_RUNNER_FOLDER']}/static_sample/static_sample.wdl", # TODO: should come from the WorkflowVersion model
             inputs={}
         )
         
-        return response
+        return "foo"
 
     @strawberry.mutation
     async def add_run_step(self, run_id: int, step_name: str, status: str, start_time: str, end_time: str) -> RunStep:

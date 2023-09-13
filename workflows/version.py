@@ -195,7 +195,7 @@ sample_entity_output = EntityOutput(
 )
 
 static_sample = WorkflowVersion(
-    name="first_sequence",
+    name="static_sample",
     version=Version(1, 0, 0),
     type="WDL",
     deprecated=False,

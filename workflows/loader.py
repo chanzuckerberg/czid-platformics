@@ -62,7 +62,7 @@ class LoaderDriver:
         self.session = session
         self.bus = bus
 
-    async def process_workflow_completed(self, workflow_version: WorkflowVersion, outputs: Dict[str, str]):
+    async def process_workflow_completed(self, user_id: int, collection_id: int, workflow_version: WorkflowVersion, outputs: Dict[str, str]):
         loaders = resolve_entity_output_loaders(workflow_version)
         loader_futures = []
         for loader_reference, loader in zip(workflow_version.output_loaders, loaders):
@@ -70,7 +70,7 @@ class LoaderDriver:
             loader_futures.append(loader.load(outputs))
         entities_lists = await asyncio.gather(*loader_futures)
         for entities in entities_lists:
-            await create_entities(entities)
+            await create_entities(user_id, collection_id, entities)
 
     async def main(self):
         while True:
@@ -80,5 +80,7 @@ class LoaderDriver:
                     # run = (await self.session.execute(
                     #     select(Run).where(Run.runner_assigned_id == _event.runner_id)
                     # )).scalar_one()
-                    await self.process_workflow_completed(static_sample, _event.outputs)
+                    user_id = 111
+                    collection_id = 444 # TODO: get from run
+                    await self.process_workflow_completed(user_id, collection_id, static_sample, _event.outputs)
             await asyncio.sleep(1)
