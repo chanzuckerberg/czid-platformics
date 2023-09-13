@@ -31,6 +31,7 @@ psycopg-binary = "^3.1.10"
 cerbos = "^0.10.1"
 jwcrypto = "^1.5.0"
 pydantic-settings = "^2.0.3"
+uuid6 = "^2023.5.2"
 
 
 [build-system]

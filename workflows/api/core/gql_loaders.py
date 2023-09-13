@@ -5,19 +5,19 @@ from typing import Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
-from api.core.deps import (get_cerbos_client, get_db_session,
+from platformics.api.core.deps import (get_cerbos_client, get_db_session,
                            require_auth_principal)
-from api.core.strawberry_extensions import DependencyExtension
+from platformics.api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc
-from database.connect import AsyncDB
+from platformics.database.connect import AsyncDB
 from fastapi import Depends
 from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
-from thirdparty.cerbos_sqlalchemy.query import get_query
+from platformics.thirdparty.cerbos_sqlalchemy.query import get_query
 
 CERBOS_ACTION_VIEW = "view"
 CERBOS_ACTION_CREATE = "create"

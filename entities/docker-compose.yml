@@ -49,7 +49,7 @@ services:
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
     volumes:
       - ./:/czid-platformics/entities
-      - ../common:/czid-platformics/entities/common
+      - ../platformics:/czid-platformics/entities/platformics
 networks:
   default:
     name: czidnet

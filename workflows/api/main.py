@@ -3,32 +3,28 @@ import json
 import os
 import typing
 
+import database.models as db
+import entity_gql_schema as entity_schema
 import sqlalchemy as sa
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
+from config import load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI
+from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
+                                       get_db_session, get_engine)
+from platformics.api.core.settings import APISettings
+from platformics.api.core.strawberry_extensions import DependencyExtension
+from platformics.database.connect import AsyncDB, init_async_db
+from platformics.database.models.base import Base
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
+from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
                                           StrawberrySQLAlchemyMapper)
 
-import database.models as db
-import entity_gql_schema as entity_schema
-from api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
-from api.core.settings import APISettings
-from api.core.strawberry_extensions import DependencyExtension
-from config import load_workflow_runners
-from database.connect import AsyncDB, init_async_db
-from database.models.base import Base
-
-############
-# Database #
-############
-app_db = init_async_db()
-session = app_db.session()
 
 ###########
 # Plugins #
@@ -117,7 +113,7 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry.mutation
+    @strawberry.mutation(extensions=[DependencyExtension()])
     async def test_connection(self) -> str:
         entity_service_url = os.getenv("ENTITY_SERVICE_URL")
         entity_service_auth_token = os.getenv("ENTITY_SERVICE_AUTH_TOKEN")
@@ -141,8 +137,14 @@ class Mutation:
 
         return "Hello World"
 
-    @strawberry.mutation
-    async def add_workflow(self, name: str, default_version: str, minimum_supported_version: str) -> Workflow:
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def add_workflow(
+        self,
+        name: str,
+        default_version: str,
+        minimum_supported_version: str,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> Workflow:
         db_workflow = db.Workflow(
             name=name, default_version=default_version, minimum_supported_version=minimum_supported_version
         )
@@ -150,9 +152,17 @@ class Mutation:
         await session.commit()
         return db_workflow
 
-    @strawberry.mutation
+    @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow_version(
-        self, workflow_id: int, version: str, type: str, package_uri: str, beta: bool, deprecated: bool, graph_json: str
+        self,
+        workflow_id: int,
+        version: str,
+        type: str,
+        package_uri: str,
+        beta: bool,
+        deprecated: bool,
+        graph_json: str,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> WorkflowVersion:
         db_workflow_version = db.WorkflowVersion(
             workflow_id=workflow_id,
@@ -167,7 +177,7 @@ class Mutation:
         await session.commit()
         return db_workflow_version
 
-    @strawberry.mutation
+    @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
         self,
         user_id: int,
@@ -177,6 +187,7 @@ class Mutation:
         outputs_json: str,
         status: str,
         workflow_version_id: int,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> Run:
         db_run = db.Run(
             user_id=user_id,
@@ -191,8 +202,13 @@ class Mutation:
         await session.commit()
         return db_run
 
-    @strawberry.mutation
-    async def submit_workflow(self, workflow_inputs: str, workflow_runner: str = default_workflow_runner_name) -> str:
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def submit_workflow(
+        self,
+        workflow_inputs: str,
+        workflow_runner: str = default_workflow_runner_name,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> str:
         # TODO: create a workflow run
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
         # inputs_json = {
@@ -217,8 +233,16 @@ class Mutation:
 
         return response
 
-    @strawberry.mutation
-    async def add_run_step(self, run_id: int, step_name: str, status: str, start_time: str, end_time: str) -> RunStep:
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def add_run_step(
+        self,
+        run_id: int,
+        step_name: str,
+        status: str,
+        start_time: str,
+        end_time: str,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> RunStep:
         db_run_step = db.RunStep(
             run_id=run_id, step_name=step_name, status=status, start_time=start_time, end_time=end_time
         )
@@ -226,9 +250,14 @@ class Mutation:
         await session.commit()
         return db_run_step
 
-    @strawberry.mutation
+    @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow_version_input(
-        self, workflow_version_id: int, name: str, type: str, description: str
+        self,
+        workflow_version_id: int,
+        name: str,
+        type: str,
+        description: str,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> WorkflowVersionInput:
         db_workflow_version_input = db.WorkflowVersionInput(
             workflow_version_id=workflow_version_id, name=name, type=type, description=description
@@ -237,9 +266,14 @@ class Mutation:
         await session.commit()
         return db_workflow_version_input
 
-    @strawberry.mutation
+    @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow_version_output(
-        self, workflow_version_id: int, name: str, type: str, description: str
+        self,
+        workflow_version_id: int,
+        name: str,
+        type: str,
+        description: str,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> WorkflowVersionOutput:
         db_workflow_version_output = db.WorkflowVersionOutput(
             workflow_version_id=workflow_version_id, name=name, type=type, description=description
@@ -248,8 +282,14 @@ class Mutation:
         await session.commit()
         return db_workflow_version_output
 
-    @strawberry.mutation
-    async def add_run_entity_input(self, run_id: int, workflow_version_input_id: int, entity_id: int) -> RunEntityInput:
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def add_run_entity_input(
+        self,
+        run_id: int,
+        workflow_version_input_id: int,
+        entity_id: int,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> RunEntityInput:
         db_run_entity_input = db.RunEntityInput(
             run_id=run_id, workflow_version_input_id=workflow_version_input_id, entity_id=entity_id
         )

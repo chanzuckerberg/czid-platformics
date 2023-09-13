@@ -12,10 +12,11 @@ WORKDIR /czid-platformics/entities
 
 COPY entities/pyproject.toml entities/poetry.lock ./
 RUN poetry config virtualenvs.create false
-
 ENV PYTHONPATH=.
-
 RUN poetry install
-COPY common ./common
+
+# Ordering is important here. Entities first!
 COPY entities/ .
+COPY platformics ./platformics
+
 CMD ["/usr/local/bin/supervisord", "-c", "/czid-platformics/entities/etc/supervisord.conf"]

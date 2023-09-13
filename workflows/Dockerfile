@@ -15,8 +15,13 @@ WORKDIR /workflows
 
 ENV PYTHONPATH=.
 
-COPY pyproject.toml poetry.lock ./
+COPY workflows/pyproject.toml workflows/poetry.lock ./
 RUN poetry install
-COPY . ./
+
+# Ordering is important here. Entities first!
+COPY workflows/ .
+COPY platformics ./platformics
 
 RUN pip install plugins/*/*
+
+CMD ["/usr/local/bin/supervisord", "-c", "/workflows/etc/supervisord.conf"]

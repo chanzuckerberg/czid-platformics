@@ -1,7 +1,7 @@
 import factory.random
 from database.models import Sample, SequencingRead
 from test_infra import factories as fa
-from database.connect import SyncDB
+from platformics.database.connect import SyncDB
 
 
 # Tests

@@ -1,7 +1,7 @@
 import enum
 
 import strawberry
-from database.models.base import Base
+from platformics.database.models.base import Base
 from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Integer,
                         String, func)
 from sqlalchemy.dialects.postgresql import UUID
