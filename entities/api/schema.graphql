@@ -1,3 +1,23 @@
+type Contig implements EntityInterface {
+  id: UUID!
+  type: String!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  entityId: UUID!
+  sequence: String!
+  sequencingReadId: UUID!
+  sequencingRead: SequencingRead!
+}
+
+type ContigConnection {
+  edges: [ContigEdge!]!
+}
+
+type ContigEdge {
+  node: Contig!
+}
+
 interface EntityInterface {
   id: UUID!
   type: String!
@@ -23,12 +43,15 @@ type File {
 type Mutation {
   createSample(name: String!, location: String!, collectionId: Int!): Sample!
   createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
+  createContig(sequence: String!, sequencingReadId: UUID!, collectionId: Int!): Contig!
   updateSample(entityId: UUID!, name: String!, location: String!): Sample!
+  createSignedUrl: String!
 }
 
 type Query {
   samples(id: UUID = null): [Sample!]!
   sequencingReads(id: UUID = null): [SequencingRead!]!
+  contigs(id: UUID = null): [Contig!]!
   files(id: UUID = null): [File!]!
 }
 
@@ -58,6 +81,7 @@ type SequencingRead implements EntityInterface {
   sampleId: UUID!
   sequenceFile: File
   sample: Sample!
+  contigs: ContigConnection!
 }
 
 type SequencingReadConnection {
