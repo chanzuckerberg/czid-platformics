@@ -178,3 +178,47 @@ first_sequence = WorkflowVersion(
         ),
     ],
 )
+
+name_workflow_output = WorkflowOutput(
+    workflow_data_type="String",
+    description="The name of the sample",
+)
+
+location_workflow_output = WorkflowOutput(
+    workflow_data_type="String",
+    description="The location of the sample",
+)
+
+sample_entity_output = EntityOutput(
+    entity_type="sample",
+    version=Version(0, 0, 0),
+)
+
+static_sample = WorkflowVersion(
+    name="first_sequence",
+    version=Version(1, 0, 0),
+    type="WDL",
+    deprecated=False,
+    description="A workflow that takes a sequence and returns the first base",
+    entity_inputs={},
+    workflow_inputs={},
+    input_loaders=[],
+    workflow_outputs={
+        "name": name_workflow_output,
+        "location": location_workflow_output,
+    },
+    entity_outputs={
+        "sample": sample_entity_output,
+    },
+    output_loaders=[
+        OutputLoader(
+            name="sample",
+            version=Version(1, 0, 0),
+            entity_output=sample_entity_output,
+            workflow_outputs={
+                "name": name_workflow_output,
+                "location": location_workflow_output,
+            },
+        )
+    ],
+)

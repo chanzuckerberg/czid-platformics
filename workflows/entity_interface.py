@@ -82,22 +82,12 @@ class SequencingRead(Entity):
     protocol: str
     sample_id: Optional[UUID] = field(default_factory=lambda: None)
 
-    def __init__(self, nucleotide: str, sequence: str, protocol: str, sequence_file_id: Optional[UUID] = None, sample_id: Optional[UUID] = None):
-        self.nucleotide = nucleotide
-        self.sequence = sequence
-        self.protocol = protocol
-        self.sequence_file_id = sequence_file_id
-        self.sample_id = sample_id
-
 
 @dataclass
 class Contig(Entity):
     sequence: str
     sequencing_read_id: Optional[UUID] = field(default_factory=lambda: None)
 
-    def __init__(self, sequence: str, sequencing_read_id: Optional[UUID] = None):
-        self.sequence = sequence
-        self.sequencing_read_id = sequencing_read_id
 
 
 async def create_entities(entities: List[List[Entity]]):

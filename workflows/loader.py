@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from entity_interface import create_entities
 
 from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
-from version import WorkflowVersion, first_sequence
+from version import WorkflowVersion, static_sample
 
 T = TypeVar('T', bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
 def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> Dict[str, List[Tuple[Version, T]]]:
@@ -80,5 +80,5 @@ class LoaderDriver:
                     # run = (await self.session.execute(
                     #     select(Run).where(Run.runner_assigned_id == _event.runner_id)
                     # )).scalar_one()
-                    await self.process_workflow_completed(first_sequence, _event.outputs)
+                    await self.process_workflow_completed(static_sample, _event.outputs)
             await asyncio.sleep(1)

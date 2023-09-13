@@ -229,17 +229,17 @@ class Mutation:
         #     "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
         #     "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
         # }
-        inputs_json = {
-            "sequences": "/home/todd/czid-platformics/workflows/test_workflows/foo.fa",
-        }
+        # inputs_json = {
+        #     "sequences": "/home/todd/czid-platformics/workflows/test_workflows/foo.fa",
+        # }
         assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
         _workflow_runner = workflow_runners[workflow_runner]
         assert "WDL" in _workflow_runner.supported_workflow_types(), f"Workflow runner {workflow_runner} does not support WDL"
         response = await _workflow_runner.run_workflow(
             event_bus=event_buses["local"],
             workflow_run_id='1', # TODO: When we create the workflow run add the uuid here
-            workflow_path="/home/todd/czid-platformics/workflows/test_workflows/first_sequence/first_sequence.wdl", # TODO: should come from the WorkflowVersion model
-            inputs=inputs_json
+            workflow_path="/home/todd/czid-platformics/workflows/test_workflows/static_sample/static_sample.wdl", # TODO: should come from the WorkflowVersion model
+            inputs={}
         )
         
         return response
