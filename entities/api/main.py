@@ -1,6 +1,8 @@
 import typing
 
 import database.models as db
+import os
+import boto3
 import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
@@ -19,6 +21,7 @@ from api.core.gql_loaders import (
     get_file_loader,
 )
 from api.core.settings import APISettings
+from api.core.strawberry_extensions import DependencyExtension
 
 ######################
 # Strawberry-GraphQL #
@@ -72,6 +75,27 @@ class Mutation:
 
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
+
+    # Create signed URL for an entity (docs: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-presigned-urls.html)
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    def create_signed_url() -> str:
+        s3_client = boto3.client(
+            "s3",
+            region_name=os.getenv("MOTO_SERVICE_REGION"),
+            endpoint_url=os.getenv("MOTO_SERVICE_URL"),
+            aws_access_key_id="ACCESS_ID",
+            aws_secret_access_key="ACCESS_KEY",
+        )
+        response = s3_client.generate_presigned_url(
+            "get_object", Params={"Bucket": "local-bucket", "Key": "test.txt"}, ExpiresIn=43200
+        )
+        return response
+
+    # FIXME: Cerbos!
+    # FIXME: Add Moto
+    # Questions:
+    # How will this be used? Generate signed URL for an entity that exists? What if file already exists? Exit?
+
 
 
 # --------------------

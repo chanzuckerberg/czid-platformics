@@ -9,7 +9,12 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - MOTO_PORT=4000 # set moto listener port with env var
+      - MOTO_PORT=4000
+      - MOTO_ENABLE_RECORDING=True
+    volumes:
+      - .moto_recording:/moto/moto_recording
+      - ./bin/init_moto.sh:/moto/init_moto.sh
+    entrypoint: ["bash", "/moto/init_moto.sh"]
 
 networks:
   default:

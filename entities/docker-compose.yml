@@ -42,7 +42,7 @@ services:
       - DB_USER=postgres
       - DB_PASS=password_postgres
       - DB_NAME=entities
-      - MOTO_SERVICE_URL=http://localhost:4000
+      - MOTO_SERVICE_URL=http://motoserver.czidnet:4000
       - MOTO_SERVICE_REGION=us-west-1
       # TODO - these are keypairs for testing only! Do not use in prod!!
       - JWK_PUBLIC_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/public_key.pem
