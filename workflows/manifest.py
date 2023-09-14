@@ -56,15 +56,15 @@ class WorkflowOutput(ManifestModel):
     workflow_data_type: str
     description: str
 
-class WorkflowOutputReference(ManifestModel):
-    id: str
-    sequence: str
+class OutputFieldMap(ManifestModel):
+    name: str
+    reference: str
 
 class OutputLoader(ManifestModel):
     name: str
     version: PydanticVersion
     entity_output: str
-    workflow_outputs: list[WorkflowOutputReference]
+    fields: list[OutputFieldMap]
 
 class Manifest(ManifestModel):
     name: str

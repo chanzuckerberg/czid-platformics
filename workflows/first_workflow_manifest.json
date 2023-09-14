@@ -55,10 +55,13 @@
         {
             "name":"sequence",
             "version":"1.0.0",
-            "entity_output":"entity_outputs.sequence",
-            "workflow_outputs":[{
-                "id": "outputs.workflow_outputs.id",
-                "sequence": "outputs.workflow_outputs.sequence"
+            "entity_output":"sequence",
+            "fields":[{
+                "name": "id",
+                "reference": "outputs.id"
+            },{
+                "name": "sequence",
+                "reference": "outputs.sequence"
             }]
         }
     ]
