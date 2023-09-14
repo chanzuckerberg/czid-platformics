@@ -135,7 +135,7 @@ class Contig(Entity):
     sequencing_read: Optional[EntityReference[SequencingRead]] = field(metadata={"id_name": "sequencingReadId"})
 
 
-async def create_entities(user_id: int, collection_id: int, entities: List[Entity]):
+async def create_entities(user_id: int, collection_id: int, entities: list[Entity]):
     headers = {"Authorization": f"Bearer {ENTITY_SERVICE_AUTH_TOKEN}"}
     transport = AIOHTTPTransport(url=ENTITY_SERVICE_URL, headers=headers)
     client = Client(transport=transport, fetch_schema_from_transport=True)
