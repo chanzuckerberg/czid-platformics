@@ -1,27 +1,41 @@
 from abc import ABC, abstractmethod
-from typing import Callable, List, NamedTuple, TypedDict, Literal, Optional, Coroutine, Any
-
-from semver import Version
+from dataclasses import dataclass
+from typing import Callable, Dict, List, Literal, Coroutine, Any
 
 from entity_interface import Entity
+from version import WorkflowInput, WorkflowOutput
 
-
-class WorkflowStartedMessage(TypedDict):
+@dataclass
+class WorkflowStatusMessage:
     runner_id: str
+    status: Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
+
+@dataclass
+class WorkflowStartedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_STARTED"]
 
+class WorkflowSucceededMessage(WorkflowStatusMessage):
+    status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
+    outputs: Dict[str, str]
 
-class WorkflowSucceededMessage(TypedDict):
-    runner_id: str
-    status: Literal["WORKFLOW_SUCCESS"]
+    def __init__(self, runner_id: str, outputs: Dict[str, str]):
+        self.runner_id = runner_id
+        self.outputs = outputs
 
-
-class WorkflowFailedMessage(TypedDict):
-    runner_id: str
+@dataclass
+class WorkflowFailedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_FAILURE"]
 
 
-WorkflowStatusMessage = WorkflowStartedMessage | WorkflowSucceededMessage | WorkflowFailedMessage
+class EventBus(ABC):
+    @abstractmethod
+    async def send(self, message: WorkflowStatusMessage) -> None:
+        pass
+
+    @abstractmethod
+    async def poll() -> List[WorkflowStatusMessage]:
+        pass
+
 
 
 class WorkflowRunner(ABC):
@@ -36,61 +50,20 @@ class WorkflowRunner(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def run_workflow(
-        self,
-        on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],
-        workflow_run_id: str,
-        workflow_path: str,
-        inputs: dict,
-    ) -> str:
+    async def run_workflow(self, event_bus: EventBus, workflow_run_id: str, workflow_path: str, inputs: dict) -> str:
         raise NotImplementedError()
 
 
-class EventListener:
+class EntityInputLoader(ABC):
     @abstractmethod
-    async def send(message: WorkflowStatusMessage) -> None:
-        pass
-
-    @abstractmethod
-    async def poll() -> List[WorkflowStatusMessage]:
-        pass
-
-
-class LoaderInput(NamedTuple):
-    output_or_type: Literal["output", "type"]
-    name: str
-    version: Version
-
-
-class LoaderInputConstraint(NamedTuple):
-    output_or_type: Literal["output", "type"]
-    name: str
-    min_version: Optional[Version]
-    max_version: Optional[Version]
-
-
-class Loader(ABC):
-    @abstractmethod
-    def constraints(self) -> List[LoaderInputConstraint]:
+    async def load(self, **kwargs: Dict[str, Entity]) -> WorkflowInput:
+        """Processes workflow output specified by the type constraints in worrkflow_output_types and returns a list of lists of entities. The outer list represents the order the entities must be created in, while the inner lists can be created in parallel."""
         raise NotImplementedError()
 
-    def satisfies(self, inputs: List[LoaderInput]) -> bool:
-        if len(inputs) != len(self.constraints()):
-            return False
 
-        for input, constraint in zip(inputs, self.constraints()):
-            if input.output_or_type != constraint.output_or_type:
-                return False
-            if input.name != constraint.name:
-                return False
-            if constraint.min_version is not None and input.version < constraint.min_version:
-                return False
-            if constraint.max_version is not None and input.version > constraint.max_version:
-                return False
-
-        return True
-
+class EntityOutputLoader(ABC):
     @abstractmethod
-    async def load(self, *args) -> List[List[Entity]]:
+    # TODO: type specificity on workflow_outputs, convert values from str to a representation of workflow outputs
+    async def load(self, workflow_outputs: Dict[str, str]) -> List[Entity]:
         """Processes workflow output specified by the type constraints in worrkflow_output_types and returns a list of lists of entities. The outer list represents the order the entities must be created in, while the inner lists can be created in parallel."""
         raise NotImplementedError()
