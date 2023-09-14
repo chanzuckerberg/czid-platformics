@@ -15,7 +15,7 @@ class Workflow(Base):
     name = Column(String, nullable=False)
     default_version = Column(String, nullable=False)
     minimum_supported_version = Column(String, nullable=False)
-    versions = relationship("WorkflowVersion", back_populates="workflow", foreign_keys=["WorkflowVersion.workflow_id"])
+    versions = relationship("WorkflowVersion", back_populates="workflow", foreign_keys="WorkflowVersion.workflow_id")
 
 
 class WorkflowVersion(Base):
@@ -24,7 +24,7 @@ class WorkflowVersion(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     workflow_id = Column(Integer, ForeignKey('workflow.id'), nullable=False)
     workflow = relationship('Workflow', back_populates='versions', foreign_keys=[workflow_id])
-    runs = relationship('Run', back_populates='workflow_version', foreign_keys=['Run.workflow_version_id'])
+    runs = relationship('Run', back_populates='workflow_version', foreign_keys='Run.workflow_version_id')
     manifest = Column(String, nullable=False)
 
 @strawberry.enum
@@ -50,12 +50,12 @@ class Run(Base):
     inputs_json = Column(String, nullable=False)
     # TODO: add this back in when we add JSONB to strawberry-sqlalchemy-mapper
     # outputs_json = Column(JSONB)
-    outputs_json = Column(String)
+    outputs_json = Column(String, nullable=True)
     status = Column(Enum(RunStatus), nullable=False, default=RunStatus.STARTED, name="status")
     workflow_version_id = Column(Integer, ForeignKey("workflow_version.id"), nullable=False)
     workflow_version = relationship("WorkflowVersion", back_populates="runs", foreign_keys=[workflow_version_id])
-    run_steps = relationship("RunStep", back_populates="run", foreign_keys=["RunStep.run_id"])
-    run_entity_inputs = relationship("RunEntityInput", back_populates="run", foreign_keys=["RunEntityInput.run_id"])
+    run_steps = relationship("RunStep", back_populates="run", foreign_keys="RunStep.run_id")
+    run_entity_inputs = relationship("RunEntityInput", back_populates="run", foreign_keys="RunEntityInput.run_id")
 
 
 @strawberry.enum

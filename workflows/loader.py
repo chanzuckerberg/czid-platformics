@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from typing import Dict, List, Literal, Tuple, Type, TypeVar
 from importlib.metadata import entry_points
 
@@ -86,36 +87,42 @@ class LoaderDriver:
         self.viz = ShowPipelineViz('')
         self.viz.plot_viz()
 
-    async def process_workflow_completed(self, workflow_manifest: Manifest, outputs: Dict[str, str]):
+    async def process_workflow_completed(self, user_id: int, collection_id: int, workflow_manifest: Manifest, outputs: Dict[str, str]):
         loaders = resolve_entity_output_loaders(workflow_manifest)
         loader_futures = []
         for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
             args = {}
+            print("loader_config", loader_config.fields, file=sys.stderr)
             for field in loader_config.fields:
                 source, field_name = field.reference.split(".")
-            if source == "output":
-                args[field.name] = outputs[field_name]
-            elif source == "input":
-                raise Exception("TODO!")
-            field = loader_config.fields[0]
-            outputs = {item.name: outputs[f'{workflow_manifest.name}.{item.name}'] for item in loader_config.fields}
+                if source == "outputs":
+                    args[field.name] = outputs[f"{workflow_manifest.name}.{field_name}"]
+                elif source == "inputs":
+                    raise Exception("TODO!")
+                
+            # field = loader_config.fields[0]
+            # outputs = {item.name: outputs[f'{workflow_manifest.name}.{item.name}'] for item in loader_config.fields}
+            print("args", args, file=sys.stderr)
+            print("outputs", outputs, file=sys.stderr)
             loader_futures.append(loader.load(args))
         entities_lists = await asyncio.gather(*loader_futures)
         for entities in entities_lists:
-            await create_entities(entities)
+            await create_entities(user_id, collection_id, entities)
 
     async def main(self):
         while True:
             for event in await self.bus.poll():
                 if isinstance(event, WorkflowSucceededMessage):
 
-                    manifest = load_manifest(open("first_workflow_manifest.json").read())
+                    manifest = load_manifest(open("sequence_manifest.json").read())
                     _event: WorkflowSucceededMessage = event
                     # run = (await self.session.execute(
                     #     select(Run).where(Run.runner_assigned_id == _event.runner_id)
                     # )).scalar_one()
+                    user_id = 111
+                    collection_id = 444
+                    await self.process_workflow_completed(user_id, collection_id, manifest, _event.outputs)
                 elif isinstance(event, WorkflowStepMessage):
                     self.viz.pwm.py_mermaid.set_node_class(event.task)
                     self.viz.plot_viz()
-                    
             await asyncio.sleep(1)

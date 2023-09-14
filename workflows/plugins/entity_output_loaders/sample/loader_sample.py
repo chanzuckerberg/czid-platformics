@@ -7,5 +7,5 @@ class Input(TypedDict):
     location: str
 
 class SampleLoader(EntityOutputLoader):
-    async def load(self, args: Input) -> List[List[Sample]]:
-        return [[Sample(args["name"], args["location"])]]
+    async def load(self, args: Input) -> List[Sample]:
+        return [Sample(args["name"], args["location"])]
