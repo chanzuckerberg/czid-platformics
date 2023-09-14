@@ -26,15 +26,17 @@
     }],
     "output_loaders": [
         {
-            "name": "sample",
+            "name": "sequence",
             "version": "1.0.0",
             "entity_output": "sample",
             "fields": [{
-                "name": "name",
+                "name": "nucleotide",
                 "reference": "outputs.name"
-            },
-            {
-                "name": "location",
+            }, {
+                "name": "sequence",
+                "reference": "outputs.name"
+            }, {
+                "name": "protocol",
                 "reference": "outputs.location"
             }]
         }
