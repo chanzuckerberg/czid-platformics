@@ -2,8 +2,7 @@ from abc import ABC
 import asyncio
 from dataclasses import dataclass, field, fields
 import os
-import sys
-from typing import Generic, List, Optional
+from typing import Generic, Optional
 import typing
 from uuid import UUID
 
@@ -26,7 +25,6 @@ _type_name_to_graphql_type = {
     "int": "Int",
     "float": "Float",
     "bool": "Boolean",
-    "UUID": "ID",
 }
 
 @dataclass
@@ -41,13 +39,14 @@ class Entity(ABC):
         for field in fields(self):
             if field.name in ["entity_id", "version"]:
                 continue
-            if field.type.__name__ == "EntityReference":
-                continue
             yield field
 
     def gql_create_mutation(self):
         field_name_types = []
         for field in self._fields():
+            if field.type.__name__ == "EntityReference":
+                field_name_types.append((field.metadata["id_name"], "UUID"))
+                continue
             field_name_types.append((_snake_to_camel(field.name), _type_name_to_graphql_type[field.type.__name__]))
 
         # field_name_types.append(("userId", "Int"))
@@ -58,7 +57,7 @@ class Entity(ABC):
         return f"""
             mutation Create{self.__class__.__name__}({type_signature}) {'{'}
                 {self._mutation_name()}({variable_signature}) {'{'}
-                    entityId
+                    id
                 {'}'}
             {'}'}
         """
@@ -66,13 +65,16 @@ class Entity(ABC):
     def gql_variables(self):
         variables = {}
         for field in self._fields():
+            if field.type.__name__ == "EntityReference":
+                variables[field.metadata["id_name"]] = getattr(self, field.name).entity_id
+                continue
             variables[_snake_to_camel(field.name)] = getattr(self, field.name)
 
         return variables
 
     def get_dependent_entities(self):
         for field in fields(self):
-            if field.type == EntityReference:
+            if field.type.__name__ == "EntityReference":
                 entity_ref: EntityReference = getattr(self, field.name)
                 yield entity_ref
     
@@ -89,7 +91,7 @@ class Entity(ABC):
         # variables["userId"] = user_id
         variables["collectionId"] = collection_id
         response = await client.execute_async(gql(self.gql_create_mutation()), variable_values=variables)
-        entity_id = response.get(self._mutation_name(), {}).get("entity_id")
+        entity_id = response.get(self._mutation_name(), {}).get("id")
         self.entity_id = entity_id
 
 
@@ -127,12 +129,10 @@ class SequencingRead(Entity):
     protocol: str
     sample: EntityReference[Sample] = field(metadata={"id_name": "sampleId"})
 
-
 @dataclass
 class Contig(Entity):
     sequence: str
-    sequencing_read_id: Optional[UUID] = field(default_factory=lambda: None)
-
+    sequencing_read: Optional[EntityReference[SequencingRead]] = field(metadata={"id_name": "sequencingReadId"})
 
 
 async def create_entities(user_id: int, collection_id: int, entities: List[Entity]):
