@@ -14,6 +14,16 @@ class WorkflowStatusMessage:
 class WorkflowStartedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_STARTED"]
 
+class WorkflowStepMessage(WorkflowStatusMessage):
+    status: Literal["WORKFLOW_STARTED"] = "WORKFLOW_STARTED"
+    task: str
+    outputs: Dict[str, str]
+
+    def __init__(self, runner_id: str, task: str, outputs: Dict[str, str]):
+        self.runner_id = runner_id
+        self.task = task
+        self.outputs = outputs
+
 class WorkflowSucceededMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
     outputs: Dict[str, str]

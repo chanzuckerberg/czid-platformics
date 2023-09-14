@@ -10,8 +10,16 @@ from semver import Version
 from sqlalchemy.ext.asyncio import AsyncSession
 from entity_interface import create_entities
 
+<<<<<<< HEAD
 from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
 from manifest import Manifest, load_manifest
+=======
+from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage, WorkflowStepMessage
+from version import WorkflowVersion, static_sample
+>>>>>>> 4aafbc7 (add step notification for local workflow runner and plot workflow)
+
+import json
+from miniwdl_viz.mermaid_wdl import ParsedWDLToMermaid
 
 T = TypeVar('T', bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
 def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> Dict[str, List[Tuple[Version, T]]]:
@@ -56,6 +64,22 @@ def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[EntityOut
         resolved_loaders.append(latest)
     return resolved_loaders
 
+class ShowPipelineViz:
+    def __init__(self, viz_string):
+        # Replace with workflow run json 
+        with open("static_sample.json") as f:
+            self.viz_string = json.load(f)
+
+        self.pwm = ParsedWDLToMermaid()
+        
+    def plot_viz(self):
+        mermaid_list = self.pwm.create_mermaid_flowchart(
+            "static_sample", 
+            self.viz_string["nodes"], 
+            self.viz_string["edges"]
+        )
+        self.pwm.show_mermaid_flowchart(mermaid_list=mermaid_list, file_output=True)
+
 
 class LoaderDriver:
     session: AsyncSession
@@ -64,6 +88,8 @@ class LoaderDriver:
     def __init__(self, session: AsyncSession, bus: EventBus) -> None:
         self.session = session
         self.bus = bus
+        self.viz = ShowPipelineViz('')
+        self.viz.plot_viz()
 
     async def process_workflow_completed(self, user_id: int, collection_id: int, workflow_manifest: Manifest, outputs: Dict[str, str]):
         loaders = resolve_entity_output_loaders(workflow_manifest)
@@ -100,4 +126,9 @@ class LoaderDriver:
                     user_id = 111
                     collection_id = 444
                     await self.process_workflow_completed(user_id, collection_id, manifest, _event.outputs)
+
+                if isinstance(event, WorkflowStepMessage):
+                    self.viz.pwm.py_mermaid.set_node_class(event.task)
+                    self.viz.plot_viz()
+
             await asyncio.sleep(1)
