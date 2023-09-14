@@ -66,7 +66,7 @@ class File(sgqlc.types.Type):
 
 class Mutation(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ('create_sample', 'create_sequencing_read', 'create_contig', 'update_sample', 'create_signed_url')
+    __field_names__ = ('create_sample', 'create_sequencing_read', 'create_contig', 'update_sample')
     create_sample = sgqlc.types.Field(sgqlc.types.non_null('Sample'), graphql_name='createSample', args=sgqlc.types.ArgDict((
         ('name', sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name='name', default=None)),
         ('location', sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name='location', default=None)),
@@ -94,7 +94,6 @@ class Mutation(sgqlc.types.Type):
         ('location', sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name='location', default=None)),
 ))
     )
-    create_signed_url = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='createSignedUrl')
 
 
 class Query(sgqlc.types.Type):

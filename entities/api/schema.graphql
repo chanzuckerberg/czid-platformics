@@ -45,7 +45,6 @@ type Mutation {
   createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
   createContig(sequence: String!, sequencingReadId: UUID!, collectionId: Int!): Contig!
   updateSample(entityId: UUID!, name: String!, location: String!): Sample!
-  createSignedUrl: String!
 }
 
 type Query {

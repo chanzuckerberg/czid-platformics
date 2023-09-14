@@ -1288,19 +1288,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "createSignedUrl",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
