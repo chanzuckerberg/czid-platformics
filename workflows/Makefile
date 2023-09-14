@@ -99,9 +99,14 @@ local-tests: ## Run tests
 local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
 
+.PHONY: fix-lint
+fix-lint: ## Apply linting rules to the code in this directory.
+	$(docker_compose) run entities black .
+	$(docker_compose) run entities ruff check --fix .
+
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
-	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
+	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8042/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
 
 ### GitHub Actions ###################################################
@@ -138,3 +143,7 @@ local-swipe-plugin-deploy-mock: local-swipe-plugin-start
 .PHONY: local-swipe-plugin-tests
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
 	docker compose exec workflows sh -c 'pytest terraform_test/'
+
+.PHONY: local-token
+local-token: ## Copy an auth token for this local dev env to the system clipboard
+	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)

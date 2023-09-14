@@ -1,4 +1,4 @@
-from database.connect import init_sync_db
+from platformics.database.connect import init_sync_db
 from factoryboy import workflow_factory as wf
 import factory.random
 

@@ -4,13 +4,13 @@ from typing import Optional
 
 import pytest_asyncio
 from cerbos.sdk.model import Principal
-from database.connect import AsyncDB
+from platformics.database.connect import AsyncDB
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from api.core.deps import get_auth_principal, get_db_session, get_engine, require_auth_principal
+from platformics.api.core.deps import get_auth_principal, get_db_session, get_engine, require_auth_principal
 from api.main import get_app
 
 

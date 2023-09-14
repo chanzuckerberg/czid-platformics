@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  resource: "workflow_version"
+  rules:
+    - actions: ['view']
+      effect: EFFECT_ALLOW
+      roles: ['user']
+
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json

@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from alembic import context
 
 
-from database.connect import get_db_uri
+from platformics.database.connect import get_db_uri
 from database.models import meta
 
 # this is the Alembic Config object, which provides

@@ -1,6 +1,6 @@
-from database.connect import init_sync_db
+from platformics.database.connect import init_sync_db
 import database.models as db
-from database.models.base import Base
+from platformics.database.models.base import Base
 from factoryboy import workflow_factory as wf
 import pytest
 from pytest_postgresql import factories

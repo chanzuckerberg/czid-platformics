@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
+apiVersion: "api.cerbos.dev/v1"
+derivedRoles:
+  name: common_roles
+  definitions:
+    - name: owner
+      parentRoles: ["user"]
+      condition:
+        match:
+          expr: request.resource.attr.user_id == request.principal.attr.user_id
+
+    - name: project_member
+      parentRoles: ["user"]
+      condition:
+        match:
+          any:
+            of:
+              - expr: request.resource.attr.project_id in request.principal.attr.member_projects
+              - expr: request.resource.attr.project_id in request.principal.attr.admin_projects
