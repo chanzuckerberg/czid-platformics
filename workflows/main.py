@@ -199,13 +199,13 @@ class Mutation:
     @strawberry.mutation
     async def submit_workflow(
         self,
-        user_id: int,
-        project_id: int,
-        execution_id: str,
-        inputs_json: str,
-        outputs_json: str,
-        status: str,
-        workflow_version_id: int,
+        # user_id: int,
+        # project_id: int,
+        # execution_id: str,
+        # inputs_json: str,
+        # outputs_json: str, this one matters!
+        # status: str,
+        # workflow_version_id: int,
         workflow_inputs: str,
         workflow_runner: str = default_workflow_runner_name
     ) -> Run:
@@ -235,7 +235,6 @@ class Mutation:
             project_id=444,
             execution_id=response,
             inputs_json="{}",
-            outputs_json=outputs_json,
             status="STARTED",
             workflow_version_id=1,
         )

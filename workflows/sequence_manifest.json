@@ -4,8 +4,8 @@
     "type": "WDL",
     "deprecated": false,
     "description": "A workflow that takes a sequence and returns the first base",
-    "entity_inputs": {},
-    "workflow_inputs": {},
+    "entity_inputs": [],
+    "workflow_inputs": [],
     "input_loaders": [],
     "workflow_outputs": [
         {
@@ -31,11 +31,11 @@
             "entity_output": "sample",
             "fields": [{
                 "name": "name",
-                "reference": "output.id"
+                "reference": "outputs.name"
             },
             {
-                "name": "name",
-                "reference": "output.location"
+                "name": "location",
+                "reference": "outputs.location"
             }]
         }
     ]

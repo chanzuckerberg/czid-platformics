@@ -2,7 +2,8 @@ from abc import ABC
 import asyncio
 from dataclasses import dataclass, field, fields
 import os
-from typing import List, Optional
+from typing import Generic, List, Optional
+import typing
 from uuid import UUID
 
 from semver import Version
@@ -81,13 +82,19 @@ class Sample(Entity):
     name: str
     location: str
 
+T = typing.TypeVar("T", bound=Entity)
+
+@dataclass
+class EntityReference(Generic[T]):
+    entity_id: Optional[UUID] = field(default_factory=lambda: None)
+    entity: Optional[T] = field(default_factory=lambda: None)
 
 @dataclass
 class SequencingRead(Entity):
     nucleotide: str
     sequence: str
     protocol: str
-    sample_id: Optional[UUID] = field(default_factory=lambda: None)
+    sample: Sample = field(metadata={"id_name": "sampleId"})
 
 
 @dataclass
