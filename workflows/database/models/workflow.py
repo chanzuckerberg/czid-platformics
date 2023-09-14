@@ -22,19 +22,10 @@ class WorkflowVersion(Base):
     __tablename__ = "workflow_version"
     # TODO: replace with uuid7
     id = Column(Integer, primary_key=True, autoincrement=True)
-    # version = Column(String, nullable=False)
-    # type = Column(String, nullable=False)
-    # package_uri = Column(String, nullable=False)
-    # beta = Column(Boolean, default=False, nullable=False)
-    # deprecated = Column(Boolean, default=False, nullable=False)
-    # TODO: add this back in when we add JSONB to strawberry-sqlalchemy-mapper
-    # graph_json = Column(JSONB)
     workflow_id = Column(Integer, ForeignKey('workflow.id'), nullable=False)
     workflow = relationship('Workflow', back_populates='versions', foreign_keys=[workflow_id])
     runs = relationship('Run', back_populates='workflow_version', foreign_keys=['Run.workflow_version_id'])
     manifest = Column(String, nullable=False)
-    # workflow_version_inputs = relationship('WorkflowVersionInput', back_populates='workflow_version')
-    # workflow_version_outputs = relationship('WorkflowVersionOutput', back_populates='workflow_version')
 
 @strawberry.enum
 class RunStatus(enum.Enum):

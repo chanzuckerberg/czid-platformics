@@ -11,6 +11,7 @@ from entity_interface import create_entities
 
 from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage, WorkflowStepMessage
 from version import WorkflowVersion, static_sample
+from manifest import Manifest, load_manifest
 
 import json
 from miniwdl_viz.mermaid_wdl import ParsedWDLToMermaid
@@ -30,29 +31,31 @@ def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> 
     return loaders
 
 input_loaders = load_loader_plugins("input", EntityInputLoader)
-def resolve_entity_input_loaders(workflow_version: WorkflowVersion) -> List[EntityInputLoader]:
+def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[EntityInputLoader]:
     resolved_loaders = []
-    for loader_reference in workflow_version.input_loaders:
-        name = loader_reference.name
-        if name not in input_loaders:
+    for loader_config in workflow_manifest.input_loaders:
+        name = loader_config.name
+        try:
+            versions = input_loaders[loader_config.name]
+        except KeyError:
             raise Exception(f"Could not find loader named '{name}'")
-        versons = input_loaders[loader_reference.name]
         # TODO: version constrants, for now pick latest version
-        _, latest = max(versons, key=lambda x: x[0])
+        _, latest = max(versions, key=lambda x: x[0])
         resolved_loaders.append(latest)
     return resolved_loaders
 
 output_loaders = load_loader_plugins("output", EntityOutputLoader)
 # TODO: DRY with above but make the types work poperly
-def resolve_entity_output_loaders(workflow_version: WorkflowVersion) -> List[EntityOutputLoader]:
+def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[EntityOutputLoader]:
     resolved_loaders = []
-    for loader_reference in workflow_version.output_loaders:
-        name = loader_reference.name
-        if name not in output_loaders:
+    for loader_config in workflow_manifest.output_loaders:
+        name = loader_config.name
+        try:
+            versions = output_loaders[name]
+        except KeyError:
             raise Exception(f"Could not find loader named '{name}'")
-        versons = output_loaders[loader_reference.name]
         # TODO: version constrants, for now pick latest version
-        _, latest = max(versons, key=lambda x: x[0])
+        _, latest = max(versions, key=lambda x: x[0])
         resolved_loaders.append(latest)
     return resolved_loaders
 
@@ -83,30 +86,36 @@ class LoaderDriver:
         self.viz = ShowPipelineViz('')
         self.viz.plot_viz()
 
-    async def process_workflow_completed(self, user_id: int, collection_id: int, workflow_version: WorkflowVersion, outputs: Dict[str, str]):
-        loaders = resolve_entity_output_loaders(workflow_version)
+    async def process_workflow_completed(self, workflow_manifest: Manifest, outputs: Dict[str, str]):
+        loaders = resolve_entity_output_loaders(workflow_manifest)
         loader_futures = []
-        for loader_reference, loader in zip(workflow_version.output_loaders, loaders):
-            outputs = {k: outputs[f'{workflow_version.name}.{k}'] for k in loader_reference.workflow_outputs}
-            loader_futures.append(loader.load(outputs))
+        for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
+            args = {}
+            for field in loader_config.fields:
+                source, field_name = field.reference.split(".")
+            if source == "output":
+                args[field.name] = outputs[field_name]
+            elif source == "input":
+                raise Exception("TODO!")
+            field = loader_config.fields[0]
+            outputs = {item.name: outputs[f'{workflow_manifest.name}.{item.name}'] for item in loader_config.fields}
+            loader_futures.append(loader.load(args))
         entities_lists = await asyncio.gather(*loader_futures)
         for entities in entities_lists:
-            await create_entities(user_id, collection_id, entities)
+            await create_entities(entities)
 
     async def main(self):
         while True:
             for event in await self.bus.poll():
                 if isinstance(event, WorkflowSucceededMessage):
+
+                    manifest = load_manifest(open("first_workflow_manifest.json").read())
                     _event: WorkflowSucceededMessage = event
                     # run = (await self.session.execute(
                     #     select(Run).where(Run.runner_assigned_id == _event.runner_id)
                     # )).scalar_one()
-                    user_id = 111
-                    collection_id = 444 # TODO: get from run
-                    await self.process_workflow_completed(user_id, collection_id, static_sample, _event.outputs)
-
-                if isinstance(event, WorkflowStepMessage):
+                elif isinstance(event, WorkflowStepMessage):
                     self.viz.pwm.py_mermaid.set_node_class(event.task)
                     self.viz.plot_viz()
-
+                    
             await asyncio.sleep(1)

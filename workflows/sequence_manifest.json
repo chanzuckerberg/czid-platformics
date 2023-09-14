@@ -1,0 +1,42 @@
+{
+    "name": "static_sample",
+    "version": "1.0.0",
+    "type": "WDL",
+    "deprecated": false,
+    "description": "A workflow that takes a sequence and returns the first base",
+    "entity_inputs": {},
+    "workflow_inputs": {},
+    "input_loaders": [],
+    "workflow_outputs": [
+        {
+            "name": "name",
+            "workflow_data_type": "String",
+            "description": "The name of the sample"
+        },
+        {
+            "name": "location",
+            "workflow_data_type": "String",
+            "description": "The location of the sample"
+        }
+    ],
+    "entity_outputs": [{
+        "name": "sample",
+        "entity_type": "sample",
+        "version": "1.0.0"
+    }],
+    "output_loaders": [
+        {
+            "name": "sample",
+            "version": "1.0.0",
+            "entity_output": "sample",
+            "fields": [{
+                "name": "name",
+                "reference": "output.id"
+            },
+            {
+                "name": "name",
+                "reference": "output.location"
+            }]
+        }
+    ]
+}
