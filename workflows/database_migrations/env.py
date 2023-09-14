@@ -1,11 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine
 from alembic import context
-
-
-from platformics.database.connect import get_db_uri
 from database.models import meta
+from platformics.api.core.settings import CLISettings
+from sqlalchemy import create_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -40,8 +38,9 @@ def run_migrations_offline() -> None:
     script output.
 
     """
+    settings = CLISettings.parse_obj({})
     context.configure(
-        url=get_db_uri(),
+        url=settings.SYNC_DB_URI,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -58,7 +57,8 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = create_engine(get_db_uri())
+    settings = CLISettings.parse_obj({})
+    connectable = create_engine(settings.SYNC_DB_URI)
 
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)

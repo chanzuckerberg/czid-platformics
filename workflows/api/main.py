@@ -277,13 +277,6 @@ def get_context(
 
 root_router = APIRouter()
 
-loader = LoaderDriver(session, event_buses["local"])
-
-# call main in it's own thread
-loop = asyncio.get_event_loop()
-loop.create_task(loader.main())
-
-
 @root_router.get("/")
 async def root():
     return {"message": "Hello World"}
