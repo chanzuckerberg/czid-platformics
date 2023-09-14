@@ -7,7 +7,7 @@ from typing import List
 from uuid import uuid4
 import re
 
-from plugin_types import EventBus, WorkflowFailedMessage, WorkflowRunner, WorkflowStartedMessage, WorkflowStatusMessage, WorkflowSucceededMessage
+from plugin_types import EventBus, WorkflowFailedMessage, WorkflowRunner, WorkflowStartedMessage, WorkflowStepMessage, WorkflowSucceededMessage
 
 
 def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
@@ -26,13 +26,14 @@ class LocalWorkflowRunner(WorkflowRunner):
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows locally using miniWDL"
 
-    def detect_task_output(self, line):
+    async def detect_task_output(self, event_bus, runner_id, line):
         if "INFO output :: job:" in line:
-            task = _search_group(r"job: (.*),", line, 1)
+            task = _search_group(r"job: \"(.*)\",", line, 1)
             outputs = json.loads(_search_group(r"values: (\{.*\})", line, 1))
             print(f"task complete: {task}")
             for key, output in outputs.items():
                 print(f"{key}: {output}")
+            await event_bus.send(WorkflowStepMessage(runner_id=runner_id, task=task, outputs=outputs))
 
 
     async def run_workflow(
@@ -57,7 +58,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                 while True:
                     assert p.stderr
                     line = p.stderr.readline().decode()
-                    self.detect_task_output(line)
+                    await self.detect_task_output(event_bus, runner_id, line)
                     print(line, file=sys.stderr)
                     if not line: break
 
