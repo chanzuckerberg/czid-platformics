@@ -39,7 +39,6 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
-    platform: linux/amd64
     volumes:
       - .:/workflows
       # enable docker in docker

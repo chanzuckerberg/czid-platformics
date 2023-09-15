@@ -42,8 +42,10 @@ services:
       - DB_USER=postgres
       - DB_PASS=password_postgres
       - DB_NAME=entities
-      - MOTO_SERVICE_URL=http://motoserver.czidnet:4000
-      - MOTO_SERVICE_REGION=us-west-1
+      - AWS_REGION=us-west-1
+      - AWS_ENDPOINT=http://motoserver.czidnet:4000
+      - AWS_ACCESS_KEY_ID=ACCESS_ID
+      - AWS_SECRET_ACCESS_KEY=ACCESS_KEY
       # TODO - these are keypairs for testing only! Do not use in prod!!
       - JWK_PUBLIC_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/public_key.pem
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
