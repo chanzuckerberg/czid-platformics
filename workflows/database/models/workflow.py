@@ -1,11 +1,11 @@
 import enum
 
 import strawberry
-from database.models.base import Base
+from platformics.database.models.base import Base
 from sqlalchemy import (Boolean, Column, DateTime, Enum, ForeignKey, Integer,
                         String, func)
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, relationship
 
 
 class Workflow(Base):
@@ -22,10 +22,12 @@ class WorkflowVersion(Base):
     __tablename__ = "workflow_version"
     # TODO: replace with uuid7
     id = Column(Integer, primary_key=True, autoincrement=True)
-    workflow_id = Column(Integer, ForeignKey('workflow.id'), nullable=False)
-    workflow = relationship('Workflow', back_populates='versions', foreign_keys=[workflow_id])
-    runs = relationship('Run', back_populates='workflow_version', foreign_keys='Run.workflow_version_id')
+    graph_json = Column(String)
+    workflow_id = Column(Integer, ForeignKey("workflow.id"), nullable=False)
+    workflow: Mapped[Workflow] = relationship(Workflow, back_populates="versions", foreign_keys=[workflow_id])
+    runs = relationship("Run", back_populates="workflow_version", foreign_keys="Run.workflow_version_id")
     manifest = Column(String, nullable=False)
+
 
 @strawberry.enum
 class RunStatus(enum.Enum):
@@ -74,13 +76,12 @@ class RunStep(Base):
     ended_at = Column(DateTime)
     status = Column(Enum(RunStepStatus), name="status")
 
+
 class RunEntityInput(Base):
     __tablename__ = "run_entity_input"
     # TODO: replace with uuid7
     id = Column(Integer, primary_key=True, autoincrement=True)
-    run_id = Column(Integer, ForeignKey('run.id'), nullable=False)
-    run = relationship('Run', back_populates='run_entity_inputs', foreign_keys=[run_id])
-    # workflow_version_input_id = Column(Integer, ForeignKey('workflow_version_input.id'), nullable=False)
-    # workflow_version_input = relationship('WorkflowVersionInput', back_populates='run_entity_inputs')
+    run_id = Column(Integer, ForeignKey("run.id"), nullable=False)
+    run = relationship("Run", back_populates="run_entity_inputs", foreign_keys=[run_id])
     entity_id = Column(Integer, nullable=False)
     field_name = Column(String, nullable=False)

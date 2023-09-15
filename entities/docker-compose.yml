@@ -26,7 +26,8 @@ services:
   entities:
     image: "platformics-entities"
     build:
-      context: "."
+      context: ".."
+      dockerfile: "entities/Dockerfile"
       args:
         - BUILDKIT_INLINE_CACHE=1
     restart: always
@@ -35,6 +36,7 @@ services:
     ports:
       - "8008:8008"
     environment:
+      - CERBOS_URL=http://cerbos:3592
       - DB_HOST=entities-db.czidnet
       - DB_PORT=5432
       - DB_USER=postgres
@@ -45,6 +47,7 @@ services:
       - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
     volumes:
       - ./:/czid-platformics/entities
+      - ../platformics:/czid-platformics/entities/platformics
 networks:
   default:
     name: czidnet

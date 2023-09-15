@@ -1,13 +1,13 @@
 import typing
 
-from database.connect import AsyncDB, init_async_db
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
+from fastapi import Depends
+from platformics.api.core.settings import APISettings
+from platformics.database.connect import AsyncDB, init_async_db
+from platformics.security.token_auth import get_token_claims
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from api.core.settings import APISettings
-from security.token_auth import get_token_claims
 
 
 def get_settings(request: Request) -> APISettings:
@@ -37,11 +37,13 @@ async def get_db_session(
         await session.close()  # type: ignore
 
 
-def get_cerbos_client() -> CerbosClient:
-    return CerbosClient(host="http://cerbos:3592")
+def get_cerbos_client(settings: APISettings = Depends(get_settings)) -> CerbosClient:
+    return CerbosClient(host=settings.CERBOS_URL)
 
 
-def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> typing.Optional[Principal]:
+def get_auth_principal(
+    request: Request, settings: APISettings = Depends(get_settings)
+) -> typing.Optional[Principal]:
     auth_header = request.headers.get("authorization")
     if auth_header:
         parts = auth_header.split()

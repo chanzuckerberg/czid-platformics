@@ -1,7 +1,7 @@
 import uuid
 
 import uuid6
-from database.models.base import Base, Entity
+from platformics.database.models.base import Base, Entity
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship

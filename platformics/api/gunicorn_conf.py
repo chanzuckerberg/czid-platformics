@@ -5,7 +5,7 @@ import sys
 
 logging.basicConfig(
     level=logging.INFO,
-    format="entities [%(asctime)s] %(levelname)s" "[%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+    format="[%(asctime)s] %(levelname)s" "[%(name)s.%(funcName)s:%(lineno)d] %(message)s",
     datefmt="%d/%b/%Y %H:%M:%S",
     stream=sys.stdout,
 )
@@ -13,7 +13,7 @@ logging.basicConfig(
 # Gunicorn config variables
 loglevel = os.getenv("LOG_LEVEL", "info")
 workers = os.getenv("WORKERS", 4)
-bind = "unix:///var/run/entities.sock"
+bind = "unix:///var/run/fastapi.sock"
 errorlog = "-"
 worker_tmp_dir = "/dev/shm"
 accesslog = "-"
@@ -21,7 +21,7 @@ graceful_timeout = int(os.getenv("GRACEFUL_TIMEOUT", "120"))
 timeout = int(os.getenv("TIMEOUT", "120"))
 keepalive = int(os.getenv("KEEP_ALIVE", "5"))
 # TODO - this is broken, per https://github.com/encode/uvicorn/issues/527
-access_log_format = 'entitites %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 
 # For debugging and testing
 log_data = {

@@ -3,8 +3,8 @@ import typing
 
 import pytest
 import pytest_asyncio
-from database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
-from database.models.base import Base
+from platformics.database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
+from platformics.database.models.base import Base
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
 from pytest_postgresql.executor_noop import NoopExecutor
