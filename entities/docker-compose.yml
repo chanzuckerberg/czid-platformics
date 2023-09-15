@@ -43,7 +43,7 @@ services:
       - DB_PASS=password_postgres
       - DB_NAME=entities
       - AWS_REGION=us-west-2
-      - AWS_ENDPOINT=http://motoserver.czidnet:4000
+      - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
       - AWS_ACCESS_KEY_ID=ACCESS_ID
       - AWS_SECRET_ACCESS_KEY=ACCESS_KEY
       # TODO - these are keypairs for testing only! Do not use in prod!!
