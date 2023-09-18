@@ -43,13 +43,14 @@ class WorkflowVersionFactory(CommonFactory):
         model = WorkflowVersion
         sqlalchemy_session = None
 
-    version = factory.Sequence(lambda n: "v1.0.%s" % n)
-    type = factory.fuzzy.FuzzyChoice(["WDL", "SMK", "NF"])
-    package_uri = factory.LazyAttribute(lambda n: f"s3://path/to/workflow-{n.version}/run.{n.type.lower()}")
-    beta = Faker("pybool")
-    deprecated = Faker("pybool")
-    graph_json = fuzzy.FuzzyChoice(["{}"])
+    # version = factory.Sequence(lambda n: "v1.0.%s" % n)
+    # type = factory.fuzzy.FuzzyChoice(["WDL", "SMK", "NF"])
+    # package_uri = factory.LazyAttribute(lambda n: f"s3://path/to/workflow-{n.version}/run.{n.type.lower()}")
+    # beta = Faker("pybool")
+    # deprecated = Faker("pybool")
+    # graph_json = fuzzy.FuzzyChoice(["{}"])
     workflow = factory.SubFactory(WorkflowFactory)
+    manifest = factory.LazyAttribute(lambda n: open("first_workflow_manifest.json").read())
 
 
 class RunFactory(CommonFactory):

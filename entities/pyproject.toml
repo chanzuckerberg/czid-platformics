@@ -49,10 +49,9 @@ explicit_package_bases = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
 exclude = [
-  "thirdparty",
-  "gql_schema.py",
+    'gql_schema\.py$',
+    '^platformics/thirdparty',
 ]
-mypy_path = "/czid-platformics"
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.

@@ -1,0 +1,77 @@
+---
+name: TestSamplePolicy
+description: Tests for verifying the sample resource policy
+
+principals:
+  user1:
+    id: USER1
+    roles: [user]
+    attr:
+      user_id: 1
+      admin_projects: [100]
+      member_projects: [100]
+  user2:
+    id: USER2
+    roles: [user]
+    attr:
+      user_id: 2
+      admin_projects: [200]
+      member_projects: [300, 100]
+
+resources:
+  user1_sample:
+    kind: sample
+    id: SAMPLE001
+    attr:
+      user_id: 1
+      project_id: 100
+
+  user2_sample:
+    kind: sample
+    id: SAMPLE002
+    attr:
+      user_id: 2
+      project_id: 200
+
+tests:
+  - name: Sample policies
+    input:
+      principals: [user1, user2]
+      resources: [user1_sample, user2_sample]
+      actions: [create, view, update, download]
+
+    expected:
+      # Sample owner can do everything
+      - principal: user1
+        resource: user1_sample
+        actions:
+          create: EFFECT_ALLOW
+          view: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          download: EFFECT_ALLOW
+
+      - principal: user2
+        resource: user2_sample
+        actions:
+          create: EFFECT_ALLOW
+          view: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          download: EFFECT_ALLOW
+
+      # User cannot operate on another user's samples if they don't have access to the collection
+      - principal: user1
+        resource: user2_sample
+        actions:
+          create: EFFECT_DENY
+          view: EFFECT_DENY
+          update: EFFECT_DENY
+          download: EFFECT_DENY
+
+      # User that has access to the collection cannot download sample unless they are the owner
+      - principal: user2
+        resource: user1_sample
+        actions:
+          create: EFFECT_ALLOW
+          view: EFFECT_ALLOW
+          update: EFFECT_ALLOW
+          download: EFFECT_DENY

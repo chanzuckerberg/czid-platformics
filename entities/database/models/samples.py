@@ -1,7 +1,7 @@
 import uuid
 from typing import TYPE_CHECKING
 
-from database.models.base import Entity
+from platformics.database.models.base import Entity
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship

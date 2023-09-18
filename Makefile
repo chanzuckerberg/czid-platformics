@@ -6,7 +6,6 @@ gha-setup:
 
 .PHONY: init
 init: gha-setup
-	docker compose -f workflows/docker-compose.yml up -d
 	$(MAKE) seed
 	$(MAKE) -C entities local-init
 	$(MAKE) -C workflows local-init
@@ -17,7 +16,7 @@ seed:
 
 .PHONY: clean
 clean:
-	docker compose -f workflows/docker-compose.yml down
 	$(MAKE) -C entities local-clean
+	$(MAKE) -C workflows local-clean
 	docker compose down
 	rm .moto_recording

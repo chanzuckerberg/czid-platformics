@@ -1,20 +1,21 @@
 name: first_sequence
 version: 0.0.1
 type: WDL
-beta: false
 deprecated: false
 description: Get the first id and sequence in a single-line fasta file
-inputs:
+workflow_inputs:
 - name: sequences
-  entity_type: fasta
-  required: true
-  description: "fastq file to ge the stats of"
-outputs:
-- name: id
   version: 0.0.1
+input_entities:
+- input_name: sequences
+  entities:
+  - name: 'First Sequence'
+    entity_type: sequence
+    description: "fastq file to ge the stats of"
+workflow_outputs:
 - name: sequence
   version: 0.0.1
-entities:
+output_entities:
 - name: 'First Sequence'
   type: sequence
   outputs:

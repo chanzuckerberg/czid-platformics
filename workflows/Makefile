@@ -31,7 +31,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 local-init:
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
-	$(docker_compose) run $(FOLDER) make alembic-upgrade-head
+	$(docker_compose) run $(FOLDER) alembic upgrade head
 	$(MAKE) local-seed
 
 .PHONY: debugger
@@ -99,9 +99,14 @@ local-tests: ## Run tests
 local-gqlschema: ## Export this app's GQL schema.
 	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
 
+.PHONY: fix-lint
+fix-lint: ## Apply linting rules to the code in this directory.
+	$(docker_compose) run entities black .
+	$(docker_compose) run entities ruff check --fix .
+
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
-	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
+	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8042/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
 
 ### GitHub Actions ###################################################
@@ -111,13 +116,13 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head:
-	alembic upgrade head ## Run alembic migrations locally
+	$(docker_compose) exec workflows alembic upgrade head ## Run alembic migrations locally
 
 alembic-undo-migration: ## Downgrade the latest alembic migration
-	alembic downgrade -1
+	$(docker_compose) exec workflows alembic downgrade -1
 
 alembic-autogenerate: ## Create new alembic migrations files based on SA schema changes.
-	alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
+	$(docker_compose) exec workflows alembic revision --autogenerate -m "$(MESSAGE)" --rev-id $$(date +%Y%m%d_%H%M%S)
 
 ### SWIPE Plugin Tests
 
@@ -138,3 +143,7 @@ local-swipe-plugin-deploy-mock: local-swipe-plugin-start
 .PHONY: local-swipe-plugin-tests
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
 	docker compose exec workflows sh -c 'pytest terraform_test/'
+
+.PHONY: local-token
+local-token: ## Copy an auth token for this local dev env to the system clipboard
+	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)

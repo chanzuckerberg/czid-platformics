@@ -3,7 +3,7 @@ Authorization spot-checks
 """
 
 import pytest
-from database.connect import SyncDB
+from platformics.database.connect import SyncDB
 from test_infra import factories as fa
 from api.conftest import GQLTestClient
 
