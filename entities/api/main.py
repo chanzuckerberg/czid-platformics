@@ -6,7 +6,9 @@ import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine, get_settings
+from platformics.api.core.settings import APISettings
+from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.api.core.gql_loaders import (
     EntityLoader,
     get_base_creator,
@@ -14,10 +16,11 @@ from platformics.api.core.gql_loaders import (
     get_base_updater,
     get_file_loader,
 )
-from platformics.api.core.settings import APISettings
 from platformics.database.connect import AsyncDB
 from platformics.thirdparty.strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 from strawberry.fastapi import GraphQLRouter
+import boto3
+from botocore.client import Config
 
 ######################
 # Strawberry-GraphQL #
@@ -31,9 +34,29 @@ class EntityInterface:
     pass
 
 
+@strawberry.type
+class DownloadURL:
+    url: str
+    protocol: str
+    expiration: int
+
+
 @strawberry_sqlalchemy_mapper.type(db.File)
 class File:
-    pass
+    @strawberry.field(extensions=[DependencyExtension()])
+    def download_link(self, expiration: int = 3600, settings: APISettings = Depends(get_settings)) -> DownloadURL:
+        key = self.path  # type: ignore
+        bucket_name = self.namespace  # type: ignore
+        s3_client = boto3.client(
+            "s3",
+            region_name=settings.AWS_REGION,
+            endpoint_url=settings.BOTO_ENDPOINT_URL,
+            config=Config(signature_version="s3v4"),
+        )
+        url = s3_client.generate_presigned_url(
+            ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration
+        )
+        return DownloadURL(url=url, protocol="https", expiration=expiration)
 
 
 @strawberry_sqlalchemy_mapper.type(db.Sample)

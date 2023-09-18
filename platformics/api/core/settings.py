@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     DB_NAME: str
     JWK_PUBLIC_KEY_FILE: str
     JWK_PRIVATE_KEY_FILE: str
+    DEFAULT_UPLOAD_BUCKET: str
+    BOTO_ENDPOINT_URL: str
+    AWS_REGION: str
 
     ############################################################################
     # Computed properties

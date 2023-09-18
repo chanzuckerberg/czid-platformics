@@ -36,6 +36,7 @@ uuid6 = "^2023.5.2"
 mypy = "^1.5.1"
 types-requests = "^2.31.0.2"
 boto3 = "^1.28.43"
+boto3-stubs = "^1.28.50"
 
 [build-system]
 requires = ["poetry-core"]
