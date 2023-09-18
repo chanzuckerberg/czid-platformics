@@ -303,5 +303,5 @@ static
 # VS Code
 .vscode
 
-# LocalStack
-.volume
+# Moto
+.moto_recording

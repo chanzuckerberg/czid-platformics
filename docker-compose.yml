@@ -1,18 +1,20 @@
 version: "3.8"
 
 services:
-  localstack:
-    image: localstack/localstack:2.2.0
+  # Mock boto with persistence.
+  # To use it from the CLI: aws --endpoint-url=http://localhost:4000 s3 ls
+  # To reset all services without restarting the container: curl -X POST http://localhost:4000/moto-api/reset
+  motoserver:
+    image: motoserver/moto:4.2.2
     ports:
-      - "127.0.0.1:4566:4566"            # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559"  # External services port range
+      - "4000:4000"
     environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - S3_BUCKET_DEV=s3://local-bucket
+      - MOTO_PORT=4000
+      - MOTO_ENABLE_RECORDING=True
     volumes:
-      - ".volume:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./bin/init_aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
+      - .moto_recording:/moto/moto_recording
+      - ./bin/init_moto.sh:/moto/init_moto.sh
+    entrypoint: ["bash", "/moto/init_moto.sh"]
 
 networks:
   default:
