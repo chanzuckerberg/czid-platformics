@@ -10,13 +10,9 @@ from semver import Version
 from sqlalchemy.ext.asyncio import AsyncSession
 from entity_interface import create_entities
 
-<<<<<<< HEAD
-from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
-from manifest import Manifest, load_manifest
-=======
 from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage, WorkflowStepMessage
-from version import WorkflowVersion, static_sample
->>>>>>> 4aafbc7 (add step notification for local workflow runner and plot workflow)
+from manifest import Manifest, load_manifest
+
 
 import json
 from miniwdl_viz.mermaid_wdl import ParsedWDLToMermaid
