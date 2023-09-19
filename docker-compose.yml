@@ -11,6 +11,7 @@ services:
     environment:
       - MOTO_PORT=4000
       - MOTO_ENABLE_RECORDING=True
+      - MOTO_S3_CUSTOM_ENDPOINTS=http://motoserver.czidnet:4000
     volumes:
       - .moto_recording:/moto/moto_recording
       - ./bin/init_moto.sh:/moto/init_moto.sh

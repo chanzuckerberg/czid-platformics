@@ -9,6 +9,7 @@ AWS_ENVIRONMENT ?= AWS
 export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
 export docker_compose:=docker compose
+export docker_compose_run:=docker compose run --rm
 
 ### DATABASE VARIABLES #################################################
 LOCAL_DB_NAME = workflows
@@ -31,7 +32,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 local-init:
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
-	$(docker_compose) run $(FOLDER) alembic upgrade head
+	$(docker_compose_run) $(FOLDER) alembic upgrade head
 	$(MAKE) local-seed
 
 .PHONY: debugger
@@ -93,16 +94,16 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run tests
-	$(docker_compose) run $(FOLDER) bash -c "poetry run pytest"
+	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest"
 
 .PHONY: local-gqlschema
 local-gqlschema: ## Export this app's GQL schema.
-	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
+	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
 
 .PHONY: fix-lint
 fix-lint: ## Apply linting rules to the code in this directory.
-	$(docker_compose) run entities black .
-	$(docker_compose) run entities ruff check --fix .
+	$(docker_compose_run) entities black .
+	$(docker_compose_run) entities ruff check --fix .
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
@@ -146,4 +147,4 @@ local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
+	TOKEN=$$($(docker_compose_run) entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)

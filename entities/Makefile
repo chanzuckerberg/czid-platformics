@@ -4,6 +4,7 @@ SHELL := /bin/bash
 export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
 export docker_compose:=docker compose
+export docker_compose_run:=docker compose run --rm
 
 ### DATABASE VARIABLES #################################################
 LOCAL_DB_NAME = entities
@@ -25,7 +26,7 @@ rm-pycache: ## remove all __pycache__ files (run if encountering issues with pyc
 .PHONY: local-setup
 local-setup: ## Load db tables and seed data
 	while [ -z "$$($(docker_compose) exec -T entities-db psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
-	$(docker_compose) run entities alembic upgrade head
+	$(docker_compose_run) entities alembic upgrade head
 	$(MAKE) local-seed
 
 .PHONY: local-init
@@ -84,28 +85,28 @@ local-update-deps: ## Update poetry.lock to reflect pyproject.toml file changes.
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
-	$(docker_compose) run entities bash -c "poetry run pytest -s"
+	$(docker_compose_run) entities bash -c "poetry run pytest -s"
 	$(MAKE) cerbos-tests
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose) run entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
+	TOKEN=$$($(docker_compose_run) entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
 
 .PHONY: fix-poetry-lock
 fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
 	git checkout --theirs poetry.lock
-	$(docker_compose) run entities poetry lock --no-update
+	$(docker_compose_run) entities poetry lock --no-update
 
 .PHONY: fix-lint
 fix-lint: ## Apply linting rules to the code in this directory.
-	$(docker_compose) run entities black .
-	$(docker_compose) run entities ruff check --fix .
+	$(docker_compose_run) entities black .
+	$(docker_compose_run) entities ruff check --fix .
 
 .PHONY: check-lint
 check-lint: ## Check for bad linting
-	$(docker_compose) run entities black --check .
-	$(docker_compose) run entities ruff check .
-	$(docker_compose) run entities mypy .
+	$(docker_compose_run) entities black --check .
+	$(docker_compose_run) entities ruff check .
+	$(docker_compose_run) entities mypy .
 
 .PHONY: local-mypy
 local-mypy: ## Run type checking
@@ -113,7 +114,7 @@ local-mypy: ## Run type checking
 
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
-	$(docker_compose) run entities strawberry export-schema api.main:schema > api/schema.graphql
+	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
 	cp cli/gql_schema.py ../workflows/entity_gql_schema.py
@@ -135,4 +136,4 @@ alembic-autogenerate: ## Create new alembic migrations files based on SA schema 
 
 ### CERBOS #############################################
 cerbos-tests:
-	$(docker_compose) run cerbos compile --tests=/entities/test/ /entities/policies
+	$(docker_compose_run) cerbos compile --tests=/entities/test/ /entities/policies
