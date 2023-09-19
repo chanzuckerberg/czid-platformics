@@ -26,7 +26,7 @@ class File:
     ) -> typing.Optional[SignedURL]:
         if not self.path:  # type: ignore
             return None
-        key = self.path  # type: ignore
+        key = self.path.lstrip("/")  # type: ignore
         bucket_name = self.namespace  # type: ignore
         url = s3_client.generate_presigned_url(
             ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration

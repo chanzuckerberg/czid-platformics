@@ -49,7 +49,7 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     status = factory.Faker("enum", enum_cls=FileStatus)
     protocol = fuzzy.FuzzyChoice(["S3", "GCP"])
-    namespace = fuzzy.FuzzyChoice(["bucket_1", "bucket_2"])
+    namespace = fuzzy.FuzzyChoice(["local-bucket", "remote-bucket"])
     # path = factory.LazyAttribute(lambda o: {factory.Faker("file_path", depth=3, extension=o.file_format)})
     path = factory.Faker("file_path", depth=3)
     file_format = fuzzy.FuzzyChoice(["fasta", "fastq", "bam"])
