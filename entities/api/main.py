@@ -89,6 +89,7 @@ class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def create_upload_url(
         file_id: uuid.UUID,
+        expiration: int = 3600,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
@@ -102,9 +103,7 @@ class Mutation:
         file = files[0]
 
         # Generate a signed URL
-        expiration = 3600
         response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
-
         return SignedURL(
             url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
         )
