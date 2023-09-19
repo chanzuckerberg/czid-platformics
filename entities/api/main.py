@@ -1,4 +1,5 @@
 import typing
+import uuid
 
 import database.models as db
 import strawberry
@@ -6,7 +7,14 @@ import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.deps import (
+    get_auth_principal,
+    get_cerbos_client,
+    get_engine,
+    get_s3_client,
+    get_db_session,
+    require_auth_principal,
+)
 from platformics.api.core.settings import APISettings
 from platformics.api.core.gql_loaders import (
     EntityLoader,
@@ -14,17 +22,19 @@ from platformics.api.core.gql_loaders import (
     get_base_loader,
     get_base_updater,
     get_file_loader,
+    get_files,
 )
 from platformics.database.connect import AsyncDB
+from platformics.api.core.strawberry_extensions import DependencyExtension
 from strawberry.fastapi import GraphQLRouter
+from sqlalchemy.ext.asyncio import AsyncSession
+from mypy_boto3_s3.client import S3Client
 from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File
+from api.files import File, SignedURL
 
 ######################
 # Strawberry-GraphQL #
 ######################
-
-# strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry_sqlalchemy_mapper.interface(db.Entity)
@@ -75,8 +85,29 @@ class Mutation:
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
 
-    # file_stuff
-    get_upload_url: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
+    # File management
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def create_upload_url(
+        file_id: uuid.UUID,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+        s3_client: S3Client = Depends(get_s3_client),
+    ) -> SignedURL:
+        # Fetch the file if we have access to it
+        filters = [db.File.id == file_id]
+        files = await get_files(db.File, session, cerbos_client, principal, filters)
+        if len(files) == 0:
+            raise Exception(f"File with ID {file_id} not found or not authorized to access it")
+        file = files[0]
+
+        # Generate a signed URL
+        expiration = 3600
+        response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
+
+        return SignedURL(
+            url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+        )
 
 
 # --------------------

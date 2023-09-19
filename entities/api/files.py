@@ -6,6 +6,7 @@ from mypy_boto3_s3.client import S3Client
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from api.strawberry import strawberry_sqlalchemy_mapper
+from strawberry.scalars import JSON
 
 
 @strawberry.type
@@ -14,6 +15,7 @@ class SignedURL:
     protocol: str
     method: str
     expiration: int
+    fields: JSON
 
 
 @strawberry_sqlalchemy_mapper.type(db.File)
