@@ -1,12 +1,14 @@
 import factory
 import sqlalchemy as sa
-from database.models import File, Sample, SequencingRead
+from database.models import File, FileStatus, Sample, SequencingRead
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
+from faker_enum import EnumProvider
 
 Faker.add_provider(Bioseq)
 Faker.add_provider(Organ)
+Faker.add_provider(EnumProvider)
 
 
 # TODO, this is a lame singleton to prevent this library from
@@ -45,7 +47,7 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_get_or_create = ("namespace", "path")
         # exclude = ("sample_organ",)
 
-    status = fuzzy.FuzzyChoice(["awaiting_upload", "error", "success"])
+    status = factory.Faker("enum", enum_cls=FileStatus)
     protocol = fuzzy.FuzzyChoice(["S3", "GCP"])
     namespace = fuzzy.FuzzyChoice(["bucket_1", "bucket_2"])
     # path = factory.LazyAttribute(lambda o: {factory.Faker("file_path", depth=3, extension=o.file_format)})

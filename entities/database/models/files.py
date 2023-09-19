@@ -2,15 +2,24 @@ import uuid
 
 import uuid6
 from platformics.database.models.base import Base, Entity
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from typing import TYPE_CHECKING
+import strawberry
+import enum
 
 if TYPE_CHECKING:
     from database.models.samples import SequencingRead
 else:
     SequencingRead = "SequencingRead"
+
+
+@strawberry.enum
+class FileStatus(enum.Enum):
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
+    PENDING = "PENDING"
 
 
 class File(Base):
@@ -25,13 +34,13 @@ class File(Base):
     # the future, but I'm not sure yet which one is going to prove to be
     # more useful.
     entity_id = mapped_column(ForeignKey("entity.id"))
-    entity_field_name = Column(String)
+    entity_field_name: Mapped[str] = mapped_column(String, nullable=False)
     entity: Mapped[Entity] = relationship(Entity, foreign_keys=entity_id)
 
-    status = mapped_column(String, nullable=False)
-    protocol = mapped_column(String, nullable=False)
-    namespace = Column(String, nullable=False)
-    path = Column(String, nullable=False)
-    file_format = Column(String, nullable=False)
-    compression_type = Column(String, nullable=False)
-    size = Column(Integer, nullable=False)
+    status: Mapped[FileStatus] = mapped_column(Enum(FileStatus), nullable=False)
+    protocol: Mapped[str] = mapped_column(String, nullable=False)
+    namespace: Mapped[str] = mapped_column(String, nullable=False)
+    path: Mapped[str] = mapped_column(String, nullable=False)
+    file_format: Mapped[str] = mapped_column(String, nullable=False)
+    compression_type: Mapped[str] = mapped_column(String, nullable=False)
+    size: Mapped[int] = mapped_column(Integer, nullable=False)
