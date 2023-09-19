@@ -1,8 +1,8 @@
-import boto3
 import typing
 import database.models as db
 import strawberry
 from fastapi import Depends
+from mypy_boto3_s3.client import S3Client
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from api.strawberry import strawberry_sqlalchemy_mapper
@@ -22,7 +22,7 @@ class File:
     def download_link(
         self,
         expiration: int = 3600,
-        s3_client: boto3.client = Depends(get_s3_client),
+        s3_client: S3Client = Depends(get_s3_client),
     ) -> typing.Optional[SignedURL]:
         if not self.path:  # type: ignore
             return None
