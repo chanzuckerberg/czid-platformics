@@ -34,6 +34,7 @@ cerbos = "^0.10.1"
 jwcrypto = "^1.5.0"
 pydantic-settings = "^2.0.3"
 uuid6 = "^2023.5.2"
+boto3-stubs = {extras = ["s3"], version = "^1.28.50"}
 
 
 [build-system]
