@@ -1,5 +1,8 @@
+import os
+import boto3
 import typing
 
+from botocore.client import Config
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
@@ -82,3 +85,13 @@ def require_auth_principal(
     if not principal:
         raise Exception("Unauthorized")
     return principal
+
+def get_s3_client(
+    settings: APISettings = Depends(get_settings),
+) -> boto3.client:
+    return boto3.client(
+        "s3",
+        region_name=settings.AWS_REGION,
+        endpoint_url=settings.BOTO_ENDPOINT_URL,
+        config=Config(signature_version="s3v4"),
+    )
