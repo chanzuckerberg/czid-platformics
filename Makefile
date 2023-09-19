@@ -14,6 +14,11 @@ init: gha-setup
 seed:
 	./bin/seed_moto.sh
 
+.PHONY: rebuild
+rebuild:
+	$(MAKE) -C entities local-rebuild
+	$(MAKE) -C workflows local-rebuild
+
 .PHONY: clean
 clean:
 	$(MAKE) -C entities local-clean

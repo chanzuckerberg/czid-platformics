@@ -1,8 +1,11 @@
+import boto3
 import typing
 
+from botocore.client import Config
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
+from mypy_boto3_s3.client import S3Client
 from platformics.api.core.settings import APISettings
 from platformics.database.connect import AsyncDB, init_async_db
 from platformics.security.token_auth import get_token_claims
@@ -82,3 +85,13 @@ def require_auth_principal(
     if not principal:
         raise Exception("Unauthorized")
     return principal
+
+def get_s3_client(
+    settings: APISettings = Depends(get_settings),
+) -> S3Client:
+    return boto3.client(
+        "s3",
+        region_name=settings.AWS_REGION,
+        endpoint_url=settings.BOTO_ENDPOINT_URL,
+        config=Config(signature_version="s3v4"),
+    )
