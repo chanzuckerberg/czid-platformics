@@ -110,7 +110,7 @@ class SequencingReadFactory(CommonFactory):
     # sequence = factory.Faker('dna', length=100)
     protocol = fuzzy.FuzzyChoice(["TARGETED", "MNGS", "MSSPE"])
 
-    sequencing_read_file = factory.RelatedFactory(
+    sequence_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
         entity_field_name="sequence_file",

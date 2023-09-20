@@ -60,9 +60,9 @@ async def mark_upload_complete(
     try:
         file_size = validator.validate(s3_client, file.namespace, file.path.lstrip("/"))
     except:  # noqa
-        raise Exception("VALIDATION FAILURE!!")
-
-    file.status = db.FileStatus.SUCCESS
-    file.size = file_size
+        file.status = db.FileStatus.FAILED
+    else:
+        file.status = db.FileStatus.SUCCESS
+        file.size = file_size
 
     return file

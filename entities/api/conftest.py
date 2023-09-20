@@ -2,6 +2,7 @@ import json
 import typing
 from typing import Optional
 
+import boto3
 import pytest_asyncio
 from cerbos.sdk.model import Principal
 from platformics.database.connect import AsyncDB
@@ -9,8 +10,16 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
+from moto import mock_s3
+from mypy_boto3_s3.client import S3Client
 
-from platformics.api.core.deps import get_auth_principal, get_db_session, get_engine, require_auth_principal
+from platformics.api.core.deps import (
+    get_auth_principal,
+    get_db_session,
+    get_engine,
+    require_auth_principal,
+    get_s3_client,
+)
 from api.main import get_app
 
 
@@ -41,6 +50,21 @@ class GQLTestClient:
         }
         result = await self.http_client.post("/graphql", json={"query": query}, headers=gql_headers)
         return result.json()
+
+
+@pytest_asyncio.fixture()
+async def moto_client() -> S3Client:
+    mocks3 = mock_s3()
+    mocks3.start()
+    res = boto3.resource("s3")
+    res.create_bucket(Bucket="local-bucket")
+    res.create_bucket(Bucket="remote-bucket")
+    yield boto3.client("s3")
+    mocks3.stop()
+
+
+async def patched_s3_client() -> S3Client:
+    yield boto3.client("s3")
 
 
 @pytest_asyncio.fixture()
@@ -81,6 +105,7 @@ async def api(
     api.dependency_overrides[get_db_session] = patched_session
     api.dependency_overrides[require_auth_principal] = patched_authprincipal
     api.dependency_overrides[get_auth_principal] = patched_authprincipal
+    api.dependency_overrides[get_s3_client] = patched_s3_client
     return api
 
 
