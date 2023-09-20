@@ -49,7 +49,6 @@ async def mark_upload_complete(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     s3_client: S3Client = Depends(get_s3_client),
-    **kwargs: typing.Any,
 ) -> db.File:
     query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
     query = query.filter(db.File.id == file_id)
@@ -59,7 +58,7 @@ async def mark_upload_complete(
 
     validator = get_validator(file.file_format)
     try:
-        file_size = validator.validate(s3_client, file.namespace, file.path)
+        file_size = validator.validate(s3_client, file.namespace, file.path.lstrip("/"))
     except:  # noqa
         raise Exception("VALIDATION FAILURE!!")
 

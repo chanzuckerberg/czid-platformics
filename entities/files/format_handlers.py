@@ -23,7 +23,7 @@ class FastqHandler(FileFormatHandler):
         # Overly simplistic validator for fastq filees checks whether the first 1mb of a file are a valid fastq
         data = client.get_object(Bucket=bucket, Key=file_path, Range="bytes=0-1000000")["Body"].read()
         records = 0
-        for _ in SeqIO.parse(StringIO(str(data)), "fasta"):
+        for _ in SeqIO.parse(StringIO(data.decode("ascii")), "fastq"):
             records += 1
         assert records > 0
         return client.head_object(Bucket=bucket, Key=file_path)["ContentLength"]
@@ -33,8 +33,8 @@ class FastqHandler(FileFormatHandler):
         return ""
 
 
-def get_validator(format: dict) -> type[FileFormatHandler]:
-    if format["name"] == "fastq":
+def get_validator(format: str) -> type[FileFormatHandler]:
+    if format == "fastq":
         return FastqHandler
     else:
         raise Exception("Unknown file format")
