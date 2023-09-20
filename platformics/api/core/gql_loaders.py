@@ -6,13 +6,11 @@ from typing import Any, Mapping, Optional, Tuple
 import database.models as db
 import strawberry
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource, ResourceDesc
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
-from platformics.api.core.deps import (get_cerbos_client, get_db_session,
-                                       require_auth_principal)
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
-from platformics.thirdparty.cerbos_sqlalchemy.query import get_query
 from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import RelationshipProperty
@@ -48,9 +46,7 @@ class EntityLoader:
 
     _loaders: dict[RelationshipProperty, DataLoader]
 
-    def __init__(
-        self, engine: AsyncDB, cerbos_client: CerbosClient, principal: Principal
-    ) -> None:
+    def __init__(self, engine: AsyncDB, cerbos_client: CerbosClient, principal: Principal) -> None:
         self._loaders = {}
         self.engine = engine
         self.cerbos_client = cerbos_client
@@ -70,11 +66,7 @@ class EntityLoader:
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
-                filters = [
-                    tuple_(
-                        *[remote for _, remote in relationship.local_remote_pairs]
-                    ).in_(keys)
-                ]
+                filters = [tuple_(*[remote for _, remote in relationship.local_remote_pairs]).in_(keys)]
                 order_by: list[tuple[ColumnElement[Any], ...]] = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
@@ -93,11 +85,7 @@ class EntityLoader:
                     if not relationship.local_remote_pairs:
                         raise Exception("invalid relationship")
                     return tuple(
-                        [
-                            getattr(row, remote.key)
-                            for _, remote in relationship.local_remote_pairs
-                            if remote.key
-                        ]
+                        [getattr(row, remote.key) for _, remote in relationship.local_remote_pairs if remote.key]
                     )
 
                 grouped_keys: Mapping[Tuple, list[Any]] = defaultdict(list)
@@ -106,10 +94,7 @@ class EntityLoader:
                 if relationship.uselist:
                     return [grouped_keys[key] for key in keys]
                 else:
-                    return [
-                        grouped_keys[key][0] if grouped_keys[key] else None
-                        for key in keys
-                    ]
+                    return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
             self._loaders[relationship] = DataLoader(load_fn=load_fn)
             return self._loaders[relationship]
@@ -173,9 +158,7 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
 
         return new_entity
 
-    create.arguments = generate_strawberry_arguments(
-        CerbosAction.CREATE, sql_model, gql_type
-    )
+    create.arguments = generate_strawberry_arguments(CerbosAction.CREATE, sql_model, gql_type)
     return typing.cast(T, create)
 
 
@@ -212,9 +195,7 @@ def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:
 
         return entity
 
-    update.arguments = generate_strawberry_arguments(
-        CerbosAction.UPDATE, sql_model, gql_type
-    )
+    update.arguments = generate_strawberry_arguments(CerbosAction.UPDATE, sql_model, gql_type)
 
     return typing.cast(T, update)
 
@@ -239,13 +220,9 @@ def generate_strawberry_arguments(
         field = gql_type.__strawberry_definition__.get_field(sql_column)  # type: ignore
         if field:
             # When updating an entity, only entity ID is required
-            is_optional_field = (
-                action == CerbosAction.UPDATE and field.name != "entity_id"
-            )
+            is_optional_field = action == CerbosAction.UPDATE and field.name != "entity_id"
             default = None if is_optional_field else strawberry.UNSET
-            argument = StrawberryArgument(
-                field.name, field.graphql_name, field.type_annotation, default=default
-            )
+            argument = StrawberryArgument(field.name, field.graphql_name, field.type_annotation, default=default)
             gql_arguments.append(argument)
 
     return gql_arguments
