@@ -4,7 +4,8 @@ from typing import Dict, List, Literal, Tuple, Type, TypeVar
 from importlib.metadata import entry_points
 
 from sqlalchemy import select
-from database.models.workflow import Run
+from database.models.workflow import Run, RunStep
+import database.models as db
 
 from semver import Version
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +16,7 @@ from manifest import Manifest, load_manifest
 
 
 import json
+import datetime
 from miniwdl_viz.mermaid_wdl import ParsedWDLToMermaid
 
 T = TypeVar('T', bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
@@ -124,7 +126,26 @@ class LoaderDriver:
                     await self.process_workflow_completed(user_id, collection_id, manifest, _event.outputs)
 
                 if isinstance(event, WorkflowStepMessage):
-                    self.viz.pwm.py_mermaid.set_node_class(event.task)
-                    self.viz.plot_viz()
+                    if event.status == "STARTED":
+                        """ Create RunStep for the run on """
+                        db_run_step = db.RunStep(
+                            run_id=1, #event.runner_id, 
+                            step_name=event.task, 
+                            status="FAILED", #event.status, 
+                            started_at=datetime.datetime.now(), 
+                            ended_at=None
+                        )
+                        self.session.add(db_run_step)
+                        await self.session.commit()
+                    elif event.status == "SUCCEEDED":
+                        run_step = (await self.session.execute(
+                            select(RunStep).where((RunStep.run_id == 1) and (RunStep.step_name == event.task)) # change 1 to event.runner_id
+                        )).scalar()
+                        run_step.ended_at = datetime.datetime.now()
+                        run_step.status = event.status
+                        await self.session.commit()
+
+                        self.viz.pwm.py_mermaid.set_node_class(event.task)
+                        self.viz.plot_viz()
 
             await asyncio.sleep(1)

@@ -62,6 +62,7 @@ class Run(Base):
 
 @strawberry.enum
 class RunStepStatus(enum.Enum):
+    STARTED = "STARTED"
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
 
@@ -71,6 +72,7 @@ class RunStep(Base):
     # TODO: replace with uuid7
     id = Column(Integer, primary_key=True, autoincrement=True)
     run_id = Column(Integer, ForeignKey("run.id"), nullable=False)
+    step_name = Column(String, nullable=False)
     run = relationship("Run", back_populates="run_steps", foreign_keys=[run_id])
     started_at = Column(DateTime, nullable=False, server_default=func.now())
     ended_at = Column(DateTime)

@@ -25,15 +25,17 @@ class LocalWorkflowRunner(WorkflowRunner):
     def description(self) -> str:
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows locally using miniWDL"
-
-    async def detect_task_output(self, event_bus, runner_id, line):
-        if "INFO output :: job:" in line:
+    
+    async def detect_task_input_output(self, event_bus, runner_id, line):
+        if ("INFO output :: job:" in line) or ("INFO input :: job:" in line):
+            type = _search_group(r"INFO (\w+) ::", line, 1)
             task = _search_group(r"job: \"(.*)\",", line, 1)
-            outputs = json.loads(_search_group(r"values: (\{.*\})", line, 1))
+            values = json.loads(_search_group(r"values: (\{.*\})", line, 1))
             print(f"task complete: {task}")
-            for key, output in outputs.items():
+            for key, output in values.items():
                 print(f"{key}: {output}")
-            await event_bus.send(WorkflowStepMessage(runner_id=runner_id, task=task, outputs=outputs))
+            status = "STARTED" if type == "input" else "SUCCEEDED"
+            await event_bus.send(WorkflowStepMessage(status=status, runner_id=runner_id, task=task, outputs=values))
 
 
     async def run_workflow(
@@ -58,7 +60,7 @@ class LocalWorkflowRunner(WorkflowRunner):
                 while True:
                     assert p.stderr
                     line = p.stderr.readline().decode()
-                    await self.detect_task_output(event_bus, runner_id, line)
+                    await self.detect_task_input_output(event_bus, runner_id, line)
                     print(line, file=sys.stderr)
                     if not line: break
 
