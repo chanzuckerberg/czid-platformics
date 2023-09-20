@@ -20,7 +20,7 @@ from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from platformics.security.authorization import get_resource_query, CerbosAction
 
-E = typing.TypeVar("E", bound=db.Base)
+E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 

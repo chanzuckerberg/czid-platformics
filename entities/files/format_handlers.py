@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from mypy_boto3_s3.client import S3Client
 from Bio import SeqIO
 from io import StringIO
@@ -32,9 +32,9 @@ class FastqHandler(FileFormatHandler):
     def convert_to(cls, client: S3Client, bucket: str, file_path: str, format: dict) -> str:
         return ""
 
+
 def get_validator(format: dict) -> type[FileFormatHandler]:
     if format["name"] == "fastq":
         return FastqHandler
     else:
         raise Exception("Unknown file format")
-
