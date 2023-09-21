@@ -1,8 +1,7 @@
 from typing import Any, Optional
 
 from sqlalchemy.engine import Engine, create_engine
-from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
-                                    async_sessionmaker, create_async_engine)
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 
@@ -41,9 +40,7 @@ class SyncDB:
 
 
 def init_async_db(db_uri: str, **kwargs: dict[str, Any]) -> AsyncDB:
-    engine = create_async_engine(
-        db_uri, echo=False, pool_size=5, max_overflow=5, future=True, **kwargs
-    )
+    engine = create_async_engine(db_uri, echo=False, pool_size=5, max_overflow=5, future=True, **kwargs)
     return AsyncDB(engine)
 
 

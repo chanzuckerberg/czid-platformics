@@ -30,7 +30,7 @@ from strawberry.fastapi import GraphQLRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 from mypy_boto3_s3.client import S3Client
 from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File, SignedURL
+from api.files import File, SignedURL, mark_upload_complete
 
 ######################
 # Strawberry-GraphQL #
@@ -86,6 +86,8 @@ class Mutation:
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
 
     # File management
+    mark_upload_complete: File = mark_upload_complete
+
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def create_upload_url(
         file_id: uuid.UUID,
@@ -107,6 +109,7 @@ class Mutation:
         return SignedURL(
             url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
         )
+
 
 
 # --------------------

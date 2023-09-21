@@ -44,9 +44,7 @@ def get_cerbos_client(settings: APISettings = Depends(get_settings)) -> CerbosCl
     return CerbosClient(host=settings.CERBOS_URL)
 
 
-def get_auth_principal(
-    request: Request, settings: APISettings = Depends(get_settings)
-) -> typing.Optional[Principal]:
+def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> typing.Optional[Principal]:
     auth_header = request.headers.get("authorization")
     if auth_header:
         parts = auth_header.split()
@@ -85,6 +83,7 @@ def require_auth_principal(
     if not principal:
         raise Exception("Unauthorized")
     return principal
+
 
 def get_s3_client(
     settings: APISettings = Depends(get_settings),
