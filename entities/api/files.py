@@ -1,4 +1,3 @@
-import os
 import typing
 import database.models as db
 import strawberry
@@ -13,7 +12,8 @@ from strawberry.scalars import JSON
 
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, get_settings
+from platformics.api.core.settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.security.authorization import CerbosAction, get_resource_query
 from files.format_handlers import get_validator
@@ -71,6 +71,7 @@ async def mark_upload_complete(
 
     return file
 
+
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file(
     file_name: str,
@@ -84,6 +85,7 @@ async def create_file(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     s3_client: S3Client = Depends(get_s3_client),
+    settings: APISettings = Depends(get_settings),
 ) -> SignedURL:
     # Basic validation
     if "/" in file_name:
@@ -97,8 +99,8 @@ async def create_file(
         raise Exception("Entity not found")
 
     # Does that entity type have a column for storing a file ID?
-    column_file_id = f"{entity_field_name}_id"
-    if not hasattr(entity, column_file_id):
+    entity_property_name = f"{entity_field_name}_id"
+    if not hasattr(entity, entity_property_name):
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
 
     # Create a new file record, returns file ID.
@@ -108,7 +110,7 @@ async def create_file(
         entity_id=entity_id,
         entity_field_name=entity_field_name,
         protocol="S3",
-        namespace=os.getenv("DEFAULT_UPLOAD_BUCKET"),
+        namespace=settings.DEFAULT_UPLOAD_BUCKET,
         status=db.FileStatus.PENDING,
         path=f"uploads/{file_id}/{file_name}",
         file_format=file_format,
@@ -116,7 +118,7 @@ async def create_file(
         size=file_size,
     )
     session.add(file)
-    entity.file_id = file_id
+    setattr(entity, entity_property_name, file_id)
     await session.commit()
 
     # Create a signed URL
