@@ -18,13 +18,11 @@ from platformics.api.core.gql_loaders import (
 from platformics.database.connect import AsyncDB
 from strawberry.fastapi import GraphQLRouter
 from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File, mark_upload_complete
+from api.files import File, SignedURL, mark_upload_complete, create_file
 
 ######################
 # Strawberry-GraphQL #
 ######################
-
-# strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry_sqlalchemy_mapper.interface(db.Entity)
@@ -75,8 +73,8 @@ class Mutation:
     # Update
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
 
-    # file_stuff
-    get_upload_url: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
+    # File management
+    create_file: SignedURL = create_file
     mark_upload_complete: File = mark_upload_complete
 
 

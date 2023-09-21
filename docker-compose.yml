@@ -11,8 +11,8 @@ services:
     environment:
       - MOTO_PORT=4000
       - MOTO_ENABLE_RECORDING=True
-      - S3_IGNORE_SUBDOMAIN_BUCKETNAME=True
       - MOTO_S3_CUSTOM_ENDPOINTS=http://motoserver.czidnet:4000
+      - S3_IGNORE_SUBDOMAIN_BUCKETNAME=True
     volumes:
       - .moto_recording:/moto/moto_recording
       - ./bin:/moto/bin

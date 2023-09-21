@@ -12,9 +12,14 @@ else:
     File = "File"
 
 
+# Note that we use polymorphic_load=inline so that if you query db.Entity and it's a db.Sample,
+# you will get the db.Sample object not lazy-loaded. Otherwise, if you try to access a field
+# of that object it will cause the error "MissingGreenlet: greenlet_spawn has not been called".
+
+
 class Sample(Entity):
     __tablename__ = "sample"
-    __mapper_args__ = {"polymorphic_identity": __tablename__}
+    __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
 
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
@@ -29,7 +34,7 @@ class Sample(Entity):
 
 class SequencingRead(Entity):
     __tablename__ = "sequencing_read"
-    __mapper_args__ = {"polymorphic_identity": __tablename__}
+    __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
 
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
     nucleotide: Mapped[str] = mapped_column(String, nullable=False)
@@ -50,7 +55,7 @@ class SequencingRead(Entity):
 
 class Contig(Entity):
     __tablename__ = "contig"
-    __mapper_args__ = {"polymorphic_identity": __tablename__}
+    __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
 
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
     sequence: Mapped[str] = mapped_column(String, nullable=False)
