@@ -71,7 +71,6 @@ async def mark_upload_complete(
 
     return file
 
-
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file(
     file_name: str,
@@ -102,31 +101,26 @@ async def create_file(
     if not hasattr(entity, column_file_id):
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
 
-    # Create a new file record, returns file ID
+    # Create a new file record, returns file ID.
+    file_id = uuid6.uuid7()
     file = db.File(
+        id=file_id,
         entity_id=entity_id,
         entity_field_name=entity_field_name,
         protocol="S3",
         namespace=os.getenv("DEFAULT_UPLOAD_BUCKET"),
         status=db.FileStatus.PENDING,
-        path=f"uploads/{uuid6.uuid7()}/{file_name}",
+        path=f"uploads/{file_id}/{file_name}",
         file_format=file_format,
         compression_type=file_compression,
         size=file_size,
     )
+    session.add(file)
+    entity.file_id = file_id
+    await session.commit()
+
     # Create a signed URL
-
-    return SignedURL(url="https://google.com", protocol="https", method="POST", expiration=expiration)
-    # # Fetch the file if we have access to it
-    # query = get_resource_query(principal, cerbos_client, CerbosAction.CREATE, db.File)
-    # query = query.filter(db.File.id == file_id)
-    # file = (await session.execute(query)).scalars().one()
-    # if not file:
-    #     raise Exception("NOT FOUND!")  # TODO: How do we raise sane errors in our api?
-
-    # # Generate a signed URL
-    # response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path.lstrip("/"), ExpiresIn=expiration)
-    # return SignedURL(
-    #     url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
-    # )
-
+    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path.lstrip("/"), ExpiresIn=expiration)
+    return SignedURL(
+        url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+    )

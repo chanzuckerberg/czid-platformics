@@ -34,7 +34,7 @@ local-init: local-start local-setup ## Setup a working local-dev environment
 
 .PHONY: debugger
 debugger: ## Attach to the gql service (useful for pdb)
-	docker attach $$($(docker_compose) ps | grep entities | cut -d ' ' -f 1 | head -n 1)
+	docker attach $$($(docker_compose) ps | grep "platformics-entities" | cut -d ' ' -f 1 | head -n 1)
 
 .PHONY: local-status
 local-status: ## Show the status of the containers in the dev environment.
