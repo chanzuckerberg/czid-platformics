@@ -13,8 +13,9 @@ else:
 
 
 # Note that we use polymorphic_load=inline so that if you query db.Entity and it's a db.Sample,
-# you will get the db.Sample object not lazy-loaded. Otherwise, if you try to access a field 
+# you will get the db.Sample object not lazy-loaded. Otherwise, if you try to access a field
 # of that object it will cause the error "MissingGreenlet: greenlet_spawn has not been called".
+
 
 class Sample(Entity):
     __tablename__ = "sample"
