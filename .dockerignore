@@ -9,8 +9,11 @@
 **/__pycache__
 **/*.egg-info
 **/.cache/
+**/.vscode/
 
-.tox
-.coverage
-.pytest_cache
-.mypy_cache
+**/.tox
+**/.coverage
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.vscode/
