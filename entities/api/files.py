@@ -1,7 +1,9 @@
+import os
 import typing
 import database.models as db
 import strawberry
 import uuid
+import uuid6
 from fastapi import Depends
 from mypy_boto3_s3.client import S3Client
 from platformics.api.core.deps import get_s3_client
@@ -71,23 +73,60 @@ async def mark_upload_complete(
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
-async def create_upload_url(
-    file_id: uuid.UUID,
+async def create_file(
+    file_name: str,
+    file_size: int,
+    file_format: str,
+    entity_id: uuid.UUID,
+    entity_field_name: str,
+    file_compression: typing.Optional[str] = None,
     expiration: int = 3600,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     s3_client: S3Client = Depends(get_s3_client),
 ) -> SignedURL:
-    # Fetch the file if we have access to it
-    query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
-    query = query.filter(db.File.id == file_id)
-    file = (await session.execute(query)).scalars().one()
-    if not file:
-        raise Exception("NOT FOUND!")  # TODO: How do we raise sane errors in our api?
+    # Basic validation
+    if "/" in file_name:
+        raise Exception("File name should not contain /")
 
-    # Generate a signed URL
-    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
-    return SignedURL(
-        url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+    # Fetch the entity if have access to it
+    query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.Entity)
+    query = query.filter(db.Entity.id == entity_id)
+    entity = (await session.execute(query)).scalars().one()
+    if not entity:
+        raise Exception("Entity not found")
+
+    # Does that entity type have a column for storing a file ID?
+    column_file_id = f"{entity_field_name}_id"
+    if not hasattr(entity, column_file_id):
+        raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
+
+    # Create a new file record, returns file ID
+    file = db.File(
+        entity_id=entity_id,
+        entity_field_name=entity_field_name,
+        protocol="S3",
+        namespace=os.getenv("DEFAULT_UPLOAD_BUCKET"),
+        status=db.FileStatus.PENDING,
+        path=f"uploads/{uuid6.uuid7()}/{file_name}",
+        file_format=file_format,
+        compression_type=file_compression,
+        size=file_size,
     )
+    # Create a signed URL
+
+    return SignedURL(url="https://google.com", protocol="https", method="POST", expiration=expiration)
+    # # Fetch the file if we have access to it
+    # query = get_resource_query(principal, cerbos_client, CerbosAction.CREATE, db.File)
+    # query = query.filter(db.File.id == file_id)
+    # file = (await session.execute(query)).scalars().one()
+    # if not file:
+    #     raise Exception("NOT FOUND!")  # TODO: How do we raise sane errors in our api?
+
+    # # Generate a signed URL
+    # response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path.lstrip("/"), ExpiresIn=expiration)
+    # return SignedURL(
+    #     url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+    # )
+
