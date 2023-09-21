@@ -23,7 +23,7 @@ class SignedURL:
     protocol: str
     method: str
     expiration: int
-    fields: JSON
+    fields: typing.Optional[JSON] = None  # type: ignore
 
 
 @strawberry_sqlalchemy_mapper.type(db.File)
@@ -68,3 +68,26 @@ async def mark_upload_complete(
         file.size = file_size
 
     return file
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_upload_url(
+    file_id: uuid.UUID,
+    expiration: int = 3600,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    s3_client: S3Client = Depends(get_s3_client),
+) -> SignedURL:
+    # Fetch the file if we have access to it
+    query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
+    query = query.filter(db.File.id == file_id)
+    file = (await session.execute(query)).scalars().one()
+    if not file:
+        raise Exception("NOT FOUND!")  # TODO: How do we raise sane errors in our api?
+
+    # Generate a signed URL
+    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
+    return SignedURL(
+        url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+    )
