@@ -53,7 +53,7 @@ class GQLTestClient:
 
 
 @pytest_asyncio.fixture()
-async def moto_client() -> S3Client:
+async def moto_client() -> typing.AsyncGenerator[S3Client, None]:
     mocks3 = mock_s3()
     mocks3.start()
     res = boto3.resource("s3")
@@ -63,7 +63,7 @@ async def moto_client() -> S3Client:
     mocks3.stop()
 
 
-async def patched_s3_client() -> S3Client:
+async def patched_s3_client() -> typing.AsyncGenerator[S3Client, None]:
     yield boto3.client("s3")
 
 

@@ -33,7 +33,7 @@ def get_resource_query(
             "request.resource.attr.owner_user_id": model_cls.owner_user_id,  # type: ignore
             "request.resource.attr.collection_id": model_cls.collection_id,  # type: ignore
         }
-        joins = None
+        joins = []
     query = get_query(
         plan,
         model_cls,  # type: ignore
