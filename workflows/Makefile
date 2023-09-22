@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 
 FOLDER = workflows
+CONTAINER ?= workflows
 
 # Sets .env.localdev file. [AWS|TEST] Otherwise sets an empty file
 AWS_ENVIRONMENT ?= AWS 
@@ -98,17 +99,17 @@ local-tests: ## Run tests
 
 .PHONY: local-gqlschema
 local-gqlschema: ## Export this app's GQL schema.
-	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
+	$(docker_compose_run) $(FOLDER) strawberry export-schema api.main:schema > api/schema.graphql
 
 .PHONY: fix-lint
 fix-lint: ## Apply linting rules to the code in this directory.
-	$(docker_compose_run) entities black .
-	$(docker_compose_run) entities ruff check --fix .
+	$(docker_compose_run) $(FOLDER) black .
+	$(docker_compose_run) $(FOLDER) ruff check --fix .
 
 .PHONY: update-cli
 update-cli:  ## Update the GQL types used by the CLI
-	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8042/graphql api/schema.json
-	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
+	$(docker_compose) exec $(FOLDER) python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8042/graphql api/schema.json
+	$(docker_compose) exec $(FOLDER) sgqlc-codegen schema api/schema.json cli/gql_schema.py
 
 ### GitHub Actions ###################################################
 .PHONY: gha-setup
@@ -116,8 +117,8 @@ gha-setup:
 	docker swarm init
 
 ### ALEMBIC #############################################
-alembic-upgrade-head:
-	$(docker_compose) exec workflows alembic upgrade head ## Run alembic migrations locally
+alembic-upgrade-head: ## Run alembic migrations locally 
+	$(docker_compose) exec workflows alembic upgrade head
 
 alembic-undo-migration: ## Downgrade the latest alembic migration
 	$(docker_compose) exec workflows alembic downgrade -1
@@ -147,4 +148,4 @@ local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose_run) entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
+	TOKEN=$$($(docker_compose_run) $(FOLDER) ./platformics/cli/generate_token.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
