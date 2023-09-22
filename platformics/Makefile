@@ -40,9 +40,13 @@ local-status: ## Show the status of the containers in the dev environment.
 local-shell: ## Open a command shell in one of the dev containers. ex: make local-shell CONTAINER=frontend
 	$(docker_compose) exec $(CONTAINER) bash
 
-.PHONY: local-rebuild
-local-rebuild: ## Rebuild local dev without re-importing data
+.PHONY: local-build
+local-build: ## Build images
 	$(docker_compose) build
+
+.PHONY: local-rebuild
+local-rebuild: local-build ## Rebuild local dev without re-importing data
+	$(docker_compose) up -d
 
 .PHONY: local-sync
 local-sync: local-rebuild local-init ## Re-sync the local-environment state after modifying library deps or docker configs
