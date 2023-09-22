@@ -3,8 +3,6 @@ import json
 import logging
 
 import click
-from platformics.api.core.settings import Settings
-from platformics.security.token_auth import ProjectRole, create_token
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 
