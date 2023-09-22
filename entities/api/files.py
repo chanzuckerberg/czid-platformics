@@ -38,7 +38,7 @@ class File:
     ) -> typing.Optional[SignedURL]:
         if not self.path:  # type: ignore
             return None
-        key = self.path.lstrip("/")  # type: ignore
+        key = self.path  # type: ignore
         bucket_name = self.namespace  # type: ignore
         url = s3_client.generate_presigned_url(
             ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration
@@ -62,7 +62,7 @@ async def mark_upload_complete(
 
     validator = get_validator(file.file_format)
     try:
-        file_size = validator.validate(s3_client, file.namespace, file.path.lstrip("/"))
+        file_size = validator.validate(s3_client, file.namespace, file.path)
     except:  # noqa
         file.status = db.FileStatus.FAILED
     else:
@@ -122,7 +122,7 @@ async def create_file(
     await session.commit()
 
     # Create a signed URL
-    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path.lstrip("/"), ExpiresIn=expiration)
+    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
     return SignedURL(
         url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
     )
