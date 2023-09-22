@@ -27,7 +27,7 @@ async def test_file_validation(
         file = session.execute(sa.select(File)).scalars().one()
 
     valid_fastq_file = "test_infra/fixtures/test1.fastq"
-    moto_client.put_object(Bucket=file.namespace, Key=file.path.lstrip("/"), Body=open(valid_fastq_file, "rb"))
+    moto_client.put_object(Bucket=file.namespace, Key=file.path, Body=open(valid_fastq_file, "rb"))
 
     # Mark upload complete
     query = f"""
@@ -64,7 +64,7 @@ async def test_invalid_fastq(
         session.commit()
         file = session.execute(sa.select(File)).scalars().one()
 
-    moto_client.put_object(Bucket=file.namespace, Key=file.path.lstrip("/"), Body="this is not a fastq file")
+    moto_client.put_object(Bucket=file.namespace, Key=file.path, Body="this is not a fastq file")
 
     # Mark upload complete
     query = f"""
