@@ -81,14 +81,15 @@ async def test_invalid_fastq(
     fileinfo = res["data"]["markUploadComplete"]
     assert fileinfo["status"] == "FAILED"
 
+
 # Test creating files
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "member_projects,project_id,entity_field",
     [
-      ([456], 123, "sequence_file"), # Can't create file for entity you don't have access to
-      ([123], 123, "does_not_exist"), # Can't create file for entity that isn't connected to a valid file type
-      ([123], 123, "sequence_file"), # Can create file for entity you have access to
+        ([456], 123, "sequence_file"),  # Can't create file for entity you don't have access to
+        ([123], 123, "does_not_exist"),  # Can't create file for entity that isn't connected to a valid file type
+        ([123], 123, "sequence_file"),  # Can create file for entity you have access to
     ],
 )
 async def test_create_file(
@@ -113,7 +114,8 @@ async def test_create_file(
     # Try creating a file
     mutation = f"""
         mutation MyQuery {{
-          createFile(entityId: "{entity_id}", entityFieldName: "{entity_field}", fileName: "test.fastq", fileSize: 123, fileFormat: "fastq") {{
+          createFile(entityId: "{entity_id}", entityFieldName: "{entity_field}",
+            fileName: "test.fastq", fileSize: 123, fileFormat: "fastq") {{
             url
             expiration
             method
