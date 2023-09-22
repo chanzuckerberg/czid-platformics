@@ -39,6 +39,7 @@ services:
       dockerfile: "workflows/Dockerfile"
       args:
         - BUILDKIT_INLINE_CACHE=1
+    image: "platformics-workflows"
     restart: always
     volumes:
       - .:/workflows

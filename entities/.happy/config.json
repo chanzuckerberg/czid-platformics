@@ -1,0 +1,59 @@
+{
+    "default_env": "dev",
+    "app": "entities",
+    "default_compose_env_file": ".env.ecr",
+    "environments": {
+        "dev": {
+            "aws_profile": "idseq-dev",
+            "aws_region": "us-west-2",
+            "k8s": {
+                "namespace": "czid-dev-happy-happy-env",
+                "cluster_id": "czid-dev-eks",
+                "auth_method": "eks"
+            },
+            "terraform_directory": ".happy/terraform/envs/dev",
+            "task_launch_type": "k8s"
+        },
+        "staging": {
+            "aws_profile": "idseq-dev",
+            "aws_region": "us-west-2",
+            "k8s": {
+                "namespace": "czid-staging-happy-happy-env",
+                "cluster_id": "czid-staging-eks",
+                "auth_method": "eks"
+            },
+            "terraform_directory": ".happy/terraform/envs/staging",
+            "task_launch_type": "k8s"
+        }
+    },
+    "services": [
+        "entities"
+    ],
+    "features": {
+        "enable_dynamo_locking": true,
+        "enable_happy_api_usage": true,
+        "enable_ecr_auto_creation": true
+    },
+    "api": {},
+    "stack_defaults": {
+        "create_dashboard": false,
+        "routing_method": "CONTEXT",
+        "services": {
+            "entities": {
+                "build": {
+                    "context": ".",
+                    "dockerfile": "Dockerfile"
+                },
+                "health_check_path": "/graphql/",
+                "name": "entities",
+                "path": "/graphql/*",
+                "platform_architecture": "arm64",
+                "port": 8008,
+                "priority": 0,
+                "service_type": "PRIVATE",
+                "success_codes": "200-499"
+            }
+        },
+        "stack_defaults": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
+    }
+}
