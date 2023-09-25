@@ -90,7 +90,7 @@ local-tests: ## Run entities tests
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose_run) entities ./cli/gqlcli.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
+	TOKEN=$$($(docker_compose_run) entities ./platformics/cli/generate_token.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
 
 .PHONY: fix-poetry-lock
 fix-poetry-lock: ## Fix poetry lockfile after merge conflict & repairing pyproject.toml
