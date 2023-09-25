@@ -44,9 +44,8 @@
                     "context": ".",
                     "dockerfile": "Dockerfile"
                 },
-                "health_check_path": "/graphql/",
+                "health_check_path": "/",
                 "name": "workflows",
-                "path": "/graphql/*",
                 "platform_architecture": "arm64",
                 "port": 8042,
                 "priority": 0,
