@@ -21,12 +21,12 @@ module "stack" {
   }
   services = {
     workflows = {
-      health_check_path     = "/graphql"
+      health_check_path     = "/"
       name                  = "workflows"
       platform_architecture = "arm64"
       port                  = 8042
       priority              = 0
-      service_type          = "PRIVATE"
+      service_type          = "INTERNAL"
       success_codes         = "200-499"
     }
   }

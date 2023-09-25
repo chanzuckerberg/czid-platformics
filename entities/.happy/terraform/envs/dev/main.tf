@@ -9,15 +9,22 @@ module "stack" {
   stack_prefix     = "/${var.stack_name}"
   app_name         = var.app
   deployment_stage = "dev"
+  additional_env_vars = {
+    CERBOS_URL="http://cerbos:3592"
+    JWK_PUBLIC_KEY_FILE="/czid-platformics/entities/test_infra/fixtures/public_key.pem"
+    JWK_PRIVATE_KEY_FILE="/czid-platformics/entities/test_infra/fixtures/private_key.pem"
+    DEFAULT_UPLOAD_BUCKET="local-bucket"
+    BOTO_ENDPOINT_URL="http://motoserver.czidnet:4000"
+    AWS_REGION="us-west-2"
+  }
   services = {
     entities = {
-      health_check_path     = "/graphql/"
+      health_check_path     = "/"
       name                  = "entities"
-      path                  = "/graphql/*"
       platform_architecture = "arm64"
       port                  = 8008
       priority              = 0
-      service_type          = "PRIVATE"
+      service_type          = "INTERNAL"
       success_codes         = "200-499"
     }
   }
