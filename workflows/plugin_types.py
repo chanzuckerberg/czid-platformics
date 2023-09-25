@@ -1,18 +1,21 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Literal, Coroutine, Any
+from typing import Dict, List, Literal
 
 from entity_interface import Entity
-from version import WorkflowInput, WorkflowOutput
+from version import WorkflowInput
+
 
 @dataclass
 class WorkflowStatusMessage:
     runner_id: str
     status: Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
+
 @dataclass
 class WorkflowStartedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_STARTED"]
+
 
 class WorkflowSucceededMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
@@ -21,6 +24,7 @@ class WorkflowSucceededMessage(WorkflowStatusMessage):
     def __init__(self, runner_id: str, outputs: Dict[str, str]):
         self.runner_id = runner_id
         self.outputs = outputs
+
 
 @dataclass
 class WorkflowFailedMessage(WorkflowStatusMessage):
@@ -35,7 +39,6 @@ class EventBus(ABC):
     @abstractmethod
     async def poll() -> List[WorkflowStatusMessage]:
         pass
-
 
 
 class WorkflowRunner(ABC):

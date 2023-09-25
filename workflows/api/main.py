@@ -1,4 +1,3 @@
-import asyncio
 import configparser
 import json
 import os
@@ -6,25 +5,20 @@ import typing
 
 import database.models as db
 import entity_gql_schema as entity_schema
-import sqlalchemy as sa
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from config import load_event_buses, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI
-from loader import LoaderDriver
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_db_session, get_engine)
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from platformics.api.core.settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.database.connect import AsyncDB, init_async_db
-from platformics.database.models.base import Base
+from platformics.database.connect import AsyncDB
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
-                                          StrawberrySQLAlchemyMapper)
+from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
 
@@ -276,6 +270,7 @@ def get_context(
 
 
 root_router = APIRouter()
+
 
 @root_router.get("/")
 async def root():

@@ -7,7 +7,13 @@ from typing import List
 from uuid import uuid4
 import re
 
-from plugin_types import EventBus, WorkflowFailedMessage, WorkflowRunner, WorkflowStartedMessage, WorkflowStatusMessage, WorkflowSucceededMessage
+from plugin_types import (
+    EventBus,
+    WorkflowFailedMessage,
+    WorkflowRunner,
+    WorkflowStartedMessage,
+    WorkflowSucceededMessage,
+)
 
 
 def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
@@ -16,6 +22,7 @@ def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
     group = match.group(n)
     assert isinstance(group, str)
     return group
+
 
 class LocalWorkflowRunner(WorkflowRunner):
     def supported_workflow_types(self) -> List[str]:
@@ -34,7 +41,6 @@ class LocalWorkflowRunner(WorkflowRunner):
             for key, output in outputs.items():
                 print(f"{key}: {output}")
 
-
     async def run_workflow(
         self,
         event_bus: EventBus,
@@ -44,8 +50,8 @@ class LocalWorkflowRunner(WorkflowRunner):
     ) -> str:
         runner_id = str(uuid4())
         await event_bus.send(WorkflowStartedMessage(runner_id, "WORKFLOW_STARTED"))
-        # Running docker-in-docker requires the paths to files and outputs to be the same between 
-        with tempfile.TemporaryDirectory(dir='/tmp') as tmpdir:
+        # Running docker-in-docker requires the paths to files and outputs to be the same between
+        with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
             try:
                 p = subprocess.Popen(
                     ["miniwdl", "run", "--verbose", os.path.abspath(workflow_path)]
@@ -59,7 +65,8 @@ class LocalWorkflowRunner(WorkflowRunner):
                     line = p.stderr.readline().decode()
                     self.detect_task_output(line)
                     print(line, file=sys.stderr)
-                    if not line: break
+                    if not line:
+                        break
 
                 assert p.stdout
                 outputs = json.loads(p.stdout.read().decode())["outputs"]

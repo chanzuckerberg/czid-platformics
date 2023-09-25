@@ -16,8 +16,8 @@ setup(
     install_requires=["miniwdl"],
     reentry_register=True,
     entry_points={
-        'czid.plugin.entity_output_loader': [
-            'sample = loader_sample:SampleLoader',
+        "czid.plugin.entity_output_loader": [
+            "sample = loader_sample:SampleLoader",
         ],
     },
 )

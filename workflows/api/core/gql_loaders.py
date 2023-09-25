@@ -5,8 +5,7 @@ from typing import Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
-from platformics.api.core.deps import (get_cerbos_client, get_db_session,
-                           require_auth_principal)
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc

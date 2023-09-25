@@ -1,5 +1,5 @@
 import factory
-from factory import Faker, fuzzy
+from factory import fuzzy
 import datetime
 
 

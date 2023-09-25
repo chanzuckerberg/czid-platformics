@@ -27,6 +27,7 @@ _type_name_to_graphql_type = {
     "bool": "Boolean",
 }
 
+
 @dataclass
 class Entity(ABC):
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
@@ -77,7 +78,7 @@ class Entity(ABC):
             if field.type.__name__ == "EntityReference":
                 entity_ref: EntityReference = getattr(self, field.name)
                 yield entity_ref
-    
+
     async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client):
         if self.entity_id:
             return
@@ -100,7 +101,9 @@ class Sample(Entity):
     name: str
     location: str
 
+
 T = typing.TypeVar("T", bound=Entity)
+
 
 @dataclass
 class EntityReference(Generic[T]):
@@ -128,6 +131,7 @@ class SequencingRead(Entity):
     sequence: str
     protocol: str
     sample: EntityReference[Sample] = field(metadata={"id_name": "sampleId"})
+
 
 @dataclass
 class Contig(Entity):

@@ -3,8 +3,6 @@ import sys
 from typing import Dict, List, Literal, Tuple, Type, TypeVar
 from importlib.metadata import entry_points
 
-from sqlalchemy import select
-from database.models.workflow import Run
 
 from semver import Version
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,13 +11,15 @@ from entity_interface import create_entities
 from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
 from manifest import Manifest, load_manifest
 
-T = TypeVar('T', bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
+T = TypeVar("T", bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
+
+
 def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> Dict[str, List[Tuple[Version, T]]]:
     loaders: Dict[str, List[Tuple[Version, T]]] = {}
     for plugin in entry_points(group=f"czid.plugin.entity_{input_or_output}_loader"):
         assert plugin.dist, "Plugin distribution not found"
         name = plugin.name
-        vesion =  Version.parse(plugin.dist.version)
+        vesion = Version.parse(plugin.dist.version)
         loader = plugin.load()()
         assert isinstance(loader, cls)
         if name not in loaders:
@@ -27,7 +27,10 @@ def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> 
         loaders[name].append((vesion, loader))
     return loaders
 
+
 input_loaders = load_loader_plugins("input", EntityInputLoader)
+
+
 def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[EntityInputLoader]:
     resolved_loaders = []
     for loader_config in workflow_manifest.input_loaders:
@@ -41,7 +44,10 @@ def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[EntityInpu
         resolved_loaders.append(latest)
     return resolved_loaders
 
+
 output_loaders = load_loader_plugins("output", EntityOutputLoader)
+
+
 # TODO: DRY with above but make the types work poperly
 def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[EntityOutputLoader]:
     resolved_loaders = []
@@ -65,7 +71,9 @@ class LoaderDriver:
         self.session = session
         self.bus = bus
 
-    async def process_workflow_completed(self, user_id: int, collection_id: int, workflow_manifest: Manifest, outputs: Dict[str, str]):
+    async def process_workflow_completed(
+        self, user_id: int, collection_id: int, workflow_manifest: Manifest, outputs: Dict[str, str]
+    ):
         loaders = resolve_entity_output_loaders(workflow_manifest)
         loader_futures = []
         for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
@@ -77,7 +85,7 @@ class LoaderDriver:
                     args[field.name] = outputs[f"{workflow_manifest.name}.{field_name}"]
                 elif source == "inputs":
                     raise Exception("TODO!")
-                
+
             # field = loader_config.fields[0]
             # outputs = {item.name: outputs[f'{workflow_manifest.name}.{item.name}'] for item in loader_config.fields}
             print("args", args, file=sys.stderr)
@@ -91,7 +99,6 @@ class LoaderDriver:
         while True:
             for event in await self.bus.poll():
                 if isinstance(event, WorkflowSucceededMessage):
-
                     manifest = load_manifest(open("sequence_manifest.json").read())
                     _event: WorkflowSucceededMessage = event
                     # run = (await self.session.execute(
