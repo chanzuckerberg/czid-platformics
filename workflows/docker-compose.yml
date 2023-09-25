@@ -1,18 +1,15 @@
 version: '3.8'
 
 x-aws-variables: &aws-variables
-  ? AWS_ACCESS_KEY_ID
-  ? AWS_SECRET_ACCESS_KEY
-  ? AWS_SESSION_TOKEN
   ? AWS_REGION=us-west-2
   ? AWS_DEFAULT_REGION=us-west-2
 
 x-db-variables: &db-variables
-  ? DB_HOST=postgres.czidnet
-  ? DB_PORT=5432
-  ? DB_USER=postgres
-  ? DB_PASS=password_postgres
-  ? DB_NAME=workflows
+  ? PLATFORMICS_DATABASE_HOST=postgres.czidnet
+  ? PLATFORMICS_DATABASE_PORT=5432
+  ? PLATFORMICS_DATABASE_USER=postgres
+  ? PLATFORMICS_DATABASE_PASSWORD=password_postgres
+  ? PLATFORMICS_DATABASE_NAME=workflows
   
 x-workflow-variables: &workflow-variables
   ? ENVIRONMENT
@@ -54,12 +51,13 @@ services:
     tty: true # Helps with pdb
     environment:
       <<: [*aws-variables, *db-variables, *workflow-variables]
-      ENTITY_SERVICE_URL: http://entities.czidnet:8008/graphql
-      CERBOS_URL: http://wf-cerbos:3592
-      JWK_PUBLIC_KEY_FILE: /workflows/test_infra/fixtures/public_key.pem
-      JWK_PRIVATE_KEY_FILE: /workflows/test_infra/fixtures/private_key.pem
-      DEFAULT_UPLOAD_BUCKET: local-bucket
-      BOTO_ENDPOINT_URL: http://motoserver.czidnet:4000
+      CERBOS_URL: "http://cerbos.cerbos-system.svc.cluster.local:3592"
+      JWK_PUBLIC_KEY_FILE: "/workflows/test_infra/fixtures/public_key.pem"
+      JWK_PRIVATE_KEY_FILE: "/workflows/test_infra/fixtures/private_key.pem"
+      DEFAULT_UPLOAD_BUCKET: "local-bucket"
+      BOTO_ENDPOINT_URL: "http://motoserver.czidnet:4000"
+      ENTITY_SERVICE_URL: "http://entity-service:8080"
+      AWS_REGION: "us-west-2"
       ENTITY_SERVICE_AUTH_TOKEN: "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6Ik5Nc3ZKbXVuYnBXY0VsdVlJTmRVeVVIcUkzbjZCR2VQd2V3ajRXS0pVdEt0QXhmUUtrVE81M2kzQ2dSZkZYVEQiLCJ5IjoiYmp6TkJuZjExWjRIV3dBVm95UVpSOGRWSERicW9wTjhvQkJZYnIxQlBiU1llZHdaWkVuYzJqS21rY0xxcloxTiJ9LCJraWQiOiItQmx2bF9wVk5LU2JRQ2N5dGV4UzNfMk5MaHBia2J6LVk5VFFjbkY5S1drIiwidHlwIjoiSldFIn0..Ymjmtj6nXp8r8AFe8AgI1g.e_39w7OXGJaOVKL_QkP38rvlcEeSgFQsxT0rTdCgI5E-b328zlVHagLSFZ_Iqvqiy6Z8KcU4pLJ3NTaW3Ys_YQsnUn6yUEvwqOY2KESB0mT0Bp3qpNYRBZJVA8PW43YAbOnO7h7ZTwQZJfwMzwhcaaYeZW8pN9rvcNtQX3rgBubSuR-LHKL6k4uAMPh9A8ZxXKZgpI6tpJPxE-uspvYi-foW8VyjZtwOUMvMp3lfZPyL1oQIv_rEUhOGNO_lfi339QcT6F7DwBjXK6C_7U65F-dFZScnReLnVczPfHhJ7z3NnVt46sFcddgZpLIpQyzA6puCcDoRm5ZZCVvm8h-LHVy-9dGWLVxBRhGRdBwBhbiVu2O_CNeVabXl8JhAs3oeV2zDgYfOj_-kkHWsbgHZ0y-tc-HtgoXzsUqaRP1IXQ3g3VDES7UjsaKsfxgURH5EIsrdWwFrWHGoLNfGwwPSwTBI5Mul7LT10-Pg_uBBCiHfQIDqerRQeADRFhV_07GYatBDt-RxwNL4bO59V8ewCzhpdCYRpL363HGldT1Pic-SpTk2NsY2t8MA6__FhJU9JSKYwJpeKMaGLUHA_40PEQ.gb5q-WZTU-ZKpV7WYFbMGMEF2CZIBrFlCUeaZ5ffPDU"
   motoserver:
     profiles: ["moto"]
