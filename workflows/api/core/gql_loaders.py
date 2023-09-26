@@ -90,7 +90,7 @@ class WorkflowLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
-            load_method = get_db_rows  # type: ignore
+            load_method = db_rows  # type: ignore
 
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:

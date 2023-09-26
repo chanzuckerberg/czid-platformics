@@ -190,7 +190,8 @@ class Mutation:
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> str:
-        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
+        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
+        # other devs may want to submit custom containers
         # inputs_json = {
         #     "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
         #     "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
@@ -207,7 +208,8 @@ class Mutation:
         response = await _workflow_runner.run_workflow(
             event_bus=event_buses["local"],
             workflow_run_id="1",  # TODO: When we create the workflow run add the uuid here
-            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",  # TODO: should come from the WorkflowVersion model
+            # TODO: should come from the WorkflowVersion model
+            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",
             inputs={},
         )
 
@@ -273,7 +275,7 @@ root_router = APIRouter()
 
 
 @root_router.get("/")
-async def root():
+async def root() -> dict:
     return {"message": "Hello World"}
 
 

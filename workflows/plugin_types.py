@@ -60,7 +60,11 @@ class WorkflowRunner(ABC):
 class EntityInputLoader(ABC):
     @abstractmethod
     async def load(self, **kwargs: Dict[str, Entity]) -> WorkflowInput:
-        """Processes workflow output specified by the type constraints in worrkflow_output_types and returns a list of lists of entities. The outer list represents the order the entities must be created in, while the inner lists can be created in parallel."""
+        """Processes workflow output specified by the type constraints in
+        worrkflow_output_types and returns a list of lists of entities.
+        The outer list represents the order the entities
+        must be created in, while the inner lists can be created in parallel.
+        """
         raise NotImplementedError()
 
 
@@ -68,5 +72,9 @@ class EntityOutputLoader(ABC):
     @abstractmethod
     # TODO: type specificity on workflow_outputs, convert values from str to a representation of workflow outputs
     async def load(self, workflow_outputs: Dict[str, str]) -> List[Entity]:
-        """Processes workflow output specified by the type constraints in worrkflow_output_types and returns a list of lists of entities. The outer list represents the order the entities must be created in, while the inner lists can be created in parallel."""
+        """Processes workflow output specified by the type constraints
+        in worrkflow_output_types and returns a list of lists of entities.
+        The outer list represents the order the entities must be created
+        in, while the inner lists can be created in parallel.
+        """
         raise NotImplementedError()
