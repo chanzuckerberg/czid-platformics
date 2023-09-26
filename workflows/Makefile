@@ -82,3 +82,4 @@ local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
 		LOCAL_DB_USERNAME=$(LOCAL_DB_USERNAME) \
 		LOCAL_DB_PASSWORD=$(LOCAL_DB_PASSWORD) \
 		LOCAL_DB_CONN_STRING=$(LOCAL_DB_CONN_STRING)
+

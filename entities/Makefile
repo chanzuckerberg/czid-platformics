@@ -52,7 +52,6 @@ local-tests: ## Run entities tests
 	$(docker_compose_run) entities bash -c "poetry run pytest -s"
 	$(MAKE) cerbos-tests
 
-
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
 	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
