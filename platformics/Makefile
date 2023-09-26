@@ -34,7 +34,7 @@ debugger: ## Attach to the backend service (useful for pdb)
 
 .PHONY: local-status
 local-status: ## Show the status of the containers in the dev environment.
-	docker ps -a | grep --color=no -e 'CONTAINER\|$(FOLDER)'
+	docker ps -a | grep --color=no -e '$(CONTAINER)\|$(FOLDER)'
 
 .PHONY: local-shell
 local-shell: ## Open a command shell in one of the dev containers. ex: make local-shell CONTAINER=frontend
