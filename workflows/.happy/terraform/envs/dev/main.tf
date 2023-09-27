@@ -10,25 +10,23 @@ module "stack" {
   app_name         = var.app
   deployment_stage = "dev"
   additional_env_vars = {
-    CERBOS_URL = "http://cerbos.cerbos-system.svc.cluster.local:3592"
-    JWK_PUBLIC_KEY_FILE = "/workflows/test_infra/fixtures/public_key.pem"
-    JWK_PRIVATE_KEY_FILE = "/workflows/test_infra/fixtures/private_key.pem"
-    DEFAULT_UPLOAD_BUCKET = "local-bucket"
-    BOTO_ENDPOINT_URL = "http://motoserver.czidnet:4000"
-    AWS_REGION = "us-west-2"
-    ENTITY_SERVICE_URL = "http://entity-service:8080"
+    CERBOS_URL                = "http://cerbos.cerbos-system.svc.cluster.local:3592"
+    JWK_PUBLIC_KEY_FILE       = "/workflows/test_infra/fixtures/public_key.pem"
+    JWK_PRIVATE_KEY_FILE      = "/workflows/test_infra/fixtures/private_key.pem"
+    DEFAULT_UPLOAD_BUCKET     = "local-bucket"
+    BOTO_ENDPOINT_URL         = "http://motoserver.czidnet:4000"
+    AWS_REGION                = "us-west-2"
+    ENTITY_SERVICE_URL        = "http://entity-service:8080"
     ENTITY_SERVICE_AUTH_TOKEN = "test"
   }
   services = {
     workflows = {
-      health_check_path     = "/"
       name                  = "workflows"
       platform_architecture = "arm64"
       port                  = 8042
-      priority              = 0
       service_type          = "INTERNAL"
-      success_codes         = "200-499"
-      memory                = "1000Mi"
+      memory                = "1000Mi" # TODO: right size this as necessary
+      cpu                   = "2"      # TODO: right size this as necessary
     }
   }
   create_dashboard = false
