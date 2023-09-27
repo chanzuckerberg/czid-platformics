@@ -3,7 +3,11 @@ name: Workflows tests
 on:
   push:
     branches:
-      - "**"
+      - main
+    paths:
+      - "workflows/**"
+  pull_request:
+    branches: "**"
     paths:
       - "workflows/**"
 
