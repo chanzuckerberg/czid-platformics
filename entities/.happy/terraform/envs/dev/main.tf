@@ -26,6 +26,7 @@ module "stack" {
       priority              = 0
       service_type          = "INTERNAL"
       success_codes         = "200-499"
+      memory                = "1000Mi"
     }
   }
   create_dashboard = false

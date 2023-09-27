@@ -46,6 +46,7 @@
                 },
                 "health_check_path": "/",
                 "name": "entities",
+                "memory": "1000Mi",
                 "platform_architecture": "arm64",
                 "port": 8008,
                 "priority": 0,

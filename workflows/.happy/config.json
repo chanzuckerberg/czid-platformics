@@ -46,6 +46,7 @@
                 },
                 "health_check_path": "/",
                 "name": "workflows",
+                "memory": "1000Mi",
                 "platform_architecture": "arm64",
                 "port": 8042,
                 "priority": 0,
