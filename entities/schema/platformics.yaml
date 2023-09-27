@@ -57,18 +57,25 @@ classes:
     attributes:
       entity_field_name:
         range: string
+        required: true
       entity:
         range: Entity
+        required: true
       status:
         range: FileStatus
+        required: true
       protocol:
         range: FileAccessProtocol
+        required: true
       namespace:
         range: string
+        required: true
       path:
         range: string
+        required: true
       file_format:
         range: string
+        required: true
       compression_type:
        range: string
       size:
@@ -79,7 +86,9 @@ classes:
     is_a: Entity
     attributes:
       name:
+        required: true
       location:
+        required: true
       sequencing_reads:
         range: SequencingRead
         multivalued: true
@@ -89,11 +98,14 @@ classes:
     attributes:
       nucleotide:
         range: Nuclotide
+        required: true
       sequence:
         range: string
         pattern: "^[AGTCUN]+$"
+        required: true
       protocol:
         range: SequencingProtocol
+        required: true
       sequence_file_id:
       sample:
         range: Sample
@@ -101,5 +113,7 @@ classes:
   Contig:
     is_a: Entity
     attributes:
-      - sequencing_read_id
-      - sequence
+      sequencing_read_id:
+        required: true
+      sequence:
+        required: true
