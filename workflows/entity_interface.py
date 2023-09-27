@@ -27,6 +27,7 @@ _type_name_to_graphql_type = {
     "bool": "Boolean",
 }
 
+
 @dataclass
 class Entity(ABC):
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
@@ -36,18 +37,20 @@ class Entity(ABC):
         return f"create{self.__class__.__name__}"
 
     def _fields(self):
-        for field in fields(self):
-            if field.name in ["entity_id", "version"]:
+        for entity_field in fields(self):
+            if entity_field.name in ["entity_id", "version"]:
                 continue
-            yield field
+            yield entity_field
 
     def gql_create_mutation(self):
         field_name_types = []
-        for field in self._fields():
-            if field.type.__name__ == "EntityReference":
-                field_name_types.append((field.metadata["id_name"], "UUID"))
+        for entity_field in self._fields():
+            if entity_field.type.__name__ == "EntityReference":
+                field_name_types.append((entity_field.metadata["id_name"], "UUID"))
                 continue
-            field_name_types.append((_snake_to_camel(field.name), _type_name_to_graphql_type[field.type.__name__]))
+            field_name_types.append(
+                (_snake_to_camel(entity_field.name), _type_name_to_graphql_type[entity_field.type.__name__])
+            )
 
         # field_name_types.append(("userId", "Int"))
         field_name_types.append(("collectionId", "Int"))
@@ -64,20 +67,20 @@ class Entity(ABC):
 
     def gql_variables(self):
         variables = {}
-        for field in self._fields():
-            if field.type.__name__ == "EntityReference":
-                variables[field.metadata["id_name"]] = getattr(self, field.name).entity_id
+        for entity_field in self._fields():
+            if entity_field.type.__name__ == "EntityReference":
+                variables[entity_field.metadata["id_name"]] = getattr(self, entity_field.name).entity_id
                 continue
-            variables[_snake_to_camel(field.name)] = getattr(self, field.name)
+            variables[_snake_to_camel(entity_field.name)] = getattr(self, entity_field.name)
 
         return variables
 
     def get_dependent_entities(self):
-        for field in fields(self):
-            if field.type.__name__ == "EntityReference":
-                entity_ref: EntityReference = getattr(self, field.name)
+        for entity_field in fields(self):
+            if entity_field.type.__name__ == "EntityReference":
+                entity_ref: EntityReference = getattr(self, entity_field.name)
                 yield entity_ref
-    
+
     async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client):
         if self.entity_id:
             return
@@ -100,7 +103,9 @@ class Sample(Entity):
     name: str
     location: str
 
+
 T = typing.TypeVar("T", bound=Entity)
+
 
 @dataclass
 class EntityReference(Generic[T]):
@@ -128,6 +133,7 @@ class SequencingRead(Entity):
     sequence: str
     protocol: str
     sample: EntityReference[Sample] = field(metadata={"id_name": "sampleId"})
+
 
 @dataclass
 class Contig(Entity):

@@ -6,11 +6,7 @@ setup(
     version="0.0.1",
     description="A local event bus",
     url="",
-    project_urls={
-        "Documentation": "",
-        "Source Code": "",
-        "Issue Tracker": ""
-    },
+    project_urls={"Documentation": "", "Source Code": "", "Issue Tracker": ""},
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
@@ -20,10 +16,8 @@ setup(
     install_requires=["miniwdl"],
     reentry_register=True,
     entry_points={
-        'czid.plugin.event_bus': [
-            'local = event_bus_local:EventBusLocal',
+        "czid.plugin.event_bus": [
+            "local = event_bus_local:EventBusLocal",
         ],
-    }
+    },
 )
-
-

@@ -2,6 +2,7 @@ from typing import List
 from threading import RLock
 from plugin_types import EventBus, WorkflowStatusMessage
 
+
 # TODO: don't lock
 class EventBusLocal(EventBus):
     def __init__(self):

@@ -1,4 +1,3 @@
-import asyncio
 import configparser
 import json
 import os
@@ -6,25 +5,20 @@ import typing
 
 import database.models as db
 import entity_gql_schema as entity_schema
-import sqlalchemy as sa
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from config import load_event_buses, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI
-from loader import LoaderDriver
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_db_session, get_engine)
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from platformics.api.core.settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.database.connect import AsyncDB, init_async_db
-from platformics.database.models.base import Base
+from platformics.database.connect import AsyncDB
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
-                                          StrawberrySQLAlchemyMapper)
+from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
 
@@ -196,7 +190,8 @@ class Mutation:
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> str:
-        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
+        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
+        # other devs may want to submit custom containers
         # inputs_json = {
         #     "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
         #     "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
@@ -213,7 +208,8 @@ class Mutation:
         response = await _workflow_runner.run_workflow(
             event_bus=event_buses["local"],
             workflow_run_id="1",  # TODO: When we create the workflow run add the uuid here
-            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",  # TODO: should come from the WorkflowVersion model
+            # TODO: should come from the WorkflowVersion model
+            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",
             inputs={},
         )
 
@@ -277,8 +273,9 @@ def get_context(
 
 root_router = APIRouter()
 
+
 @root_router.get("/")
-async def root():
+async def root() -> dict:
     return {"message": "Hello World"}
 
 
