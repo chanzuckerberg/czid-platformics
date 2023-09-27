@@ -91,7 +91,6 @@ class TestSFNWDL(unittest.TestCase):
                 # make sure weird conditions don't hang the tests
                 break
 
-        breakpoint()
         self.print_execution(sfn.get_execution_history(executionArn=arn)["events"])
         self.assertEqual(sfn.describe_execution(executionArn=arn)["status"], "SUCCEEDED")
 
