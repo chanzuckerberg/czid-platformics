@@ -1,0 +1,105 @@
+id: https://czid.org/entities/schema/platformics
+title: CZID Platformics Bio-Entities Schema
+name: platformics
+default_range: string
+
+types:
+  string:
+    uri: xsd:string
+    base: str
+    description: A character string
+
+  integer:
+    uri: xsd:integer
+    base: int
+    description: An integer
+
+enums:
+  FileStatus:
+    permissible_values:
+      SUCCESS:
+        description: This file has been uploaded and validated successfully
+      FAILED:
+        description: This file failed to upload or failed validation
+      PENDING:
+        description: This file is a placeholder and awaiting a successful upload
+  FileAcessProtocol:
+    permissible_values:
+      s3:
+        description: This file is accessible via the (AWS) S3 protocol
+  Nucleotide:
+    permissible_values:
+      RNA:
+        description: DNA nucleotide
+      DNA:
+        description: RNA nucleotide
+  SequencingProtocol:
+    permissible_values:
+      MNGS:
+        description: Metagenomics sequencing read
+      TARGETED:
+        description: Targeted (amplified via primers) sequencing read
+      MSSPE:
+        description: MSSPE Sequencing Read
+ 
+classes:
+  Entity:
+    attributes:
+      id:
+        identifier: true
+      type:
+        range: string
+      producing_run_id:
+      owner_user_id:
+      collection_id:
+ 
+  File:
+    attributes:
+      entity_field_name:
+        range: string
+      entity:
+        range: Entity
+      status:
+        range: FileStatus
+      protocol:
+        range: FileAccessProtocol
+      namespace:
+        range: string
+      path:
+        range: string
+      file_format:
+        range: string
+      compression_type:
+       range: string
+      size:
+        range: int
+        minimum_value: 0
+
+  Sample:
+    is_a: Entity
+    attributes:
+      name:
+      location:
+      sequencing_reads:
+        range: SequencingRead
+        multivalued: true
+
+  SequencingRead:
+    is_a: Entity
+    attributes:
+      nucleotide:
+        range: Nuclotide
+      sequence:
+        range: string
+        pattern: "^[AGTCUN]+$"
+      protocol:
+        range: SequencingProtocol
+      sequence_file_id:
+      sample:
+        range: Sample
+
+  Contig:
+    is_a: Entity
+    attributes:
+      - sequencing_read_id
+      - sequence
