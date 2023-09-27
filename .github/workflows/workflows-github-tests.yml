@@ -3,7 +3,7 @@ name: Workflows tests
 on:
   push:
     branches:
-      - main
+      - "**"
     paths:
       - "workflows/**"
 
