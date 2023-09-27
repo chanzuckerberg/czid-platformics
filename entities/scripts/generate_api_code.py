@@ -1,6 +1,7 @@
 import logging
 
 import click
+from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 
 
@@ -25,6 +26,22 @@ def api() -> None:
     pass
 
 
+def generate_enums(environment, view):
+    filename = "support/enums.py"
+    template = environment.get_template(f"{filename}.j2")
+    logging.debug("generating enums")
+
+    enums = []
+    for enum_name in view.all_enums():
+        enums.append(view.get_element(enum_name))
+    content = template.render(
+        enums=enums,
+    )
+    with open(filename, mode="w", encoding="utf-8") as message:
+        message.write(content)
+        print(f"... wrote {filename}")
+
+
 @api.command("generate")
 @click.option(
     "--schemafile",
@@ -33,16 +50,13 @@ def api() -> None:
 )
 @click.pass_context
 def api_generate(ctx: click.Context, schemafile: str) -> None:
-    # Print the query if we're in debug mode
-    logging.debug("generating api code")
+    environment = Environment(loader=FileSystemLoader("codegen_templates/"))
 
     view = SchemaView(schemafile)
     view.imports_closure()
-    for enum_name in view.all_enums():
-        print(enum_name)
-        linkml_enum = view.get_element(enum_name)
-        for val in linkml_enum.permissible_values:
-            print(f"  {val}")
+
+    logging.debug("generating api code")
+    generate_enums(environment, view)
 
 
 if __name__ == "__main__":
