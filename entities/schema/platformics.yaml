@@ -50,8 +50,14 @@ classes:
       type:
         range: string
       producing_run_id:
+        range: int
+        minimum_value: 0
       owner_user_id:
+        range: int
+        minimum_value: 0
       collection_id:
+        range: int
+        minimum_value: 0
  
   File:
     attributes:

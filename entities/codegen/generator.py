@@ -65,6 +65,26 @@ def generate_db_models(output_prefix: str, environment: Environment, view: Schem
             message.write(content)
             print(f"... wrote {dest_filename}")
 
+def generate_cerbos_policies(output_prefix: str, environment: Environment, view: SchemaView) -> None:
+    filename = "cerbos/policies/class_name.yaml"
+    template = environment.get_template(f"{filename}.j2")
+    logging.debug("generating enums")
+
+    for class_name in view.all_classes():
+        cls = view.get_element(class_name)
+        # If this class doesn't descend from Entity, skip it.
+        if cls.is_a != "Entity":
+            continue
+        wrapped = EntityWrapper(view, cls)
+        content = template.render(
+            cls=wrapped,
+            view=view,
+        )
+        dest_filename = str(filename).replace("class_name", strcase.to_snake(class_name))
+        with open(os.path.join(output_prefix, dest_filename), mode="w", encoding="utf-8") as message:
+            message.write(content)
+            print(f"... wrote {dest_filename}")
+
 
 @api.command("generate")
 @click.option(
@@ -87,6 +107,7 @@ def api_generate(ctx: click.Context, schemafile: str, output_prefix: str) -> Non
     logging.debug("generating api code")
     generate_enums(output_prefix, environment, view)
     generate_db_models(output_prefix, environment, view)
+    generate_cerbos_policies(output_prefix, environment, view)
 
 
 if __name__ == "__main__":

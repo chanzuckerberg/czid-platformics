@@ -8,8 +8,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.files import File
+    {%- for related_field in cls.get_related_fields() %}
+    from database.models.{{related_field.related_class.snake_name}} import {{related_field.related_class.name}}
+    {%- endfor %}
 else:
     File = "File"
+    {%- for related_field in cls.get_related_fields() %}
+    {{related_field.related_class.name}} = "{{related_field.related_class.name}}"
+    {%- endfor %}
 
 
 class {{cls.name}}(Entity):
@@ -26,6 +32,11 @@ class {{cls.name}}(Entity):
         {%- elif attr.is_enum %}
     {{attr.name}}: Mapped[{{attr.type}}] = mapped_column(Enum({{attr.type}}), nullable={{ "True" if attr.required else "False"}})
         {%- else %}
-    {{attr.name}}: Mapped[{{attr.type}}] = relationship("{{attr.type}}")
+            {% if attr.multivalued %}
+    {{attr.name}}: Mapped[{{attr.type}}] = relationship("{{attr.type}}", back_populates="TODO", foreign_keys="TODO")
+            {% else %}
+    {{attr.name}}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("TODO"), nullable={{"True" if attr.required else "False"}})
+    {{attr.name}}: Mapped[{{attr.type}}] = relationship("{{attr.type}}", back_populates="TODO", foreign_keys={{attr.name}}_id)
+            {% endif %}
         {%- endif %}
     {%- endfor %}
