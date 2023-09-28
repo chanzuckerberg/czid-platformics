@@ -8,4 +8,4 @@ from database.models.workflow import (
     RunEntityInput,
 )
 
-__all__ = ["Base", "meta", "Workflow", "WorkflowVersion", "RunStatus", "Run", "RunStep", "RunEntityInput"]
+__all__ = ["Base", "meta", "Workflow", "WorkflowVersion", "Run", "RunStatus", "RunStep", "RunEntityInput"]
