@@ -13,10 +13,18 @@ from database.connect import AsyncDB
 from fastapi import Depends
 from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing_extensions import TypedDict
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from thirdparty.cerbos_sqlalchemy.query import get_query
+from api.core.gql_to_sql import (
+    UUIDComparators,
+    StrComparators,
+    IntComparators,
+    EnumComparators,
+    convert_where_clauses_to_sql,
+)
 
 CERBOS_ACTION_VIEW = "view"
 CERBOS_ACTION_CREATE = "create"
@@ -146,6 +154,35 @@ class EntityLoader:
 
             self._loaders[relationship] = DataLoader(load_fn=load_fn)
             return self._loaders[relationship]
+
+
+@strawberry.input
+class SampleWhereClause(TypedDict):
+    id: typing.Optional[UUIDComparators]
+    name: typing.Optional[StrComparators]
+    location: typing.Optional[StrComparators]
+
+@strawberry.input
+class SRWhereClause(TypedDict):
+    id: typing.Optional[UUIDComparators]
+    protocol: typing.Optional[StrComparators]
+    nucleotide: typing.Optional[StrComparators]
+    sequence: typing.Optional[StrComparators]
+    sample: typing.Optional[SampleWhereClause]
+
+def get_sr_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]:
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def resolve_entity(
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+        where: typing.Optional[SRWhereClause] = None,
+    ) -> typing.Sequence[E]:
+        filters = []
+        if id:
+            filters.append(sql_model.id == id)
+        return await get_entities(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
+    return typing.cast(typing.Sequence[T], resolve_entity)
 
 
 def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]:
