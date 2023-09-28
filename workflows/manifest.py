@@ -1,5 +1,5 @@
 import json
-from pydantic import BaseModel, conlist
+from pydantic import BaseModel
 import semver
 
 
@@ -13,16 +13,20 @@ class PydanticVersion(semver.Version):
         """Return a list of validator methods for pydantic models."""
         yield cls._parse
 
+
 def convert_semver(v: PydanticVersion):
     return str(v)
+
 
 class ManifestModel(BaseModel):
     class Config:
         json_encoders = {PydanticVersion: convert_semver}
 
+
 class WorkflowTypeAnnotation(ManifestModel):
     name: str
     version: PydanticVersion
+
 
 class WorkflowInput(ManifestModel):
     name: str
@@ -31,14 +35,17 @@ class WorkflowInput(ManifestModel):
     version: PydanticVersion
     type_annotations: list[WorkflowTypeAnnotation]
 
+
 class EntityInput(ManifestModel):
     name: str
     entity_type: str
     description: str
 
+
 class EntityInputReference(ManifestModel):
     name: str
     value: str
+
 
 class InputLoader(ManifestModel):
     name: str
@@ -46,25 +53,30 @@ class InputLoader(ManifestModel):
     workflow_input: str
     entity_inputs: list[EntityInputReference]
 
+
 class EntityOutput(ManifestModel):
     name: str
     entity_type: str
     version: PydanticVersion
+
 
 class WorkflowOutput(ManifestModel):
     name: str
     workflow_data_type: str
     description: str
 
+
 class OutputFieldMap(ManifestModel):
     name: str
     reference: str
+
 
 class OutputLoader(ManifestModel):
     name: str
     version: PydanticVersion
     entity_output: str
     fields: list[OutputFieldMap]
+
 
 class Manifest(ManifestModel):
     name: str
