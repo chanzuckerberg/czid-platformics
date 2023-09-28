@@ -5,7 +5,11 @@ from typing import Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
-from api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from api.core.deps import (get_cerbos_client, get_db_session,
+                           require_auth_principal)
+from api.core.gql_to_sql import (EnumComparators, IntComparators,
+                                 StrComparators, UUIDComparators,
+                                 convert_where_clauses_to_sql)
 from api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc
@@ -13,18 +17,11 @@ from database.connect import AsyncDB
 from fastapi import Depends
 from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing_extensions import TypedDict
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from thirdparty.cerbos_sqlalchemy.query import get_query
-from api.core.gql_to_sql import (
-    UUIDComparators,
-    StrComparators,
-    IntComparators,
-    EnumComparators,
-    convert_where_clauses_to_sql,
-)
+from typing_extensions import TypedDict
 
 CERBOS_ACTION_VIEW = "view"
 CERBOS_ACTION_CREATE = "create"
@@ -118,6 +115,7 @@ class EntityLoader:
             print("====")
             print(f"RUNNING LOADER FOR!!! {where}")
             print("====")
+
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
                 print(f"LOAD_FN WHERE IS {where}")
                 if not relationship.local_remote_pairs:
@@ -161,6 +159,8 @@ class SampleWhereClause(TypedDict):
     id: typing.Optional[UUIDComparators]
     name: typing.Optional[StrComparators]
     location: typing.Optional[StrComparators]
+    sequencing_read: typing.Optional["SRWhereClause"]
+
 
 @strawberry.input
 class SRWhereClause(TypedDict):
@@ -168,7 +168,8 @@ class SRWhereClause(TypedDict):
     protocol: typing.Optional[StrComparators]
     nucleotide: typing.Optional[StrComparators]
     sequence: typing.Optional[StrComparators]
-    sample: typing.Optional[SampleWhereClause]
+    sample: typing.Optional["SampleWhereClause"]
+
 
 def get_sr_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]:
     @strawberry.field(extensions=[DependencyExtension()])
@@ -182,6 +183,7 @@ def get_sr_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]:
         if id:
             filters.append(sql_model.id == id)
         return await get_entities(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
+
     return typing.cast(typing.Sequence[T], resolve_entity)
 
 
@@ -197,6 +199,7 @@ def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]
         if id:
             filters.append(sql_model.id == id)
         return await get_entities(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
+
     return typing.cast(typing.Sequence[T], resolve_entity)
 
 
@@ -212,6 +215,7 @@ def get_file_loader(sql_model: type[db.File], gql_type: type[T]) -> typing.Seque
         if id:
             filters.append(sql_model.id == id)
         return await get_files(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
+
     return typing.cast(typing.Sequence[T], resolve_file)
 
 
