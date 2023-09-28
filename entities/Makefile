@@ -114,7 +114,7 @@ local-mypy: ## Run type checking
 
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
-	$(docker_compose) exec entities python3 scripts/generate_api_code.py api generate --schemafile schema/platformics.yaml
+	$(docker_compose) exec entities python3 codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix .
 	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
