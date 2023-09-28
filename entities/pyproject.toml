@@ -42,7 +42,6 @@ biopython = "^1.81"
 moto = "^4.2.3"
 jinja2 = "^3.1.2"
 linkml = "^1.5.7"
-jinja2-strcase = "^0.0.2"
 strcase = "^1.0.0"
 
 [build-system]

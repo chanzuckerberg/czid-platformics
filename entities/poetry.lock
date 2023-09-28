@@ -1558,20 +1558,6 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
-name = "jinja2-strcase"
-version = "0.0.2"
-description = "A python package for converting string case in jinja2 templates"
-optional = false
-python-versions = "*"
-files = [
-    {file = "jinja2-strcase-0.0.2.tar.gz", hash = "sha256:d90c37f7bd40d345aacc8f78b087f66e6c5aa4c968ab23a791573fcf756c3379"},
-    {file = "jinja2_strcase-0.0.2-py2.py3-none-any.whl", hash = "sha256:e3067062f6158cd836ab495f805fc0d1d83cf92049e180509b004db86f6b745c"},
-]
-
-[package.dependencies]
-jinja2 = "*"
-
-[[package]]
 name = "jmespath"
 version = "1.0.1"
 description = "JSON Matching Expressions"
@@ -3891,4 +3877,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0fa3d8f37a872f0f2d395e21fe2477c11728c6183601b1ed3bc9b5b94cb71152"
+content-hash = "62193ed4e25a9d11a0be28479507fe025c55f764787b1c3ae51f7fb9e210046e"
