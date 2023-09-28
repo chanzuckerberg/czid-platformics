@@ -103,7 +103,7 @@ classes:
     is_a: Entity
     attributes:
       nucleotide:
-        range: Nuclotide
+        range: Nucleotide
         required: true
       sequence:
         range: string
