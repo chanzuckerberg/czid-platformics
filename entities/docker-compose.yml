@@ -37,11 +37,11 @@ services:
       - "8008:8008"
     environment:
       - CERBOS_URL=http://cerbos:3592
-      - DB_HOST=entities-db.czidnet
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASS=password_postgres
-      - DB_NAME=entities
+      - PLATFORMICS_DATABASE_HOST=entities-db.czidnet
+      - PLATFORMICS_DATABASE_PORT=5432
+      - PLATFORMICS_DATABASE_USER=postgres
+      - PLATFORMICS_DATABASE_PASSWORD=password_postgres
+      - PLATFORMICS_DATABASE_NAME=entities
       - DEFAULT_UPLOAD_BUCKET=local-bucket
       - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
       - AWS_REGION=us-west-2

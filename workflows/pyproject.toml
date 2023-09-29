@@ -37,6 +37,7 @@ uuid6 = "^2023.5.2"
 boto3-stubs = {extras = ["s3"], version = "^1.28.50"}
 black = "^23.9.1"
 mypy = "^1.5.1"
+sqlalchemy_utils = "^0.41.1"
 
 
 [build-system]

@@ -32,4 +32,6 @@ def use_factoryboy() -> None:
 
 
 if __name__ == "__main__":
+    print("Seeding database")
     use_factoryboy()
+    print("Seeding complete")
