@@ -4,7 +4,7 @@ from api.conftest import GQLTestClient
 from platformics.database.connect import SyncDB
 from test_infra import factories as fa
 from mypy_boto3_s3.client import S3Client
-from database.models import File, SequencingRead
+from database.models import File, FileStatus, SequencingRead
 import sqlalchemy as sa
 
 
@@ -27,6 +27,7 @@ async def test_file_validation(
         file = session.execute(sa.select(File)).scalars().one()
 
     valid_fastq_file = "test_infra/fixtures/test1.fastq"
+    file_size = os.stat(valid_fastq_file).st_size
     moto_client.put_object(Bucket=file.namespace, Key=file.path, Body=open(valid_fastq_file, "rb"))
 
     # Mark upload complete
@@ -43,8 +44,13 @@ async def test_file_validation(
     res = await gql_client.query(query, member_projects=[project1_id])
     fileinfo = res["data"]["markUploadComplete"]
     assert fileinfo["status"] == "SUCCESS"
-    assert fileinfo["size"] == os.stat(valid_fastq_file).st_size
+    assert fileinfo["size"] == file_size
 
+    # Make sure the file was updated in the database
+    with sync_db.session() as session:
+        file = session.execute(sa.select(File)).scalars().one()
+        assert file.status == FileStatus.SUCCESS
+        assert file.size == file_size
 
 # Test that invalid fastq's don't work
 @pytest.mark.asyncio
