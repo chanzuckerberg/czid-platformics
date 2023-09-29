@@ -43,4 +43,4 @@ class File(Base):
     path: Mapped[str] = mapped_column(String, nullable=False)
     file_format: Mapped[str] = mapped_column(String, nullable=False)
     compression_type: Mapped[str] = mapped_column(String, nullable=True)
-    size: Mapped[int] = mapped_column(Integer, nullable=False)
+    size: Mapped[int] = mapped_column(Integer, nullable=True)

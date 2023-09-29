@@ -68,6 +68,7 @@ async def mark_upload_complete(
     else:
         file.status = db.FileStatus.SUCCESS
         file.size = file_size
+    await session.commit()
 
     return file
 
@@ -75,7 +76,6 @@ async def mark_upload_complete(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file(
     file_name: str,
-    file_size: int,
     file_format: str,
     entity_id: uuid.UUID,
     entity_field_name: str,
@@ -115,7 +115,6 @@ async def create_file(
         path=f"uploads/{file_id}/{file_name}",
         file_format=file_format,
         compression_type=file_compression,
-        size=file_size,
     )
     session.add(file)
     setattr(entity, entity_property_name, file_id)
