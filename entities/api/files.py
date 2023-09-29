@@ -28,6 +28,23 @@ class SignedURL:
     fields: typing.Optional[JSON] = None  # type: ignore
 
 
+# Define graphQL input types so we can pass a file JSON to mutations
+@strawberry.input()
+class FileUploadInput():
+    name: str
+    format: str
+    compression_type: typing.Optional[str] = None
+
+@strawberry.input()
+class FileInput():
+    name: str
+    format: str
+    protocol: str
+    namespace: str
+    path: str = None
+    compression_type: typing.Optional[str] = None
+
+
 @strawberry_sqlalchemy_mapper.type(db.File)
 class File:
     @strawberry.field(extensions=[DependencyExtension()])
@@ -75,11 +92,20 @@ async def mark_upload_complete(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file(
-    file_name: str,
-    file_format: str,
     entity_id: uuid.UUID,
     entity_field_name: str,
-    file_compression: typing.Optional[str] = None,
+    file: FileInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> db.File:
+    pass
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_file_upload(
+    entity_id: uuid.UUID,
+    entity_field_name: str,
+    file: FileUploadInput,
     expiration: int = 3600,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
@@ -87,8 +113,29 @@ async def create_file(
     s3_client: S3Client = Depends(get_s3_client),
     settings: APISettings = Depends(get_settings),
 ) -> SignedURL:
+    # Set upload destination and create file object
+    file.id = uuid6.uuid7()
+    file.path = f"uploads/{file.id}/{file.name}"
+    file.protocol = settings.DEFAULT_UPLOAD_PROTOCOL
+    file.namespace = settings.DEFAULT_UPLOAD_BUCKET
+    file = await create_or_upload_file(entity_id, entity_field_name, file, session, cerbos_client, principal)
+
+    # Create a signed URL
+    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
+    return SignedURL(
+        url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+    )
+
+async def create_or_upload_file(
+    entity_id: uuid.UUID,
+    entity_field_name: str,
+    file: FileInput | FileUploadInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+):
     # Basic validation
-    if "/" in file_name:
+    if "/" in file.name:
         raise Exception("File name should not contain /")
 
     # Fetch the entity if have access to it
@@ -103,25 +150,20 @@ async def create_file(
     if not hasattr(entity, entity_property_name):
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
 
-    # Create a new file record, returns file ID.
-    file_id = uuid6.uuid7()
+    # Create a new file record
     file = db.File(
-        id=file_id,
+        id=file.id,
         entity_id=entity_id,
         entity_field_name=entity_field_name,
-        protocol="S3",
-        namespace=settings.DEFAULT_UPLOAD_BUCKET,
+        file_format=file.format,
+        compression_type=file.compression_type,
+        protocol=file.protocol,
+        namespace=file.namespace,
+        path=file.path,
         status=db.FileStatus.PENDING,
-        path=f"uploads/{file_id}/{file_name}",
-        file_format=file_format,
-        compression_type=file_compression,
     )
     session.add(file)
-    setattr(entity, entity_property_name, file_id)
+    setattr(entity, entity_property_name, file.id)
     await session.commit()
 
-    # Create a signed URL
-    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
-    return SignedURL(
-        url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
-    )
+    return file
