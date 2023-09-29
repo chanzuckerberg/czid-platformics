@@ -36,7 +36,7 @@ module "stack" {
     migrate = {
       image  = "{entities}:${var.image_tag}"
       memory = "1000Mi"
-      cpu    = "1"
+      cpu    = "100m"
       cmd    = ["/czid-platformics/entities/scripts/migrate.sh"]
     }
   }
