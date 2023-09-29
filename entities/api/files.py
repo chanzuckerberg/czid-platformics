@@ -68,6 +68,7 @@ async def mark_upload_complete(
     else:
         file.status = db.FileStatus.SUCCESS
         file.size = file_size
+    await session.commit()
 
     return file
 
