@@ -33,7 +33,7 @@ class {{cls.name}}(Entity):
     __tablename__ = "{{ cls.snake_name }}"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
 
-    {%- for attr in cls.fields %}
+    {%- for attr in cls.owned_fields %}
         {%- if attr.type == "string" %}
     {{attr.name}}: Mapped[str] = mapped_column(String, nullable={{ "True" if attr.required else "False"}})
         {%- elif attr.type == "integer" %}
