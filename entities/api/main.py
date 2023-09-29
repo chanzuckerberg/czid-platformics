@@ -1,86 +1,20 @@
 import typing
 
 import database.models as db
-import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
+                                       get_engine)
+from platformics.api.core.gql_loaders import EntityLoader
 from platformics.api.core.settings import APISettings
-from platformics.api.core.gql_loaders import (
-    EntityLoader,
-    get_base_creator,
-    get_base_loader,
-    get_base_updater,
-    get_file_loader,
-)
 from platformics.database.connect import AsyncDB
-from strawberry.fastapi import GraphQLRouter
+
+import strawberry
+from api.queries import Query
 from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File, SignedURL, mark_upload_complete, create_file
-
-######################
-# Strawberry-GraphQL #
-######################
-
-
-@strawberry_sqlalchemy_mapper.interface(db.Entity)
-class EntityInterface:
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.Sample)
-class Sample(EntityInterface):
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.SequencingRead)
-class SequencingRead(EntityInterface):
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.Contig)
-class Contig(EntityInterface):
-    pass
-
-
-# --------------------
-# Queries
-# --------------------
-
-
-@strawberry.type
-class Query:
-    samples: typing.Sequence[Sample] = get_base_loader(db.Sample, Sample)
-    sequencing_reads: typing.Sequence[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
-    contigs: typing.Sequence[Contig] = get_base_loader(db.Contig, Contig)
-    files: typing.Sequence[File] = get_file_loader(db.File, File)
-
-
-# --------------------
-# Mutations
-# --------------------
-
-
-@strawberry.type
-class Mutation:
-    # Create
-    create_sample: Sample = get_base_creator(db.Sample, Sample)  # type: ignore
-    create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)  # type: ignore
-    create_contig: Contig = get_base_creator(db.Contig, Contig)  # type: ignore
-
-    # Update
-    update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
-
-    # File management
-    create_file: SignedURL = create_file
-    mark_upload_complete: File = mark_upload_complete
-
-
-# --------------------
-# Initialize app
-# --------------------
+from strawberry.fastapi import GraphQLRouter
 
 
 def get_context(
@@ -103,7 +37,6 @@ additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
-    mutation=Mutation,
     types=additional_types,
 )
 
