@@ -30,13 +30,14 @@ class SignedURL:
 
 # Define graphQL input types so we can pass a file JSON to mutations
 @strawberry.input()
-class FileUploadInput():
+class FileUploadInput:
     name: str
     format: str
     compression_type: typing.Optional[str] = None
 
+
 @strawberry.input()
-class FileInput():
+class FileInput:
     name: str
     format: str
     protocol: str
@@ -125,6 +126,7 @@ async def create_file_upload(
     return SignedURL(
         url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
     )
+
 
 async def create_or_upload_file(
     entity_id: uuid.UUID,

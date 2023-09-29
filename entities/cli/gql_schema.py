@@ -9,7 +9,18 @@ gql_schema = sgqlc.types.Schema()
 ########################################################################
 Boolean = sgqlc.types.Boolean
 
+
+class FileStatus(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = ("FAILED", "PENDING", "SUCCESS")
+
+
 Int = sgqlc.types.Int
+
+
+class JSON(sgqlc.types.Scalar):
+    __schema__ = gql_schema
+
 
 String = sgqlc.types.String
 
@@ -21,6 +32,23 @@ class UUID(sgqlc.types.Scalar):
 ########################################################################
 # Input Objects
 ########################################################################
+class FileInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("name", "format", "protocol", "namespace", "path", "compression_type")
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="format")
+    protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
+    namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
+    path = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="path")
+    compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
+
+
+class FileUploadInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("name", "format", "compression_type")
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="format")
+    compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
 
 
 ########################################################################
@@ -64,23 +92,39 @@ class File(sgqlc.types.Type):
         "compression_type",
         "size",
         "entity",
+        "download_link",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="id")
     entity_id = sgqlc.types.Field(UUID, graphql_name="entityId")
-    entity_field_name = sgqlc.types.Field(String, graphql_name="entityFieldName")
-    status = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="status")
+    entity_field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="entityFieldName")
+    status = sgqlc.types.Field(sgqlc.types.non_null(FileStatus), graphql_name="status")
     protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
     namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
     path = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="path")
     file_format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fileFormat")
-    compression_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="compressionType")
-    size = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="size")
+    compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
+    size = sgqlc.types.Field(Int, graphql_name="size")
     entity = sgqlc.types.Field(EntityInterface, graphql_name="entity")
+    download_link = sgqlc.types.Field(
+        "SignedURL",
+        graphql_name="downloadLink",
+        args=sgqlc.types.ArgDict(
+            (("expiration", sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="expiration", default=3600)),)
+        ),
+    )
 
 
 class Mutation(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("create_sample", "create_sequencing_read", "create_contig", "update_sample")
+    __field_names__ = (
+        "create_sample",
+        "create_sequencing_read",
+        "create_contig",
+        "update_sample",
+        "create_file",
+        "create_file_upload",
+        "mark_upload_complete",
+    )
     create_sample = sgqlc.types.Field(
         sgqlc.types.non_null("Sample"),
         graphql_name="createSample",
@@ -140,6 +184,42 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    create_file = sgqlc.types.Field(
+        sgqlc.types.non_null("SignedURL"),
+        graphql_name="createFile",
+        args=sgqlc.types.ArgDict(
+            (
+                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="entityId", default=None)),
+                (
+                    "entity_field_name",
+                    sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="entityFieldName", default=None),
+                ),
+                ("file", sgqlc.types.Arg(sgqlc.types.non_null(FileInput), graphql_name="file", default=None)),
+            )
+        ),
+    )
+    create_file_upload = sgqlc.types.Field(
+        sgqlc.types.non_null("SignedURL"),
+        graphql_name="createFileUpload",
+        args=sgqlc.types.ArgDict(
+            (
+                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="entityId", default=None)),
+                (
+                    "entity_field_name",
+                    sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="entityFieldName", default=None),
+                ),
+                ("file", sgqlc.types.Arg(sgqlc.types.non_null(FileUploadInput), graphql_name="file", default=None)),
+                ("expiration", sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="expiration", default=3600)),
+            )
+        ),
+    )
+    mark_upload_complete = sgqlc.types.Field(
+        sgqlc.types.non_null(File),
+        graphql_name="markUploadComplete",
+        args=sgqlc.types.ArgDict(
+            (("file_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="fileId", default=None)),)
+        ),
+    )
 
 
 class Query(sgqlc.types.Type):
@@ -179,6 +259,16 @@ class SequencingReadEdge(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("node",)
     node = sgqlc.types.Field(sgqlc.types.non_null("SequencingRead"), graphql_name="node")
+
+
+class SignedURL(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("url", "protocol", "method", "expiration", "fields")
+    url = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="url")
+    protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
+    method = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="method")
+    expiration = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="expiration")
+    fields = sgqlc.types.Field(JSON, graphql_name="fields")
 
 
 class Contig(sgqlc.types.Type, EntityInterface):
