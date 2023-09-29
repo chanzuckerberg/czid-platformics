@@ -44,14 +44,12 @@
                     "context": ".",
                     "dockerfile": "Dockerfile"
                 },
-                "health_check_path": "/",
                 "name": "workflows",
                 "memory": "1000Mi",
+                "cpu": "2",
                 "platform_architecture": "arm64",
                 "port": 8042,
-                "priority": 0,
-                "service_type": "INTERNAL",
-                "success_codes": "200-499"
+                "service_type": "INTERNAL"
             }
         },
         "stack_defaults": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"

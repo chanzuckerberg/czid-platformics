@@ -19,16 +19,25 @@ module "stack" {
   }
   services = {
     entities = {
-      health_check_path     = "/"
+      health_check_path     = "/graphql"
+      cpu                   = "2" # TODO: right size this as necessary
+      memory                = "1000Mi" # TODO: right size this as necessary
       name                  = "entities"
       platform_architecture = "arm64"
       port                  = 8008
-      priority              = 0
       service_type          = "INTERNAL"
-      success_codes         = "200-499"
-      memory                = "1000Mi"
     }
   }
   create_dashboard = false
   routing_method   = "CONTEXT"
+
+  tasks = {
+    # TODO: Fix migrate task to run properly post-deployment
+    migrate = {
+      image  = "{entities}:${var.image_tag}"
+      memory = "1000Mi"
+      cpu    = "1"
+      cmd    = ["/czid-platformics/entities/scripts/migrate.sh"]
+    }
+  }
 }

@@ -21,23 +21,24 @@ module "stack" {
   }
   services = {
     workflows = {
+      cpu                   = "2" # TODO: right size this as necessary
+      memory                = "1000Mi" # TODO: right size this as necessary
       name                  = "workflows"
       platform_architecture = "arm64"
       port                  = 8042
       service_type          = "INTERNAL"
-      memory                = "1000Mi" # TODO: right size this as necessary
-      cpu                   = "2"      # TODO: right size this as necessary
     }
   }
   create_dashboard = false
   routing_method   = "CONTEXT"
 
   tasks = {
+    # TODO: Fix migrate task to run properly post-deployment
     migrate = {
       image  = "{workflows}:${var.image_tag}"
       memory = "1000Mi"
       cpu    = "100m"
-      cmd    = ["/app/scripts/migrate.sh"]
+      cmd    = ["/czid-platformics/workflows/scripts/migrate.sh"]
     }
   }
 }
