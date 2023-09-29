@@ -52,6 +52,7 @@ async def test_file_validation(
         assert file.status == FileStatus.SUCCESS
         assert file.size == file_size
 
+
 # Test that invalid fastq's don't work
 @pytest.mark.asyncio
 async def test_invalid_fastq(
@@ -121,7 +122,7 @@ async def test_create_file(
     mutation = f"""
         mutation MyQuery {{
           createFile(entityId: "{entity_id}", entityFieldName: "{entity_field}",
-            fileName: "test.fastq", fileSize: 123, fileFormat: "fastq") {{
+            fileName: "test.fastq", fileFormat: "fastq") {{
             url
             expiration
             method
