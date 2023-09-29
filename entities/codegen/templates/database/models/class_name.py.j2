@@ -9,7 +9,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from database.models.files import File
     {%- for related_field in cls.related_fields %}
+        {%- if related_field.related_class.name not in ["File", "Entity"] %}
     from database.models.{{related_field.related_class.snake_name}} import {{related_field.related_class.name}}
+        {%- endif %}
     {%- endfor %}
     {%- for field in cls.enum_fields %}
         {%- if loop.first %}
@@ -22,7 +24,9 @@ if TYPE_CHECKING:
 else:
     File = "File"
     {%- for related_field in cls.related_fields %}
+        {%- if related_field.related_class.name not in ["File", "Entity"] %}
     {{related_field.related_class.name}} = "{{related_field.related_class.name}}"
+        {%- endif %}
     {%- endfor %}
     {%- for enum_field in cls.enum_fields %}
     {{enum_field.type}} = "{{enum_field.type}}"
@@ -33,23 +37,25 @@ class {{cls.name}}(Entity):
     __tablename__ = "{{ cls.snake_name }}"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
 
-    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
-
     {%- for attr in cls.owned_fields %}
-        {%- if attr.type == "string" %}
-    {{attr.name}}: Mapped[str] = mapped_column(String, nullable={{ "True" if attr.required else "False"}})
+        {%- if attr.type == "uuid" %}
+    {{attr.name}}: Mapped[uuid.UUID] = mapped_column({%- if attr.inverse %}ForeignKey("{{attr.inverse}}"){%- else %}UUID{%- endif %}, nullable={{ "False" if attr.required else "True"}}, primary_key={{ "True" if attr.identifier else "False"}})
+        {%- elif attr.type == "string" %}
+    {{attr.name}}: Mapped[str] = mapped_column(String, nullable={{ "False" if attr.required else "True"}})
         {%- elif attr.type == "integer" %}
-    {{attr.name}}: Mapped[int] = mapped_column(Integer, nullable={{ "True" if attr.required else "False"}})
+    {{attr.name}}: Mapped[int] = mapped_column(Integer, nullable={{ "False" if attr.required else "True"}})
         {%- elif attr.type == "float" %}
-    {{attr.name}}: Mapped[int] = mapped_column(Float, nullable={{ "True" if attr.required else "False"}})
+    {{attr.name}}: Mapped[int] = mapped_column(Float, nullable={{ "False" if attr.required else "True"}})
         {%- elif attr.is_enum %}
-    {{attr.name}}: Mapped[{{attr.type}}] = mapped_column(Enum({{attr.type}}), nullable={{ "True" if attr.required else "False"}})
+    {{attr.name}}: Mapped[{{attr.type}}] = mapped_column(Enum({{attr.type}}), nullable={{ "False" if attr.required else "True"}})
         {%- else %}
-            {% if attr.multivalued %}
-    {{attr.name}}: Mapped[list[{{attr.type}}]] = relationship("{{attr.type}}", back_populates="{{attr.inverse_field}}", uselist=True)
-            {% else %}
-    {{attr.name}}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("{{attr.inverse_class_snake_name}}.entity_id"), nullable={{"True" if attr.required else "False"}})
-    {{attr.name}}: Mapped[{{attr.type}}] = relationship({{attr.type}}, back_populates="{{attr.inverse_field}}", foreign_keys={{attr.name}}_id)
-            {% endif %}
+            {%- if attr.multivalued %}
+    {{attr.name}}: Mapped[list[{{attr.type}}]] = relationship("{{attr.type}}", back_populates="{{attr.inverse_field}}", uselist=True, foreign_keys="{{attr.type}}.{{attr.inverse_field}}_id")
+            {%- else %}
+    {{attr.name}}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("{{attr.related_class.snake_name}}.{{attr.related_class.identifier}}"), nullable={{"False" if attr.required else "True"}}{%- if attr.identifier %}, primary_key=True{%- endif %})
+              {%- if attr.type != "Entity" %}
+    {{attr.name}}: Mapped[{{attr.type}}] = relationship({{attr.type}}, {%- if attr.inverse %}back_populates="{{attr.inverse_field}}",{%- endif %} foreign_keys={{attr.name}}_id)
+              {%- endif %}
+            {%- endif %}
         {%- endif %}
     {%- endfor %}
