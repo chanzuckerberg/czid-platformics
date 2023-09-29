@@ -1,6 +1,9 @@
 version: '3.8'
 
 x-aws-variables: &aws-variables
+  ? AWS_ACCESS_KEY_ID
+  ? AWS_SECRET_ACCESS_KEY
+  ? AWS_SESSION_TOKEN
   ? AWS_REGION=us-west-2
   ? AWS_DEFAULT_REGION=us-west-2
 
