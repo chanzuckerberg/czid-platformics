@@ -17,9 +17,10 @@ else:
 class Sample(Entity):
     __tablename__ = "sample"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    location: Mapped[str] = mapped_column(String, nullable=False)
+
+    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
+    name: Mapped[str] = mapped_column(String, nullable=True)
+    location: Mapped[str] = mapped_column(String, nullable=True)
             
-    sequencing_reads_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("TODO"), nullable=False)
-    sequencing_reads: Mapped[SequencingRead] = relationship("SequencingRead", back_populates="TODO", foreign_keys=sequencing_reads_id)
+    sequencing_reads: Mapped[list[SequencingRead]] = relationship("SequencingRead", back_populates="sample", uselist=True)
             

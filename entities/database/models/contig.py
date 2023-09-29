@@ -15,5 +15,7 @@ else:
 class Contig(Entity):
     __tablename__ = "contig"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    sequencing_read_id: Mapped[str] = mapped_column(String, nullable=False)
-    sequence: Mapped[str] = mapped_column(String, nullable=False)
+
+    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
+    sequencing_read_id: Mapped[str] = mapped_column(String, nullable=True)
+    sequence: Mapped[str] = mapped_column(String, nullable=True)

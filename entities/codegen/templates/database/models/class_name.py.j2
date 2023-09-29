@@ -33,6 +33,8 @@ class {{cls.name}}(Entity):
     __tablename__ = "{{ cls.snake_name }}"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
 
+    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), primary_key=True)
+
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "string" %}
     {{attr.name}}: Mapped[str] = mapped_column(String, nullable={{ "True" if attr.required else "False"}})
@@ -44,10 +46,10 @@ class {{cls.name}}(Entity):
     {{attr.name}}: Mapped[{{attr.type}}] = mapped_column(Enum({{attr.type}}), nullable={{ "True" if attr.required else "False"}})
         {%- else %}
             {% if attr.multivalued %}
-    {{attr.name}}: Mapped[{{attr.type}}] = relationship("{{attr.type}}", back_populates="TODO", foreign_keys="TODO")
+    {{attr.name}}: Mapped[list[{{attr.type}}]] = relationship("{{attr.type}}", back_populates="{{attr.inverse_field}}", uselist=True)
             {% else %}
-    {{attr.name}}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("TODO"), nullable={{"True" if attr.required else "False"}})
-    {{attr.name}}: Mapped[{{attr.type}}] = relationship("{{attr.type}}", back_populates="TODO", foreign_keys={{attr.name}}_id)
+    {{attr.name}}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("{{attr.inverse_class_snake_name}}.entity_id"), nullable={{"True" if attr.required else "False"}})
+    {{attr.name}}: Mapped[{{attr.type}}] = relationship({{attr.type}}, back_populates="{{attr.inverse_field}}", foreign_keys={{attr.name}}_id)
             {% endif %}
         {%- endif %}
     {%- endfor %}
