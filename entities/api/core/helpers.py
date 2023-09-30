@@ -13,6 +13,7 @@ from platformics.api.core.deps import (get_cerbos_client, get_db_session,
                                        require_auth_principal)
 from platformics.api.core.gql_to_sql import (EnumComparators, IntComparators,
                                              StrComparators, UUIDComparators,
+                                             convert_where_clauses_to_sql,
                                              strawberry_sqlalchemy_mapper)
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
@@ -23,31 +24,22 @@ from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
-from platformics.api.core.gql_to_sql import (
-    convert_where_clauses_to_sql,
-)
-from api.core.helpers import get_db_rows
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 
-@strawberry.input
-class SampleWhereClause(TypedDict):
-    id: typing.Optional[UUIDComparators]
-    name: typing.Optional[StrComparators]
-    location: typing.Optional[StrComparators]
-
-@strawberry_sqlalchemy_mapper.type(db.Sample)
-class Sample(EntityInterface):
-    _where_clause_ = SampleWhereClause
-
-SampleWhereClause.foobar: typing.Optional[StrComparators] = ""
-@strawberry.field(extensions=[DependencyExtension()])
-async def resolve_samples(
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-    where: SampleWhereClause = {},
-) -> typing.Sequence[Sample]:
-    return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+async def get_db_rows(
+    model_cls: type[E],
+    session: AsyncSession,
+    cerbos_client: CerbosClient,
+    principal: Principal,
+    where: Any,
+    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
+) -> typing.Sequence[E]:
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, model_cls)
+    query = convert_where_clauses_to_sql(query, model_cls, where)
+    if order_by:
+        query = query.order_by(*order_by)  # type: ignore
+    result = await session.execute(query)
+    return result.scalars().all()

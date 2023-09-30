@@ -52,7 +52,7 @@ class EntityLoader:
         self.cerbos_client = cerbos_client
         self.principal = principal
 
-    def loader_for(self, relationship: RelationshipProperty) -> DataLoader:
+    def loader_for(self, relationship: RelationshipProperty, where) -> DataLoader:
         """
         Retrieve or create a DataLoader for the given relationship
         """
@@ -66,6 +66,7 @@ class EntityLoader:
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
+                print(f"WHERE IS {where}")
                 filters = [tuple_(*[remote for _, remote in relationship.local_remote_pairs]).in_(keys)]
                 order_by: list[tuple[ColumnElement[Any], ...]] = []
                 if relationship.order_by:

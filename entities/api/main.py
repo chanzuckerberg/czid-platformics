@@ -13,7 +13,7 @@ from platformics.database.connect import AsyncDB
 
 import strawberry
 from api.queries import Query
-from api.strawberry import strawberry_sqlalchemy_mapper
+from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from strawberry.fastapi import GraphQLRouter
 
 

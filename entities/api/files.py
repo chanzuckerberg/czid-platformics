@@ -7,7 +7,7 @@ from fastapi import Depends
 from mypy_boto3_s3.client import S3Client
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from api.strawberry import strawberry_sqlalchemy_mapper
+from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from strawberry.scalars import JSON
 
 from cerbos.sdk.client import CerbosClient

@@ -33,21 +33,21 @@ T = typing.TypeVar("T")
 
 
 @strawberry.input
-class SampleWhereClause(TypedDict):
+class SequencingReadWhereClause(TypedDict):
     id: typing.Optional[UUIDComparators]
     name: typing.Optional[StrComparators]
     location: typing.Optional[StrComparators]
 
-@strawberry_sqlalchemy_mapper.type(db.Sample)
-class Sample(EntityInterface):
-    _where_clause_ = SampleWhereClause
+@strawberry_sqlalchemy_mapper.type(db.SequencingRead)
+class SequencingRead(EntityInterface):
+    _where_clause_ = SequencingReadWhereClause
 
-SampleWhereClause.foobar: typing.Optional[StrComparators] = ""
+
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_samples(
+async def resolve_sequencing_reads(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-    where: SampleWhereClause = {},
-) -> typing.Sequence[Sample]:
-    return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+    where: SequencingReadWhereClause = {},
+) -> typing.Sequence[SequencingRead]:
+    return await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [])  # type: ignore

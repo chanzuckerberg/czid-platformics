@@ -1,4 +1,5 @@
 import types
+import typing
 import uuid
 from typing import Any, Awaitable, Callable, Generic, Optional, TypeVar, cast
 
@@ -25,7 +26,7 @@ operator_map = {
     "_neq": "__ne__",
     "_in_": "in_",
     "_nin": "not_in",
-    "_is_null": "SPECIAL",
+    "_is_null": "IS_NULL",
     "_gt": "__gt__",
     "_gte": "__ge__",
     "_lt": "__lt__",
@@ -45,7 +46,7 @@ def convert_where_clauses_to_sql(query, sa_model, whereClause):
     for k, v in whereClause.items():
         for comparator, value in v.items():
             sa_comparator = operator_map[comparator]
-            if sa_comparator == "SPECIAL":
+            if sa_comparator == "IS_NULL":
                 query = query.filter(getattr(sa_model, k).is_(None))
             else:
                 query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
@@ -228,7 +229,13 @@ class WhereClauseBuilder(SSAPlugin):
         relationship_model = relationship.entity.entity
         type_name = strawberry_sqlalchemy_mapper.model_to_type_or_interface_name(relationship_model)
         try:
-            whereclause = self._cached_where_args[type_name]
+            whereclause = None
+            try:
+                whereclause = strawberry_type._where_clause_
+            except:
+                pass
+            if not whereclause:
+                whereclause = self._cached_where_args[type_name]
             field.arguments.append(
                 StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), None)
             )
