@@ -50,7 +50,7 @@ class WorkflowVersionFactory(CommonFactory):
     # deprecated = Faker("pybool")
     # graph_json = fuzzy.FuzzyChoice(["{}"])
     workflow = factory.SubFactory(WorkflowFactory)
-    manifest = factory.LazyAttribute(lambda n: open("first_workflow_manifest.json").read())
+    manifest = factory.LazyAttribute(lambda n: open("/workflows/manifests/first_workflow_manifest.json").read())
 
 
 class RunFactory(CommonFactory):
