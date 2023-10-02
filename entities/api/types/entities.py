@@ -1,4 +1,5 @@
 import typing
+import uuid
 
 import database.models as db
 import strawberry
@@ -19,6 +20,7 @@ from platformics.database.connect import AsyncDB
 from strawberry.fastapi import GraphQLRouter
 
 
-@strawberry_sqlalchemy_mapper.interface(db.Entity)
+# @strawberry_sqlalchemy_mapper.interface(db.Entity)
+@strawberry.interface
 class EntityInterface:
-    pass
+    id: uuid.UUID

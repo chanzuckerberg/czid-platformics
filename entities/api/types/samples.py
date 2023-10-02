@@ -27,22 +27,41 @@ from platformics.api.core.gql_to_sql import (
     convert_where_clauses_to_sql,
 )
 from api.core.helpers import get_db_rows
+from typing import TYPE_CHECKING, Annotated
+from pydantic import BaseModel
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
+if TYPE_CHECKING:
+    from api.types.sequencing_reads import SequencingReadWhereClause, SequencingRead
+else:
+    SequencingReadWhereClause = "SequencingReadWhereClause"
+    SequencingRead = "SequencingRead"
+
 
 @strawberry.input
-class SampleWhereClause(TypedDict):
+class SampleWhereClause(BaseModel):
     id: typing.Optional[UUIDComparators]
     name: typing.Optional[StrComparators]
     location: typing.Optional[StrComparators]
+    # sequencing_reads: typing.Optional["SequencingReadWhereClause"]
+    sequencing_reads: typing.Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
 
-@strawberry_sqlalchemy_mapper.type(db.Sample)
+def get_sequencing_reads(where: "SequencingReadWhereClause", ids: list[int])->typing.Sequence[SequencingRead]:
+    return []
+
+@strawberry.type
 class Sample(EntityInterface):
-    _where_clause_ = SampleWhereClause
+    __where_clause = SampleWhereClause
+    id: uuid.UUID
+    name: str
+    location: str
+    @strawberry.field(extensions=[DependencyExtension()])
+    def sequencing_reads(where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
+        return {}
+    # sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = get_sequencing_reads
 
-SampleWhereClause.foobar: typing.Optional[StrComparators] = ""
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples(
     session: AsyncSession = Depends(get_db_session, use_cache=False),

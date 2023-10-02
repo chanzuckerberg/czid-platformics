@@ -8,12 +8,13 @@ from fastapi import Depends, FastAPI
 from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
                                        get_engine)
 from platformics.api.core.gql_loaders import EntityLoader
+from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from platformics.api.core.settings import APISettings
 from platformics.database.connect import AsyncDB
 
 import strawberry
 from api.queries import Query
-from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
+from api.relationships import finalize
 from strawberry.fastapi import GraphQLRouter
 
 
@@ -30,14 +31,15 @@ def get_context(
 # call finalize() before using the schema:
 # (note that models that are related to models that are in the schema
 # are automatically mapped at this stage
-strawberry_sqlalchemy_mapper.finalize()
+# strawberry_sqlalchemy_mapper.finalize()
+finalize()
 # only needed if you have polymorphic types
-additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
+# additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # strawberry graphql schema
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
-    types=additional_types,
+    # types=additional_types,
 )
 
 

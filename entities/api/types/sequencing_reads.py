@@ -2,6 +2,7 @@ import typing
 import uuid
 from collections import defaultdict
 from typing import Any, Mapping, Optional, Tuple
+from typing import TYPE_CHECKING, Annotated
 
 import database.models as db
 import strawberry
@@ -27,9 +28,16 @@ from platformics.api.core.gql_to_sql import (
     convert_where_clauses_to_sql,
 )
 from api.core.helpers import get_db_rows
+import uuid
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
+
+if TYPE_CHECKING:
+    from api.types.samples import SampleWhereClause, Sample
+else:
+    SampleWherClause = "SampleWherClause"
+    Sample = "Sample"
 
 
 @strawberry.input
@@ -37,10 +45,17 @@ class SequencingReadWhereClause(TypedDict):
     id: typing.Optional[UUIDComparators]
     name: typing.Optional[StrComparators]
     location: typing.Optional[StrComparators]
+    sample: typing.Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
 
-@strawberry_sqlalchemy_mapper.type(db.SequencingRead)
+@strawberry.type
 class SequencingRead(EntityInterface):
-    _where_clause_ = SequencingReadWhereClause
+    __where_clause = SequencingReadWhereClause
+    id: uuid.UUID
+    sequence: str
+    # sample: Annotated["Sample", strawberry.lazy("api.types.samples")]
+    @strawberry.field(extensions=[DependencyExtension()])
+    def sample(where: Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]) -> Annotated["Sample", strawberry.lazy("api.types.samples")]:
+        return {}
 
 
 @strawberry.field(extensions=[DependencyExtension()])

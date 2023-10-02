@@ -14,9 +14,10 @@ class DependencyExtension(FieldExtension):
         self.strawberry_field_names = ["self"]
 
     def apply(self, field: StrawberryField) -> None:
-        self.dependant: Dependant = deputils.get_dependant(
-            path="/", call=field.base_resolver.wrapped_func  # type: ignore
-        )
+        self.dependant: field.base_resolver.wrapped_func
+        #self.dependant: Dependant = deputils.get_dependant(
+            #path="/", call=field.base_resolver.wrapped_func  # type: ignore
+        #)
         # Remove fastapi Depends arguments from the list that strawberry tries
         # to resolve
         field.arguments = [item for item in field.arguments if not isinstance(item.default, DependsClass)]
