@@ -7,17 +7,41 @@ from strawberry.extensions import FieldExtension
 from strawberry.field import StrawberryField
 from strawberry.types import Info
 
+import types
+import functools
+import inspect
+
+def get_func_with_only_deps(func: typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]:
+    """ This function returns a copy of the function with all the arguments that are not DependsClass.
+    We do this because Pydantic freaks out and explodes if we have any parameters that rely on the
+    strawberry.lazy() functionality that Strawberry needs to handle forward-refs properly. Basically
+    Strawberry and pydantic use different and incompatible tricks for handling forward refs and we
+    decided that it was better to workaround Pydantic than Strawberry."""
+    newfunc = types.FunctionType(
+        func.__code__, func.__globals__,
+        name=func.__name__,
+        argdefs=func.__defaults__,
+        closure=func.__closure__)
+    newfunc = functools.update_wrapper(newfunc, func)
+    signature = inspect.signature(func)
+    for param in signature.parameters.values():
+        if (isinstance(param.default, DependsClass)):
+            continue
+        newfunc.__annotations__[param.name] = str
+    return newfunc
 
 class DependencyExtension(FieldExtension):
     def __init__(self) -> None:
         self.dependency_args: list[typing.Any] = []
         self.strawberry_field_names = ["self"]
 
+
     def apply(self, field: StrawberryField) -> None:
-        self.dependant: field.base_resolver.wrapped_func
-        #self.dependant: Dependant = deputils.get_dependant(
-            #path="/", call=field.base_resolver.wrapped_func  # type: ignore
-        #)
+        func = field.base_resolver.wrapped_func
+        func = get_func_with_only_deps(func)
+        self.dependant: Dependant = deputils.get_dependant(
+            path="/", call=func  # type: ignore
+        )
         # Remove fastapi Depends arguments from the list that strawberry tries
         # to resolve
         field.arguments = [item for item in field.arguments if not isinstance(item.default, DependsClass)]
