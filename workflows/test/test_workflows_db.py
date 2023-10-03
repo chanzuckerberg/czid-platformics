@@ -8,7 +8,7 @@ from pytest_postgresql.janitor import DatabaseJanitor
 import os
 
 
-test_db = factories.postgresql_noproc(host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS"))
+test_db = factories.postgresql_noproc(host=os.getenv("PLATFORMICS_DATABASE_HOST"), password=os.getenv("PLATFORMICS_DATABASE_PASSWORD"))
 
 
 def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
