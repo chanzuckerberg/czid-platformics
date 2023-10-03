@@ -46,7 +46,6 @@ class SampleWhereClause(BaseModel):
     id: UUIDComparators | None
     name: StrComparators | None
     location: StrComparators | None
-    # sequencing_reads: SequencingReadWhereClause | None
     sequencing_reads: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None
 
 def get_sequencing_reads(where: "SequencingReadWhereClause", ids: list[int])->typing.Sequence[SequencingRead]:
@@ -61,9 +60,6 @@ class Sample(EntityInterface):
     id: uuid.UUID
     name: str
     location: str
-    #@strawberry.field(extensions=[DependencyExtension()])
-    #def sequencing_reads(where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
-        #return {}
     sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
 
 @strawberry.field(extensions=[DependencyExtension()])

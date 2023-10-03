@@ -48,16 +48,13 @@ class SequencingReadWhereClause(TypedDict):
     location: typing.Optional[StrComparators]
     sample: typing.Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
 
+
 @strawberry.type
 class SequencingRead(EntityInterface):
     __where_clause = SequencingReadWhereClause
     id: uuid.UUID
     sequence: str
     sample: Annotated["Sample", strawberry.lazy("api.types.samples")] = load_samples
-    # sample: Annotated["Sample", strawberry.lazy("api.types.samples")]
-    # @strawberry.field(extensions=[DependencyExtension()])
-    # def sample(where: Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]) -> Annotated["Sample", strawberry.lazy("api.types.samples")]:
-        # return {}
 
 
 @strawberry.field(extensions=[DependencyExtension()])
