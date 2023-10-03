@@ -10,10 +10,12 @@ from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
 from platformics.api.core.gql_loaders import EntityLoader
 from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from platformics.api.core.settings import APISettings
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 from platformics.database.connect import AsyncDB
 
 import strawberry
 from api.queries import Query
+from strawberry.schema.config import StrawberryConfig
 from strawberry.fastapi import GraphQLRouter
 
 
@@ -27,12 +29,20 @@ def get_context(
     }
 
 
+# Arg/Field names that start with _ are not camel-cased
+class CustomNameConverter(NameConverter):
+    def get_graphql_name(self, obj: HasGraphQLName) -> str:
+        if obj.python_name.startswith("_"):
+            return obj.python_name
+        return super().get_graphql_name(obj)
+
 # only needed if you have polymorphic types
 # additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # strawberry graphql schema
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
+    config=StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter()),
     # types=additional_types,
 )
 
