@@ -14,7 +14,6 @@ from platformics.database.connect import AsyncDB
 
 import strawberry
 from api.queries import Query
-from api.relationships import finalize
 from strawberry.fastapi import GraphQLRouter
 
 
@@ -28,11 +27,6 @@ def get_context(
     }
 
 
-# call finalize() before using the schema:
-# (note that models that are related to models that are in the schema
-# are automatically mapped at this stage
-# strawberry_sqlalchemy_mapper.finalize()
-finalize()
 # only needed if you have polymorphic types
 # additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # strawberry graphql schema
