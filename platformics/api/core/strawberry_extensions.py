@@ -12,11 +12,11 @@ import functools
 import inspect
 
 def get_func_with_only_deps(func: typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]:
-    """ This function returns a copy of the function with all the arguments that are not DependsClass.
-    We do this because Pydantic freaks out and explodes if we have any parameters that rely on the
-    strawberry.lazy() functionality that Strawberry needs to handle forward-refs properly. Basically
-    Strawberry and pydantic use different and incompatible tricks for handling forward refs and we
-    decided that it was better to workaround Pydantic than Strawberry."""
+    """ This function returns a copy of the function with all the arguments that are not DependsClass
+    updated to have a type annotation of "str".  We do this because Pydantic explodes if it sees any
+    parameter annotationss that rely on the strawberry.lazy() functionality that Strawberry requires t
+    handle forward-refs properly. Basically Strawberry and pydantic use different and incompatible tricks
+    for handling forward refs and we decided that it was better to workaround Pydantic than Strawberry."""
     newfunc = types.FunctionType(
         func.__code__, func.__globals__,
         name=func.__name__,
