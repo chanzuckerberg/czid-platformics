@@ -42,7 +42,7 @@ class FileInput:
     format: str
     protocol: str
     namespace: str
-    path: str = None
+    path: str
     compression_type: typing.Optional[str] = None
 
 
@@ -91,16 +91,6 @@ async def mark_upload_complete(
     return file
 
 
-@strawberry.mutation(extensions=[DependencyExtension()])
-async def create_file(
-    entity_id: uuid.UUID,
-    entity_field_name: str,
-    file: FileInput,
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-) -> db.File:
-    pass
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file_upload(
@@ -119,7 +109,7 @@ async def create_file_upload(
     file.path = f"uploads/{file.id}/{file.name}"
     file.protocol = settings.DEFAULT_UPLOAD_PROTOCOL
     file.namespace = settings.DEFAULT_UPLOAD_BUCKET
-    file = await create_or_upload_file(entity_id, entity_field_name, file, session, cerbos_client, principal)
+    file = await create_file_record(entity_id, entity_field_name, file, session, cerbos_client, principal)
 
     # Create a signed URL
     response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
@@ -128,14 +118,14 @@ async def create_file_upload(
     )
 
 
-async def create_or_upload_file(
+async def create_file_record(
     entity_id: uuid.UUID,
     entity_field_name: str,
     file: FileInput | FileUploadInput,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-):
+) -> db.File:
     # Basic validation
     if "/" in file.name:
         raise Exception("File name should not contain /")
@@ -153,7 +143,7 @@ async def create_or_upload_file(
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
 
     # Create a new file record
-    file = db.File(
+    new_file = db.File(
         id=file.id,
         entity_id=entity_id,
         entity_field_name=entity_field_name,
@@ -164,8 +154,8 @@ async def create_or_upload_file(
         path=file.path,
         status=db.FileStatus.PENDING,
     )
-    session.add(file)
-    setattr(entity, entity_property_name, file.id)
+    session.add(new_file)
+    setattr(entity, entity_property_name, new_file.id)
     await session.commit()
 
-    return file
+    return new_file
