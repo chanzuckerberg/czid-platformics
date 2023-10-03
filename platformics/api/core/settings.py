@@ -24,11 +24,11 @@ class Settings(BaseSettings):
 
     # Properties usually read from env vars
     CERBOS_URL: str
-    DB_HOST: str
-    DB_PORT: str
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
+    PLATFORMICS_DATABASE_HOST: str
+    PLATFORMICS_DATABASE_PORT: str
+    PLATFORMICS_DATABASE_USER: str
+    PLATFORMICS_DATABASE_PASSWORD: str
+    PLATFORMICS_DATABASE_NAME: str
     JWK_PUBLIC_KEY_FILE: str
     JWK_PRIVATE_KEY_FILE: str
     DEFAULT_UPLOAD_BUCKET: str
@@ -63,22 +63,22 @@ class Settings(BaseSettings):
     def DB_URI(self) -> str:
         db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
             protocol=self.DB_DRIVER,
-            db_host=self.DB_HOST,
-            db_port=self.DB_PORT,
-            db_user=self.DB_USER,
-            db_pass=self.DB_PASS,
-            db_name=self.DB_NAME,
+            db_host=self.PLATFORMICS_DATABASE_HOST,
+            db_port=self.PLATFORMICS_DATABASE_PORT,
+            db_user=self.PLATFORMICS_DATABASE_USER,
+            db_pass=self.PLATFORMICS_DATABASE_PASSWORD,
+            db_name=self.PLATFORMICS_DATABASE_NAME,
         )
         return db_uri
 
     @cached_property
     def SYNC_DB_URI(self) -> str:
         db_uri = "postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
-            db_host=self.DB_HOST,
-            db_port=self.DB_PORT,
-            db_user=self.DB_USER,
-            db_pass=self.DB_PASS,
-            db_name=self.DB_NAME,
+            db_host=self.PLATFORMICS_DATABASE_HOST,
+            db_port=self.PLATFORMICS_DATABASE_PORT,
+            db_user=self.PLATFORMICS_DATABASE_USER,
+            db_pass=self.PLATFORMICS_DATABASE_PASSWORD,
+            db_name=self.PLATFORMICS_DATABASE_NAME,
         )
         return db_uri
 
