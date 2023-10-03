@@ -33,7 +33,8 @@ class SignedURL:
     fields: typing.Optional[JSON] = None  # type: ignore
 
 
-# Define graphQL input types so we can pass a "file" JSON to mutations
+# Define graphQL input types so we can pass a "file" JSON to mutations.
+# Keep them separate so we can control which fields are required.
 @strawberry.input()
 class FileUpload:
     name: str
@@ -132,7 +133,7 @@ async def create_file(
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
-async def create_file_upload(
+async def upload_file(
     entity_id: uuid.UUID,
     entity_field_name: str,
     file: FileUpload,
