@@ -29,48 +29,20 @@ from platformics.api.core.gql_to_sql import (
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
 from pydantic import BaseModel
-from api.types.dataloaders import load_sequencing_reads
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.sequencing_reads import SequencingReadWhereClause, SequencingRead
-else:
-    SequencingReadWhereClause = "SequencingReadWhereClause"
-    SequencingRead = "SequencingRead"
+    from api.types.samples import Sample, SampleWhereClause
 
 
-@strawberry.input
-class SampleWhereClause(BaseModel):
-    id: UUIDComparators | None
-    name: StrComparators | None
-    location: StrComparators | None
-    # sequencing_reads: SequencingReadWhereClause | None
-    sequencing_reads: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None
-
-def get_sequencing_reads(where: "SequencingReadWhereClause", ids: list[int])->typing.Sequence[SequencingRead]:
-    return []
 
 @strawberry.field(extensions=[DependencyExtension()])
-def do_stuff(where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] | None:
+def load_sequencing_reads(where: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
     return None
 
-@strawberry.type
-class Sample(EntityInterface):
-    id: uuid.UUID
-    name: str
-    location: str
-    #@strawberry.field(extensions=[DependencyExtension()])
-    #def sequencing_reads(where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
-        #return {}
-    sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
-
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_samples(
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-    where: SampleWhereClause | None= {},
-) -> typing.Sequence[Sample]:
-    return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+def load_samples(where: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]) -> Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]]:
+    return None
