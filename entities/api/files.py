@@ -19,6 +19,11 @@ from platformics.security.authorization import CerbosAction, get_resource_query
 from files.format_handlers import get_validator
 
 
+# ------------------------------------------------------------------------------
+# Types and inputs
+# ------------------------------------------------------------------------------
+
+
 @strawberry.type
 class SignedURL:
     url: str
@@ -28,22 +33,25 @@ class SignedURL:
     fields: typing.Optional[JSON] = None  # type: ignore
 
 
-# Define graphQL input types so we can pass a file JSON to mutations
+# Define graphQL input types so we can pass a "file" JSON to mutations
 @strawberry.input()
-class FileUploadInput:
+class FileUpload:
     name: str
-    format: str
+    file_format: typing.Optional[str] = None
     compression_type: typing.Optional[str] = None
+    protocol: typing.Optional[str] = None
+    namespace: typing.Optional[str] = None
+    path: typing.Optional[str] = None
 
 
 @strawberry.input()
-class FileInput:
+class FileCreate:
     name: str
-    format: str
+    file_format: typing.Optional[str] = None
+    compression_type: typing.Optional[str] = None
     protocol: str
     namespace: str
     path: str
-    compression_type: typing.Optional[str] = None
 
 
 @strawberry_sqlalchemy_mapper.type(db.File)
@@ -64,6 +72,27 @@ class File:
         return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
 
 
+# ------------------------------------------------------------------------------
+# Mutations
+# ------------------------------------------------------------------------------
+
+
+async def validate_file(
+    file: db.File,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    s3_client: S3Client = Depends(get_s3_client),
+) -> None:
+    validator = get_validator(file.file_format)
+    try:
+        file_size = validator.validate(s3_client, file.namespace, file.path)
+    except:  # noqa
+        file.status = db.FileStatus.FAILED
+    else:
+        file.status = db.FileStatus.SUCCESS
+        file.size = file_size
+    await session.commit()
+
+
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def mark_upload_complete(
     file_id: uuid.UUID,
@@ -78,25 +107,35 @@ async def mark_upload_complete(
     if not file:
         raise Exception("NOT FOUND!")  # TODO: How do we raise sane errors in our api?
 
-    validator = get_validator(file.file_format)
-    try:
-        file_size = validator.validate(s3_client, file.namespace, file.path)
-    except:  # noqa
-        file.status = db.FileStatus.FAILED
-    else:
-        file.status = db.FileStatus.SUCCESS
-        file.size = file_size
-    await session.commit()
-
+    await validate_file(file, session, s3_client)
     return file
 
+
+# Need to create separate mutations because they return different types.
+# Strawberry is unhappy with a mutation returning a union type.
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_file(
+    entity_id: uuid.UUID,
+    entity_field_name: str,
+    file: FileCreate,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    s3_client: S3Client = Depends(get_s3_client),
+    settings: APISettings = Depends(get_settings),
+) -> db.File:
+    new_file = await create_or_upload_file(
+        entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, settings
+    )
+    assert isinstance(new_file, db.File)  # this is to reassure mypy that we are in fact returning db.File
+    return new_file
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file_upload(
     entity_id: uuid.UUID,
     entity_field_name: str,
-    file: FileUploadInput,
+    file: FileUpload,
     expiration: int = 3600,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
@@ -104,28 +143,24 @@ async def create_file_upload(
     s3_client: S3Client = Depends(get_s3_client),
     settings: APISettings = Depends(get_settings),
 ) -> SignedURL:
-    # Set upload destination and create file object
-    file.id = uuid6.uuid7()
-    file.path = f"uploads/{file.id}/{file.name}"
-    file.protocol = settings.DEFAULT_UPLOAD_PROTOCOL
-    file.namespace = settings.DEFAULT_UPLOAD_BUCKET
-    file = await create_file_record(entity_id, entity_field_name, file, session, cerbos_client, principal)
-
-    # Create a signed URL
-    response = s3_client.generate_presigned_post(Bucket=file.namespace, Key=file.path, ExpiresIn=expiration)
-    return SignedURL(
-        url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+    new_file = await create_or_upload_file(
+        entity_id, entity_field_name, file, expiration, session, cerbos_client, principal, s3_client, settings
     )
+    assert isinstance(new_file, SignedURL)  # this is to reassure mypy that we are in fact returning a SignedURL
+    return new_file
 
 
-async def create_file_record(
+async def create_or_upload_file(
     entity_id: uuid.UUID,
     entity_field_name: str,
-    file: FileInput | FileUploadInput,
+    file: FileCreate | FileUpload,
+    expiration: int = 3600,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> db.File:
+    s3_client: S3Client = Depends(get_s3_client),
+    settings: APISettings = Depends(get_settings),
+) -> db.File | SignedURL:
     # Basic validation
     if "/" in file.name:
         raise Exception("File name should not contain /")
@@ -142,20 +177,37 @@ async def create_file_record(
     if not hasattr(entity, entity_property_name):
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
 
+    # Set file parameters based on user inputs
+    file_id = uuid6.uuid7()
+    if isinstance(file, FileUpload):
+        file.protocol = settings.DEFAULT_UPLOAD_PROTOCOL
+        file.namespace = settings.DEFAULT_UPLOAD_BUCKET
+        file.path = f"uploads/{file_id}/{file.name}"
+
     # Create a new file record
     new_file = db.File(
-        id=file.id,
+        id=file_id,
         entity_id=entity_id,
         entity_field_name=entity_field_name,
-        file_format=file.format,
-        compression_type=file.compression_type,
         protocol=file.protocol,
         namespace=file.namespace,
         path=file.path,
+        file_format=file.file_format,
+        compression_type=file.compression_type,
         status=db.FileStatus.PENDING,
     )
     session.add(new_file)
     setattr(entity, entity_property_name, new_file.id)
     await session.commit()
 
-    return new_file
+    # If file already exists, validate it
+    if isinstance(file, FileCreate):
+        await validate_file(new_file, session, s3_client)
+        return new_file
+
+    # If new file, create a signed URL
+    else:
+        response = s3_client.generate_presigned_post(Bucket=new_file.namespace, Key=new_file.path, ExpiresIn=expiration)
+        return SignedURL(
+            url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
+        )
