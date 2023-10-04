@@ -44,18 +44,24 @@ def cache_key(key: dict) -> str:
 # need batching function that takes in list of sample ids and returns SequencingReads
 async def batch_sequencing_reads(keys: list[dict]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
     session = keys[0]["session"]
+    cerbos_client = keys[0]["cerbos_client"]
+    principal = keys[0]["principal"]
     ids = [key["id"] for key in keys]
-    query = select(db.SequencingRead).where(db.SequencingRead.sample_id.in_(ids))
+
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
+    query = query.filter(db.SequencingRead.sample_id.in_(ids))
     result = await session.execute(query)
     return result.scalars().all()
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def load_sequencing_reads(
-    root: "Sample", info: strawberry.types.Info,
+    root: "Sample",
     session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
     ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
     sequencing_read_loader = DataLoader(load_fn=batch_sequencing_reads, cache_key_fn=cache_key)
-    return await sequencing_read_loader.load({"session":session, "id":root.id})
+    return await sequencing_read_loader.load({"session": session, "cerbos_client": cerbos_client, "principal": principal, "id":root.id})
 
 @strawberry.field(extensions=[DependencyExtension()])
 def load_samples(where: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]) -> Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]]:

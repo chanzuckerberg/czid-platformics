@@ -56,6 +56,9 @@ class SequencingRead(EntityInterface):
     sequence: str
     sample: Annotated["Sample", strawberry.lazy("api.types.samples")] = load_samples
 
+SequencingRead.__strawberry_definition__.is_type_of = (
+    lambda obj, info: type(obj) == db.SequencingRead or type(obj) == SequencingRead
+)
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_sequencing_reads(
