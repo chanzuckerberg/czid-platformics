@@ -17,7 +17,7 @@ from platformics.api.core.gql_to_sql import (EnumComparators, IntComparators,
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
 from platformics.security.authorization import CerbosAction, get_resource_query
-from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
+from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
@@ -29,6 +29,7 @@ from platformics.api.core.gql_to_sql import (
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
 from pydantic import BaseModel
+import database.models as db
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -37,11 +38,24 @@ if TYPE_CHECKING:
     from api.types.sequencing_reads import SequencingReadWhereClause, SequencingRead
     from api.types.samples import Sample, SampleWhereClause
 
+def cache_key(key: dict) -> str:
+    return key["id"]
 
+# need batching function that takes in list of sample ids and returns SequencingReads
+async def batch_sequencing_reads(keys: list[dict]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
+    session = keys[0]["session"]
+    ids = [key["id"] for key in keys]
+    query = select(db.SequencingRead).where(db.SequencingRead.sample_id.in_(ids))
+    result = await session.execute(query)
+    return result.scalars().all()
 
 @strawberry.field(extensions=[DependencyExtension()])
-def load_sequencing_reads(where: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
-    return None
+async def load_sequencing_reads(
+    root: "Sample", info: strawberry.types.Info,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
+    sequencing_read_loader = DataLoader(load_fn=batch_sequencing_reads, cache_key_fn=cache_key)
+    return await sequencing_read_loader.load({"session":session, "id":root.id})
 
 @strawberry.field(extensions=[DependencyExtension()])
 def load_samples(where: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]) -> Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]]:
