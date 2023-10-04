@@ -5,18 +5,16 @@ from platformics.database.models.base import Entity
 from sqlalchemy import ForeignKey, String, Float, Integer, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from support.enums import Nucleotide, SequencingProtocol
 
 if TYPE_CHECKING:
     from database.models.files import File
     from database.models.sample import Sample
     from database.models.contig import Contig
-    from support.enums import Nucleotide, SequencingProtocol
 else:
     File = "File"
     Sample = "Sample"
     Contig = "Contig"
-    Nucleotide = "Nucleotide"
-    SequencingProtocol = "SequencingProtocol"
 
 
 class SequencingRead(Entity):

@@ -5,6 +5,14 @@ from platformics.database.models.base import Entity
 from sqlalchemy import ForeignKey, String, Float, Integer, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+{%- for field in cls.enum_fields %}
+    {%- if loop.first %}
+from support.enums import 
+    {%- endif %}
+    {{- " " }}
+    {{- field.type}}
+    {{- "," if not loop.last else "" }}
+{%- endfor %}
 
 if TYPE_CHECKING:
     from database.models.files import File
@@ -13,23 +21,12 @@ if TYPE_CHECKING:
     from database.models.{{related_field.related_class.snake_name}} import {{related_field.related_class.name}}
         {%- endif %}
     {%- endfor %}
-    {%- for field in cls.enum_fields %}
-        {%- if loop.first %}
-    from support.enums import 
-        {%- endif %}
-        {{- " " }}
-        {{- field.type}}
-        {{- "," if not loop.last else "" }}
-    {%- endfor %}
 else:
     File = "File"
     {%- for related_field in cls.related_fields %}
         {%- if related_field.related_class.name not in ["File", "Entity"] %}
     {{related_field.related_class.name}} = "{{related_field.related_class.name}}"
         {%- endif %}
-    {%- endfor %}
-    {%- for enum_field in cls.enum_fields %}
-    {{enum_field.type}} = "{{enum_field.type}}"
     {%- endfor %}
 
 
