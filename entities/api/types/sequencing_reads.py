@@ -1,11 +1,12 @@
 import typing
 import uuid
 from collections import defaultdict
-from typing import Any, Mapping, Optional, Tuple
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
+from api.core.helpers import get_db_rows
+from api.types.dataloaders import load_samples
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -24,18 +25,12 @@ from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
-from platformics.api.core.gql_to_sql import (
-    convert_where_clauses_to_sql,
-)
-from api.types.dataloaders import load_samples
-from api.core.helpers import get_db_rows
-import uuid
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.samples import SampleWhereClause, Sample
+    from api.types.samples import Sample, SampleWhereClause
 else:
     SampleWherClause = "SampleWherClause"
     Sample = "Sample"
@@ -44,8 +39,7 @@ else:
 @strawberry.input
 class SequencingReadWhereClause(TypedDict):
     id: UUIDComparators | None
-    name: typing.Optional[StrComparators]
-    location: typing.Optional[StrComparators]
+    sequence: typing.Optional[StrComparators]
     sample: typing.Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
 
 

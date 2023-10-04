@@ -42,18 +42,6 @@ operator_map = {
 }
 
 
-def convert_where_clauses_to_sql(query, sa_model, whereClause):
-    if not whereClause:
-        return query
-    for k, v in whereClause.items():
-        for comparator, value in v.items():
-            sa_comparator = operator_map[comparator]
-            if sa_comparator == "IS_NULL":
-                query = query.filter(getattr(sa_model, k).is_(None))
-            else:
-                query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
-    return query
-
 
 @strawberry.input()
 class EnumComparators(TypedDict, Generic[T]):

@@ -23,9 +23,6 @@ from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
-from platformics.api.core.gql_to_sql import (
-    convert_where_clauses_to_sql,
-)
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
 from pydantic import BaseModel
@@ -47,13 +44,6 @@ class SampleWhereClause(TypedDict):
     name: Optional[StrComparators]
     location: Optional[StrComparators]
     sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
-
-def get_sequencing_reads(where: "SequencingReadWhereClause", ids: list[int])->typing.Sequence[SequencingRead]:
-    return []
-
-@strawberry.field(extensions=[DependencyExtension()])
-def do_stuff(where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] | None:
-    return None
 
 @strawberry.type
 class Sample(EntityInterface):
