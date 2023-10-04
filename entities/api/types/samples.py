@@ -42,11 +42,11 @@ else:
 
 
 @strawberry.input
-class SampleWhereClause(BaseModel):
-    id: UUIDComparators | None
-    name: StrComparators | None
-    location: StrComparators | None
-    sequencing_reads: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None
+class SampleWhereClause(TypedDict):
+    id: Optional[UUIDComparators]
+    name: Optional[StrComparators]
+    location: Optional[StrComparators]
+    sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
 
 def get_sequencing_reads(where: "SequencingReadWhereClause", ids: list[int])->typing.Sequence[SequencingRead]:
     return []
@@ -62,11 +62,15 @@ class Sample(EntityInterface):
     location: str
     sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
 
+Sample.__strawberry_definition__.is_type_of = (
+    lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
+)
+
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-    where: SampleWhereClause | None= {},
+    where: Optional[SampleWhereClause] = None,
 ) -> typing.Sequence[Sample]:
     return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
