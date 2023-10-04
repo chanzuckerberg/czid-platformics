@@ -43,6 +43,8 @@ operator_map = {
 
 
 def convert_where_clauses_to_sql(query, sa_model, whereClause):
+    if not whereClause:
+        return query
     for k, v in whereClause.items():
         for comparator, value in v.items():
             sa_comparator = operator_map[comparator]

@@ -33,6 +33,7 @@ from api.types.dataloaders import load_sequencing_reads
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
+from pydantic import BaseModel, ConfigDict, constr
 
 if TYPE_CHECKING:
     from api.types.sequencing_reads import SequencingReadWhereClause, SequencingRead
@@ -42,18 +43,11 @@ else:
 
 
 @strawberry.input
-class SampleWhereClause(BaseModel):
+class SampleWhereClause(TypedDict):
     id: UUIDComparators | None
     name: StrComparators | None
     location: StrComparators | None
     sequencing_reads: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None
-
-def get_sequencing_reads(where: "SequencingReadWhereClause", ids: list[int])->typing.Sequence[SequencingRead]:
-    return []
-
-@strawberry.field(extensions=[DependencyExtension()])
-def do_stuff(where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] | None:
-    return None
 
 @strawberry.type
 class Sample(EntityInterface):
@@ -62,6 +56,9 @@ class Sample(EntityInterface):
     location: str
     sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
 
+# Tell Strawberry that it's ok to return db.Sample instances and pretend they're api.type.Sample instances
+Sample.__strawberry_definition__.is_type_of = lambda result, info: isinstance(result, db.Sample) or isinstance(result, Sample)
+
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -69,4 +66,8 @@ async def resolve_samples(
     principal: Principal = Depends(require_auth_principal),
     where: SampleWhereClause | None= {},
 ) -> typing.Sequence[Sample]:
-    return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+    foo = await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+    results = []
+    for item in foo:
+        results.append(item)
+    return results
