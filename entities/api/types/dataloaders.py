@@ -23,9 +23,6 @@ from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
-from platformics.api.core.gql_to_sql import (
-    convert_where_clauses_to_sql,
-)
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
 from pydantic import BaseModel
