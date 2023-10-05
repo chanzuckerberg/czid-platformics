@@ -1443,7 +1443,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "FileInput",
+                      "name": "FileCreate",
                       "ofType": null
                     }
                   }
@@ -1455,7 +1455,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "SignedURL",
+                  "name": "File",
                   "ofType": null
                 }
               }
@@ -1496,7 +1496,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "FileUploadInput",
+                      "name": "FileUpload",
                       "ofType": null
                     }
                   }
@@ -1515,7 +1515,7 @@
                   }
                 }
               ],
-              "name": "createFileUpload",
+              "name": "uploadFile",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -1578,16 +1578,21 @@
               }
             },
             {
-              "defaultValue": null,
-              "name": "format",
+              "defaultValue": "null",
+              "name": "fileFormat",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "compressionType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             },
             {
@@ -1628,20 +1633,11 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "defaultValue": "null",
-              "name": "compressionType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "FileInput",
+          "name": "FileCreate",
           "possibleTypes": null
         },
         {
@@ -1662,16 +1658,12 @@
               }
             },
             {
-              "defaultValue": null,
-              "name": "format",
+              "defaultValue": "null",
+              "name": "fileFormat",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             },
             {
@@ -1682,11 +1674,38 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "protocol",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "namespace",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "path",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "FileUploadInput",
+          "name": "FileUpload",
           "possibleTypes": null
         },
         {

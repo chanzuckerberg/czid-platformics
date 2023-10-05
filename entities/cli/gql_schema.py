@@ -32,23 +32,26 @@ class UUID(sgqlc.types.Scalar):
 ########################################################################
 # Input Objects
 ########################################################################
-class FileInput(sgqlc.types.Input):
+class FileCreate(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "format", "protocol", "namespace", "path", "compression_type")
+    __field_names__ = ("name", "file_format", "compression_type", "protocol", "namespace", "path")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
-    format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="format")
+    file_format = sgqlc.types.Field(String, graphql_name="fileFormat")
+    compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
     protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
     namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
     path = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="path")
-    compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
 
 
-class FileUploadInput(sgqlc.types.Input):
+class FileUpload(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "format", "compression_type")
+    __field_names__ = ("name", "file_format", "compression_type", "protocol", "namespace", "path")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
-    format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="format")
+    file_format = sgqlc.types.Field(String, graphql_name="fileFormat")
     compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
+    protocol = sgqlc.types.Field(String, graphql_name="protocol")
+    namespace = sgqlc.types.Field(String, graphql_name="namespace")
+    path = sgqlc.types.Field(String, graphql_name="path")
 
 
 ########################################################################
@@ -122,7 +125,7 @@ class Mutation(sgqlc.types.Type):
         "create_contig",
         "update_sample",
         "create_file",
-        "create_file_upload",
+        "upload_file",
         "mark_upload_complete",
     )
     create_sample = sgqlc.types.Field(
@@ -185,7 +188,7 @@ class Mutation(sgqlc.types.Type):
         ),
     )
     create_file = sgqlc.types.Field(
-        sgqlc.types.non_null("SignedURL"),
+        sgqlc.types.non_null(File),
         graphql_name="createFile",
         args=sgqlc.types.ArgDict(
             (
@@ -194,13 +197,13 @@ class Mutation(sgqlc.types.Type):
                     "entity_field_name",
                     sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="entityFieldName", default=None),
                 ),
-                ("file", sgqlc.types.Arg(sgqlc.types.non_null(FileInput), graphql_name="file", default=None)),
+                ("file", sgqlc.types.Arg(sgqlc.types.non_null(FileCreate), graphql_name="file", default=None)),
             )
         ),
     )
-    create_file_upload = sgqlc.types.Field(
+    upload_file = sgqlc.types.Field(
         sgqlc.types.non_null("SignedURL"),
-        graphql_name="createFileUpload",
+        graphql_name="uploadFile",
         args=sgqlc.types.ArgDict(
             (
                 ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="entityId", default=None)),
@@ -208,7 +211,7 @@ class Mutation(sgqlc.types.Type):
                     "entity_field_name",
                     sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="entityFieldName", default=None),
                 ),
-                ("file", sgqlc.types.Arg(sgqlc.types.non_null(FileUploadInput), graphql_name="file", default=None)),
+                ("file", sgqlc.types.Arg(sgqlc.types.non_null(FileUpload), graphql_name="file", default=None)),
                 ("expiration", sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="expiration", default=3600)),
             )
         ),

@@ -41,13 +41,13 @@ type File {
   downloadLink(expiration: Int! = 3600): SignedURL
 }
 
-input FileInput {
+input FileCreate {
   name: String!
-  format: String!
+  fileFormat: String = null
+  compressionType: String = null
   protocol: String!
   namespace: String!
   path: String!
-  compressionType: String = null
 }
 
 enum FileStatus {
@@ -56,10 +56,13 @@ enum FileStatus {
   PENDING
 }
 
-input FileUploadInput {
+input FileUpload {
   name: String!
-  format: String!
+  fileFormat: String = null
   compressionType: String = null
+  protocol: String = null
+  namespace: String = null
+  path: String = null
 }
 
 """
@@ -72,8 +75,8 @@ type Mutation {
   createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
   createContig(sequence: String!, sequencingReadId: UUID!, collectionId: Int!): Contig!
   updateSample(entityId: UUID!, name: String!, location: String!): Sample!
-  createFile(entityId: UUID!, entityFieldName: String!, file: FileInput!): SignedURL!
-  createFileUpload(entityId: UUID!, entityFieldName: String!, file: FileUploadInput!, expiration: Int! = 3600): SignedURL!
+  createFile(entityId: UUID!, entityFieldName: String!, file: FileCreate!): File!
+  uploadFile(entityId: UUID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): SignedURL!
   markUploadComplete(fileId: UUID!): File!
 }
 
