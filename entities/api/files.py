@@ -197,7 +197,10 @@ async def create_or_upload_file(
         compression_type=file.compression_type,
         status=db.FileStatus.PENDING,
     )
+    # Save file to db first
     session.add(new_file)
+    await session.commit()
+    # Then update entity with file ID (if do both in one transaction, it will fail because of foreign key constraint)
     setattr(entity, entity_property_name, new_file.id)
     await session.commit()
 
