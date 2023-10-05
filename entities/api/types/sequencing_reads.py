@@ -39,17 +39,24 @@ else:
 @strawberry.input
 class SequencingReadWhereClause(TypedDict):
     id: UUIDComparators | None
+    producing_runid: IntComparators | None
+    owner_user_id: IntComparators | None
+    collection_id: IntComparators | None
     sequence: typing.Optional[StrComparators]
     sample: typing.Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
 
 
 @strawberry.type
 class SequencingRead(EntityInterface):
-    __where_clause = SequencingReadWhereClause
     id: uuid.UUID
+    producing_runid: int
+    owner_user_id: int
+    collection_id: int
     sequence: str
     sample: Annotated["Sample", strawberry.lazy("api.types.samples")] = load_samples
 
+# We need to add this to each Queryable type so that strawberry will accept either our
+# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 SequencingRead.__strawberry_definition__.is_type_of = (
     lambda obj, info: type(obj) == db.SequencingRead or type(obj) == SequencingRead
 )
