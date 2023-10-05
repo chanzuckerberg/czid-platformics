@@ -39,7 +39,6 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 async def batch_sequencing_reads(keys: list[dict]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
-    print("one time!")
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
