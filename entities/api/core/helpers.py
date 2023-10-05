@@ -24,7 +24,7 @@ from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from platformics.api.core.gql_to_sql import operator_map
-from sqlalchemy import inspect
+from sqlalchemy import inspect, and_
 from sqlalchemy.orm import aliased
 
 E = typing.TypeVar("E", db.File, db.Entity)
@@ -41,7 +41,8 @@ def convert_where_clauses_to_sql(principal, cerbos_client, action, query, sa_mod
                 related_cls = relationship.mapper.entity
                 subquery = get_db_query(related_cls, action, cerbos_client, principal, v).subquery()
                 query_alias = aliased(related_cls, subquery)
-                query = query.join(query_alias, relationship._join_condition)
+                joincondition_a = [(getattr(sa_model, local.key) == getattr(query_alias, remote.key)) for local, remote in relationship.local_remote_pairs]
+                query = query.join(query_alias, and_(*joincondition_a))
                 continue
             sa_comparator = operator_map[comparator]
             if sa_comparator == "IS_NULL":
