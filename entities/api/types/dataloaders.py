@@ -38,8 +38,8 @@ if TYPE_CHECKING:
 def cache_key(key: dict) -> str:
     return key["id"]
 
-# need batching function that takes in list of sample ids and returns SequencingReads
 async def batch_sequencing_reads(keys: list[dict]) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
+    print("one time!")
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
@@ -50,6 +50,8 @@ async def batch_sequencing_reads(keys: list[dict]) -> Annotated["SequencingRead"
     result = await session.execute(query)
     return result.scalars().all()
 
+sequencing_read_loader = DataLoader(load_fn=batch_sequencing_reads, cache_key_fn=cache_key)
+
 @strawberry.field(extensions=[DependencyExtension()])
 async def load_sequencing_reads(
     root: "Sample",
@@ -57,7 +59,6 @@ async def load_sequencing_reads(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
-    sequencing_read_loader = DataLoader(load_fn=batch_sequencing_reads, cache_key_fn=cache_key)
     return await sequencing_read_loader.load({"session": session, "cerbos_client": cerbos_client, "principal": principal, "id":root.id})
 
 @strawberry.field(extensions=[DependencyExtension()])

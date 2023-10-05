@@ -20,9 +20,9 @@ else:
 class SequencingRead(Entity):
     __tablename__ = "sequencing_read"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    nucleotide: Mapped[str] = mapped_column(String, nullable=False) # TODO: should be enum
+    nucleotide: Mapped[Nucleotide] = mapped_column(Enum(Nucleotide), nullable=False)
     sequence: Mapped[str] = mapped_column(String, nullable=False)
-    protocol: Mapped[str] = mapped_column(String, nullable=False) # TODO: should be enum
+    protocol: Mapped[SequencingProtocol] = mapped_column(Enum(SequencingProtocol), nullable=False)
     sequence_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence_file: Mapped[File] = relationship(File, foreign_keys=sequence_file_id)
     sample_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sample.entity_id"), nullable=True)
