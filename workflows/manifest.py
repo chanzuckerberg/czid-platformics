@@ -1,4 +1,7 @@
 import json
+from pathlib import Path
+from database.models.workflow import Workflow, WorkflowVersion
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import semver
 
@@ -96,3 +99,31 @@ def load_manifest(manifest_json: str) -> Manifest:
     manifest_dict = json.loads(manifest_json)
     manifest = Manifest.model_validate(manifest_dict)
     return manifest
+
+
+def import_manifests(session: Session) -> None:
+    manifests_dir = Path("/workflows/manifests/")
+
+    for manifest_file in manifests_dir.glob("*.json"):
+        with open(manifest_file) as manifest_f:
+            manifest_str = manifest_f.read()
+            manifest = load_manifest(manifest_str)
+
+        workflow = (
+            session.query(Workflow)
+            .filter(Workflow.name == manifest.name, Workflow.default_version == str(manifest.version))
+            .first()
+        )
+
+        if workflow is None:
+            workflow = Workflow(
+                name=manifest.name,
+                default_version=str(manifest.version),
+                minimum_supported_version=str(manifest.version),
+            )
+            session.add(workflow)
+            session.commit()
+
+        workflow_version = WorkflowVersion(graph_json="{}", workflow=workflow, manifest=manifest_str)  # TODO: fill in
+        session.add(workflow_version)
+        session.commit()
