@@ -121,8 +121,8 @@ async def test_create_file(
     # Try creating a file
     mutation = f"""
         mutation MyQuery {{
-          createFileUpload(entityId: "{entity_id}", entityFieldName: "{entity_field}", file: {{
-            name: "test.fastq", format: "fastq"
+          uploadFile(entityId: "{entity_id}", entityFieldName: "{entity_field}", file: {{
+            name: "test.fastq", fileFormat: "fastq"
           }}) {{
             url
             expiration
@@ -140,4 +140,4 @@ async def test_create_file(
         assert output["errors"] is not None
         return
 
-    assert output["data"]["createFileUpload"]["url"] == "https://local-bucket.s3.amazonaws.com/"
+    assert output["data"]["uploadFile"]["url"] == "https://local-bucket.s3.amazonaws.com/"
