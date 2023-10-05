@@ -27,7 +27,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
 
     def __init__(self, output_path=None):
         # TODO: remove this
-        self.output_path = output_path or "s3://idseq-samples-development/rlim-test/test-nxtg/"
+        self.output_path = output_path or "s3://local-bucket/rlim-test/test-nxtg/"
 
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types"""
