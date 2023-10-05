@@ -40,9 +40,6 @@ class FileUpload:
     name: str
     file_format: typing.Optional[str] = None
     compression_type: typing.Optional[str] = None
-    protocol: typing.Optional[str] = None
-    namespace: typing.Optional[str] = None
-    path: typing.Optional[str] = None
 
 
 @strawberry.input()
@@ -181,18 +178,22 @@ async def create_or_upload_file(
     # Set file parameters based on user inputs
     file_id = uuid6.uuid7()
     if isinstance(file, FileUpload):
-        file.protocol = settings.DEFAULT_UPLOAD_PROTOCOL
-        file.namespace = settings.DEFAULT_UPLOAD_BUCKET
-        file.path = f"uploads/{file_id}/{file.name}"
+        file_protocol = settings.DEFAULT_UPLOAD_PROTOCOL
+        file_namespace = settings.DEFAULT_UPLOAD_BUCKET
+        file_path = f"uploads/{file_id}/{file.name}"
+    else:
+        file_protocol = file.protocol
+        file_namespace = file.namespace
+        file_path = file.path
 
     # Create a new file record
     new_file = db.File(
         id=file_id,
         entity_id=entity_id,
         entity_field_name=entity_field_name,
-        protocol=file.protocol,
-        namespace=file.namespace,
-        path=file.path,
+        protocol=file_protocol,
+        namespace=file_namespace,
+        path=file_path,
         file_format=file.file_format,
         compression_type=file.compression_type,
         status=db.FileStatus.PENDING,
