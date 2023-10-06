@@ -8,7 +8,10 @@ from workflow_runner_swipe import SwipeWorkflowRunner
 
 class AWSMock:
     def __init__(
-        self, endpoint_url="http://motoserver.czidnet:4000", sfn_endpoint_url="http://sfn.czidnet:8083", aws_region="us-east-1"
+        self,
+        endpoint_url="http://motoserver.czidnet:4000",
+        sfn_endpoint_url="http://sfn.czidnet:8083",
+        aws_region="us-east-1",
     ) -> None:
         self.s3 = boto3.resource("s3", endpoint_url=endpoint_url, region_name=aws_region)
         self.sqs = boto3.client("sqs", endpoint_url=endpoint_url, region_name=aws_region)
@@ -45,7 +48,7 @@ class TestSFNWDL(unittest.TestCase):
         self.test_bucket = self.s3.create_bucket(Bucket="swipe-test")
 
         self.batch = boto3.client("batch", endpoint_url="http://motoserver.czidnet:4000")
-        self.logs = boto3.client("logs",  endpoint_url="http://motoserver.czidnet:4000")
+        self.logs = boto3.client("logs", endpoint_url="http://motoserver.czidnet:4000")
         ## TODO Loop through multiple wdl files to read everything into the test bucket
         with open("terraform_test/test_wdl.wdl") as f:
             self.wdl_one = f.read()
@@ -59,6 +62,7 @@ class TestSFNWDL(unittest.TestCase):
 
     def print_execution(self, events):
         import sys
+
         seen_events = set()
         for event in sorted(
             events,
@@ -79,19 +83,12 @@ class TestSFNWDL(unittest.TestCase):
                     file=sys.stderr,
                 )
                 if "taskSubmittedEventDetails" in event:
-                    if (
-                        event.get("taskSubmittedEventDetails", {}).get("resourceType")
-                        == "batch"
-                    ):
-                        job_id = json.loads(
-                            event["taskSubmittedEventDetails"]["output"]
-                        )["JobId"]
+                    if event.get("taskSubmittedEventDetails", {}).get("resourceType") == "batch":
+                        job_id = json.loads(event["taskSubmittedEventDetails"]["output"])["JobId"]
                         print(f"Batch job ID {job_id}", file=sys.stderr)
                         job_desc = self.batch.describe_jobs(jobs=[job_id])["jobs"][0]
                         try:
-                            log_group_name = job_desc["container"]["logConfiguration"][
-                                "options"
-                            ]["awslogs-group"]
+                            log_group_name = job_desc["container"]["logConfiguration"]["options"]["awslogs-group"]
                         except KeyError:
                             log_group_name = "/aws/batch/job"
                         response = self.logs.get_log_events(
