@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     JWK_PUBLIC_KEY_FILE: str
     JWK_PRIVATE_KEY_FILE: str
     DEFAULT_UPLOAD_BUCKET: str
+    DEFAULT_UPLOAD_PROTOCOL: str
     BOTO_ENDPOINT_URL: str
     AWS_REGION: str
 

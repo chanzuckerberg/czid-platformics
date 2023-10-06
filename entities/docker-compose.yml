@@ -43,6 +43,7 @@ services:
       - PLATFORMICS_DATABASE_PASSWORD=password_postgres
       - PLATFORMICS_DATABASE_NAME=entities
       - DEFAULT_UPLOAD_BUCKET=local-bucket
+      - DEFAULT_UPLOAD_PROTOCOL=S3
       - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
       - AWS_REGION=us-west-2
       - AWS_ACCESS_KEY_ID=test
