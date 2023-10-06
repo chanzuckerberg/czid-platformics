@@ -1,23 +1,24 @@
 import json
+import semver
+import typing
 from pathlib import Path
 from database.models.workflow import Workflow, WorkflowVersion
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-import semver
 
 
 class PydanticVersion(semver.Version):
     @classmethod
-    def _parse(cls, version, *args):
+    def _parse(cls, version: str, *args: typing.Any) -> semver.Version:
         return cls.parse(version)
 
     @classmethod
-    def __get_validators__(cls):
+    def __get_validators__(cls):  # type: ignore
         """Return a list of validator methods for pydantic models."""
         yield cls._parse
 
 
-def convert_semver(v: PydanticVersion):
+def convert_semver(v: PydanticVersion) -> str:
     return str(v)
 
 

@@ -19,7 +19,7 @@ class TestSFNWDL(unittest.TestCase):
         self.input_obj = self.test_bucket.Object("input.txt")
         self.input_obj.put(Body="hello".encode())
 
-    def test_simple_swipe_workflow(self):
+    def test_simple_swipe_workflow(self) -> None:
         """A simple test to test whether the SWIPE plugin works"""
         workflow_runner = SwipeWorkflowRunner(f"s3://{self.wdl_obj.bucket_name}/")
         # TODO: Add listener function + workflow run when available

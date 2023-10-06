@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, List, Literal
-
-from entity_interface import Entity
-from version import WorkflowInput
+from typing import Dict, List, Literal, Any
 
 
 @dataclass
@@ -37,7 +34,7 @@ class EventBus(ABC):
         pass
 
     @abstractmethod
-    async def poll() -> List[WorkflowStatusMessage]:
+    async def poll(self) -> List[WorkflowStatusMessage]:
         pass
 
 
@@ -59,7 +56,7 @@ class WorkflowRunner(ABC):
 
 class EntityInputLoader(ABC):
     @abstractmethod
-    async def load(self, **kwargs: Dict[str, Entity]) -> WorkflowInput:
+    async def load(self, args: Any) -> List[List[Any]]:
         """Processes workflow output specified by the type constraints in
         worrkflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities
@@ -71,7 +68,7 @@ class EntityInputLoader(ABC):
 class EntityOutputLoader(ABC):
     @abstractmethod
     # TODO: type specificity on workflow_outputs, convert values from str to a representation of workflow outputs
-    async def load(self, workflow_outputs: Dict[str, str]) -> List[Entity]:
+    async def load(self, args: Any) -> List[Any]:
         """Processes workflow output specified by the type constraints
         in worrkflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities must be created

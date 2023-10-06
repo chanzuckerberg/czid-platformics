@@ -31,7 +31,7 @@ def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> 
 input_loaders = load_loader_plugins("input", EntityInputLoader)
 
 
-def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[EntityInputLoader]:
+def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[type[EntityInputLoader]]:
     resolved_loaders = []
     for loader_config in workflow_manifest.input_loaders:
         name = loader_config.name
@@ -49,7 +49,7 @@ output_loaders = load_loader_plugins("output", EntityOutputLoader)
 
 
 # TODO: DRY with above but make the types work poperly
-def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[EntityOutputLoader]:
+def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[type[EntityOutputLoader]]:
     resolved_loaders = []
     for loader_config in workflow_manifest.output_loaders:
         name = loader_config.name
@@ -73,7 +73,7 @@ class LoaderDriver:
 
     async def process_workflow_completed(
         self, user_id: int, collection_id: int, workflow_manifest: Manifest, outputs: Dict[str, str]
-    ):
+    ) -> None:
         loaders = resolve_entity_output_loaders(workflow_manifest)
         loader_futures = []
         for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
@@ -90,12 +90,13 @@ class LoaderDriver:
             # outputs = {item.name: outputs[f'{workflow_manifest.name}.{item.name}'] for item in loader_config.fields}
             print("args", args, file=sys.stderr)
             print("outputs", outputs, file=sys.stderr)
-            loader_futures.append(loader.load(args))
+            # FIXME: error: Missing positional argument "self" in call to "load" of "EntityOutputLoader"
+            loader_futures.append(loader.load(args=args))  # type: ignore
         entities_lists = await asyncio.gather(*loader_futures)
         for entities in entities_lists:
             await create_entities(user_id, collection_id, entities)
 
-    async def main(self):
+    async def main(self) -> None:
         while True:
             for event in await self.bus.poll():
                 if isinstance(event, WorkflowSucceededMessage):
