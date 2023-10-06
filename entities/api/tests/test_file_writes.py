@@ -4,7 +4,7 @@ from api.conftest import GQLTestClient
 from platformics.database.connect import SyncDB
 from test_infra import factories as fa
 from mypy_boto3_s3.client import S3Client
-from database.models import File, SequencingRead
+from database.models import File, FileStatus, SequencingRead
 import sqlalchemy as sa
 
 
@@ -27,6 +27,7 @@ async def test_file_validation(
         file = session.execute(sa.select(File)).scalars().one()
 
     valid_fastq_file = "test_infra/fixtures/test1.fastq"
+    file_size = os.stat(valid_fastq_file).st_size
     moto_client.put_object(Bucket=file.namespace, Key=file.path, Body=open(valid_fastq_file, "rb"))
 
     # Mark upload complete
@@ -43,7 +44,13 @@ async def test_file_validation(
     res = await gql_client.query(query, member_projects=[project1_id])
     fileinfo = res["data"]["markUploadComplete"]
     assert fileinfo["status"] == "SUCCESS"
-    assert fileinfo["size"] == os.stat(valid_fastq_file).st_size
+    assert fileinfo["size"] == file_size
+
+    # Make sure the file was updated in the database
+    with sync_db.session() as session:
+        file = session.execute(sa.select(File)).scalars().one()
+        assert file.status == FileStatus.SUCCESS
+        assert file.size == file_size
 
 
 # Test that invalid fastq's don't work
@@ -82,7 +89,7 @@ async def test_invalid_fastq(
     assert fileinfo["status"] == "FAILED"
 
 
-# Test creating files
+# Test generating signed URLs for file upload
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "member_projects,project_id,entity_field",
@@ -92,7 +99,7 @@ async def test_invalid_fastq(
         ([123], 123, "sequence_file"),  # Can create file for entity you have access to
     ],
 )
-async def test_create_file(
+async def test_upload_file(
     member_projects: list[int],
     project_id: int,
     entity_field: str,
@@ -114,8 +121,9 @@ async def test_create_file(
     # Try creating a file
     mutation = f"""
         mutation MyQuery {{
-          createFile(entityId: "{entity_id}", entityFieldName: "{entity_field}",
-            fileName: "test.fastq", fileSize: 123, fileFormat: "fastq") {{
+          uploadFile(entityId: "{entity_id}", entityFieldName: "{entity_field}", file: {{
+            name: "test.fastq", fileFormat: "fastq"
+          }}) {{
             url
             expiration
             method
@@ -132,4 +140,53 @@ async def test_create_file(
         assert output["errors"] is not None
         return
 
-    assert output["data"]["createFile"]["url"] == "https://local-bucket.s3.amazonaws.com/"
+    assert output["data"]["uploadFile"]["url"] == "https://local-bucket.s3.amazonaws.com/"
+
+
+# Test adding an existing file to the entities service
+@pytest.mark.asyncio
+async def test_create_file(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+    moto_client: S3Client,
+) -> None:
+    # Create mock data
+    with sync_db.session() as session:
+        # Create sequencing read and file
+        fa.SessionStorage.set_session(session)
+        fa.SequencingReadFactory.create(owner_user_id=12345, collection_id=123)
+        fa.FileFactory.update_file_ids()
+        session.commit()
+
+        sequencing_read = session.execute(sa.select(SequencingRead)).scalars().one()
+        entity_id = sequencing_read.entity_id
+
+    # Upload a fastq file to a mock bucket so we can create a file object from it
+    file_namespace = "local-bucket"
+    file_path = "test1.fastq"
+    file_path_local = "test_infra/fixtures/test1.fastq"
+    file_size = os.stat(file_path_local).st_size
+    with open(file_path_local, "rb") as fp:
+        moto_client.put_object(Bucket=file_namespace, Key=file_path, Body=fp)
+
+    # Try creating a file from existing file on S3
+    mutation = f"""
+        mutation MyQuery {{
+            createFile(
+                entityId: "{entity_id}",
+                entityFieldName: "sequence_file",
+                file: {{
+                    name: "{file_path}",
+                    fileFormat: "fastq",
+                    protocol: "S3",
+                    namespace: "{file_namespace}",
+                    path: "{file_path}"
+                }}
+            ) {{
+                path
+                size
+            }}
+        }}
+    """
+    output = await gql_client.query(mutation, member_projects=[123])
+    assert output["data"]["createFile"]["size"] == file_size

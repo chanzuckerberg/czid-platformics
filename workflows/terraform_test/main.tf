@@ -1,5 +1,5 @@
 module "swipetest" {
-  source                   = "git@github.com:chanzuckerberg/swipe.git"
+  source                   = "github.com/chanzuckerberg/swipe?ref=v1.4.8"
   call_cache               = true
   ami_ssm_parameter        = "/mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
   miniwdl_dir              = "/tmp/"
@@ -35,4 +35,5 @@ module "swipetest" {
   workspace_s3_prefixes = ["swipe-test"]
 
   output_status_json_files = true
+  step_notifications       = true
 }

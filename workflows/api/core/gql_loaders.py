@@ -5,8 +5,7 @@ from typing import Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
-from platformics.api.core.deps import (get_cerbos_client, get_db_session,
-                           require_auth_principal)
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc
@@ -91,7 +90,7 @@ class WorkflowLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
-            load_method = get_db_rows  # type: ignore
+            load_method = db_rows  # type: ignore
 
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:
