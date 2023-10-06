@@ -8,7 +8,7 @@ from workflow_runner_swipe import SwipeWorkflowRunner
 
 class AWSMock:
     def __init__(
-        self, endpoint_url="http://czidnet:5000", sfn_endpoint_url="http://sfn.czidnet:8083", aws_region="us-east-1"
+        self, endpoint_url="http://motoserver.czidnet:4000", sfn_endpoint_url="http://sfn.czidnet:8083", aws_region="us-east-1"
     ) -> None:
         self.s3 = boto3.resource("s3", endpoint_url=endpoint_url, region_name=aws_region)
         self.sqs = boto3.client("sqs", endpoint_url=endpoint_url, region_name=aws_region)
