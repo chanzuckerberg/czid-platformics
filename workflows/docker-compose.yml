@@ -58,6 +58,7 @@ services:
       JWK_PUBLIC_KEY_FILE: "/workflows/test_infra/fixtures/public_key.pem"
       JWK_PRIVATE_KEY_FILE: "/workflows/test_infra/fixtures/private_key.pem"
       DEFAULT_UPLOAD_BUCKET: "local-bucket"
+      DEFAULT_UPLOAD_PROTOCOL: "S3"
       BOTO_ENDPOINT_URL: "http://motoserver.czidnet:4000"
       ENTITY_SERVICE_URL: "http://entity-service:8008"
       AWS_REGION: "us-west-2"

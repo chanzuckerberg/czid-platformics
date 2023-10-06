@@ -6,6 +6,7 @@ import uuid
 import uuid6
 from fastapi import Depends
 from mypy_boto3_s3.client import S3Client
+from mypy_boto3_sts.client import STSClient
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from api.strawberry import strawberry_sqlalchemy_mapper
