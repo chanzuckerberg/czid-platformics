@@ -10,7 +10,7 @@ from plugin_types import WorkflowRunner, WorkflowStatusMessage
 # TODO: maybe split out these decisions into another module, or a YAML file??
 if os.environ.get("ENVIRONMENT", None) == "test":
     sfn = boto3.client("stepfunctions", endpoint_url="http://sfn.czidnet:8083")
-    sts = boto3.client("sts", endpoint_url="http://czidnet:5000")
+    sts = boto3.client("sts", endpoint_url="http://motoserver.czidnet:4000")
     REGION = "us-east-1"
     SFN_NAME = "swipe-test-default-wdl"
 else:
