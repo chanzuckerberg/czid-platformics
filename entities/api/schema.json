@@ -1521,7 +1521,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "SignedURL",
+                  "name": "MultipartUploadCredentials",
                   "ofType": null
                 }
               }
@@ -1642,6 +1642,107 @@
         },
         {
           "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "protocol",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "namespace",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "path",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "accessKeyId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "secretAccessKey",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "sessionToken",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "expiration",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MultipartUploadCredentials",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": null,
           "inputFields": [
             {
@@ -1669,33 +1770,6 @@
             {
               "defaultValue": "null",
               "name": "compressionType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "protocol",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "namespace",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "path",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
