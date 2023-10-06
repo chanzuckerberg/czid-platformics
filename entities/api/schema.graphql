@@ -29,22 +29,55 @@ interface EntityInterface {
 type File {
   id: UUID!
   entityId: UUID
-  entityFieldName: String
-  status: String!
+  entityFieldName: String!
+  status: FileStatus!
   protocol: String!
   namespace: String!
   path: String!
   fileFormat: String!
-  compressionType: String!
-  size: Int!
+  compressionType: String
+  size: Int
   entity: EntityInterface
+  downloadLink(expiration: Int! = 3600): SignedURL
 }
+
+input FileCreate {
+  name: String!
+  fileFormat: String = null
+  compressionType: String = null
+  protocol: String!
+  namespace: String!
+  path: String!
+}
+
+enum FileStatus {
+  SUCCESS
+  FAILED
+  PENDING
+}
+
+input FileUpload {
+  name: String!
+  fileFormat: String = null
+  compressionType: String = null
+  protocol: String = null
+  namespace: String = null
+  path: String = null
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type Mutation {
   createSample(name: String!, location: String!, collectionId: Int!): Sample!
   createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
   createContig(sequence: String!, sequencingReadId: UUID!, collectionId: Int!): Contig!
   updateSample(entityId: UUID!, name: String!, location: String!): Sample!
+  createFile(entityId: UUID!, entityFieldName: String!, file: FileCreate!): File!
+  uploadFile(entityId: UUID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): SignedURL!
+  markUploadComplete(fileId: UUID!): File!
 }
 
 type Query {
@@ -89,6 +122,14 @@ type SequencingReadConnection {
 
 type SequencingReadEdge {
   node: SequencingRead!
+}
+
+type SignedURL {
+  url: String!
+  protocol: String!
+  method: String!
+  expiration: Int!
+  fields: JSON
 }
 
 scalar UUID

@@ -281,7 +281,7 @@ async def root() -> dict:
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
-    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     # call finalize() before using the schema:
     # (note that models that are related to models that are in the schema
