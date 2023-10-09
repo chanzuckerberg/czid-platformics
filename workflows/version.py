@@ -16,7 +16,7 @@ class EntityTypeConstraint:
     max_version: Optional[Version] = None
     # TODO: add metadata
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         _dict = asdict(self)
         if _dict["min_version"]:
             _dict["min_version"] = str(_dict["min_version"])
@@ -25,7 +25,8 @@ class EntityTypeConstraint:
         return _dict
 
     def satisfies(self, entity: Entity) -> bool:
-        if entity.entity_type != self.entity_type:
+        # FIXME: error: "Entity" has no attribute "entity_type"
+        if entity.entity_type != self.entity_type:  # type: ignore
             return False
         if entity.version is None:
             return True
@@ -50,7 +51,7 @@ class WorkflowData:
     version: Version = field(default_factory=lambda: Version(0))
     type_annotation: Optional[WorkflowTypeAnnotation] = None
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         _dict = asdict(self)
         _dict["version"] = str(_dict["version"])
         return _dict
@@ -69,7 +70,7 @@ class InputLoader:
     workflow_input: WorkflowInput
     entity_inputs: Dict[str, EntityTypeConstraint] = field(default_factory=dict)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         _dict = asdict(self)
         _dict["version"] = str(_dict["version"])
         return _dict
@@ -93,7 +94,7 @@ class OutputLoader:
     entity_output: EntityOutput
     workflow_outputs: Dict[str, WorkflowOutput] = field(default_factory=dict)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         _dict = asdict(self)
         _dict["version"] = str(_dict["version"])
         return _dict

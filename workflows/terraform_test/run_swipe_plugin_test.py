@@ -99,7 +99,7 @@ class TestSFNWDL(unittest.TestCase):
                             print(log_event["message"], file=sys.stderr)
                 seen_events.add(event["id"])
 
-    def test_simple_swipe_workflow(self):
+    def test_simple_swipe_workflow(self) -> None:
         """A simple test to test whether the SWIPE plugin works"""
         workflow_runner = SwipeWorkflowRunner(f"s3://{self.wdl_obj.bucket_name}/")
         # TODO: Add listener function + workflow run when available

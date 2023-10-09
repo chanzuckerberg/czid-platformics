@@ -5,11 +5,11 @@ from plugin_types import EventBus, WorkflowStatusMessage
 
 # TODO: don't lock
 class EventBusLocal(EventBus):
-    def __init__(self):
+    def __init__(self) -> None:
         self._queue: List[WorkflowStatusMessage] = []
         self._lock = RLock()
 
-    async def send(self, message: WorkflowStatusMessage):
+    async def send(self, message: WorkflowStatusMessage) -> None:
         with self._lock:
             self._queue.append(message)
 
