@@ -114,7 +114,7 @@ def generate_multipart_upload_token(
     new_file: db.File,
     expiration: int = 3600,
     sts_client: STSClient = Depends(get_sts_client),
-):
+) -> MultipartUploadCredentials:
     policy = {
         "Version": "2012-10-17",
         "Statement": [
@@ -182,10 +182,11 @@ async def create_file(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     s3_client: S3Client = Depends(get_s3_client),
+    sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
 ) -> db.File:
     new_file = await create_or_upload_file(
-        entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, None, settings
+        entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, sts_client, settings
     )
     assert isinstance(new_file, db.File)  # reassure mypy that we're returning the right type
     return new_file
