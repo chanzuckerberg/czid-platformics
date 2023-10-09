@@ -67,6 +67,13 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
+    # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
+    # we're using an annotation here to tack on the extra functionality that we need. We do this because
+    # English pluralization is hard, and we don't want to have to write a custom pluralization function.
+    # This basically means we now have our own "dialect" of LinkML to worry about. We may want to see if
+    # pluralization can be added to the core spec in the future.
+    annotations:
+      plural: Entities
  
   File:
     attributes:
@@ -113,6 +120,8 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+    annotations:
+      plural: Samples
 
   SequencingRead:
     is_a: Entity
@@ -138,6 +147,8 @@ classes:
         range: Contig
         multivalued: true
         inverse: Contig.sequencing_read
+    annotations:
+      plural: SequencingReads
 
   Contig:
     is_a: Entity
@@ -149,6 +160,8 @@ classes:
         inverse: Sample.contigs
       sequence:
         required: true
+    annotations:
+      plural: Contigs
 
   EntityMixin:
     mixin: true
