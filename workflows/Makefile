@@ -62,11 +62,11 @@ local-db-tests: ## Run workflow db tests
 
 .PHONY: local-swipe-plugin-tests
 local-swipe-plugin-start: local-envfile
-	$(docker_compose) --profile moto --env-file .env.localdev up --force-recreate -d 
+	$(docker_compose) --env-file .env.localdev up --force-recreate -d 
 
 .PHONY: local-swipe-plugin-deploy-mock
 local-swipe-plugin-deploy-mock: local-swipe-plugin-start
-	- source environment.test; aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id --value ami-12345678 --type String --endpoint-url http://localhost:9000 --no-cli-pager
+	- source environment.test; aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id --value ami-12345678 --type String --endpoint-url http://localhost:4000 --no-cli-pager
 	source environment.test && \
 	cd terraform_test && \
 	find . -name '*tfstate*' | xargs rm -f && \

@@ -33,7 +33,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows locally using miniWDL"
 
-    def detect_task_output(self, line):
+    def detect_task_output(self, line: str) -> None:
         if "INFO output :: job:" in line:
             task = _search_group(r"job: (.*),", line, 1)
             outputs = json.loads(_search_group(r"values: (\{.*\})", line, 1))

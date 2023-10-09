@@ -51,7 +51,7 @@ class Run(Base):
     # TODO: add this back in when we add JSONB to strawberry-sqlalchemy-mapper
     # outputs_json = Column(JSONB)
     outputs_json = Column(String, nullable=True)
-    status = Column(Enum(RunStatus), nullable=False, default=RunStatus.STARTED, name="status")
+    status: Column = Column(Enum(RunStatus), nullable=False, default=RunStatus.STARTED, name="status")
     workflow_version_id = Column(Integer, ForeignKey("workflow_version.id"), nullable=False)
     workflow_version = relationship("WorkflowVersion", back_populates="runs", foreign_keys=[workflow_version_id])
     run_steps = relationship("RunStep", back_populates="run", foreign_keys="RunStep.run_id")
@@ -72,7 +72,7 @@ class RunStep(Base):
     run = relationship("Run", back_populates="run_steps", foreign_keys=[run_id])
     started_at = Column(DateTime, nullable=False, server_default=func.now())
     ended_at = Column(DateTime)
-    status = Column(Enum(RunStepStatus), name="status")
+    status: Column = Column(Enum(RunStepStatus), name="status")
 
 
 class RunEntityInput(Base):

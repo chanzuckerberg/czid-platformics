@@ -10,4 +10,10 @@ class Input(TypedDict):
 
 class FastaLoader(EntityInputLoader):
     async def load(self, args: Input) -> List[List[SequencingRead]]:
-        return [[SequencingRead(args["name"], args["sequencing_read"])]]
+        return [
+            [
+                SequencingRead(
+                    nucleotide=args["name"], sequence=args["sequencing_read"], protocol="my_protocol", sample=None
+                )
+            ]
+        ]
