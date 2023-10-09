@@ -9,18 +9,18 @@ terraform {
 
 provider "aws" {
   endpoints {
-    batch            = "http://localhost:9000"
-    cloudwatch       = "http://localhost:9000"
-    cloudwatchevents = "http://localhost:9000"
-    ec2              = "http://localhost:9000"
-    iam              = "http://localhost:9000"
-    lambda           = "http://localhost:9000"
-    s3               = "http://localhost:9000"
-    secretsmanager   = "http://localhost:9000"
-    sns              = "http://localhost:9000"
-    sqs              = "http://localhost:9000"
-    ssm              = "http://localhost:9000"
+    batch            = "http://localhost:4000"
+    cloudwatch       = "http://localhost:4000"
+    cloudwatchevents = "http://localhost:4000"
+    ec2              = "http://localhost:4000"
+    iam              = "http://localhost:4000"
+    lambda           = "http://localhost:4000"
+    s3               = "http://localhost:4000"
+    secretsmanager   = "http://localhost:4000"
+    sns              = "http://localhost:4000"
+    sqs              = "http://localhost:4000"
+    ssm              = "http://localhost:4000"
     stepfunctions    = "http://localhost:8083"
-    sts              = "http://localhost:9000"
+    sts              = "http://localhost:4000"
   }
 }
