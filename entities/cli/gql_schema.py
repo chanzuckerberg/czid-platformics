@@ -45,13 +45,10 @@ class FileCreate(sgqlc.types.Input):
 
 class FileUpload(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "file_format", "compression_type", "protocol", "namespace", "path")
+    __field_names__ = ("name", "file_format", "compression_type")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     file_format = sgqlc.types.Field(String, graphql_name="fileFormat")
     compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
-    protocol = sgqlc.types.Field(String, graphql_name="protocol")
-    namespace = sgqlc.types.Field(String, graphql_name="namespace")
-    path = sgqlc.types.Field(String, graphql_name="path")
 
 
 ########################################################################
@@ -115,6 +112,26 @@ class File(sgqlc.types.Type):
             (("expiration", sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="expiration", default=3600)),)
         ),
     )
+
+
+class MultipartUploadCredentials(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "protocol",
+        "namespace",
+        "path",
+        "access_key_id",
+        "secret_access_key",
+        "session_token",
+        "expiration",
+    )
+    protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
+    namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
+    path = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="path")
+    access_key_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessKeyId")
+    secret_access_key = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="secretAccessKey")
+    session_token = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sessionToken")
+    expiration = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="expiration")
 
 
 class Mutation(sgqlc.types.Type):
@@ -202,7 +219,7 @@ class Mutation(sgqlc.types.Type):
         ),
     )
     upload_file = sgqlc.types.Field(
-        sgqlc.types.non_null("SignedURL"),
+        sgqlc.types.non_null(MultipartUploadCredentials),
         graphql_name="uploadFile",
         args=sgqlc.types.ArgDict(
             (

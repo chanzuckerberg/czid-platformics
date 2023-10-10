@@ -1,11 +1,13 @@
-from platformics.database.connect import init_sync_db
-import database.models as db
-from platformics.database.models.base import Base
-from factoryboy import workflow_factory as wf
+import os
 import pytest
+import typing
+from factoryboy import workflow_factory as wf
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
-import os
+from pytest_postgresql.executor_noop import NoopExecutor
+from platformics.database.connect import SyncDB, init_sync_db
+from platformics.database.models.base import Base
+import database.models as db
 
 
 test_db = factories.postgresql_noproc(
@@ -13,13 +15,15 @@ test_db = factories.postgresql_noproc(
 )
 
 
-def get_db_uri(protocol, db_user, db_pass, db_host, db_port, db_name):
+def get_db_uri(
+    protocol: str, db_user: str, db_pass: typing.Optional[str], db_host: str, db_port: int, db_name: str
+) -> str:
     db_uri = f"{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
     return db_uri
 
 
 @pytest.fixture()
-def sync_db(test_db):
+def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user
@@ -41,7 +45,7 @@ def sync_db(test_db):
         yield db
 
 
-def test_workflow_creation(sync_db):
+def test_workflow_creation(sync_db: SyncDB) -> None:
     with sync_db.session() as session:
         wf.SessionStorage.set_session(session)
         wf.WorkflowFactory.create_batch(2, name="test-workflow-name")
@@ -49,7 +53,7 @@ def test_workflow_creation(sync_db):
         assert session.query(db.Workflow).filter_by(name="test-workflow-name").count() == 2
 
 
-def test_run_creation(sync_db):
+def test_run_creation(sync_db: SyncDB) -> None:
     with sync_db.session() as session:
         wf.SessionStorage.set_session(session)
         wf.RunFactory.create_batch(2, status=db.RunStatus["FAILED"])

@@ -2,16 +2,16 @@ import unittest
 import time
 import json
 import boto3
-from typing import Dict, List
+from typing import Dict, List, Any
 from workflow_runner_swipe import SwipeWorkflowRunner
 
 
 class AWSMock:
     def __init__(
         self,
-        endpoint_url="http://motoserver.czidnet:4000",
-        sfn_endpoint_url="http://sfn.czidnet:8083",
-        aws_region="us-east-1",
+        endpoint_url: str = "http://motoserver.czidnet:4000",
+        sfn_endpoint_url: str = "http://sfn.czidnet:8083",
+        aws_region: str = "us-east-1",
     ) -> None:
         self.s3 = boto3.resource("s3", endpoint_url=endpoint_url, region_name=aws_region)
         self.sqs = boto3.client("sqs", endpoint_url=endpoint_url, region_name=aws_region)
@@ -38,7 +38,7 @@ class AWSMock:
         )
         return json.loads(message["Body"])
 
-    def get_sfn_execution_status(self, sfn_arn) -> List:
+    def get_sfn_execution_status(self, sfn_arn: str) -> List:
         return self.sfn.describe_execution(executionArn=sfn_arn)["status"]
 
 
@@ -60,7 +60,7 @@ class TestSFNWDL(unittest.TestCase):
         self.input_obj.put(Body="hello".encode())
         self.aws = AWSMock()
 
-    def print_execution(self, events):
+    def print_execution(self, events: List[Any]) -> None:
         import sys
 
         seen_events = set()
@@ -99,7 +99,7 @@ class TestSFNWDL(unittest.TestCase):
                             print(log_event["message"], file=sys.stderr)
                 seen_events.add(event["id"])
 
-    def test_simple_swipe_workflow(self):
+    def test_simple_swipe_workflow(self) -> None:
         """A simple test to test whether the SWIPE plugin works"""
         workflow_runner = SwipeWorkflowRunner(f"s3://{self.wdl_obj.bucket_name}/")
         # TODO: Add listener function + workflow run when available

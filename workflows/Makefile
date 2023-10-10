@@ -53,6 +53,11 @@ local-start: local-envfile ## Start a local dev environment that's been stopped.
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
+
+.PHONY: local-db-tests
+local-db-tests: ## Run workflow db tests
+	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest test/"
+
 ### SWIPE Plugin Tests
 
 .PHONY: local-swipe-plugin-tests

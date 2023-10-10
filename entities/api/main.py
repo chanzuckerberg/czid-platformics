@@ -18,7 +18,7 @@ from platformics.api.core.gql_loaders import (
 from platformics.database.connect import AsyncDB
 from strawberry.fastapi import GraphQLRouter
 from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File, SignedURL, mark_upload_complete, create_file, upload_file
+from api.files import File, MultipartUploadCredentials, mark_upload_complete, create_file, upload_file
 
 ######################
 # Strawberry-GraphQL #
@@ -75,7 +75,7 @@ class Mutation:
 
     # File management
     create_file: File = create_file
-    upload_file: SignedURL = upload_file
+    upload_file: MultipartUploadCredentials = upload_file
     mark_upload_complete: File = mark_upload_complete
 
 

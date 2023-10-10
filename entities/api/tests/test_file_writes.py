@@ -89,7 +89,7 @@ async def test_invalid_fastq(
     assert fileinfo["status"] == "FAILED"
 
 
-# Test generating signed URLs for file upload
+# Test generating STS tokens for file uploads
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "member_projects,project_id,entity_field",
@@ -121,14 +121,19 @@ async def test_upload_file(
     # Try creating a file
     mutation = f"""
         mutation MyQuery {{
-          uploadFile(entityId: "{entity_id}", entityFieldName: "{entity_field}", file: {{
-            name: "test.fastq", fileFormat: "fastq"
-          }}) {{
-            url
+          uploadFile(
+            entityId: "{entity_id}",
+            entityFieldName: "{entity_field}",
+            file: {{
+                name: "test.fastq",
+                fileFormat: "fastq"
+            }}
+        ) {{
+            namespace
+            path
+            accessKeyId
+            secretAccessKey
             expiration
-            method
-            protocol
-            fields
           }}
         }}
     """
@@ -140,7 +145,9 @@ async def test_upload_file(
         assert output["errors"] is not None
         return
 
-    assert output["data"]["uploadFile"]["url"] == "https://local-bucket.s3.amazonaws.com/"
+    # Moto produces a hard-coded tokens
+    assert output["data"]["uploadFile"]["accessKeyId"].endswith("EXAMPLE")
+    assert output["data"]["uploadFile"]["secretAccessKey"].endswith("EXAMPLEKEY")
 
 
 # Test adding an existing file to the entities service

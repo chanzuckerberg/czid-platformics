@@ -32,7 +32,7 @@ event_buses = load_event_buses()
 # Strawberry-GraphQL #
 ######################
 
-strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
+strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry_sqlalchemy_mapper.type(db.Workflow)
@@ -96,7 +96,7 @@ class Mutation:
         default_version: str,
         minimum_supported_version: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> Workflow:
+    ) -> db.Workflow:
         db_workflow = db.Workflow(
             name=name, default_version=default_version, minimum_supported_version=minimum_supported_version
         )
@@ -115,7 +115,7 @@ class Mutation:
         deprecated: bool,
         graph_json: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> WorkflowVersion:
+    ) -> db.WorkflowVersion:
         db_workflow_version = db.WorkflowVersion(
             workflow_id=workflow_id,
             version=version,
@@ -140,7 +140,7 @@ class Mutation:
         status: str,
         workflow_version_id: int,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> Run:
+    ) -> db.Run:
         db_run = db.Run(
             user_id=user_id,
             project_id=project_id,
@@ -160,7 +160,7 @@ class Mutation:
         workflow_inputs: str,
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> str:
+    ) -> db.Run:
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
         # other devs may want to submit custom containers
         # inputs_json = {
@@ -208,7 +208,7 @@ class Mutation:
         start_time: str,
         end_time: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> RunStep:
+    ) -> db.RunStep:
         db_run_step = db.RunStep(
             run_id=run_id, step_name=step_name, status=status, start_time=start_time, end_time=end_time
         )
@@ -223,7 +223,7 @@ class Mutation:
         workflow_version_input_id: int,
         entity_id: int,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> RunEntityInput:
+    ) -> db.RunEntityInput:
         db_run_entity_input = db.RunEntityInput(
             run_id=run_id, workflow_version_input_id=workflow_version_input_id, entity_id=entity_id
         )
@@ -273,7 +273,7 @@ def get_app() -> FastAPI:
     # Add a global settings object to the app that we can use as a dependency
     _app.state.entities_settings = settings
 
-    graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+    graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
     _app.include_router(root_router)
     _app.include_router(graphql_app, prefix="/graphql")
     return _app

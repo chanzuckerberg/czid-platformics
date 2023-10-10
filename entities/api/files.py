@@ -1,3 +1,4 @@
+import json
 import typing
 import database.models as db
 import strawberry
@@ -5,6 +6,7 @@ import uuid
 import uuid6
 from fastapi import Depends
 from mypy_boto3_s3.client import S3Client
+from mypy_boto3_sts.client import STSClient
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from api.strawberry import strawberry_sqlalchemy_mapper
@@ -12,7 +14,13 @@ from strawberry.scalars import JSON
 
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, get_settings
+from platformics.api.core.deps import (
+    get_cerbos_client,
+    get_db_session,
+    require_auth_principal,
+    get_settings,
+    get_sts_client,
+)
 from platformics.api.core.settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.security.authorization import CerbosAction, get_resource_query
@@ -31,6 +39,17 @@ class SignedURL:
     method: str
     expiration: int
     fields: typing.Optional[JSON] = None  # type: ignore
+
+
+@strawberry.type
+class MultipartUploadCredentials:
+    protocol: str
+    namespace: str
+    path: str
+    access_key_id: str
+    secret_access_key: str
+    session_token: str
+    expiration: str
 
 
 # Define graphQL input types so we can pass a "file" JSON to mutations.
@@ -71,7 +90,7 @@ class File:
 
 
 # ------------------------------------------------------------------------------
-# Mutations
+# Utilities
 # ------------------------------------------------------------------------------
 
 
@@ -89,6 +108,49 @@ async def validate_file(
         file.status = db.FileStatus.SUCCESS
         file.size = file_size
     await session.commit()
+
+
+def generate_multipart_upload_token(
+    new_file: db.File,
+    expiration: int = 3600,
+    sts_client: STSClient = Depends(get_sts_client),
+) -> MultipartUploadCredentials:
+    policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "AllowSampleUploads",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:CreateMultipartUpload",
+                    "s3:AbortMultipartUpload",
+                    "s3:ListMultipartUploadParts",
+                ],
+                "Resource": f"arn:aws:s3:::{new_file.namespace}/{new_file.path}",
+            }
+        ],
+    }
+
+    # Generate an STS token to allow users to
+    token_name = f"file-upload-token-{uuid6.uuid7()}"
+    creds = sts_client.get_federation_token(Name=token_name, Policy=json.dumps(policy), DurationSeconds=expiration)
+
+    return MultipartUploadCredentials(
+        protocol="S3",
+        namespace=new_file.namespace,
+        path=new_file.path,
+        access_key_id=creds["Credentials"]["AccessKeyId"],
+        secret_access_key=creds["Credentials"]["SecretAccessKey"],
+        session_token=creds["Credentials"]["SessionToken"],
+        expiration=creds["Credentials"]["Expiration"].isoformat(),
+    )
+
+
+# ------------------------------------------------------------------------------
+# Mutations
+# ------------------------------------------------------------------------------
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
@@ -120,12 +182,13 @@ async def create_file(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     s3_client: S3Client = Depends(get_s3_client),
+    sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
 ) -> db.File:
     new_file = await create_or_upload_file(
-        entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, settings
+        entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, sts_client, settings
     )
-    assert isinstance(new_file, db.File)  # this is to reassure mypy that we are in fact returning db.File
+    assert isinstance(new_file, db.File)  # reassure mypy that we're returning the right type
     return new_file
 
 
@@ -139,13 +202,23 @@ async def upload_file(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     s3_client: S3Client = Depends(get_s3_client),
+    sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
-) -> SignedURL:
-    new_file = await create_or_upload_file(
-        entity_id, entity_field_name, file, expiration, session, cerbos_client, principal, s3_client, settings
+) -> MultipartUploadCredentials:
+    credentials = await create_or_upload_file(
+        entity_id,
+        entity_field_name,
+        file,
+        expiration,
+        session,
+        cerbos_client,
+        principal,
+        s3_client,
+        sts_client,
+        settings,
     )
-    assert isinstance(new_file, SignedURL)  # this is to reassure mypy that we are in fact returning a SignedURL
-    return new_file
+    assert isinstance(credentials, MultipartUploadCredentials)  # reassure mypy that we're returning the right type
+    return credentials
 
 
 async def create_or_upload_file(
@@ -157,8 +230,9 @@ async def create_or_upload_file(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     s3_client: S3Client = Depends(get_s3_client),
+    sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
-) -> db.File | SignedURL:
+) -> db.File | MultipartUploadCredentials:
     # Basic validation
     if "/" in file.name:
         raise Exception("File name should not contain /")
@@ -210,9 +284,6 @@ async def create_or_upload_file(
         await validate_file(new_file, session, s3_client)
         return new_file
 
-    # If new file, create a signed URL
+    # If new file, create an STS token for multipart upload
     else:
-        response = s3_client.generate_presigned_post(Bucket=new_file.namespace, Key=new_file.path, ExpiresIn=expiration)
-        return SignedURL(
-            url=response["url"], fields=response["fields"], protocol="https", method="POST", expiration=expiration
-        )
+        return generate_multipart_upload_token(new_file, expiration, sts_client)
