@@ -1,10 +1,7 @@
 import configparser
-import json
-import os
 import typing
 
 import database.models as db
-import entity_gql_schema as entity_schema
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
@@ -14,8 +11,6 @@ from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get
 from platformics.api.core.settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
-from sgqlc.endpoint.http import HTTPEndpoint
-from sgqlc.operation import Operation
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
@@ -94,30 +89,6 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry.mutation(extensions=[DependencyExtension()])
-    async def test_connection(self) -> str:
-        entity_service_url = os.getenv("ENTITY_SERVICE_URL")
-        entity_service_auth_token = os.getenv("ENTITY_SERVICE_AUTH_TOKEN")
-        headers = {"Authorization": f"Bearer {entity_service_auth_token}"}
-        endpoint = HTTPEndpoint(entity_service_url)
-
-        # Create query to list all samples
-        op = Operation(entity_schema.Query)
-        samples = op.samples()
-        samples.id()
-        samples.name()
-        samples.location()
-        data = endpoint(op, extra_headers=headers)
-        print(json.dumps(data["data"]["samples"], indent=4))
-
-        # Create a sample
-        op = Operation(entity_schema.Mutation)
-        op.create_sample(name="test", location="test", collection_id=444)
-        data = endpoint(op, extra_headers=headers)
-        print(json.dumps(data, indent=4))
-
-        return "Hello World"
-
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow(
         self,
