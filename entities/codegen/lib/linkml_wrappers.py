@@ -1,0 +1,202 @@
+"""Helpers for writing J2 templates based on linkml schema objects
+
+The wrapper classes in this module are entirely centered around providing convenience
+functions to keep complicated LinkML-specific logic out of our Jinja2 templates.
+"""
+from functools import cached_property
+import typing
+
+import strcase
+from linkml_runtime.linkml_model.meta import ClassDefinition, EnumDefinition
+from linkml_runtime.utils.schemaview import SchemaView
+
+class FieldWrapper:
+    def __init__(self, view: SchemaView, wrapped_field):
+        self.view = view
+        self.wrapped_field = wrapped_field
+    
+    # Blow up if a property doesn't exist
+    def __getattr__(self, attr):
+        raise NotImplementedError(f"please define field property {attr}")
+
+    @cached_property
+    def identifier(self) -> str:
+        return self.wrapped_field.identifier
+
+    @cached_property
+    def name(self) -> str:
+        return self.wrapped_field.name
+
+    @cached_property
+    def multivalued(self) -> str:
+        return self.wrapped_field.multivalued
+
+    @cached_property
+    def required(self) -> str:
+        return self.wrapped_field.required
+
+    @cached_property
+    def type(self) -> str:
+        return self.wrapped_field.range
+
+    @cached_property
+    def inverse(self) -> str:
+        return self.wrapped_field.inverse
+
+    @cached_property
+    def inverse_class(self) -> str:
+        return self.wrapped_field.inverse.split(".")[0]
+
+    @cached_property
+    def inverse_class_snake_name(self) -> str:
+        return strcase.to_snake(self.inverse_class)
+
+    @cached_property
+    def inverse_field(self) -> str:
+        return self.wrapped_field.inverse.split(".")[1]
+
+    @cached_property
+    def is_enum(self) -> bool:
+        field = self.view.get_element(self.wrapped_field.range)
+        if isinstance(field, EnumDefinition):
+            return True
+        return False
+
+    @cached_property
+    def is_entity(self) -> bool:
+        field = self.view.get_element(self.wrapped_field.range)
+        if isinstance(field, ClassDefinition):
+            return True
+        return False
+    
+    @property
+    def related_class(self) -> "EntityWrapper":
+        return EntityWrapper(self.view, self.view.get_element(self.wrapped_field.range))
+
+
+class EnumWrapper:
+    def __init__(self, view: SchemaView, wrapped_class):
+        self.view = view
+        self.wrapped_class = wrapped_class
+    
+    # Blow up if a property doesn't exist
+    def __getattr__(self, attr):
+        raise NotImplementedError(f"please define enum property {attr}")
+
+    @cached_property
+    def name(self) -> str:
+        return self.wrapped_class.name
+
+    @cached_property
+    def permissible_values(self) -> str:
+        return self.wrapped_class.permissible_values
+
+class EntityWrapper:
+    def __init__(self, view: SchemaView, wrapped_class):
+        self.view = view
+        self.wrapped_class = wrapped_class
+    
+    # Blow up if a property doesn't exist
+    def __getattr__(self, attr):
+        raise NotImplementedError(f"please define entity property {attr}")
+
+    @cached_property
+    def name(self) -> str:
+        return self.wrapped_class.name
+
+    @cached_property
+    def plural_camel_name(self) -> str:
+        return self.wrapped_class.annotations.plural
+
+    @cached_property
+    def plural_snake_name(self) -> str:
+        return strcase.to_snakee(self.wrapped_class.annotations.plural)
+
+    @cached_property
+    def camel_name(self) -> str:
+        return self.wrapped_class.name
+
+    @cached_property
+    def snake_name(self) -> str:
+        return strcase.to_snake(self.name)
+
+    @cached_property
+    def writable_fields(self) -> list[FieldWrapper]:
+        return [
+            FieldWrapper(self.view, item)
+            for item in self.view.class_induced_slots(self.name)
+            if not item.readonly
+        ]
+    
+    @cached_property
+    def identifier(self) -> str:
+        # Prioritize sending back identifiers from the entity mixin instead of inherited fields.
+        for field in self.all_fields:
+            # FIXME, the entity.id / entity_id relationship is a little brittle right now :(
+            if field.identifier:
+                if "EntityMixin" in field.wrapped_field.domain_of:
+                    return field.name
+        for field in self.all_fields:
+            if field.identifier:
+                return field.name
+
+    @cached_property
+    def readable_fields(self) -> list[FieldWrapper]:
+        return [
+            FieldWrapper(self.view, item)
+            for item in self.view.class_induced_slots(self.name)
+        ]
+
+    @cached_property
+    def all_fields(self) -> list[FieldWrapper]:
+        return [
+            FieldWrapper(self.view, item)
+            for item in self.view.class_induced_slots(self.name)
+        ]
+
+    @cached_property
+    def owned_fields(self) -> list[FieldWrapper]:
+        return [
+            FieldWrapper(self.view, item)
+            for item in self.view.class_induced_slots(self.name)
+            if "Entity" not in item.domain_of
+        ]
+
+    @cached_property
+    def enum_fields(self) -> list[FieldWrapper, None, None]:
+        enumfields = self.view.all_enums()
+        class_names = [k for k, _ in enumfields.items()]
+        return [field for field in self.all_fields if field.type in class_names]
+
+    @cached_property
+    def related_fields(self) -> list[FieldWrapper, None, None]:
+        return [field for field in self.all_fields if field.is_entity]
+
+class ViewWrapper:
+    def __init__(self, view: SchemaView):
+        self.view = view
+    
+    # Blow up if a property doesn't exist
+    def __getattr__(self, attr):
+        raise NotImplementedError(f"please define view property {attr}")
+    
+    @cached_property
+    def enums(self) -> list[FieldWrapper]:
+        enums = []
+        for enum_name in self.view.all_enums():
+            enum = self.view.get_element(enum_name)
+            enums.append(EnumWrapper(self.view, enum))
+        return enums
+
+    @cached_property
+    def entities(self) -> list[EntityWrapper]:
+        classes = []
+        for class_name in self.view.all_classes():
+            cls = self.view.get_element(class_name)
+            if cls.mixin:
+                continue
+            # If this class doesn't descend from Entity, skip it.
+            if cls.is_a != "Entity":
+                continue
+            classes.append(EntityWrapper(self.view, cls))
+        return classes
