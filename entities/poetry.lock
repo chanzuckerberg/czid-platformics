@@ -1808,13 +1808,13 @@ linkml-runtime = ">=1.1.6"
 
 [[package]]
 name = "linkml-runtime"
-version = "1.5.7"
+version = "1.6.0"
 description = "Runtime environment for LinkML, the Linked open data modeling language"
 optional = false
 python-versions = ">=3.7.6,<4.0.0"
 files = [
-    {file = "linkml_runtime-1.5.7-py3-none-any.whl", hash = "sha256:8ea32b5f0de3637c2339edfbb88008bb08a9e2ff36d1aada20e002058263418f"},
-    {file = "linkml_runtime-1.5.7.tar.gz", hash = "sha256:c202799f01571b0c202bb521957f281b1052fabad106419c8e1368802088d6a4"},
+    {file = "linkml_runtime-1.6.0-py3-none-any.whl", hash = "sha256:1b6b698f8cf23d63ff833ae0be8055b2e945e1c0ef06a1ed6db359247194a2eb"},
+    {file = "linkml_runtime-1.6.0.tar.gz", hash = "sha256:a06df7431a9b929afe242598800d99cec83bb31cbdc1f5d2d70e6b26c67dc337"},
 ]
 
 [package.dependencies]
@@ -3882,4 +3882,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "62193ed4e25a9d11a0be28479507fe025c55f764787b1c3ae51f7fb9e210046e"
+content-hash = "4bd0489134476cef6212775af2f53b09a792b68785ce00aef9fed7bd8c104301"
