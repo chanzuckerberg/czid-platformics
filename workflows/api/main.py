@@ -96,13 +96,13 @@ class Mutation:
         default_version: str,
         minimum_supported_version: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> db.Workflow:
+    ) -> Workflow:
         db_workflow = db.Workflow(
             name=name, default_version=default_version, minimum_supported_version=minimum_supported_version
         )
         session.add(db_workflow)
         await session.commit()
-        return db_workflow
+        return db_workflow  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow_version(
@@ -115,7 +115,7 @@ class Mutation:
         deprecated: bool,
         graph_json: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> db.WorkflowVersion:
+    ) -> WorkflowVersion:
         db_workflow_version = db.WorkflowVersion(
             workflow_id=workflow_id,
             version=version,
@@ -127,7 +127,7 @@ class Mutation:
         )
         session.add(db_workflow_version)
         await session.commit()
-        return db_workflow_version
+        return db_workflow_version  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
@@ -140,7 +140,7 @@ class Mutation:
         status: str,
         workflow_version_id: int,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> db.Run:
+    ) -> Run:
         db_run = db.Run(
             user_id=user_id,
             project_id=project_id,
@@ -152,7 +152,7 @@ class Mutation:
         )
         session.add(db_run)
         await session.commit()
-        return db_run
+        return db_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def submit_workflow(
@@ -160,7 +160,7 @@ class Mutation:
         workflow_inputs: str,
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> db.Run:
+    ) -> Run:
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
         # other devs may want to submit custom containers
         # inputs_json = {
@@ -197,7 +197,7 @@ class Mutation:
         session.add(db_run)
         await session.commit()
 
-        return db_run
+        return db_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_step(
@@ -208,13 +208,13 @@ class Mutation:
         start_time: str,
         end_time: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> db.RunStep:
+    ) -> RunStep:
         db_run_step = db.RunStep(
             run_id=run_id, step_name=step_name, status=status, start_time=start_time, end_time=end_time
         )
         session.add(db_run_step)
         await session.commit()
-        return db_run_step
+        return db_run_step  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_entity_input(
@@ -223,13 +223,13 @@ class Mutation:
         workflow_version_input_id: int,
         entity_id: int,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> db.RunEntityInput:
+    ) -> RunEntityInput:
         db_run_entity_input = db.RunEntityInput(
             run_id=run_id, workflow_version_input_id=workflow_version_input_id, entity_id=entity_id
         )
         session.add(db_run_entity_input)
         await session.commit()
-        return db_run_entity_input
+        return db_run_entity_input  # type: ignore
 
 
 def get_context(

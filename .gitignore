@@ -305,3 +305,6 @@ static
 
 # Moto
 .moto_recording
+
+# Local env vars.
+.env.localdev
