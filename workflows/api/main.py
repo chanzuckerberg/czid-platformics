@@ -7,8 +7,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from config import load_event_buses, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_db_session, get_engine)
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from platformics.api.core.settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
