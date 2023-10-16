@@ -103,7 +103,7 @@ class Mutation:
         )
         session.add(db_workflow)
         await session.commit()
-        return db_workflow
+        return db_workflow  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow_version(
@@ -128,7 +128,7 @@ class Mutation:
         )
         session.add(db_workflow_version)
         await session.commit()
-        return db_workflow_version
+        return db_workflow_version  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
@@ -153,7 +153,7 @@ class Mutation:
         )
         session.add(db_run)
         await session.commit()
-        return db_run
+        return db_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def submit_workflow(
@@ -198,7 +198,7 @@ class Mutation:
         session.add(db_run)
         await session.commit()
 
-        return db_run
+        return db_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_step(
@@ -215,7 +215,7 @@ class Mutation:
         )
         session.add(db_run_step)
         await session.commit()
-        return db_run_step
+        return db_run_step  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_entity_input(
@@ -230,7 +230,7 @@ class Mutation:
         )
         session.add(db_run_entity_input)
         await session.commit()
-        return db_run_entity_input
+        return db_run_entity_input  # type: ignore
 
 
 def get_context(
