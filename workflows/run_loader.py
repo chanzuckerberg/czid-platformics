@@ -12,7 +12,7 @@ if __name__ == "__main__":
     session = app_db.session()
 
     event_buses = load_event_buses()
-    loader = LoaderDriver(event_buses["redis"])
+    loader = LoaderDriver(session, event_buses["redis"])
 
     # call main in it's own thread
     loop = asyncio.get_event_loop()
