@@ -41,7 +41,7 @@ services:
       # directory as its storage location instead so it works with our db snapshot
       # workflow.
       - PGDATA=/var/lib/platformics/data
-  workflows-webservice:
+  workflow:
     build:
       context: ".."
       dockerfile: "workflows/Dockerfile"
