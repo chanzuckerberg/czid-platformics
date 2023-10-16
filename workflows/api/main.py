@@ -177,7 +177,7 @@ class Mutation:
             "WDL" in _workflow_runner.supported_workflow_types()
         ), f"Workflow runner {workflow_runner} does not support WDL"
         response = await _workflow_runner.run_workflow(
-            event_bus=event_buses["local"],
+            event_bus=event_buses["redis"],
             workflow_run_id="1",  # TODO: When we create the workflow run add the uuid here
             # TODO: should come from the WorkflowVersion model
             workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",

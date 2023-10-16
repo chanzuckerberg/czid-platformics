@@ -1,28 +1,16 @@
-name: first_sequence
+name: simple_workflow
 version: 0.0.1
 type: WDL
 deprecated: false
-description: Get the first id and sequence in a single-line fasta file
-workflow_inputs:
-- name: sequences
-  version: 0.0.1
-input_entities:
-- input_name: sequences
-  entities:
-  - name: 'First Sequence'
-    entity_type: sequence
-    description: "fastq file to ge the stats of"
-workflow_outputs:
-- name: sequence
-  version: 0.0.1
-output_entities:
-- name: 'First Sequence'
+description: Count reads in a sequence
+input_loaders:
+- loader_name: sequence_input_loader
+  loader_version: 0.0.1
+  input_name: fastq_0
+output_loaders:
+- loader_name: count_file_output_loader
+  loader_version: 0.0.1
   type: sequence
   outputs:
-  - name: sequence
-    type: sequence
-    version: 0.0.1
-- name: 'First ID'
-  type: string
-  outputs:
-  - name: id
+  - name: line_count
+

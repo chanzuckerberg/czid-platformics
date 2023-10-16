@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Dict, List, Literal, Any
 
 
@@ -8,10 +8,12 @@ class WorkflowStatusMessage:
     runner_id: str
     status: Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
+    def asdict(self) -> dict:
+        return asdict(self)
 
-@dataclass
+
 class WorkflowStartedMessage(WorkflowStatusMessage):
-    status: Literal["WORKFLOW_STARTED"]
+    status: Literal["WORKFLOW_STARTED"] = "WORKFLOW_STARTED"
 
 
 class WorkflowSucceededMessage(WorkflowStatusMessage):
@@ -27,6 +29,16 @@ class WorkflowSucceededMessage(WorkflowStatusMessage):
 class WorkflowFailedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_FAILURE"]
 
+def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
+    status = obj["status"]
+    if status == "WORKFLOW_STARTED":
+        return WorkflowStartedMessage(**obj)
+    elif status == "WORKFLOW_SUCCESS":
+        return WorkflowSucceededMessage(**obj)
+    elif status == "WORKFLOW_FAILURE":
+        return WorkflowFailedMessage(**obj)
+    else:
+        raise Exception(f"Unknown workflow status: {status}")
 
 class EventBus(ABC):
     @abstractmethod
@@ -75,3 +87,4 @@ class EntityOutputLoader(ABC):
         in, while the inner lists can be created in parallel.
         """
         raise NotImplementedError()
+

@@ -11,6 +11,6 @@ class Input(TypedDict):
 
 class SequenceLoader(EntityOutputLoader):
     async def load(self, args: Input) -> List[SequencingRead]:
-        # TODO don't hardcode me :(
         sample = Sample("dummy", "Venus")
         return [SequencingRead(args["protocol"], args["sequence"], args["nucleotide"], EntityReference(entity=sample))]
+
