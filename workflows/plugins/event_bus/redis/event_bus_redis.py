@@ -4,12 +4,12 @@ from typing import List
 
 from plugin_types import EventBus, WorkflowStatusMessage, parse_workflow_status_message
 
-import aioredis
+import redis.asyncio as aioredis
 
 REDIS_URL = os.environ.get('CZID__EVENT_BUS_REDIS__REDIS_URL', 'redis://localhost')
 QUEUE_NAME = os.environ.get('CZID__EVENT_BUS_REDIS__QUEUE_NAME', 'workflow_status')
 
-class EventBusLocal(EventBus):
+class EventBusRedis(EventBus):
     def __init__(self):
         self.redis = aioredis.from_url(REDIS_URL)
 

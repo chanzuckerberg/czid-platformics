@@ -1,36 +1,61 @@
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass
 from typing import Dict, List, Literal, Any
 
+WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
-@dataclass
-class WorkflowStatusMessage:
+class WorkflowStatusMessage(ABC):
     runner_id: str
-    status: Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
+    status: WorkflowStatus
 
+    def __init__(self, runner_id: str, status: WorkflowStatus):
+        self.runner_id = runner_id
+        self.status = status
+
+    @abstractmethod
     def asdict(self) -> dict:
-        return asdict(self)
+        return {
+            "runner_id": self.runner_id,
+            "status": self.status
+        }
 
 
 class WorkflowStartedMessage(WorkflowStatusMessage):
-    status: Literal["WORKFLOW_STARTED"] = "WORKFLOW_STARTED"
+    status: Literal["WORKFLOW_STARTED"]
+
+    def __init__(self, runner_id: str):
+        super().__init__(runner_id, "WORKFLOW_STARTED")
+
+    def asdict(self) -> dict:
+        return super().asdict()
 
 
 class WorkflowSucceededMessage(WorkflowStatusMessage):
-    status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
+    status: Literal["WORKFLOW_SUCCESS"]
     outputs: Dict[str, str]
 
     def __init__(self, runner_id: str, outputs: Dict[str, str]):
-        self.runner_id = runner_id
+        super().__init__(runner_id, "WORKFLOW_SUCCESS")
         self.outputs = outputs
 
+    def asdict(self) -> dict:
+        d = super().asdict()
+        d["outputs"] = self.outputs
+        return d
 
-@dataclass
+
 class WorkflowFailedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_FAILURE"]
 
+    def __init__(self, runner_id: str):
+        super().__init__(runner_id, "WORKFLOW_FAILURE")
+
+    def asdict(self) -> dict:
+        return super().asdict()
+
+
 def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
     status = obj["status"]
+    del obj["status"]
     if status == "WORKFLOW_STARTED":
         return WorkflowStartedMessage(**obj)
     elif status == "WORKFLOW_SUCCESS":
@@ -39,6 +64,7 @@ def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
         return WorkflowFailedMessage(**obj)
     else:
         raise Exception(f"Unknown workflow status: {status}")
+
 
 class EventBus(ABC):
     @abstractmethod

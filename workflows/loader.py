@@ -99,6 +99,7 @@ class LoaderDriver:
     async def main(self) -> None:
         while True:
             for event in await self.bus.poll():
+                print("event", event, file=sys.stderr)
                 if isinstance(event, WorkflowSucceededMessage):
                     manifest = load_manifest(open("sequence_manifest.json").read())
                     _event: WorkflowSucceededMessage = event
