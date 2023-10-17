@@ -3,6 +3,7 @@ from typing import Dict, List, Literal, Any
 
 WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
+
 class WorkflowStatusMessage(ABC):
     runner_id: str
     status: WorkflowStatus
@@ -13,10 +14,7 @@ class WorkflowStatusMessage(ABC):
 
     @abstractmethod
     def asdict(self) -> dict:
-        return {
-            "runner_id": self.runner_id,
-            "status": self.status
-        }
+        return {"runner_id": self.runner_id, "status": self.status}
 
 
 class WorkflowStartedMessage(WorkflowStatusMessage):
@@ -113,4 +111,3 @@ class EntityOutputLoader(ABC):
         in, while the inner lists can be created in parallel.
         """
         raise NotImplementedError()
-
