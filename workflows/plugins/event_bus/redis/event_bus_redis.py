@@ -11,10 +11,10 @@ QUEUE_NAME = os.environ.get("CZID__EVENT_BUS_REDIS__QUEUE_NAME", "workflow_statu
 
 
 class EventBusRedis(EventBus):
-    def __init__(self):
+    def __init__(self) -> None:
         self.redis = aioredis.from_url(REDIS_URL)
 
-    async def send(self, message: WorkflowStatusMessage):
+    async def send(self, message: WorkflowStatusMessage) -> None:
         await self.redis.lpush(QUEUE_NAME, json.dumps(message.asdict()))
 
     async def poll(self) -> List[WorkflowStatusMessage]:
