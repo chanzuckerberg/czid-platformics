@@ -32,7 +32,7 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     from api.types.samples import Sample, SampleWhereClause
 else:
-    SampleWherClause = "SampleWherClause"
+    SampleWhereClause = "SampleWhereClause"
     Sample = "Sample"
 
 

@@ -60,6 +60,32 @@ async def load_sequencing_reads(
     ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
     return await sequencing_read_loader.load({"session": session, "cerbos_client": cerbos_client, "principal": principal, "id":root.id})
 
+
+async def batch_samples(keys: list[dict]) -> Annotated["Sample", strawberry.lazy("api.types.samples")]:
+    session = keys[0]["session"]
+    cerbos_client = keys[0]["cerbos_client"]
+    principal = keys[0]["principal"]
+    ids = [key["id"] for key in keys]
+    print(ids)
+
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
+    # filter samples based on their sequencing reads' ids
+    # TODO: this query isn't working; fix "Received wrong number of results in dataloader, expected: 2, received: 5"
+    query = query.filter(db.Sample.sequencing_reads.any(db.SequencingRead.id.in_(ids)))
+    # query = query.filter(db.Sample.id.in_(select(db.SequencingRead.sample_id).where(db.SequencingRead.id.in_(ids))))
+    print(query)
+    result = await session.execute(query)
+    print(result)
+    return result.scalars().all()
+
+sample_loader = DataLoader(load_fn=batch_samples, cache_key_fn=cache_key)
+
 @strawberry.field(extensions=[DependencyExtension()])
-def load_samples(where: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]) -> Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]]:
-    return None
+async def load_samples(
+    root: "SequencingRead",
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:
+    print("only one time!!")
+    return await sample_loader.load({"session": session, "cerbos_client": cerbos_client, "principal": principal, "id":root.id})
