@@ -5,8 +5,8 @@ import database.models as db
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from config import load_event_buses, load_workflow_runners
-from fastapi import APIRouter, Depends, FastAPI
+from config import load_event_bus, load_workflow_runners
+from fastapi import APIRouter, Depends, FastAPI, Request
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from platformics.api.core.settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -16,6 +16,7 @@ from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
+from plugin_types import EventBus
 
 ###########
 # Plugins #
@@ -26,7 +27,12 @@ config.read("defaults.cfg")
 default_workflow_runner_name = config.get("plugins", "default_workflow_runner")
 
 workflow_runners = load_workflow_runners()
-event_buses = load_event_buses()
+
+
+def get_event_bus(request: Request) -> EventBus:
+    """Get the event_bus object from the app state"""
+    return request.app.state.event_bus
+
 
 ######################
 # Strawberry-GraphQL #
@@ -160,6 +166,7 @@ class Mutation:
         workflow_inputs: str,
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
+        event_bus: EventBus = Depends(get_event_bus),
     ) -> Run:
         # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
         # other devs may want to submit custom containers
@@ -177,7 +184,7 @@ class Mutation:
             "WDL" in _workflow_runner.supported_workflow_types()
         ), f"Workflow runner {workflow_runner} does not support WDL"
         response = await _workflow_runner.run_workflow(
-            event_bus=event_buses["local"],
+            event_bus=event_bus,
             workflow_run_id="1",  # TODO: When we create the workflow run add the uuid here
             # TODO: should come from the WorkflowVersion model
             workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",
@@ -253,6 +260,7 @@ async def root() -> dict:
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    event_bus = load_event_bus(settings)
 
     # call finalize() before using the schema:
     # (note that models that are related to models that are in the schema
@@ -272,6 +280,7 @@ def get_app() -> FastAPI:
     _app = FastAPI()
     # Add a global settings object to the app that we can use as a dependency
     _app.state.entities_settings = settings
+    _app.state.event_bus = event_bus
 
     graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
     _app.include_router(root_router)

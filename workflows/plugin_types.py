@@ -1,31 +1,38 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from pydantic import BaseModel
 from typing import Dict, List, Literal, Any
 
+WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
-@dataclass
-class WorkflowStatusMessage:
+
+class WorkflowStatusMessage(BaseModel):
     runner_id: str
-    status: Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
+    status: WorkflowStatus
 
 
-@dataclass
 class WorkflowStartedMessage(WorkflowStatusMessage):
-    status: Literal["WORKFLOW_STARTED"]
+    status: Literal["WORKFLOW_STARTED"] = "WORKFLOW_STARTED"
 
 
 class WorkflowSucceededMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
-    outputs: Dict[str, str]
-
-    def __init__(self, runner_id: str, outputs: Dict[str, str]):
-        self.runner_id = runner_id
-        self.outputs = outputs
+    outputs: Dict[str, str] = {}
 
 
-@dataclass
 class WorkflowFailedMessage(WorkflowStatusMessage):
-    status: Literal["WORKFLOW_FAILURE"]
+    status: Literal["WORKFLOW_FAILURE"] = "WORKFLOW_FAILURE"
+
+
+def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
+    status = obj["status"]
+    if status == "WORKFLOW_STARTED":
+        return WorkflowStartedMessage(**obj)
+    elif status == "WORKFLOW_SUCCESS":
+        return WorkflowSucceededMessage(**obj)
+    elif status == "WORKFLOW_FAILURE":
+        return WorkflowFailedMessage(**obj)
+    else:
+        raise Exception(f"Unknown workflow status: {status}")
 
 
 class EventBus(ABC):

@@ -38,6 +38,7 @@ boto3-stubs = { extras = ["s3", "sts"], version = "^1.28.50" }
 black = "^23.9.1"
 mypy = "^1.5.1"
 sqlalchemy_utils = "^0.41.1"
+redis = "^5.0.1"
 
 
 [build-system]
