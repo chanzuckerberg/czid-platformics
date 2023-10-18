@@ -23,7 +23,7 @@ class WorkflowFailedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_FAILURE"] = "WORKFLOW_FAILURE"
 
 
-def parse_workflow_status_message(obj: dict) ->  WorkflowStatusMessage:
+def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
     status = obj["status"]
     if status == "WORKFLOW_STARTED":
         return WorkflowStartedMessage(**obj)
