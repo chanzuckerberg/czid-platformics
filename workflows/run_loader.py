@@ -1,6 +1,6 @@
 import asyncio
 
-from config import load_event_buses
+from config import load_event_bus
 from loader import LoaderDriver
 from platformics.api.core.settings import APISettings
 from platformics.database.connect import init_async_db
@@ -11,8 +11,8 @@ if __name__ == "__main__":
     app_db = init_async_db(settings.DB_URI)
     session = app_db.session()
 
-    event_buses = load_event_buses()
-    loader = LoaderDriver(session, event_buses["redis"])
+    event_bus = load_event_bus(settings)
+    loader = LoaderDriver(session, event_bus)
 
     # call main in it's own thread
     loop = asyncio.get_event_loop()

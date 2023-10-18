@@ -1,12 +1,23 @@
 from functools import cached_property
 
 from jwcrypto import jwk
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class RedisEventBusSettings(BaseModel):
+    REDIS_URL: str
+    QUEUE_NAME: str
+
+
+class EventBusSettings(BaseModel):
+    REDIS: RedisEventBusSettings
 
 
 class Settings(BaseSettings):
     """Pydantic Settings object - do not instantiate it directly,
     please use get_settings() as a dependency where possible"""
+    model_config = SettingsConfigDict(env_nested_delimiter='__')
 
     SERVICE_NAME: str = "Platformics Entities"
 
@@ -35,6 +46,11 @@ class Settings(BaseSettings):
     DEFAULT_UPLOAD_PROTOCOL: str
     BOTO_ENDPOINT_URL: str
     AWS_REGION: str
+
+    PLATFORMICS_WORKFLOW_RUNNER_PLUGIN: str
+
+    PLATFORMICS_EVENT_BUS_PLUGIN: str
+    PLATFORMICS_EVENT_BUS: EventBusSettings
 
     ############################################################################
     # Computed properties
