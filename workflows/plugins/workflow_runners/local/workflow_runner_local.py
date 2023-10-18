@@ -49,7 +49,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         inputs: dict,
     ) -> str:
         runner_id = str(uuid4())
-        await event_bus.send(WorkflowStartedMessage(runner_id))
+        await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         # Running docker-in-docker requires the paths to files and outputs to be the same between
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
             try:
@@ -70,9 +70,9 @@ class LocalWorkflowRunner(WorkflowRunner):
 
                 assert p.stdout
                 outputs = json.loads(p.stdout.read().decode())["outputs"]
-                await event_bus.send(WorkflowSucceededMessage(runner_id, outputs))
+                await event_bus.send(WorkflowSucceededMessage(runner_id=runner_id, outputs=outputs))
 
             except subprocess.CalledProcessError as e:
                 print(e.output)
-                await event_bus.send(WorkflowFailedMessage(runner_id))
+                await event_bus.send(WorkflowFailedMessage(runner_id=runner_id))
         return runner_id

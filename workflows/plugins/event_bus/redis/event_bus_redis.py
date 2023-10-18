@@ -13,7 +13,7 @@ class EventBusRedis(EventBus):
         self.redis = aioredis.from_url(self.settings.REDIS_URL)
 
     async def send(self, message: WorkflowStatusMessage) -> None:
-        await self.redis.lpush(self.settings.QUEUE_NAME, json.dumps(message.asdict()))
+        await self.redis.lpush(self.settings.QUEUE_NAME, message.model_dump_json())
 
     async def poll(self) -> List[WorkflowStatusMessage]:
         _, message = await self.redis.brpop(self.settings.QUEUE_NAME)
