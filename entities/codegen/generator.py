@@ -96,6 +96,7 @@ def generate_db_models(output_prefix: str, environment: Environment, view: ViewW
 
 
 def generate_gql_types(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
+    # TODO: move to api/types/class_name.py
     filename = "api/class_name.py"
     generate_gql_type_files(output_prefix, filename, environment, view)
 
