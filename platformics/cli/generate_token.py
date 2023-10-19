@@ -2,7 +2,7 @@
 import logging
 
 import click
-from settings import Settings
+from platformics.settings import Settings
 from platformics.security.token_auth import ProjectRole, create_token
 
 @click.group()
