@@ -104,4 +104,3 @@ class LocalWorkflowRunner(WorkflowRunner):
         )
         thread.start()
         return runner_id
-
