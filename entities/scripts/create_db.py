@@ -1,4 +1,4 @@
-from settings import APISettings
+from platformics.settings import APISettings
 from sqlalchemy_utils import create_database, database_exists
 
 

@@ -1,7 +1,7 @@
 from platformics.database.connect import init_sync_db
 from test_infra import factories as fa
 import factory.random
-from settings import CLISettings
+from platformics.settings import CLISettings
 
 
 def use_factoryboy() -> None:

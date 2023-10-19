@@ -7,7 +7,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from settings import APISettings
+from platformics.settings import APISettings
 from platformics.api.core.gql_loaders import (
     EntityLoader,
     get_base_creator,

@@ -4,7 +4,7 @@ from alembic import context
 from sqlalchemy import create_engine
 
 from database.models import meta
-from settings import CLISettings
+from platformics.settings import CLISettings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

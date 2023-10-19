@@ -4,6 +4,7 @@ from platformics.settings import Settings as PlatformicsSettings
 from platformics.settings import APISettings as PlatformicsAPISettings
 from platformics.settings import CLISettings as PlatformicCLISettings
 
+
 class RedisEventBusSettings(BaseModel):
     REDIS_URL: str
     QUEUE_NAME: str
@@ -26,4 +27,3 @@ class APISettings(PlatformicsAPISettings, Settings):
 
 class CLISettings(PlatformicCLISettings, Settings):
     ...
-
