@@ -1,6 +1,6 @@
 from importlib.metadata import entry_points
 from typing import Dict
-from platformics.api.core.settings import APISettings
+from settings import APISettings
 from plugin_types import EventBus, WorkflowRunner
 
 

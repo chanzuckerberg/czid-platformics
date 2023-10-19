@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from platformics.api.core.settings import RedisEventBusSettings
+from settings import RedisEventBusSettings
 from plugin_types import EventBus, WorkflowStatusMessage, parse_workflow_status_message
 
 import redis.asyncio as aioredis
