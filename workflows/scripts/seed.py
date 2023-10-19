@@ -1,6 +1,6 @@
 import factory.random
 from factoryboy import workflow_factory as wf
-from platformics.api.core.settings import APISettings
+from settings import APISettings
 from platformics.database.connect import init_sync_db
 from manifest import import_manifests
 

@@ -4,7 +4,7 @@ from alembic import context
 from sqlalchemy import create_engine
 
 from database.models import meta
-from platformics.api.core.settings import CLISettings
+from settings import CLISettings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -33,7 +33,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    settings = CLISettings.parse_obj({})
+    settings = CLISettings.model_validate({})
     context.configure(
         url=settings.SYNC_DB_URI,
         target_metadata=target_metadata,
@@ -53,7 +53,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    settings = CLISettings.parse_obj({})
+    settings = CLISettings.model_validate({})
     connectable = create_engine(settings.SYNC_DB_URI)
 
     with connectable.connect() as connection:

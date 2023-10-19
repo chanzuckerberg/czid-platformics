@@ -21,7 +21,7 @@ from platformics.api.core.deps import (
     get_settings,
     get_sts_client,
 )
-from platformics.api.core.settings import APISettings
+from settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.security.authorization import CerbosAction, get_resource_query
 from files.format_handlers import get_validator

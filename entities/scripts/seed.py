@@ -1,11 +1,11 @@
 from platformics.database.connect import init_sync_db
 from test_infra import factories as fa
 import factory.random
-from platformics.api.core.settings import CLISettings
+from settings import CLISettings
 
 
 def use_factoryboy() -> None:
-    settings = CLISettings.parse_obj({})
+    settings = CLISettings.model_validate({})
     app_db = init_sync_db(settings.SYNC_DB_URI)
     session = app_db.session()
     fa.SessionStorage.set_session(session)

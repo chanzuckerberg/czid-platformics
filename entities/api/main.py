@@ -7,7 +7,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from platformics.api.core.settings import APISettings
+from settings import APISettings
 from platformics.api.core.gql_loaders import (
     EntityLoader,
     get_base_creator,
@@ -111,7 +111,7 @@ schema = strawberry.Schema(
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
-    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     # Add a global settings object to the app that we can use as a dependency
     graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
