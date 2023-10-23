@@ -3,14 +3,12 @@ SHELL := /bin/bash
 FOLDER = workflows
 CONTAINER ?= workflows
 
-# Sets .env.localdev file. [AWS|TEST] Otherwise sets an empty file
-AWS_ENVIRONMENT ?= TEST 
-
+MOTO_SERVER_PATH=http://localhost:4000
 ### DOCKER ENVIRONMENTAL VARS #################################################
 export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
-export docker_compose:=docker compose --env-file .env.localdev
-export docker_compose_run:=docker compose --env-file .env.localdev run --rm
+export docker_compose:=docker compose
+export docker_compose_run:=docker compose run --rm
 
 ### DATABASE VARIABLES #################################################
 LOCAL_DB_NAME = workflows
@@ -28,13 +26,6 @@ shared-help:
 help: shared-help ## display help for this makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
-
-.env.localdev: 
-	if [[ "$${AWS_ENVIRONMENT}" == "AWS" ]]; then \
-		aws-oidc exec --session-duration=12h -- env | grep --color=no "AWS" > .env.localdev; \
-	else \
-		cp environment.test .env.localdev; \
-	fi 
 
 .PHONY: local-init
 local-init: .env.localdev ## initialize service containers
@@ -59,18 +50,26 @@ local-db-tests: ## Run workflow db tests
 ### SWIPE Plugin Tests
 
 .PHONY: local-swipe-plugin-tests
-local-swipe-plugin-start: .env.localdev
-	$(docker_compose) up --force-recreate -d 
+local-swipe-plugin-start:
+	source environment.test; $(docker_compose) up --force-recreate -d 
 
 .PHONY: local-swipe-plugin-deploy-mock
-local-swipe-plugin-deploy-mock: local-swipe-plugin-start
-	- source environment.test; aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id --value ami-12345678 --type String --endpoint-url http://localhost:4000 --no-cli-pager
-	source environment.test && \
+local-swipe-plugin-deploy-mock: local-swipe-plugin-start local-swipe-plugin-reset
+	- source environment.test && \
+	aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id \
+		--value ami-12345678 --type String --endpoint-url $(MOTO_SERVER_PATH) \
+		--no-cli-pager && \
 	cd terraform_test && \
-	find . -name '*tfstate*' | xargs rm -f && \
 	unset TF_CLI_ARGS_init && \
 	terraform init && \
 	terraform apply --auto-approve
+
+.PHONY: local-swipe-plugin-reset
+local-swipe-plugin-reset: 
+	- curl -X POST $(MOTO_SERVER_PATH)/moto-api/reset &&\
+	cd terraform_test && \
+	find . -name '*tfstate*' | xargs rm -f 
+
 
 .PHONY: local-swipe-plugin-tests
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
