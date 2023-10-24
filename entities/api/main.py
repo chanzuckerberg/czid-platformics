@@ -6,7 +6,7 @@ from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from platformics.api.core.gql_loaders import EntityLoader
-from platformics.api.core.settings import APISettings
+from platformics.settings import APISettings
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 from platformics.database.connect import AsyncDB
 

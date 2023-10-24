@@ -1,142 +1,91 @@
-type Contig implements EntityInterface {
-  id: UUID!
-  type: String!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  entityId: UUID!
-  sequence: String!
-  sequencingReadId: UUID!
-  sequencingRead: SequencingRead!
-}
-
-type ContigConnection {
-  edges: [ContigEdge!]!
-}
-
-type ContigEdge {
-  node: Contig!
-}
-
 interface EntityInterface {
   id: UUID!
-  type: String!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
 }
 
-type File {
-  id: UUID!
-  entityId: UUID
-  entityFieldName: String!
-  status: FileStatus!
-  protocol: String!
-  namespace: String!
-  path: String!
-  fileFormat: String!
-  compressionType: String
-  size: Int
-  entity: EntityInterface
-  downloadLink(expiration: Int! = 3600): SignedURL
-}
-
-input FileCreate {
-  name: String!
-  fileFormat: String = null
-  compressionType: String = null
-  protocol: String!
-  namespace: String!
-  path: String!
-}
-
-enum FileStatus {
-  SUCCESS
-  FAILED
-  PENDING
-}
-
-input FileUpload {
-  name: String!
-  fileFormat: String = null
-  compressionType: String = null
-}
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-type MultipartUploadCredentials {
-  protocol: String!
-  namespace: String!
-  path: String!
-  accessKeyId: String!
-  secretAccessKey: String!
-  sessionToken: String!
-  expiration: String!
-}
-
-type Mutation {
-  createSample(name: String!, location: String!, collectionId: Int!): Sample!
-  createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
-  createContig(sequence: String!, sequencingReadId: UUID!, collectionId: Int!): Contig!
-  updateSample(entityId: UUID!, name: String!, location: String!): Sample!
-  createFile(entityId: UUID!, entityFieldName: String!, file: FileCreate!): File!
-  uploadFile(entityId: UUID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadCredentials!
-  markUploadComplete(fileId: UUID!): File!
+input IntComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
 }
 
 type Query {
-  samples(id: UUID = null): [Sample!]!
-  sequencingReads(id: UUID = null): [SequencingRead!]!
-  contigs(id: UUID = null): [Contig!]!
-  files(id: UUID = null): [File!]!
+  samples(where: SampleWhereClause = null): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause! = {}): [SequencingRead!]!
 }
 
 type Sample implements EntityInterface {
   id: UUID!
-  type: String!
-  producingRunId: Int
+  producingRunid: Int!
   ownerUserId: Int!
   collectionId: Int!
-  entityId: UUID!
   name: String!
   location: String!
-  sequencingReads: SequencingReadConnection!
+  sequencingReads: SequencingRead!
+}
+
+input SampleWhereClause {
+  id: UUIDComparators
+  producingRunid: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: StrComparators
+  location: StrComparators
+  sequencingReads: SequencingReadWhereClause
 }
 
 type SequencingRead implements EntityInterface {
   id: UUID!
-  type: String!
-  producingRunId: Int
+  producingRunid: Int!
   ownerUserId: Int!
   collectionId: Int!
-  entityId: UUID!
-  nucleotide: String!
   sequence: String!
-  protocol: String!
-  sequenceFileId: UUID
-  sampleId: UUID!
-  sequenceFile: File
   sample: Sample!
-  contigs: ContigConnection!
 }
 
-type SequencingReadConnection {
-  edges: [SequencingReadEdge!]!
+input SequencingReadWhereClause {
+  id: UUIDComparators
+  producingRunid: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  sequence: StrComparators
+  sample: SampleWhereClause
 }
 
-type SequencingReadEdge {
-  node: SequencingRead!
-}
-
-type SignedURL {
-  url: String!
-  protocol: String!
-  method: String!
-  expiration: Int!
-  fields: JSON
+input StrComparators {
+  _eq: String
+  _neq: String
+  _in: [String!]
+  _nin: [String!]
+  _is_null: Int
+  _gt: String
+  _gte: String
+  _lt: String
+  _lte: String
+  _like: String
+  _nlike: String
+  _ilike: String
+  _nilike: String
+  _regex: String
+  _nregex: String
+  _iregex: String
+  _niregex: String
 }
 
 scalar UUID
+
+input UUIDComparators {
+  _eq: UUID
+  _neq: UUID
+  _in: [UUID!]
+  _nin: [UUID!]
+  _gt: UUID
+  _gte: UUID
+  _lt: UUID
+  _lte: UUID
+}
