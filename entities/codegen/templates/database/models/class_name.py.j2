@@ -47,15 +47,11 @@ class {{cls.name}}(Entity):
     {{attr.name}}: Mapped[{{attr.type}}] = mapped_column(Enum({{attr.type}}), nullable={{ "False" if attr.required else "True"}})
         {%- else %}
             {%- if attr.multivalued %}
-    {{attr.name}}: Mapped[list[{{attr.type}}]] = relationship(
-        "{{attr.type}}", back_populates="{{attr.inverse_field}}", uselist=True, foreign_keys="{{attr.type}}.{{attr.inverse_field}}_id"
-    )
+    {{attr.name}}: Mapped[list[{{attr.type}}]] = relationship("{{attr.type}}", back_populates="{{attr.inverse_field}}", uselist=True, foreign_keys="{{attr.type}}.{{attr.inverse_field}}_id")
             {%- else %}
     {{attr.name}}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("{{attr.related_class.snake_name}}.{{attr.related_class.identifier}}"), nullable={{"False" if attr.required else "True"}}{%- if attr.identifier %}, primary_key=True{%- endif %})
               {%- if attr.type != "Entity" %}
-    {{attr.name}}: Mapped[{{attr.type}}] = relationship(
-        {{attr.type}},{%- if attr.inverse %} back_populates="{{attr.inverse_field}}",{%- endif %} foreign_keys={{attr.name}}_id
-    )
+    {{attr.name}}: Mapped[{{attr.type}}] = relationship({{attr.type}},{%- if attr.inverse %} back_populates="{{attr.inverse_field}}",{%- endif %} foreign_keys={{attr.name}}_id)
               {%- endif %}
             {%- endif %}
         {%- endif %}

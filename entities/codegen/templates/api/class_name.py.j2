@@ -12,12 +12,13 @@ from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
-from platformics.api.core.deps import (get_cerbos_client, get_db_session,
-                                       require_auth_principal)
-from platformics.api.core.gql_to_sql import (IntComparators,
-                                             StrComparators, UUIDComparators)
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUIDComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
+from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import UUID
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
@@ -71,6 +72,10 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: str
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: int
+        {%- elif attr.type == "File" %}
+    # TODO:
+    {{ attr.name }}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    # {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.type }}")] = load_{{ attr.related_class.snake_name }}s
         {%- elif attr.inverse %}
     {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.type }}")] = load_{{ attr.related_class.snake_name }}s
         {%- endif %}
