@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
-from api.types.dataloaders import load_sequencing_reads
+from api.types.dataloaders import load_sequencing_reads, load_samples
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")

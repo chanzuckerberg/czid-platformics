@@ -59,12 +59,9 @@ async def batch_samples(keys: list[dict]) -> Annotated["Sample", strawberry.lazy
     principal = keys[0]["principal"]
     ids = [key["id"] for key in keys]
 
-    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Sample)
     # filter samples based on their sequencing reads' ids
-    # TODO: this query isn't working; fix "Received wrong number of results in dataloader, expected: 2, received: 5"
-    # number of results returned needs to equal the number of ids that were passed in
     query = query.filter(db.Sample.sequencing_reads.any(db.SequencingRead.id.in_(ids)))
-    # query = query.filter(db.Sample.id.in_(select(db.SequencingRead.sample_id).where(db.SequencingRead.id.in_(ids))))
     result = await session.execute(query)
     return result.scalars().all()
 
