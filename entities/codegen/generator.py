@@ -41,7 +41,9 @@ def generate_enums(output_prefix: str, environment: Environment, view: ViewWrapp
         print(f"... wrote {filename}")
 
 
-def generate_entity_subclass_files(output_prefix: str, template_filename: str, environment: Environment, view: ViewWrapper) -> None:
+def generate_entity_subclass_files(
+    output_prefix: str, template_filename: str, environment: Environment, view: ViewWrapper
+) -> None:
     template = environment.get_template(f"{template_filename}.j2")
     logging.debug("generating enums")
 
@@ -57,6 +59,7 @@ def generate_entity_subclass_files(output_prefix: str, template_filename: str, e
             print(f"... wrote {dest_filename}")
     return classes
 
+
 def generate_entity_import_files(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
     import_templates = ["database/models/__init__.py"]
     classes = view.entities
@@ -69,8 +72,11 @@ def generate_entity_import_files(output_prefix: str, environment: Environment, v
         with open(os.path.join(output_prefix, filename), mode="w", encoding="utf-8") as outfile:
             outfile.write(content)
             print(f"... wrote {filename}")
-    
-def generate_gql_type_files(output_prefix: str, template_filename: str, environment: Environment, view: ViewWrapper) -> None:
+
+
+def generate_gql_type_files(
+    output_prefix: str, template_filename: str, environment: Environment, view: ViewWrapper
+) -> None:
     template = environment.get_template(f"{template_filename}.j2")
     logging.debug("generating gql types")
 
@@ -86,9 +92,11 @@ def generate_gql_type_files(output_prefix: str, template_filename: str, environm
             print(f"... wrote {dest_filename}")
     return types
 
+
 def generate_cerbos_policies(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
     filename = "cerbos/policies/class_name.yaml"
     generate_entity_subclass_files(output_prefix, filename, environment, view)
+
 
 def generate_db_models(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
     filename = "database/models/class_name.py"

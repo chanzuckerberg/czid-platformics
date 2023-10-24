@@ -4,19 +4,19 @@ The wrapper classes in this module are entirely centered around providing conven
 functions to keep complicated LinkML-specific logic out of our Jinja2 templates.
 """
 from functools import cached_property
-import typing
 
 import strcase
 from linkml_runtime.linkml_model.meta import ClassDefinition, EnumDefinition
 from linkml_runtime.utils.schemaview import SchemaView
 
+
 class FieldWrapper:
     def __init__(self, view: SchemaView, wrapped_field):
         self.view = view
         self.wrapped_field = wrapped_field
-    
+
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str):
         raise NotImplementedError(f"please define field property {attr}")
 
     @cached_property
@@ -68,7 +68,7 @@ class FieldWrapper:
         if isinstance(field, ClassDefinition):
             return True
         return False
-    
+
     @property
     def related_class(self) -> "EntityWrapper":
         return EntityWrapper(self.view, self.view.get_element(self.wrapped_field.range))
@@ -78,9 +78,9 @@ class EnumWrapper:
     def __init__(self, view: SchemaView, wrapped_class):
         self.view = view
         self.wrapped_class = wrapped_class
-    
+
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str):
         raise NotImplementedError(f"please define enum property {attr}")
 
     @cached_property
@@ -91,13 +91,14 @@ class EnumWrapper:
     def permissible_values(self) -> str:
         return self.wrapped_class.permissible_values
 
+
 class EntityWrapper:
     def __init__(self, view: SchemaView, wrapped_class):
         self.view = view
         self.wrapped_class = wrapped_class
-    
+
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str):
         raise NotImplementedError(f"please define entity property {attr}")
 
     @cached_property
@@ -122,12 +123,8 @@ class EntityWrapper:
 
     @cached_property
     def writable_fields(self) -> list[FieldWrapper]:
-        return [
-            FieldWrapper(self.view, item)
-            for item in self.view.class_induced_slots(self.name)
-            if not item.readonly
-        ]
-    
+        return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name) if not item.readonly]
+
     @cached_property
     def identifier(self) -> str:
         # Prioritize sending back identifiers from the entity mixin instead of inherited fields.
@@ -142,17 +139,11 @@ class EntityWrapper:
 
     @cached_property
     def readable_fields(self) -> list[FieldWrapper]:
-        return [
-            FieldWrapper(self.view, item)
-            for item in self.view.class_induced_slots(self.name)
-        ]
+        return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name)]
 
     @cached_property
     def all_fields(self) -> list[FieldWrapper]:
-        return [
-            FieldWrapper(self.view, item)
-            for item in self.view.class_induced_slots(self.name)
-        ]
+        return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name)]
 
     @cached_property
     def owned_fields(self) -> list[FieldWrapper]:
@@ -172,14 +163,15 @@ class EntityWrapper:
     def related_fields(self) -> list[FieldWrapper, None, None]:
         return [field for field in self.all_fields if field.is_entity]
 
+
 class ViewWrapper:
     def __init__(self, view: SchemaView):
         self.view = view
-    
+
     # Blow up if a property doesn't exist
     def __getattr__(self, attr):
         raise NotImplementedError(f"please define view property {attr}")
-    
+
     @cached_property
     def enums(self) -> list[FieldWrapper]:
         enums = []

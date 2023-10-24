@@ -1,28 +1,12 @@
 import typing
-import uuid
-from collections import defaultdict
-from typing import Any, Mapping, Optional, Tuple
+from typing import Any, Optional
 
 import database.models as db
-import strawberry
-from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource
-from fastapi import Depends
-from platformics.api.core.deps import (get_cerbos_client, get_db_session,
-                                       require_auth_principal)
-from platformics.api.core.gql_to_sql import (EnumComparators, IntComparators,
-                                             StrComparators, UUIDComparators,
-                                             strawberry_sqlalchemy_mapper)
-from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.database.connect import AsyncDB
+from cerbos.sdk.model import Principal
 from platformics.security.authorization import CerbosAction, get_resource_query
-from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
+from sqlalchemy import ColumnElement
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import RelationshipProperty
-from strawberry.arguments import StrawberryArgument
-from strawberry.dataloader import DataLoader
-from typing_extensions import TypedDict
 from platformics.api.core.gql_to_sql import operator_map
 from sqlalchemy import inspect, and_
 from sqlalchemy.orm import aliased
@@ -33,7 +17,15 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 
-def convert_where_clauses_to_sql(principal: Principal, cerbos_client: CerbosClient, action: str, query, sa_model: Base, whereClause: dict[str, Any], depth: int) -> Select:
+def convert_where_clauses_to_sql(
+    principal: Principal,
+    cerbos_client: CerbosClient,
+    action: str,
+    query,
+    sa_model: Base,
+    whereClause: dict[str, Any],
+    depth: int,
+) -> Select:
     if not whereClause:
         return query
     for k, v in whereClause.items():
@@ -46,7 +38,10 @@ def convert_where_clauses_to_sql(principal: Principal, cerbos_client: CerbosClie
                 related_cls = relationship.mapper.entity
                 subquery = get_db_query(related_cls, action, cerbos_client, principal, v, depth).subquery()
                 query_alias = aliased(related_cls, subquery)
-                joincondition_a = [(getattr(sa_model, local.key) == getattr(query_alias, remote.key)) for local, remote in relationship.local_remote_pairs]
+                joincondition_a = [
+                    (getattr(sa_model, local.key) == getattr(query_alias, remote.key))
+                    for local, remote in relationship.local_remote_pairs
+                ]
                 query = query.join(query_alias, and_(*joincondition_a))
                 continue
             sa_comparator = operator_map[comparator]
@@ -55,7 +50,6 @@ def convert_where_clauses_to_sql(principal: Principal, cerbos_client: CerbosClie
             else:
                 query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
     return query
-
 
 
 def get_db_query(
@@ -76,6 +70,7 @@ def get_db_query(
     query = get_resource_query(principal, cerbos_client, action, model_cls)
     query = convert_where_clauses_to_sql(principal, cerbos_client, action, query, model_cls, where, depth)
     return query
+
 
 async def get_db_rows(
     model_cls: type[E],

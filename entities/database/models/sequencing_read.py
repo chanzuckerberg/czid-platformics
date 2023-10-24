@@ -2,7 +2,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Float, Integer, Enum
+from sqlalchemy import ForeignKey, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import Nucleotide, SequencingProtocol
@@ -26,6 +26,8 @@ class SequencingRead(Entity):
     sequence_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence_file: Mapped[File] = relationship(File, foreign_keys=sequence_file_id)
     sample_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sample.entity_id"), nullable=True)
-    sample: Mapped[Sample] = relationship(Sample,back_populates="sequencing_reads", foreign_keys=sample_id)
-    contigs: Mapped[list[Contig]] = relationship("Contig", back_populates="sequencing_read", uselist=True, foreign_keys="Contig.sequencing_read_id")
+    sample: Mapped[Sample] = relationship(Sample, back_populates="sequencing_reads", foreign_keys=sample_id)
+    contigs: Mapped[list[Contig]] = relationship(
+        "Contig", back_populates="sequencing_read", uselist=True, foreign_keys="Contig.sequencing_read_id"
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
