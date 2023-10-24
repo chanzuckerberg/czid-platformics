@@ -1,6 +1,7 @@
-import factory
-from factory import Faker, fuzzy
 import datetime
+import factory
+import sqlalchemy as sa
+from factory import fuzzy
 
 
 from database.models import Workflow, WorkflowVersion, Run, RunStatus
@@ -13,11 +14,11 @@ class SessionStorage:
     session = None
 
     @classmethod
-    def set_session(cls, session):
+    def set_session(cls, session: sa.orm.Session) -> None:
         cls.session = session
 
     @classmethod
-    def get_session(cls):
+    def get_session(cls) -> sa.orm.Session | None:
         return cls.session
 
 
@@ -50,7 +51,7 @@ class WorkflowVersionFactory(CommonFactory):
     # deprecated = Faker("pybool")
     # graph_json = fuzzy.FuzzyChoice(["{}"])
     workflow = factory.SubFactory(WorkflowFactory)
-    manifest = factory.LazyAttribute(lambda n: open("first_workflow_manifest.json").read())
+    manifest = factory.LazyAttribute(lambda n: open("/workflows/manifests/first_workflow_manifest.json").read())
 
 
 class RunFactory(CommonFactory):

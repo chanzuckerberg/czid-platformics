@@ -15,7 +15,7 @@ ENTITY_SERVICE_URL = os.environ["ENTITY_SERVICE_URL"]
 ENTITY_SERVICE_AUTH_TOKEN = os.environ["ENTITY_SERVICE_AUTH_TOKEN"]
 
 
-def _snake_to_camel(s: str):
+def _snake_to_camel(s: str) -> str:
     title = "".join(word.title() for word in s.split("_"))
     return title[0].lower() + title[1:]
 
@@ -27,27 +27,30 @@ _type_name_to_graphql_type = {
     "bool": "Boolean",
 }
 
+
 @dataclass
 class Entity(ABC):
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
     version: Optional[Version] = field(default_factory=lambda: Version(0), init=False)
 
-    def _mutation_name(self):
+    def _mutation_name(self) -> str:
         return f"create{self.__class__.__name__}"
 
-    def _fields(self):
-        for field in fields(self):
-            if field.name in ["entity_id", "version"]:
+    def _fields(self) -> typing.Iterator:
+        for entity_field in fields(self):
+            if entity_field.name in ["entity_id", "version"]:
                 continue
-            yield field
+            yield entity_field
 
-    def gql_create_mutation(self):
+    def gql_create_mutation(self) -> str:
         field_name_types = []
-        for field in self._fields():
-            if field.type.__name__ == "EntityReference":
-                field_name_types.append((field.metadata["id_name"], "UUID"))
+        for entity_field in self._fields():
+            if entity_field.type.__name__ == "EntityReference":
+                field_name_types.append((entity_field.metadata["id_name"], "UUID"))
                 continue
-            field_name_types.append((_snake_to_camel(field.name), _type_name_to_graphql_type[field.type.__name__]))
+            field_name_types.append(
+                (_snake_to_camel(entity_field.name), _type_name_to_graphql_type[entity_field.type.__name__])
+            )
 
         # field_name_types.append(("userId", "Int"))
         field_name_types.append(("collectionId", "Int"))
@@ -62,23 +65,23 @@ class Entity(ABC):
             {'}'}
         """
 
-    def gql_variables(self):
+    def gql_variables(self) -> dict:
         variables = {}
-        for field in self._fields():
-            if field.type.__name__ == "EntityReference":
-                variables[field.metadata["id_name"]] = getattr(self, field.name).entity_id
+        for entity_field in self._fields():
+            if entity_field.type.__name__ == "EntityReference":
+                variables[entity_field.metadata["id_name"]] = getattr(self, entity_field.name).entity_id
                 continue
-            variables[_snake_to_camel(field.name)] = getattr(self, field.name)
+            variables[_snake_to_camel(entity_field.name)] = getattr(self, entity_field.name)
 
         return variables
 
-    def get_dependent_entities(self):
-        for field in fields(self):
-            if field.type.__name__ == "EntityReference":
-                entity_ref: EntityReference = getattr(self, field.name)
+    def get_dependent_entities(self) -> typing.Iterator:
+        for entity_field in fields(self):
+            if entity_field.type.__name__ == "EntityReference":
+                entity_ref: EntityReference = getattr(self, entity_field.name)
                 yield entity_ref
-    
-    async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client):
+
+    async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client) -> None:
         if self.entity_id:
             return
 
@@ -100,14 +103,16 @@ class Sample(Entity):
     name: str
     location: str
 
+
 T = typing.TypeVar("T", bound=Entity)
+
 
 @dataclass
 class EntityReference(Generic[T]):
     entity_id: Optional[UUID] = field(default_factory=lambda: None)
     entity: Optional[T] = field(default_factory=lambda: None)
 
-    async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client):
+    async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client) -> None:
         if self.entity_id:
             return
         if self.entity is None:
@@ -115,10 +120,10 @@ class EntityReference(Generic[T]):
         await self.entity.create_if_not_exists(user_id, collection_id, client)
         self.entity_id = self.entity.entity_id
 
-    def exists(self):
+    def exists(self) -> bool:
         return self.entity_id is not None
 
-    async def load(self):
+    async def load(self) -> None:
         pass
 
 
@@ -127,7 +132,8 @@ class SequencingRead(Entity):
     nucleotide: str
     sequence: str
     protocol: str
-    sample: EntityReference[Sample] = field(metadata={"id_name": "sampleId"})
+    sample: Optional[EntityReference[Sample]] = field(metadata={"id_name": "sampleId"})
+
 
 @dataclass
 class Contig(Entity):
@@ -135,7 +141,7 @@ class Contig(Entity):
     sequencing_read: Optional[EntityReference[SequencingRead]] = field(metadata={"id_name": "sequencingReadId"})
 
 
-async def create_entities(user_id: int, collection_id: int, entities: list[Entity]):
+async def create_entities(user_id: int, collection_id: int, entities: list[Entity]) -> None:
     headers = {"Authorization": f"Bearer {ENTITY_SERVICE_AUTH_TOKEN}"}
     transport = AIOHTTPTransport(url=ENTITY_SERVICE_URL, headers=headers)
     client = Client(transport=transport, fetch_schema_from_transport=True)

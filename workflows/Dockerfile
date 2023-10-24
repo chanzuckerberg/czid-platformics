@@ -18,7 +18,7 @@ ENV PYTHONPATH=.
 COPY workflows/pyproject.toml workflows/poetry.lock ./
 RUN poetry install
 
-# Ordering is important here. Entities first!
+# Ordering is important here. Workflows first!
 COPY workflows/ .
 COPY platformics ./platformics
 

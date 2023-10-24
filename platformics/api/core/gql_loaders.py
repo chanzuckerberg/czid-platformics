@@ -18,7 +18,7 @@ from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from platformics.security.authorization import get_resource_query, CerbosAction
 
-E = typing.TypeVar("E", db.File, db.Entity)
+E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
 
 
@@ -117,14 +117,15 @@ def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]
     return typing.cast(typing.Sequence[T], resolve_entity)
 
 
-def get_file_loader(sql_model: type[db.File], gql_type: type[T]) -> typing.Sequence[T]:
+# FIXME: error: Name "db.File" is not defined
+def get_file_loader(sql_model: type[db.File], gql_type: type[T]) -> typing.Sequence[T]:  # type: ignore
     @strawberry.field(extensions=[DependencyExtension()])
     async def resolve_file(
         id: typing.Optional[uuid.UUID] = None,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
-    ) -> typing.Sequence[db.File]:
+    ) -> typing.Sequence[db.File]:  # type: ignore
         filters = []
         if id:
             filters.append(sql_model.id == id)
@@ -163,7 +164,8 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     return typing.cast(T, create)
 
 
-def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:
+# FIXME: error: Name "db.Entity" is not defined
+def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # type: ignore
     @strawberry.field(extensions=[DependencyExtension()])
     async def update(
         entity_id: uuid.UUID,
@@ -171,7 +173,7 @@ def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
         **kwargs: typing.Any,
-    ) -> db.Entity:
+    ) -> db.Entity:  # type: ignore
         params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
 
         # Fetch entity for update, if we have access to it
@@ -202,8 +204,9 @@ def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:
 
 
 # Infer Strawberry arguments from SQLAlchemy columns
+# FIXME: error: Name "db.Entity" is not defined
 def generate_strawberry_arguments(
-    action: str, sql_model: type[db.Entity | db.Base], gql_type: type[T]
+    action: str, sql_model: type[db.Entity | db.Base], gql_type: type[T]  # type: ignore
 ) -> list[StrawberryArgument]:
     sql_columns = [column.name for column in sql_model.__table__.columns]
 

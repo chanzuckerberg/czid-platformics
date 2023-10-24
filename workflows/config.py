@@ -1,5 +1,6 @@
 from importlib.metadata import entry_points
 from typing import Dict
+from settings import APISettings
 from plugin_types import EventBus, WorkflowRunner
 
 
@@ -11,10 +12,14 @@ def load_workflow_runners() -> Dict[str, WorkflowRunner]:
         workflow_runners_by_name[plugin.name] = workflow_runner
     return workflow_runners_by_name
 
-def load_event_buses() -> Dict[str, EventBus]:
-    event_buses_by_name: Dict[str, EventBus] = {}
+
+def load_event_bus(settings: APISettings) -> EventBus:
     for plugin in entry_points(group="czid.plugin.event_bus"):
-        event_bus = plugin.load()()
+        if plugin.name != settings.PLATFORMICS_EVENT_BUS_PLUGIN:
+            continue
+        event_bus = plugin.load()(
+            getattr(settings.PLATFORMICS_EVENT_BUS, settings.PLATFORMICS_EVENT_BUS_PLUGIN.upper())
+        )
         assert isinstance(event_bus, EventBus)
-        event_buses_by_name[plugin.name] = event_bus
-    return event_buses_by_name
+        return event_bus
+    raise Exception(f"Event bus plugin {settings.PLATFORMICS_EVENT_BUS_PLUGIN} not found")

@@ -1,4 +1,6 @@
 import strawberry
+from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadCredentials
+
 
 @strawberry.type
 class Mutation:
@@ -11,6 +13,6 @@ class Mutation:
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
 
     # File management
-    create_file: SignedURL = create_file
+    create_file: File = create_file
+    upload_file: MultipartUploadCredentials = upload_file
     mark_upload_complete: File = mark_upload_complete
-

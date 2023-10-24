@@ -11,7 +11,7 @@ from pytest_postgresql.executor_noop import NoopExecutor
 
 
 test_db: NoopExecutor = factories.postgresql_noproc(
-    host=os.getenv("DB_HOST"), password=os.getenv("DB_PASS")
+    host=os.getenv("PLATFORMICS_DATABASE_HOST"), password=os.getenv("PLATFORMICS_DATABASE_PASSWORD")
 )  # type: ignore
 
 

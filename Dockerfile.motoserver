@@ -1,0 +1,8 @@
+# This Dockerfile is used only because we rely on curl, and can be removed if we upgrade
+# to a version of moto > 4.1.12
+
+# The version of moto is pinned to 4.1.0 because s3parcp is unable to parse date strings in later version
+# see: https://github.com/aws/aws-sdk-go-v2/issues/1981
+FROM motoserver/moto:4.1.0
+
+RUN apt-get update && apt-get install -y curl

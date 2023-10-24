@@ -1,14 +1,11 @@
 import typing
 
-import database.models as db
 import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_engine)
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from platformics.api.core.gql_loaders import EntityLoader
-from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 from platformics.api.core.settings import APISettings
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 from platformics.database.connect import AsyncDB
@@ -36,6 +33,7 @@ class CustomNameConverter(NameConverter):
             return obj.python_name
         return super().get_graphql_name(obj)
 
+
 # only needed if you have polymorphic types
 # additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # strawberry graphql schema
@@ -49,7 +47,7 @@ schema = strawberry.Schema(
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
-    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     # Add a global settings object to the app that we can use as a dependency
     graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)

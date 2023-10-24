@@ -1,32 +1,22 @@
-import asyncio
 import configparser
-import json
-import os
 import typing
 
 import database.models as db
-import entity_gql_schema as entity_schema
-import sqlalchemy as sa
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from config import load_event_buses, load_workflow_runners
-from fastapi import APIRouter, Depends, FastAPI
-from loader import LoaderDriver
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_db_session, get_engine)
-from platformics.api.core.settings import APISettings
+from config import load_event_bus, load_workflow_runners
+from fastapi import APIRouter, Depends, FastAPI, Request
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
+from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.database.connect import AsyncDB, init_async_db
-from platformics.database.models.base import Base
-from sgqlc.endpoint.http import HTTPEndpoint
-from sgqlc.operation import Operation
+from platformics.database.connect import AsyncDB
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import (StrawberrySQLAlchemyLoader,
-                                          StrawberrySQLAlchemyMapper)
+from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
+from plugin_types import EventBus
 
 ###########
 # Plugins #
@@ -37,13 +27,18 @@ config.read("defaults.cfg")
 default_workflow_runner_name = config.get("plugins", "default_workflow_runner")
 
 workflow_runners = load_workflow_runners()
-event_buses = load_event_buses()
+
+
+def get_event_bus(request: Request) -> EventBus:
+    """Get the event_bus object from the app state"""
+    return request.app.state.event_bus
+
 
 ######################
 # Strawberry-GraphQL #
 ######################
 
-strawberry_sqlalchemy_mapper = StrawberrySQLAlchemyMapper()
+strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry_sqlalchemy_mapper.type(db.Workflow)
@@ -101,30 +96,6 @@ class Query:
 @strawberry.type
 class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
-    async def test_connection(self) -> str:
-        entity_service_url = os.getenv("ENTITY_SERVICE_URL")
-        entity_service_auth_token = os.getenv("ENTITY_SERVICE_AUTH_TOKEN")
-        headers = {"Authorization": f"Bearer {entity_service_auth_token}"}
-        endpoint = HTTPEndpoint(entity_service_url)
-
-        # Create query to list all samples
-        op = Operation(entity_schema.Query)
-        samples = op.samples()
-        samples.id()
-        samples.name()
-        samples.location()
-        data = endpoint(op, extra_headers=headers)
-        print(json.dumps(data["data"]["samples"], indent=4))
-
-        # Create a sample
-        op = Operation(entity_schema.Mutation)
-        op.create_sample(name="test", location="test", collection_id=444)
-        data = endpoint(op, extra_headers=headers)
-        print(json.dumps(data, indent=4))
-
-        return "Hello World"
-
-    @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow(
         self,
         name: str,
@@ -137,7 +108,7 @@ class Mutation:
         )
         session.add(db_workflow)
         await session.commit()
-        return db_workflow
+        return db_workflow  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_workflow_version(
@@ -162,7 +133,7 @@ class Mutation:
         )
         session.add(db_workflow_version)
         await session.commit()
-        return db_workflow_version
+        return db_workflow_version  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
@@ -187,7 +158,7 @@ class Mutation:
         )
         session.add(db_run)
         await session.commit()
-        return db_run
+        return db_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def submit_workflow(
@@ -195,8 +166,10 @@ class Mutation:
         workflow_inputs: str,
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> str:
-        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined, other devs may want to submit custom containers
+        event_bus: EventBus = Depends(get_event_bus),
+    ) -> Run:
+        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
+        # other devs may want to submit custom containers
         # inputs_json = {
         #     "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
         #     "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
@@ -211,9 +184,10 @@ class Mutation:
             "WDL" in _workflow_runner.supported_workflow_types()
         ), f"Workflow runner {workflow_runner} does not support WDL"
         response = await _workflow_runner.run_workflow(
-            event_bus=event_buses["local"],
+            event_bus=event_bus,
             workflow_run_id="1",  # TODO: When we create the workflow run add the uuid here
-            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",  # TODO: should come from the WorkflowVersion model
+            # TODO: should come from the WorkflowVersion model
+            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",
             inputs={},
         )
 
@@ -230,7 +204,7 @@ class Mutation:
         session.add(db_run)
         await session.commit()
 
-        return db_run
+        return db_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_step(
@@ -247,7 +221,7 @@ class Mutation:
         )
         session.add(db_run_step)
         await session.commit()
-        return db_run_step
+        return db_run_step  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_entity_input(
@@ -262,7 +236,7 @@ class Mutation:
         )
         session.add(db_run_entity_input)
         await session.commit()
-        return db_run_entity_input
+        return db_run_entity_input  # type: ignore
 
 
 def get_context(
@@ -277,14 +251,16 @@ def get_context(
 
 root_router = APIRouter()
 
+
 @root_router.get("/")
-async def root():
+async def root() -> dict:
     return {"message": "Hello World"}
 
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
-    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    event_bus = load_event_bus(settings)
 
     # call finalize() before using the schema:
     # (note that models that are related to models that are in the schema
@@ -304,8 +280,9 @@ def get_app() -> FastAPI:
     _app = FastAPI()
     # Add a global settings object to the app that we can use as a dependency
     _app.state.entities_settings = settings
+    _app.state.event_bus = event_bus
 
-    graphql_app = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+    graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
     _app.include_router(root_router)
     _app.include_router(graphql_app, prefix="/graphql")
     return _app

@@ -5,8 +5,7 @@ from typing import Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
-from platformics.api.core.deps import (get_cerbos_client, get_db_session,
-                           require_auth_principal)
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource, ResourceDesc
@@ -27,19 +26,18 @@ E = typing.TypeVar("E", bound=db.Base)
 T = typing.TypeVar("T")
 
 
-def get_authz_map(model_cls: type[db.Base]) -> tuple[dict[str, ColumnElement], list[type[db.Base]]]:
+def get_authz_map(
+    model_cls: type[db.Base],
+) -> tuple[dict, list]:
+    authz_map = {
+        "request.resource.attr.user_id": db.Run.user_id,
+        "request.resource.attr.project_id": db.Run.project_id,
+    }
+
     if model_cls == db.Run:
-        return {
-            "request.resource.attr.user_id": model_cls.user_id,
-            "request.resource.attr.project_id": model_cls.project_id,
-        }, []
+        return authz_map, []
     if model_cls in [db.RunStep, db.RunEntityInput]:
-        return {
-            "request.resource.attr.user_id": db.Run.user_id,
-            "request.resource.attr.project_id": db.Run.project_id,
-        }, [
-            (db.Run, model_cls.run_id == db.Run.id)  # type: ignore
-        ]
+        return authz_map, [(db.Run, model_cls.run_id == db.Run.id)]  # type: ignore
     # The rest don't apply authorization rules, they just require authentication.
     return {}, []
 
@@ -91,7 +89,7 @@ class WorkflowLoader:
         except KeyError:
             related_model = relationship.entity.entity
 
-            load_method = get_db_rows  # type: ignore
+            load_method = db_rows  # type: ignore
 
             async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:
@@ -140,7 +138,8 @@ def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]
     ) -> typing.Sequence[E]:
         filters = []
         if id:
-            filters.append(sql_model.id == id)
+            # FIXME: error: "type[E]" has no attribute "id"
+            filters.append(sql_model.id == id)  # type: ignore
         return await db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
 
     return typing.cast(typing.Sequence[T], resolve_entity)
@@ -188,7 +187,8 @@ def get_base_updater(sql_model: type[db.Base], gql_type: type[T]) -> T:
         params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
 
         # Fetch entity for update, if we have access to it
-        filters = [sql_model.id == entity_id]
+        # FIXME: error: "type[Base]" has no attribute "id"
+        filters = [sql_model.id == entity_id]  # type: ignore
         entities = await db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
         if len(entities) != 1:
             raise Exception("Unauthorized: Cannot retrieve entity")
@@ -196,8 +196,10 @@ def get_base_updater(sql_model: type[db.Base], gql_type: type[T]) -> T:
 
         # Validate that user can update this entity. For now, this is redundant with db_rows() above,
         # but it's possible we'll want "update" actions to require additional permissions in the future.
-        attr = {"collection_id": entity.collection_id}
-        resource = Resource(id=str(entity.id), kind=sql_model.__tablename__, attr=attr)
+        # FIXME: error: "Base" has no attribute "collection_id"
+        attr = {"collection_id": entity.collection_id}  # type: ignore
+        # FIXME: error: "Base" has no attribute "id"
+        resource = Resource(id=str(entity.id), kind=sql_model.__tablename__, attr=attr)  # type: ignore
         if not cerbos_client.is_allowed(CERBOS_ACTION_UPDATE, principal, resource):
             raise Exception("Unauthorized: Cannot update entity")
 
