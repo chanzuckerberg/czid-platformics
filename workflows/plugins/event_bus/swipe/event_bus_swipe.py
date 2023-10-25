@@ -4,12 +4,12 @@ import boto3
 import os
 from plugin_types import EventBus, WorkflowStatusMessage
 
-SQS_QUEUE_URL = os.environ.get("SQS_QUEUE_URL", "http://czidnet:5000/123456789012/swipe-test-notifications-sfn-notifications-queue") # TODO: remove hardcoded test
+SQS_QUEUE_URL = os.environ.get("SQS_QUEUE_URL") 
 
 
 class EventBusSWIPE(EventBus):
     def __init__(self):
-        self.sqs = boto3.client("sqs", endpoint_url="http://czidnet:5000")
+        self.sqs = boto3.client("sqs")
         if SQS_QUEUE_URL and SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")
 
@@ -43,7 +43,6 @@ class EventBusSWIPE(EventBus):
         workflow_statuses = []
 
         if message:
-            print(message)
             if message["source"] == "aws.states":
                 workflow_status = WorkflowStatusMessage(
                     runner_id=message["detail"]["executionArn"],
@@ -53,5 +52,8 @@ class EventBusSWIPE(EventBus):
                     workflow_status
                 )
             elif message["source"] == "aws.batch":
-                print("BAATTCH", message)
+                # TODO: store step status messages
+                pass
+                
+               
         return workflow_statuses

@@ -10,9 +10,9 @@ if __name__ == "__main__":
     settings = APISettings.model_validate({})
     app_db = init_async_db(settings.DB_URI)
     session = app_db.session()
+
     event_bus = load_event_bus(settings)
     loader = LoaderDriver(session, event_bus)
-
 
     # call main in it's own thread
     loop = asyncio.get_event_loop()
