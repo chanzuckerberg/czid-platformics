@@ -28,16 +28,17 @@ boto3 = "^1.28.12"
 semver = "^3.0.1"
 sgqlc = "^16.3"
 psycopg-binary = "^3.1.10"
-gql = {extras = ["all"], version = "^3.4.1"}
+gql = { extras = ["all"], version = "^3.4.1" }
 pydantic = "^2.3.0"
 cerbos = "^0.10.1"
 jwcrypto = "^1.5.0"
 pydantic-settings = "^2.0.3"
 uuid6 = "^2023.5.2"
-boto3-stubs = {extras = ["s3"], version = "^1.28.50"}
+boto3-stubs = { extras = ["s3", "sts"], version = "^1.28.50" }
 black = "^23.9.1"
 mypy = "^1.5.1"
 sqlalchemy_utils = "^0.41.1"
+redis = "^5.0.1"
 
 
 [build-system]
@@ -52,10 +53,7 @@ explicit_package_bases = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
 implicit_reexport = false
-exclude = [
-    'gql_schema\.py$',
-    '^platformics/thirdparty',
-]
+exclude = ['gql_schema\.py$', '^platformics/thirdparty']
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
@@ -63,7 +61,52 @@ select = ["E", "F"]
 ignore = []
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+fixable = [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "I",
+    "N",
+    "Q",
+    "S",
+    "T",
+    "W",
+    "ANN",
+    "ARG",
+    "BLE",
+    "COM",
+    "DJ",
+    "DTZ",
+    "EM",
+    "ERA",
+    "EXE",
+    "FBT",
+    "ICN",
+    "INP",
+    "ISC",
+    "NPY",
+    "PD",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "RET",
+    "RSE",
+    "RUF",
+    "SIM",
+    "SLF",
+    "TCH",
+    "TID",
+    "TRY",
+    "UP",
+    "YTT",
+]
 unfixable = []
 
 # Exclude a variety of commonly ignored directories.

@@ -30,4 +30,4 @@ clean:
 	$(MAKE) -C entities local-clean
 	$(MAKE) -C workflows local-clean
 	docker compose down
-	rm -f .moto_recording
+	rm -rf .moto_recording

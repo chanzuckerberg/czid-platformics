@@ -1,0 +1,42 @@
+name: Workflows tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "workflows/**"
+  pull_request:
+    branches: "**"
+    paths:
+      - "workflows/**"
+
+jobs:
+  py-lint:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - uses: actions/checkout@v3
+      # Build images and run linters
+      - name: Set up deps
+        run: |
+          make gha-setup
+      - name: Lint Python
+        working-directory: workflows
+        run: |
+          make local-build
+          make check-lint
+  py-test:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - uses: actions/checkout@v3
+      # Set up a local dev env and run tests
+      - name: Set up deps
+        run: |
+          make gha-setup
+      - name: Run tests
+        working-directory: workflows
+        run: |
+          make local-init
+          make local-db-tests
+        env: 
+          AWS_REGION: us-west-2

@@ -1,12 +1,13 @@
 from functools import cached_property
 
 from jwcrypto import jwk
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Pydantic Settings object - do not instantiate it directly,
     please use get_settings() as a dependency where possible"""
+    model_config = SettingsConfigDict(env_nested_delimiter='__')
 
     SERVICE_NAME: str = "Platformics Entities"
 
@@ -32,6 +33,7 @@ class Settings(BaseSettings):
     JWK_PUBLIC_KEY_FILE: str
     JWK_PRIVATE_KEY_FILE: str
     DEFAULT_UPLOAD_BUCKET: str
+    DEFAULT_UPLOAD_PROTOCOL: str
     BOTO_ENDPOINT_URL: str
     AWS_REGION: str
 

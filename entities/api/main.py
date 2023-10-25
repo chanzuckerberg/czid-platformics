@@ -7,7 +7,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from platformics.api.core.settings import APISettings
+from platformics.settings import APISettings
 from platformics.api.core.gql_loaders import (
     EntityLoader,
     get_base_creator,
@@ -18,7 +18,7 @@ from platformics.api.core.gql_loaders import (
 from platformics.database.connect import AsyncDB
 from strawberry.fastapi import GraphQLRouter
 from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File, SignedURL, mark_upload_complete, create_file
+from api.files import File, MultipartUploadCredentials, mark_upload_complete, create_file, upload_file
 
 ######################
 # Strawberry-GraphQL #
@@ -74,7 +74,8 @@ class Mutation:
     update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
 
     # File management
-    create_file: SignedURL = create_file
+    create_file: File = create_file
+    upload_file: MultipartUploadCredentials = upload_file
     mark_upload_complete: File = mark_upload_complete
 
 
@@ -110,7 +111,7 @@ schema = strawberry.Schema(
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
-    settings = APISettings.parse_obj({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     # Add a global settings object to the app that we can use as a dependency
     graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)

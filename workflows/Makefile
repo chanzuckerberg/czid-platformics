@@ -4,13 +4,13 @@ FOLDER = workflows
 CONTAINER ?= workflows
 
 # Sets .env.localdev file. [AWS|TEST] Otherwise sets an empty file
-AWS_ENVIRONMENT ?= AWS 
+AWS_ENVIRONMENT ?= TEST 
 
 ### DOCKER ENVIRONMENTAL VARS #################################################
 export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
-export docker_compose:=docker compose
-export docker_compose_run:=docker compose run --rm
+export docker_compose:=docker compose --env-file .env.localdev
+export docker_compose_run:=docker compose --env-file .env.localdev run --rm
 
 ### DATABASE VARIABLES #################################################
 LOCAL_DB_NAME = workflows
@@ -29,39 +29,42 @@ help: shared-help ## display help for this makefile
 shared-help: 
 	$(MAKE) -f platformics/Makefile help
 
-.PHONY: local-envfile
-local-envfile: 
+.env.localdev: 
 	if [[ "$${AWS_ENVIRONMENT}" == "AWS" ]]; then \
 		aws-oidc exec --session-duration=12h -- env | grep --color=no "AWS" > .env.localdev; \
-	elif [[ "$${AWS_ENVIRONMENT}" == "TEST" ]]; then \
-		cp environment.test .env.localdev; \
 	else \
-		> .env.localdev; \
+		cp environment.test .env.localdev; \
 	fi 
+
 .PHONY: local-init
-local-init: ## initialize service containers
+local-init: .env.localdev ## initialize service containers
 	$(docker_compose) up -d
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
 	$(docker_compose_run) $(FOLDER) alembic upgrade head
 	$(MAKE) local-seed
 	
 .PHONY: local-start
-local-start: local-envfile ## Start a local dev environment that's been stopped.
-	$(docker_compose) --env-file .env.localdev up -d 
+local-start: .env.localdev ## Start a local dev environment that's been stopped.
+	$(docker_compose) up -d 
 
 .PHONY: local-pgconsole
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
+
+.PHONY: local-db-tests
+local-db-tests: ## Run workflow db tests
+	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest test/"
+
 ### SWIPE Plugin Tests
 
 .PHONY: local-swipe-plugin-tests
-local-swipe-plugin-start: local-envfile
-	$(docker_compose) --profile moto --env-file .env.localdev up --force-recreate -d 
+local-swipe-plugin-start: .env.localdev
+	$(docker_compose) up --force-recreate -d 
 
 .PHONY: local-swipe-plugin-deploy-mock
 local-swipe-plugin-deploy-mock: local-swipe-plugin-start
-	- source environment.test; aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id --value ami-12345678 --type String --endpoint-url http://localhost:9000 --no-cli-pager
+	- source environment.test; aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id --value ami-12345678 --type String --endpoint-url http://localhost:4000 --no-cli-pager
 	source environment.test && \
 	cd terraform_test && \
 	find . -name '*tfstate*' | xargs rm -f && \
@@ -71,7 +74,7 @@ local-swipe-plugin-deploy-mock: local-swipe-plugin-start
 
 .PHONY: local-swipe-plugin-tests
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
-	docker compose exec workflows sh -c 'pytest terraform_test/'
+	$(docker_compose) exec workflows sh -c 'pytest terraform_test/'
 
 %: 
 	$(MAKE) -f platformics/Makefile $@ \

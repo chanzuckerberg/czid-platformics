@@ -1,9 +1,10 @@
-from platformics.api.core.settings import APISettings
+from settings import APISettings
 from sqlalchemy_utils import create_database, database_exists
 
 
-def create_db():
-    settings = APISettings.parse_obj({})
+
+def create_db() -> None:
+    settings = APISettings.model_validate({})
     db_uri = settings.SYNC_DB_URI
     if database_exists(db_uri):
         print("Database already exists!")
