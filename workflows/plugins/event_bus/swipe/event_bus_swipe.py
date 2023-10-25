@@ -4,7 +4,7 @@ import boto3
 import os
 from plugin_types import EventBus, WorkflowStatusMessage
 
-SQS_QUEUE_URL = os.environ.get("SQS_QUEUE_URL") 
+SQS_QUEUE_URL = os.environ.get("SQS_QUEUE_URL")
 
 
 class EventBusSWIPE(EventBus):
@@ -30,11 +30,10 @@ class EventBusSWIPE(EventBus):
             ReceiptHandle=receipt_handle,
         )
         return json.loads(message["Body"])
-        
+
     async def send(self, message: WorkflowStatusMessage) -> None:
         pass
 
-    
     async def poll(self) -> List[WorkflowStatusMessage]:
         if SQS_QUEUE_URL is None:
             return []
@@ -45,15 +44,11 @@ class EventBusSWIPE(EventBus):
         if message:
             if message["source"] == "aws.states":
                 workflow_status = WorkflowStatusMessage(
-                    runner_id=message["detail"]["executionArn"],
-                    status=f'WORKFLOW_{message["detail"]["status"]}'
+                    runner_id=message["detail"]["executionArn"], status=f'WORKFLOW_{message["detail"]["status"]}'
                 )
-                workflow_statuses.append(
-                    workflow_status
-                )
+                workflow_statuses.append(workflow_status)
             elif message["source"] == "aws.batch":
                 # TODO: store step status messages
                 pass
-                
-               
+
         return workflow_statuses
