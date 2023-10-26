@@ -86,7 +86,7 @@ def generate_gql_type_files(
             cls=entity,
             view=view,
         )
-        dest_filename = str(template_filename).replace("class_name", entity.snake_name)
+        dest_filename = str(template_filename).replace("class_name", (entity.snake_name + "s"))
         with open(os.path.join(output_prefix, dest_filename), mode="w", encoding="utf-8") as outfile:
             outfile.write(content)
             print(f"... wrote {dest_filename}")
@@ -104,8 +104,7 @@ def generate_db_models(output_prefix: str, environment: Environment, view: ViewW
 
 
 def generate_gql_types(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
-    # TODO: move to api/types/class_name.py
-    filename = "api/class_name.py"
+    filename = "api/types/class_name.py"
     generate_gql_type_files(output_prefix, filename, environment, view)
 
 
