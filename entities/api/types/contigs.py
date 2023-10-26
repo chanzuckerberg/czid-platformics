@@ -37,7 +37,6 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 # Define dataloaders for nested where clauses
-# TODO: handle pluralization
 async def batch_sequencing_read(
     keys: list[dict],
 ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]:
@@ -47,7 +46,7 @@ async def batch_sequencing_read(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
-    query = query.filter(db.SequencingRead.contig_id.in_(ids))
+    query = query.filter(db.SequencingRead.contigs.any(db.Contig.id.in_(ids)))
     result = await session.execute(query)
     return result.scalars().all()
 
@@ -72,6 +71,7 @@ class ContigWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
+    sequencing_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
     sequence: Optional[StrComparators] | None
     # entity_id: Optional[UUIDComparators] | None
 

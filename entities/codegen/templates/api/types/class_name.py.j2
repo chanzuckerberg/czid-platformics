@@ -45,7 +45,6 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 # Define dataloaders for nested where clauses
-# TODO: handle pluralization
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
 async def batch_{{ related_field.name }}(
@@ -57,7 +56,11 @@ async def batch_{{ related_field.name }}(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.{{ related_field.type }})
-    query = query.filter(db.{{ related_field. type }}.{{cls.snake_name}}_id.in_(ids))
+        {%- if related_field.multivalued %}
+    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
+        {%- else %}
+    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}s.any(db.{{ cls.name }}.id.in_(ids)))
+        {%- endif %}
     result = await session.execute(query)
     return result.scalars().all()
 
@@ -66,7 +69,11 @@ async def batch_{{ related_field.name }}(
 
 
 @strawberry.field(extensions=[DependencyExtension()])
+    {%- if related_field.multivalued %}
 async def load_{{ related_field.name }}(
+    {%- else %}
+async def load_{{ related_field.name }}s(
+    {%- endif %}
     root: "{{ cls.name }}",
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
@@ -91,11 +98,15 @@ class {{ cls.name }}WhereClause(TypedDict):
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.is_enum %}
         # TODO: need to fix enums, pass in the type of the enum
-    {{ attr.name }}: Optional[EnumComparators] | None
+    # {{ attr.name }}: Optional[EnumComparators] | None
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: Optional[IntComparators] | None
-        {%- elif attr.multivalued %}
+        {%- elif attr.inverse %}
+            {%- if attr.multivalued %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.name }}")]]
+            {%- else %}
+    {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.name }}s")]]
+            {%- endif%}
         {%- endif %}
     {%- endfor %}
 
@@ -117,7 +128,11 @@ class {{ cls.name }}(EntityInterface):
     # {{ attr.name }}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     # {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")] = load_{{ attr.related_class.snake_name }}s
         {%- elif attr.inverse %}
-    {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")] = load_{{ attr.related_class.snake_name }}s
+            {%- if attr.multivalued %}
+    {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")] = load_{{ attr.name }}
+            {%- else %}
+    {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")] = load_{{ attr.name }}s
+            {%- endif %}
         {%- endif %}
     {%- endfor %}
 

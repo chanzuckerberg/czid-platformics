@@ -37,7 +37,6 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 # Define dataloaders for nested where clauses
-# TODO: handle pluralization
 async def batch_sequencing_reads(
     keys: list[dict],
 ) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]:

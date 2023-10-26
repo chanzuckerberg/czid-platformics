@@ -40,7 +40,6 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 # Define dataloaders for nested where clauses
-# TODO: handle pluralization
 async def batch_sample(
     keys: list[dict],
 ) -> Annotated["Sample", strawberry.lazy("api.types.sample")]:
@@ -51,7 +50,6 @@ async def batch_sample(
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Sample)
     query = query.filter(db.Sample.sequencing_reads.any(db.SequencingRead.id.in_(ids)))
-    # query = query.filter(db.Sample.sequencing_read_id.in_(ids))
     result = await session.execute(query)
     return result.scalars().all()
 
@@ -103,8 +101,10 @@ class SequencingReadWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
+        # TODO: need to fix enums, pass in the type of the enum
     # nucleotide: Optional[EnumComparators] | None
     sequence: Optional[StrComparators] | None
+        # TODO: need to fix enums, pass in the type of the enum
     # protocol: Optional[EnumComparators] | None
     sample: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
     contigs: Optional[Annotated["ContigWhereClause", strawberry.lazy("api.types.contigs")]]
