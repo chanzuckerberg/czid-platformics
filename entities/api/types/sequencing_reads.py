@@ -23,6 +23,7 @@ from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
+from support.enums import Nucleotide, SequencingProtocol
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -49,6 +50,10 @@ async def batch_sample(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Sample)
+    # For each id in ids, filter the query to only include rows where the related field matches that id
+    # TODO: need to handle this for not 1:1 cases,
+    # ex: a sequencing read can have many (or no) contigs; given a list of sequencing read ids [1, 2, 3],
+    # return contig ids [[1, 2], [], [3]]
     query = query.filter(db.Sample.sequencing_reads.any(db.SequencingRead.id.in_(ids)))
     result = await session.execute(query)
     return result.scalars().all()
@@ -76,6 +81,10 @@ async def batch_contigs(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Contig)
+    # For each id in ids, filter the query to only include rows where the related field matches that id
+    # TODO: need to handle this for not 1:1 cases,
+    # ex: a sequencing read can have many (or no) contigs; given a list of sequencing read ids [1, 2, 3],
+    # return contig ids [[1, 2], [], [3]]
     query = query.filter(db.Contig.sequencing_read_id.in_(ids))
     result = await session.execute(query)
     return result.scalars().all()
@@ -101,14 +110,12 @@ class SequencingReadWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-        # TODO: need to fix enums, pass in the type of the enum
-    # nucleotide: Optional[EnumComparators] | None
+    nucleotide: Optional[EnumComparators[Nucleotide]] | None
     sequence: Optional[StrComparators] | None
-        # TODO: need to fix enums, pass in the type of the enum
-    # protocol: Optional[EnumComparators] | None
+    protocol: Optional[EnumComparators[SequencingProtocol]] | None
     sample: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
     contigs: Optional[Annotated["ContigWhereClause", strawberry.lazy("api.types.contigs")]]
-    # entity_id: Optional[UUIDComparators] | None
+    entity_id: Optional[UUIDComparators] | None
 
 @strawberry.type
 class SequencingRead(EntityInterface):
@@ -116,15 +123,15 @@ class SequencingRead(EntityInterface):
     producing_run_id: int
     owner_user_id: int
     collection_id: int
-    nucleotide: str
+    nucleotide: Nucleotide
     sequence: str
-    protocol: str
+    protocol: SequencingProtocol
     # TODO:
     # sequence_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     # sequence_file: Annotated["File", strawberry.lazy("api.types.sequence_files")] = load_files
     sample: Annotated["Sample", strawberry.lazy("api.types.samples")] = load_samples
     contigs: Annotated["Contig", strawberry.lazy("api.types.contigs")] = load_contigs
-    # entity_id: uuid.UUID
+    entity_id: uuid.UUID
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver

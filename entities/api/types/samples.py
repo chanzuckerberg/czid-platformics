@@ -46,6 +46,10 @@ async def batch_sequencing_reads(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
+    # For each id in ids, filter the query to only include rows where the related field matches that id
+    # TODO: need to handle this for not 1:1 cases,
+    # ex: a sequencing read can have many (or no) contigs; given a list of sequencing read ids [1, 2, 3],
+    # return contig ids [[1, 2], [], [3]]
     query = query.filter(db.SequencingRead.sample_id.in_(ids))
     result = await session.execute(query)
     return result.scalars().all()
@@ -74,7 +78,7 @@ class SampleWhereClause(TypedDict):
     name: Optional[StrComparators] | None
     location: Optional[StrComparators] | None
     sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
-    # entity_id: Optional[UUIDComparators] | None
+    entity_id: Optional[UUIDComparators] | None
 
 @strawberry.type
 class Sample(EntityInterface):
@@ -85,7 +89,7 @@ class Sample(EntityInterface):
     name: str
     location: str
     sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
-    # entity_id: uuid.UUID
+    entity_id: uuid.UUID
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver

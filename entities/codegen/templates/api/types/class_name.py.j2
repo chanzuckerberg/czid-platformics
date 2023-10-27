@@ -23,6 +23,14 @@ from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
+{%- for field in cls.enum_fields %}
+    {%- if loop.first %}
+from support.enums import 
+    {%- endif %}
+    {{- " " }}
+    {{- field.type}}
+    {{- "," if not loop.last else "" }}
+{%- endfor %}
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -56,6 +64,10 @@ async def batch_{{ related_field.name }}(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.{{ related_field.type }})
+    # For each id in ids, filter the query to only include rows where the related field matches that id
+    # TODO: need to handle this for not 1:1 cases,
+    # ex: a sequencing read can have many (or no) contigs; given a list of sequencing read ids [1, 2, 3],
+    # return contig ids [[1, 2], [], [3]]
         {%- if related_field.multivalued %}
     query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
         {%- else %}
@@ -93,12 +105,11 @@ class {{ cls.name }}WhereClause(TypedDict):
     collection_id: IntComparators | None
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "uuid" %}
-    # {{ attr.name }}: Optional[UUIDComparators] | None
+    {{ attr.name }}: Optional[UUIDComparators] | None
         {%- elif attr.type == "string" %}
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.is_enum %}
-        # TODO: need to fix enums, pass in the type of the enum
-    # {{ attr.name }}: Optional[EnumComparators] | None
+    {{ attr.name }}: Optional[EnumComparators[{{ attr.type }}]] | None
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: Optional[IntComparators] | None
         {%- elif attr.inverse %}
@@ -118,9 +129,11 @@ class {{ cls.name }}(EntityInterface):
     collection_id: int
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "uuid" %}
-    # {{ attr.name }}: uuid.UUID
-        {%- elif attr.type == "string" or attr.is_enum %}
+    {{ attr.name }}: uuid.UUID
+        {%- elif attr.type == "string" %}
     {{ attr.name }}: str
+        {%- elif attr.is_enum %}
+    {{ attr.name }}: {{ attr.type }}
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: int
         {%- elif attr.type == "File" %}
