@@ -59,14 +59,14 @@ class MultipartUploadCredentials:
 @strawberry.input()
 class FileUpload:
     name: str
-    file_format: typing.Optional[str] = None
+    file_format: str
     compression_type: typing.Optional[str] = None
 
 
 @strawberry.input()
 class FileCreate:
     name: str
-    file_format: typing.Optional[str] = None
+    file_format: str
     compression_type: typing.Optional[str] = None
     protocol: str
     namespace: str
@@ -89,8 +89,8 @@ class File:
     namespace: str
     path: str
     file_format: str
-    compression_type: str
-    size: int
+    compression_type: typing.Optional[int] = None
+    size: typing.Optional[int] = None
 
     @strawberry.field(extensions=[DependencyExtension()])
     def download_link(
@@ -106,6 +106,12 @@ class File:
             ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration
         )
         return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
+
+
+@strawberry.type
+class MultipartUploadResponse:
+    credentials: MultipartUploadCredentials
+    file: File
 
 
 @strawberry.input
@@ -127,7 +133,6 @@ async def resolve_files(
     where: typing.Optional[FileWhereClause] = None,
 ) -> typing.Sequence[File]:
     rows = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
-    print(rows)
     return rows  # type: ignore
 
 
@@ -246,8 +251,8 @@ async def upload_file(
     s3_client: S3Client = Depends(get_s3_client),
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
-) -> MultipartUploadCredentials:
-    credentials = await create_or_upload_file(
+) -> MultipartUploadResponse:
+    response = await create_or_upload_file(
         entity_id,
         entity_field_name,
         file,
@@ -259,8 +264,8 @@ async def upload_file(
         sts_client,
         settings,
     )
-    assert isinstance(credentials, MultipartUploadCredentials)  # reassure mypy that we're returning the right type
-    return credentials
+    assert isinstance(response, MultipartUploadResponse)  # reassure mypy that we're returning the right type
+    return response
 
 
 async def create_or_upload_file(
@@ -274,7 +279,7 @@ async def create_or_upload_file(
     s3_client: S3Client = Depends(get_s3_client),
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
-) -> db.File | MultipartUploadCredentials:
+) -> db.File | MultipartUploadResponse:
     # Basic validation
     if "/" in file.name:
         raise Exception("File name should not contain /")
@@ -328,4 +333,7 @@ async def create_or_upload_file(
 
     # If new file, create an STS token for multipart upload
     else:
-        return generate_multipart_upload_token(new_file, expiration, sts_client)
+        return MultipartUploadResponse(
+            file=new_file,
+            credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
+        )
