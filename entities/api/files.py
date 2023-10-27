@@ -12,6 +12,7 @@ from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from strawberry.scalars import JSON
+from strawberry.dataloader import DataLoader
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.api.core.deps import (
@@ -26,6 +27,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.security.authorization import CerbosAction, get_resource_query
 from files.format_handlers import get_validator
 from api.core.helpers import get_db_rows
+from api.types.entities import Entity
 from database.models import FileStatus
 
 
@@ -74,6 +76,58 @@ class FileCreate:
 
 
 # ------------------------------------------------------------------------------
+# Data loader for fetching a File's related entity
+# ------------------------------------------------------------------------------
+
+
+def cache_key(key: dict) -> str:
+    return key["id"]
+
+
+async def batch_entities(
+    keys: list[dict],
+) -> typing.Annotated["Entity", strawberry.lazy("api.types.entities")]:
+    session = keys[0]["session"]
+    cerbos_client = keys[0]["cerbos_client"]
+    principal = keys[0]["principal"]
+    file_ids = [key["id"] for key in keys]
+
+    # Infer entity IDs from each file ID
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
+    query = query.filter(db.File.id.in_(file_ids))
+    all_files = (await session.execute(query)).scalars().all()
+    entity_ids = [file.entity_id for file in all_files]
+
+    # Fetch Entity objects by ID
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Entity)
+    query = query.filter(db.Entity.id.in_(entity_ids))
+    all_entities = (await session.execute(query)).scalars().all()
+
+    # Group the results by Entity id (each file has exactly one entity it relates to)
+    result = []
+    for id in entity_ids:
+        matching_entities = [e for e in all_entities if e.entity_id == id]
+        assert len(matching_entities) == 1
+        result.append(matching_entities[0])
+    return result
+
+
+entity_loader = DataLoader(load_fn=batch_entities, cache_key_fn=cache_key)
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def load_entities(
+    root: "Entity",
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> typing.Annotated["Entity", strawberry.lazy("api.types.entities")]:
+    return await entity_loader.load(
+        {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
+    )
+
+
+# ------------------------------------------------------------------------------
 # Main types/inputs
 # ------------------------------------------------------------------------------
 
@@ -83,7 +137,7 @@ class File:
     id: uuid.UUID
     entity_id: uuid.UUID
     entity_field_name: str
-    # entity: Annotated["Entity", strawberry.lazy("api.types.entities")]
+    entity: typing.Annotated["Entity", strawberry.lazy("api.types.entities")] = load_entities
     status: FileStatus
     protocol: str
     namespace: str
