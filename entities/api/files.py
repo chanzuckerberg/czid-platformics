@@ -5,13 +5,13 @@ import strawberry
 import uuid
 import uuid6
 from fastapi import Depends
+from typing_extensions import TypedDict
 from mypy_boto3_s3.client import S3Client
 from mypy_boto3_sts.client import STSClient
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
+from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from strawberry.scalars import JSON
-
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.api.core.deps import (
@@ -25,10 +25,12 @@ from platformics.settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.security.authorization import CerbosAction, get_resource_query
 from files.format_handlers import get_validator
+from api.core.helpers import get_db_rows
+from database.models import FileStatus
 
 
 # ------------------------------------------------------------------------------
-# Types and inputs
+# Utility types/inputs
 # ------------------------------------------------------------------------------
 
 
@@ -71,8 +73,25 @@ class FileCreate:
     path: str
 
 
-@strawberry_sqlalchemy_mapper.type(db.File)
+# ------------------------------------------------------------------------------
+# Main types/inputs
+# ------------------------------------------------------------------------------
+
+
+@strawberry.type
 class File:
+    id: uuid.UUID
+    entity_id: uuid.UUID
+    entity_field_name: str
+    # entity: Annotated["Entity", strawberry.lazy("api.types.entities")]
+    status: FileStatus
+    protocol: str
+    namespace: str
+    path: str
+    file_format: str
+    compression_type: str
+    size: int
+
     @strawberry.field(extensions=[DependencyExtension()])
     def download_link(
         self,
@@ -87,6 +106,29 @@ class File:
             ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration
         )
         return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
+
+
+@strawberry.input
+class FileWhereClause(TypedDict):
+    id: typing.Optional[UUIDComparators]
+    status: typing.Optional[EnumComparators[FileStatus]]
+    protocol: typing.Optional[StrComparators]
+    namespace: typing.Optional[StrComparators]
+    path: typing.Optional[StrComparators]
+    compression_type: typing.Optional[StrComparators]
+    size: typing.Optional[IntComparators]
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_files(
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: typing.Optional[FileWhereClause] = None,
+) -> typing.Sequence[File]:
+    rows = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
+    print(rows)
+    return rows  # type: ignore
 
 
 # ------------------------------------------------------------------------------

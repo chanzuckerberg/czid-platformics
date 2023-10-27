@@ -60,6 +60,8 @@ codegen:  ## Update the GQL types used by the CLI
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
 	$(docker_compose_run) $(FOLDER) black database/models/
 	$(docker_compose_run) $(FOLDER) ruff check --fix database/models/
+	$(docker_compose_run) $(FOLDER) black database/models/ api/types/
+	$(docker_compose_run) $(FOLDER) ruff check --fix database/models/ api/types/
 
 ### CERBOS #############################################
 cerbos-tests:

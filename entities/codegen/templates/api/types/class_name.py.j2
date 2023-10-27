@@ -23,6 +23,7 @@ from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
+from api.files import File
 {%- for field in cls.enum_fields %}
     {%- if loop.first %}
 from support.enums import 

@@ -3,7 +3,7 @@
 
 import uuid
 import typing
-from typing import Any, Mapping, Optional, Tuple
+from typing import Optional
 
 import database.models as db
 import strawberry
@@ -12,13 +12,10 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUIDComparators
 from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
@@ -33,8 +30,10 @@ else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
 
+
 def cache_key(key: dict) -> str:
     return key["id"]
+
 
 # Define dataloaders for nested where clauses
 async def batch_sequencing_reads(
@@ -69,6 +68,7 @@ async def load_sequencing_reads(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
 
+
 @strawberry.input
 class SampleWhereClause(TypedDict):
     id: UUIDComparators | None
@@ -79,6 +79,7 @@ class SampleWhereClause(TypedDict):
     location: Optional[StrComparators] | None
     sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
     entity_id: Optional[UUIDComparators] | None
+
 
 @strawberry.type
 class Sample(EntityInterface):
@@ -91,11 +92,11 @@ class Sample(EntityInterface):
     sequencing_reads: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
     entity_id: uuid.UUID
 
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-Sample.__strawberry_definition__.is_type_of = (
-    lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
-)
+Sample.__strawberry_definition__.is_type_of = lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples(

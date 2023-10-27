@@ -3,7 +3,7 @@
 
 import uuid
 import typing
-from typing import Any, Mapping, Optional, Tuple
+from typing import Optional
 
 import database.models as db
 import strawberry
@@ -15,10 +15,7 @@ from platformics.api.core.deps import get_cerbos_client, get_db_session, require
 from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
@@ -37,8 +34,10 @@ else:
     ContigWhereClause = "ContigWhereClause"
     Contig = "Contig"
 
+
 def cache_key(key: dict) -> str:
     return key["id"]
+
 
 # Define dataloaders for nested where clauses
 async def batch_sample(
@@ -72,6 +71,8 @@ async def load_samples(
     return await sample_loader.load(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
+
+
 async def batch_contigs(
     keys: list[dict],
 ) -> Annotated["Contig", strawberry.lazy("api.types.contigs")]:
@@ -104,6 +105,7 @@ async def load_contigs(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
 
+
 @strawberry.input
 class SequencingReadWhereClause(TypedDict):
     id: UUIDComparators | None
@@ -116,6 +118,7 @@ class SequencingReadWhereClause(TypedDict):
     sample: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.samples")]]
     contigs: Optional[Annotated["ContigWhereClause", strawberry.lazy("api.types.contigs")]]
     entity_id: Optional[UUIDComparators] | None
+
 
 @strawberry.type
 class SequencingRead(EntityInterface):
@@ -131,11 +134,13 @@ class SequencingRead(EntityInterface):
     contigs: Annotated["Contig", strawberry.lazy("api.types.contigs")] = load_contigs
     entity_id: uuid.UUID
 
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 SequencingRead.__strawberry_definition__.is_type_of = (
     lambda obj, info: type(obj) == db.SequencingRead or type(obj) == SequencingRead
 )
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_sequencing_reads(
