@@ -64,7 +64,7 @@ async def load_sequencing_reads(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]:
+) -> Annotated["Contig", strawberry.lazy("api.types.sequencing_read")]:
     return await sequencing_read_loader.load(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )

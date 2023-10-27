@@ -126,9 +126,7 @@ class SequencingRead(EntityInterface):
     nucleotide: Nucleotide
     sequence: str
     protocol: SequencingProtocol
-    # TODO:
-    # sequence_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    # sequence_file: Annotated["File", strawberry.lazy("api.types.sequence_files")] = load_files
+    sequence_file_id: uuid.UUID
     sample: Annotated["Sample", strawberry.lazy("api.types.samples")] = load_samples
     contigs: Annotated["Contig", strawberry.lazy("api.types.contigs")] = load_contigs
     entity_id: uuid.UUID

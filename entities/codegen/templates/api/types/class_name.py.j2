@@ -90,7 +90,7 @@ async def load_{{ related_field.name }}s(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> Annotated["SequencingRead", strawberry.lazy("api.types.{{ related_field.name }}")]:
+) -> Annotated["{{ cls.name }}", strawberry.lazy("api.types.{{ related_field.name }}")]:
     return await {{ related_field.name }}_loader.load(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
@@ -137,9 +137,7 @@ class {{ cls.name }}(EntityInterface):
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: int
         {%- elif attr.type == "File" %}
-    # TODO:
-    # {{ attr.name }}_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    # {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")] = load_{{ attr.related_class.snake_name }}s
+    {{ attr.name }}_id: uuid.UUID
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
     {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")] = load_{{ attr.name }}
