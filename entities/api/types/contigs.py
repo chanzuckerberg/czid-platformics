@@ -3,7 +3,7 @@
 
 import uuid
 import typing
-from typing import Optional
+from typing import Any, Mapping, Optional, Tuple
 
 import database.models as db
 import strawberry
@@ -12,10 +12,13 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.api.core.strawberry_extensions import DependencyExtension
+from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import UUID
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
@@ -35,29 +38,31 @@ else:
 # Dataloaders
 # ------------------------------------------------------------------------------
 
-
 def cache_key(key: dict) -> str:
     return key["id"]
-
-
-# Define dataloaders for nested where clauses
+# Given a list of Contig ids, return a list of lists, where the inner lists correspond to the
+# sequencing_read associated with each Contig id.
 async def batch_sequencing_read(
     keys: list[dict],
-) -> Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]:
+) -> typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
-    # For each id in ids, filter the query to only include rows where the related field matches that id
-    # TODO: need to handle this for not 1:1 cases,
-    # ex: a sequencing read can have many (or no) contigs; given a list of sequencing read ids [1, 2, 3],
-    # return contig ids [[1, 2], [], [3]]
+    # The relationship is many-to-one or many-to-many (e.g. if the inverse relationship is multivalued)
+    # Get all sequencing_reads that are associated with at least one Contig id
     query = query.filter(db.SequencingRead.contigs.any(db.Contig.id.in_(ids)))
-    result = await session.execute(query)
-    return result.scalars().all()
+    all_sequencing_reads = await session.execute(query)
+    all_sequencing_reads = all_sequencing_reads.scalars().all()
 
+    # Group the results by Contig id
+    result = []
+    for id in ids:
+        # TODO: fix MissingGreenlet error; can't access SequencingRead fields here
+        result += [list(filter(lambda sequencing_read: id in sequencing_read.contigs, all_sequencing_reads))]
+    return result
 
 sequencing_read_loader = DataLoader(load_fn=batch_sequencing_read, cache_key_fn=cache_key)
 
@@ -68,16 +73,14 @@ async def load_sequencing_reads(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> Annotated["Contig", strawberry.lazy("api.types.sequencing_read")]:
+) -> typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     return await sequencing_read_loader.load(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
 
-
 # ------------------------------------------------------------------------------
 # Dataloader for File object
 # ------------------------------------------------------------------------------
-
 
 # Given a list of Contig IDs for a certain file type, return related Files
 def load_files_from(attr_name):
@@ -88,7 +91,10 @@ def load_files_from(attr_name):
         ids = [key["id"] for key in keys]
 
         query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
-        query = query.filter(db.File.entity_id.in_(ids), db.File.entity_field_name == attr_name)
+        query = query.filter(
+            db.File.entity_id.in_(ids),
+            db.File.entity_field_name == attr_name
+        )
         result = await session.execute(query)
         return result.scalars().all()
 
@@ -107,11 +113,9 @@ def load_files_from(attr_name):
 
     return load_files
 
-
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
-
 
 # Supported WHERE clause attributes
 @strawberry.input
@@ -124,7 +128,6 @@ class ContigWhereClause(TypedDict):
     sequence: Optional[StrComparators] | None
     entity_id: Optional[UUIDComparators] | None
 
-
 # Define Contig type
 @strawberry.type
 class Contig(EntityInterface):
@@ -132,15 +135,15 @@ class Contig(EntityInterface):
     producing_run_id: int
     owner_user_id: int
     collection_id: int
-    sequencing_read: Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")] = load_sequencing_reads
+    sequencing_read: typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]] = load_sequencing_reads
     sequence: str
     entity_id: uuid.UUID
 
-
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-Contig.__strawberry_definition__.is_type_of = lambda obj, info: type(obj) == db.Contig or type(obj) == Contig
-
+Contig.__strawberry_definition__.is_type_of = (
+    lambda obj, info: type(obj) == db.Contig or type(obj) == Contig
+)
 
 # Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])

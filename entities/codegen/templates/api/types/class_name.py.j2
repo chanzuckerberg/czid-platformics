@@ -57,30 +57,47 @@ else:
 def cache_key(key: dict) -> str:
     return key["id"]
 
-# Define dataloaders for nested where clauses
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
+# Given a list of {{cls.name}} ids, return a list of lists, where the inner lists correspond to the
+# {{related_field.name}} associated with each {{cls.name}} id.
 async def batch_{{ related_field.name }}(
     keys: list[dict],
-) -> Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]:
+) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.{{ related_field.type }})
-    # For each id in ids, filter the query to only include rows where the related field matches that id
-    # TODO: need to handle this for not 1:1 cases,
-    # ex: a sequencing read can have many (or no) contigs; given a list of sequencing read ids [1, 2, 3],
-    # return contig ids [[1, 2], [], [3]]
-        {%- if related_field.multivalued %}
-    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
-        {%- else %}
+        {%- for inverse_field in related_field.related_class.related_fields if inverse_field.related_class.name == cls.name %}
+            {%- if inverse_field.multivalued %}
+    # The relationship is many-to-one or many-to-many (e.g. if the inverse relationship is multivalued)
+    # Get all {{ related_field.name }}s that are associated with at least one {{ cls.name }} id
     query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}s.any(db.{{ cls.name }}.id.in_(ids)))
-        {%- endif %}
-    result = await session.execute(query)
-    return result.scalars().all()
+    all_{{ related_field.name }}s = await session.execute(query)
+    all_{{ related_field.name }}s = all_{{ related_field.name }}s.scalars().all()
 
+    # Group the results by {{cls.name}} id
+    result = []
+    for id in ids:
+        # TODO: fix MissingGreenlet error; can't access {{ related_field.related_class.name }} fields here
+        result += [list(filter(lambda {{ related_field.name }}: id in {{ related_field.name}}.{{ related_field.inverse_field }}, all_{{ related_field.name }}s))]
+    return result
+            {%- else %}
+    # The relationship is one-to-one or one-to-many
+    # Get all {{ related_field.name }} associated with the {{ cls.name }} ids
+    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
+    all_{{ related_field.name }} = await session.execute(query)
+    all_{{ related_field.name }} = all_{{ related_field.name }}.scalars().all()
+
+    # Group the results by {{cls.name}} id
+    result = []
+    for id in ids:
+        result += [list(filter(lambda {{ related_field.name }}: {{ related_field.name }}.{{cls.snake_name}}_id == id, all_{{ related_field.name }}))]
+    return result
+            {%- endif %}
+        {%- endfor %}
 
 {{ related_field.name }}_loader = DataLoader(load_fn=batch_{{ related_field.name }}, cache_key_fn=cache_key)
 
@@ -95,7 +112,7 @@ async def load_{{ related_field.name }}s(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> Annotated["{{ cls.name }}", strawberry.lazy("api.types.{{ related_field.name }}")]:
+) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
     return await {{ related_field.name }}_loader.load(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
@@ -187,9 +204,9 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
-    {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")] = load_{{ attr.name }}
+    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]] = load_{{ attr.name }}
             {%- else %}
-    {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")] = load_{{ attr.name }}s
+    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]] = load_{{ attr.name }}s
             {%- endif %}
         {%- endif %}
     {%- endfor %}
