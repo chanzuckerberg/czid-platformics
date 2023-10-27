@@ -50,6 +50,10 @@ else:
         {%- endif %}
     {%- endfor %}
 
+# ------------------------------------------------------------------------------
+# Dataloaders
+# ------------------------------------------------------------------------------
+
 def cache_key(key: dict) -> str:
     return key["id"]
 
@@ -98,6 +102,46 @@ async def load_{{ related_field.name }}s(
     {%- endif %}
 {%- endfor %}
 
+# ------------------------------------------------------------------------------
+# Dataloader for File object
+# ------------------------------------------------------------------------------
+
+# Given a list of {{ cls.name }} IDs for a certain file type, return related Files
+def load_files_from(attr_name):
+    async def batch_files(keys: list[dict]) -> Annotated["File", strawberry.lazy("api.files")]:
+        session = keys[0]["session"]
+        cerbos_client = keys[0]["cerbos_client"]
+        principal = keys[0]["principal"]
+        ids = [key["id"] for key in keys]
+
+        query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
+        query = query.filter(
+            db.File.entity_id.in_(ids),
+            db.File.entity_field_name == attr_name
+        )
+        result = await session.execute(query)
+        return result.scalars().all()
+
+    file_loader = DataLoader(load_fn=batch_files, cache_key_fn=cache_key)
+
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def load_files(
+        root: "{{ cls.name }}",
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+    ) -> Annotated["{{ cls.name }}", strawberry.lazy("api.files")]:
+        return await file_loader.load(
+            {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
+        )
+
+    return load_files
+
+# ------------------------------------------------------------------------------
+# Define Strawberry GQL types
+# ------------------------------------------------------------------------------
+
+# Supported WHERE clause attributes
 @strawberry.input
 class {{ cls.name }}WhereClause(TypedDict):
     id: UUIDComparators | None
@@ -122,6 +166,7 @@ class {{ cls.name }}WhereClause(TypedDict):
         {%- endif %}
     {%- endfor %}
 
+# Define {{ cls.name }} type
 @strawberry.type
 class {{ cls.name }}(EntityInterface):
     id: uuid.UUID
@@ -139,6 +184,7 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: int
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: uuid.UUID
+    {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
     {{ attr.name }}: Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")] = load_{{ attr.name }}
@@ -154,6 +200,7 @@ class {{ cls.name }}(EntityInterface):
     lambda obj, info: type(obj) == db.{{ cls.name }} or type(obj) == {{ cls.name }}
 )
 
+# Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_{{ cls.snake_name|lower }}s(
     session: AsyncSession = Depends(get_db_session, use_cache=False),

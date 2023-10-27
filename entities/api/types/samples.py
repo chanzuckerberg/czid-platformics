@@ -20,6 +20,7 @@ from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
+from api.files import File
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -29,6 +30,10 @@ if TYPE_CHECKING:
 else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
+
+# ------------------------------------------------------------------------------
+# Dataloaders
+# ------------------------------------------------------------------------------
 
 
 def cache_key(key: dict) -> str:
@@ -69,6 +74,46 @@ async def load_sequencing_reads(
     )
 
 
+# ------------------------------------------------------------------------------
+# Dataloader for File object
+# ------------------------------------------------------------------------------
+
+
+# Given a list of Sample IDs for a certain file type, return related Files
+def load_files_from(attr_name):
+    async def batch_files(keys: list[dict]) -> Annotated["File", strawberry.lazy("api.files")]:
+        session = keys[0]["session"]
+        cerbos_client = keys[0]["cerbos_client"]
+        principal = keys[0]["principal"]
+        ids = [key["id"] for key in keys]
+
+        query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
+        query = query.filter(db.File.entity_id.in_(ids), db.File.entity_field_name == attr_name)
+        result = await session.execute(query)
+        return result.scalars().all()
+
+    file_loader = DataLoader(load_fn=batch_files, cache_key_fn=cache_key)
+
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def load_files(
+        root: "Sample",
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+    ) -> Annotated["Sample", strawberry.lazy("api.files")]:
+        return await file_loader.load(
+            {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
+        )
+
+    return load_files
+
+
+# ------------------------------------------------------------------------------
+# Define Strawberry GQL types
+# ------------------------------------------------------------------------------
+
+
+# Supported WHERE clause attributes
 @strawberry.input
 class SampleWhereClause(TypedDict):
     id: UUIDComparators | None
@@ -81,6 +126,7 @@ class SampleWhereClause(TypedDict):
     entity_id: Optional[UUIDComparators] | None
 
 
+# Define Sample type
 @strawberry.type
 class Sample(EntityInterface):
     id: uuid.UUID
@@ -98,6 +144,7 @@ class Sample(EntityInterface):
 Sample.__strawberry_definition__.is_type_of = lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
 
 
+# Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples(
     session: AsyncSession = Depends(get_db_session, use_cache=False),

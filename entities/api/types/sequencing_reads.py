@@ -20,6 +20,7 @@ from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
 from typing import TYPE_CHECKING, Annotated
+from api.files import File
 from support.enums import Nucleotide, SequencingProtocol
 
 E = typing.TypeVar("E", db.File, db.Entity)
@@ -33,6 +34,10 @@ else:
     Sample = "Sample"
     ContigWhereClause = "ContigWhereClause"
     Contig = "Contig"
+
+# ------------------------------------------------------------------------------
+# Dataloaders
+# ------------------------------------------------------------------------------
 
 
 def cache_key(key: dict) -> str:
@@ -106,6 +111,46 @@ async def load_contigs(
     )
 
 
+# ------------------------------------------------------------------------------
+# Dataloader for File object
+# ------------------------------------------------------------------------------
+
+
+# Given a list of SequencingRead IDs for a certain file type, return related Files
+def load_files_from(attr_name):
+    async def batch_files(keys: list[dict]) -> Annotated["File", strawberry.lazy("api.files")]:
+        session = keys[0]["session"]
+        cerbos_client = keys[0]["cerbos_client"]
+        principal = keys[0]["principal"]
+        ids = [key["id"] for key in keys]
+
+        query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
+        query = query.filter(db.File.entity_id.in_(ids), db.File.entity_field_name == attr_name)
+        result = await session.execute(query)
+        return result.scalars().all()
+
+    file_loader = DataLoader(load_fn=batch_files, cache_key_fn=cache_key)
+
+    @strawberry.field(extensions=[DependencyExtension()])
+    async def load_files(
+        root: "SequencingRead",
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+    ) -> Annotated["SequencingRead", strawberry.lazy("api.files")]:
+        return await file_loader.load(
+            {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
+        )
+
+    return load_files
+
+
+# ------------------------------------------------------------------------------
+# Define Strawberry GQL types
+# ------------------------------------------------------------------------------
+
+
+# Supported WHERE clause attributes
 @strawberry.input
 class SequencingReadWhereClause(TypedDict):
     id: UUIDComparators | None
@@ -120,6 +165,7 @@ class SequencingReadWhereClause(TypedDict):
     entity_id: Optional[UUIDComparators] | None
 
 
+# Define SequencingRead type
 @strawberry.type
 class SequencingRead(EntityInterface):
     id: uuid.UUID
@@ -130,6 +176,7 @@ class SequencingRead(EntityInterface):
     sequence: str
     protocol: SequencingProtocol
     sequence_file_id: uuid.UUID
+    sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")
     sample: Annotated["Sample", strawberry.lazy("api.types.samples")] = load_samples
     contigs: Annotated["Contig", strawberry.lazy("api.types.contigs")] = load_contigs
     entity_id: uuid.UUID
@@ -142,6 +189,7 @@ SequencingRead.__strawberry_definition__.is_type_of = (
 )
 
 
+# Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_sequencing_reads(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
