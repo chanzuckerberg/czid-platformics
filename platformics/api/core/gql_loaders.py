@@ -117,23 +117,6 @@ def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]
     return typing.cast(typing.Sequence[T], resolve_entity)
 
 
-# FIXME: error: Name "db.File" is not defined
-def get_file_loader(sql_model: type[db.File], gql_type: type[T]) -> typing.Sequence[T]:  # type: ignore
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def resolve_file(
-        id: typing.Optional[uuid.UUID] = None,
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(require_auth_principal),
-    ) -> typing.Sequence[db.File]:  # type: ignore
-        filters = []
-        if id:
-            filters.append(sql_model.id == id)
-        return await get_db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-
-    return typing.cast(typing.Sequence[T], resolve_file)
-
-
 def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def create(

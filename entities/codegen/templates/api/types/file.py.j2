@@ -22,11 +22,6 @@ from platformics.api.core.gql_to_sql import strawberry_sqlalchemy_mapper
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
-
-class File:
-    pass
-
-
 @strawberry.input
 class FileSetParams(TypedDict):
     status: typing.Optional[FileStatus]
@@ -34,18 +29,6 @@ class FileSetParams(TypedDict):
     namespace: typing.Optional[str]
     path: typing.Optional[str]
     compression_type: typing.Optional[str]
-
-
-@strawberry.input
-class FileWhereClause(TypedDict):
-    id: typing.Optional[UUIDComparators]
-    status: typing.Optional[EnumComparators[FileStatus]]
-    protocol: typing.Optional[StrComparators]
-    namespace: typing.Optional[StrComparators]
-    path: typing.Optional[StrComparators]
-    compression_type: typing.Optional[StrComparators]
-    size: typing.Optional[IntComparators]
-
 
 @strawberry.type
 class FileUpdated:
