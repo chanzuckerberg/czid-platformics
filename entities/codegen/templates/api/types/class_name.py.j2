@@ -63,7 +63,11 @@ def cache_key(key: dict) -> str:
 # {{related_field.name}} associated with each {{cls.name}} id.
 async def batch_{{ related_field.name }}(
     keys: list[dict],
+        {%- if related_field.multivalued %}
 ) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
+        {%- else %}
+) -> Optional[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
+        {%- endif %}
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
@@ -72,30 +76,69 @@ async def batch_{{ related_field.name }}(
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.{{ related_field.type }})
         {%- for inverse_field in related_field.related_class.related_fields if inverse_field.related_class.name == cls.name %}
             {%- if inverse_field.multivalued %}
-    # The relationship is many-to-one or many-to-many (e.g. if the inverse relationship is multivalued)
-    # Get all {{ related_field.name }}s that are associated with at least one {{ cls.name }} id
+                {%- if related_field.multivalued %}
+    # The relationship is many-to-many
+    # Get all {{ related_field.name }}s that are associated with at least one of the {{ cls.name }} ids
     query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}s.any(db.{{ cls.name }}.id.in_(ids)))
-    all_{{ related_field.name }}s = await session.execute(query)
-    all_{{ related_field.name }}s = all_{{ related_field.name }}s.scalars().all()
 
-    # Group the results by {{cls.name}} id
-    result = []
-    for id in ids:
-        # TODO: fix MissingGreenlet error; can't access {{ related_field.related_class.name }} fields here
-        result += [list(filter(lambda {{ related_field.name }}: id in {{ related_field.name}}.{{ related_field.inverse_field }}, all_{{ related_field.name }}s))]
-    return result
-            {%- else %}
-    # The relationship is one-to-one or one-to-many
-    # Get all {{ related_field.name }} associated with the {{ cls.name }} ids
-    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
     all_{{ related_field.name }} = await session.execute(query)
     all_{{ related_field.name }} = all_{{ related_field.name }}.scalars().all()
 
     # Group the results by {{cls.name}} id
     result = []
     for id in ids:
-        result += [list(filter(lambda {{ related_field.name }}: {{ related_field.name }}.{{cls.snake_name}}_id == id, all_{{ related_field.name }}))]
+        grouped_{{ related_field.name }} = []
+        for {{ related_field.related_class.snake_name }} in all_{{ related_field.name }}:
+            if id in [{{ cls.snake_name }}.id for {{ cls.snake_name }} in await {{ related_field.related_class.snake_name }}.awaitable_attrs.{{cls.snake_name}}s]:
+                grouped_{{ related_field.name }}.append({{ related_field.related_class.snake_name }})
+        result += [grouped_{{ related_field.name }}]
     return result
+                {%- else %}
+    # The relationship is many-to-one
+    # Get all {{ related_field.name }}s that are associated with at least one of the {{ cls.name }} ids
+    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}s.any(db.{{ cls.name }}.id.in_(ids)))
+
+    all_{{ related_field.name }}s = await session.execute(query)
+    all_{{ related_field.name }}s = all_{{ related_field.name }}s.scalars().all()
+
+    # Order the results by {{cls.name}} ids
+    result = []
+    for id in ids:
+        for {{ related_field.name }} in all_{{ related_field.name }}s:
+            if id in [{{ cls.snake_name }}.id for {{ cls.snake_name }} in await {{ related_field.name }}.awaitable_attrs.{{cls.snake_name}}s]:
+                result.append({{ related_field.name }})
+    return result
+                {%- endif %}
+            {%- else %}
+                {%- if related_field.multivalued %}
+    # The relationship is one-to-many
+    # Get all {{ related_field.name }} associated with the {{ cls.name }} ids
+    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
+
+    all_{{ related_field.name }} = await session.execute(query)
+    all_{{ related_field.name }} = all_{{ related_field.name }}.scalars().all()
+
+    # Group the results by {{cls.name}} id
+    result = []
+    for id in ids:
+        grouped_{{ related_field.name }} = []
+        for {{ related_field.related_class.snake_name }} in all_{{ related_field.name }}:
+            if id == await {{ related_field.related_class.snake_name }}.awaitable_attrs.{{cls.snake_name}}_id:
+                grouped_{{ related_field.name }}.append({{ related_field.related_class.snake_name }})
+        result += [grouped_{{ related_field.name }}]
+    return result
+                {%- else %}
+    # The relationship is one-to-one
+    # Get all {{ related_field.name }} associated with the {{ cls.name }} ids
+    query = query.filter(db.{{ related_field.type }}.{{cls.snake_name}}_id.in_(ids))
+
+    all_{{ related_field.name }}s = await session.execute(query)
+    all_{{ related_field.name }}s = all_{{ related_field.name }}.scalars().all()
+
+    # Order the results by {{cls.name}} ids
+    result = [next({{ related_field.name }} for {{ related_field.name }} in all_{{ related_field.name }}s if await {{ related_field.name }}.{{cls.snake_name}}_id == id) for id in ids]
+    return result
+                {%- endif %}
             {%- endif %}
         {%- endfor %}
 
@@ -206,7 +249,7 @@ class {{ cls.name }}(EntityInterface):
             {%- if attr.multivalued %}
     {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]] = load_{{ attr.name }}
             {%- else %}
-    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]] = load_{{ attr.name }}s
+    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]] = load_{{ attr.name }}s
             {%- endif %}
         {%- endif %}
     {%- endfor %}

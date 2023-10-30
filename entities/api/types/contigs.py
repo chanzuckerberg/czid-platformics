@@ -44,24 +44,26 @@ def cache_key(key: dict) -> str:
 # sequencing_read associated with each Contig id.
 async def batch_sequencing_read(
     keys: list[dict],
-) -> typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
+) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
-    # The relationship is many-to-one or many-to-many (e.g. if the inverse relationship is multivalued)
-    # Get all sequencing_reads that are associated with at least one Contig id
+    # The relationship is many-to-one
+    # Get all sequencing_reads that are associated with at least one of the Contig ids
     query = query.filter(db.SequencingRead.contigs.any(db.Contig.id.in_(ids)))
+
     all_sequencing_reads = await session.execute(query)
     all_sequencing_reads = all_sequencing_reads.scalars().all()
 
-    # Group the results by Contig id
+    # Order the results by Contig ids
     result = []
     for id in ids:
-        # TODO: fix MissingGreenlet error; can't access SequencingRead fields here
-        result += [list(filter(lambda sequencing_read: id in sequencing_read.contigs, all_sequencing_reads))]
+        for sequencing_read in all_sequencing_reads:
+            if id in [contig.id for contig in await sequencing_read.awaitable_attrs.contigs]:
+                result.append(sequencing_read)
     return result
 
 sequencing_read_loader = DataLoader(load_fn=batch_sequencing_read, cache_key_fn=cache_key)
@@ -135,7 +137,7 @@ class Contig(EntityInterface):
     producing_run_id: int
     owner_user_id: int
     collection_id: int
-    sequencing_read: typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]] = load_sequencing_reads
+    sequencing_read: Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]] = load_sequencing_reads
     sequence: str
     entity_id: uuid.UUID
 

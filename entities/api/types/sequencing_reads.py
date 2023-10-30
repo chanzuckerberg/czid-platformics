@@ -48,24 +48,26 @@ def cache_key(key: dict) -> str:
 # sample associated with each SequencingRead id.
 async def batch_sample(
     keys: list[dict],
-) -> typing.Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
+) -> Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Sample)
-    # The relationship is many-to-one or many-to-many (e.g. if the inverse relationship is multivalued)
-    # Get all samples that are associated with at least one SequencingRead id
+    # The relationship is many-to-one
+    # Get all samples that are associated with at least one of the SequencingRead ids
     query = query.filter(db.Sample.sequencing_reads.any(db.SequencingRead.id.in_(ids)))
+
     all_samples = await session.execute(query)
     all_samples = all_samples.scalars().all()
 
-    # Group the results by SequencingRead id
+    # Order the results by SequencingRead ids
     result = []
     for id in ids:
-        # TODO: fix MissingGreenlet error; can't access Sample fields here
-        result += [list(filter(lambda sample: id in sample.sequencing_reads, all_samples))]
+        for sample in all_samples:
+            if id in [sequencing_read.id for sequencing_read in await sample.awaitable_attrs.sequencing_reads]:
+                result.append(sample)
     return result
 
 sample_loader = DataLoader(load_fn=batch_sample, cache_key_fn=cache_key)
@@ -92,16 +94,21 @@ async def batch_contigs(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Contig)
-    # The relationship is one-to-one or one-to-many
+    # The relationship is one-to-many
     # Get all contigs associated with the SequencingRead ids
     query = query.filter(db.Contig.sequencing_read_id.in_(ids))
+
     all_contigs = await session.execute(query)
     all_contigs = all_contigs.scalars().all()
 
     # Group the results by SequencingRead id
     result = []
     for id in ids:
-        result += [list(filter(lambda contigs: contigs.sequencing_read_id == id, all_contigs))]
+        grouped_contigs = []
+        for contig in all_contigs:
+            if id == await contig.awaitable_attrs.sequencing_read_id:
+                grouped_contigs.append(contig)
+        result += [grouped_contigs]
     return result
 
 contigs_loader = DataLoader(load_fn=batch_contigs, cache_key_fn=cache_key)
@@ -183,7 +190,7 @@ class SequencingRead(EntityInterface):
     protocol: SequencingProtocol
     sequence_file_id: uuid.UUID
     sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")
-    sample: typing.Sequence[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples
+    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples
     contigs: typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs
     entity_id: uuid.UUID
 

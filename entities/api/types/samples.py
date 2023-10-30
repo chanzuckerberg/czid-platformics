@@ -51,16 +51,21 @@ async def batch_sequencing_reads(
     ids = [key["id"] for key in keys]
 
     query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.SequencingRead)
-    # The relationship is one-to-one or one-to-many
+    # The relationship is one-to-many
     # Get all sequencing_reads associated with the Sample ids
     query = query.filter(db.SequencingRead.sample_id.in_(ids))
+
     all_sequencing_reads = await session.execute(query)
     all_sequencing_reads = all_sequencing_reads.scalars().all()
 
     # Group the results by Sample id
     result = []
     for id in ids:
-        result += [list(filter(lambda sequencing_reads: sequencing_reads.sample_id == id, all_sequencing_reads))]
+        grouped_sequencing_reads = []
+        for sequencing_read in all_sequencing_reads:
+            if id == await sequencing_read.awaitable_attrs.sample_id:
+                grouped_sequencing_reads.append(sequencing_read)
+        result += [grouped_sequencing_reads]
     return result
 
 sequencing_reads_loader = DataLoader(load_fn=batch_sequencing_reads, cache_key_fn=cache_key)
