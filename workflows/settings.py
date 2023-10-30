@@ -5,6 +5,11 @@ from platformics.settings import APISettings as PlatformicsAPISettings
 from platformics.settings import CLISettings as PlatformicCLISettings
 
 
+class SWIPEEventBusSettings(BaseModel):
+    SQS_QUEUE_URL: str
+    BOTO_ENDPOINT_URL: str
+
+
 class RedisEventBusSettings(BaseModel):
     REDIS_URL: str
     QUEUE_NAME: str
@@ -12,6 +17,7 @@ class RedisEventBusSettings(BaseModel):
 
 class EventBusSettings(BaseModel):
     REDIS: RedisEventBusSettings
+    SWIPE: SWIPEEventBusSettings
 
 
 class Settings(PlatformicsSettings):
