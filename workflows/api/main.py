@@ -1,5 +1,6 @@
 import configparser
 import typing
+import json
 
 import database.models as db
 import strawberry
@@ -7,6 +8,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from config import load_event_bus, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI, Request
+from manifest import Manifest
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -71,6 +73,12 @@ class WorkflowRunner:
     name: str
     supported_workflow_types: typing.List[str]
     description: str
+
+
+@strawberry.input
+class WorkflowInput:
+    name: str
+    value: str
 
 
 @strawberry.type
@@ -138,73 +146,41 @@ class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
         self,
-        user_id: int,
-        project_id: int,
-        execution_id: str,
-        inputs_json: str,
-        outputs_json: str,
-        status: str,
+        project_id: str,
         workflow_version_id: int,
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> Run:
-        db_run = db.Run(
-            user_id=user_id,
-            project_id=project_id,
-            execution_id=execution_id,
-            inputs_json=inputs_json,
-            outputs_json=outputs_json,
-            status=status,
-            workflow_version_id=workflow_version_id,
-        )
-        session.add(db_run)
-        await session.commit()
-        return db_run  # type: ignore
-
-    @strawberry.mutation(extensions=[DependencyExtension()])
-    async def submit_workflow(
-        self,
-        workflow_inputs: str,
+        workflow_inputs: typing.List[WorkflowInput],
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         event_bus: EventBus = Depends(get_event_bus),
     ) -> Run:
-        # TODO: how do we determine the docker_image_id? Argument to miniwdl, may not be defined,
-        # other devs may want to submit custom containers
-        # inputs_json = {
-        #     "query_0": "s3://idseq-samples-development/rlim-test/test-upload/valid_input1.fastq",
-        #     "db_chunk": "s3://czid-public-references/ncbi-indexes-prod/2021-01-22/index-generation-2/nt_k14_w8_20/nt.part_001.idx",
-        #     "docker_image_id": "732052188396.dkr.ecr.us-west-2.amazonaws.com/minimap2:latest"
-        # }
-        # inputs_json = {
-        #     "sequences": "/home/todd/czid-platformics/workflows/test_workflows/foo.fa",
-        # }
         assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
         _workflow_runner = workflow_runners[workflow_runner]
         assert (
             "WDL" in _workflow_runner.supported_workflow_types()
         ), f"Workflow runner {workflow_runner} does not support WDL"
-        response = await _workflow_runner.run_workflow(
-            event_bus=event_bus,
-            workflow_run_id="1",  # TODO: When we create the workflow run add the uuid here
-            # TODO: should come from the WorkflowVersion model
-            workflow_path="/workflows/test_workflows/static_sample/static_sample.wdl",
-            inputs={},
-        )
 
-        # creates a workflow run in the db
-        # TODO: remove hardcoding
-        db_run = db.Run(
+        workflow_version = await session.get_one(db.WorkflowVersion, workflow_version_id)
+        manifest = Manifest.model_validate_json(str(workflow_version.manifest))
+        inputs = { input.name: input.value for input in workflow_inputs }
+        workflow_run = db.Run(
             user_id=111,
-            project_id=444,
-            execution_id=response,
-            inputs_json="{}",
+            project_id=project_id,
+            inputs_json=json.dumps(inputs),
             status="STARTED",
             workflow_version_id=1,
         )
-        session.add(db_run)
+        session.add(workflow_run)
         await session.commit()
 
-        return db_run  # type: ignore
+        execution_id = await _workflow_runner.run_workflow(
+            event_bus=event_bus,
+            workflow_run_id=str(workflow_run.id),
+            workflow_path=manifest.package_uri,
+            inputs=inputs,
+        )
+        workflow_run.execution_id = execution_id
+
+        return workflow_run  # type: ignore
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_step(

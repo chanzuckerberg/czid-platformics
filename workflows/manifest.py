@@ -88,6 +88,7 @@ class Manifest(ManifestModel):
     type: str = "WDL"
     deprecated: bool = False
     description: str
+    package_uri: str
     entity_inputs: list[EntityInput]
     workflow_inputs: list[WorkflowInput]
     input_loaders: list[InputLoader]
