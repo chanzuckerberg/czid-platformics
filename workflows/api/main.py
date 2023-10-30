@@ -162,23 +162,22 @@ class Mutation:
         workflow_version = await session.get_one(db.WorkflowVersion, workflow_version_id)
         manifest = Manifest.model_validate_json(str(workflow_version.manifest))
         inputs = {input.name: input.value for input in workflow_inputs}
+
+        execution_id = await _workflow_runner.run_workflow(
+            event_bus=event_bus,
+            workflow_path=manifest.package_uri,
+            inputs=inputs,
+        )
         workflow_run = db.Run(
             user_id=111,
             project_id=project_id,
+            execution_id=execution_id,
             inputs_json=json.dumps(inputs),
             status="STARTED",
             workflow_version_id=1,
         )
         session.add(workflow_run)
         await session.commit()
-
-        execution_id = await _workflow_runner.run_workflow(
-            event_bus=event_bus,
-            workflow_run_id=str(workflow_run.id),
-            workflow_path=manifest.package_uri,
-            inputs=inputs,
-        )
-        workflow_run.execution_id = execution_id
 
         return workflow_run  # type: ignore
 
