@@ -24,7 +24,7 @@ T = TypeVar("T")
 operator_map = {
     "_eq": "__eq__",
     "_neq": "__ne__",
-    "_in_": "in_",
+    "_in": "in_",
     "_nin": "not_in",
     "_is_null": "IS_NULL",
     "_gt": "__gt__",

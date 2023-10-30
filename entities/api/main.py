@@ -12,6 +12,7 @@ from platformics.database.connect import AsyncDB
 
 import strawberry
 from api.queries import Query
+from api.mutations import Mutation
 from strawberry.schema.config import StrawberryConfig
 from strawberry.fastapi import GraphQLRouter
 
@@ -40,6 +41,7 @@ class CustomNameConverter(NameConverter):
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
+    mutation=Mutation,
     config=StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter()),
     # types=additional_types,
 )
