@@ -161,7 +161,7 @@ class Mutation:
 
         workflow_version = await session.get_one(db.WorkflowVersion, workflow_version_id)
         manifest = Manifest.model_validate_json(str(workflow_version.manifest))
-        inputs = { input.name: input.value for input in workflow_inputs }
+        inputs = {input.name: input.value for input in workflow_inputs}
         workflow_run = db.Run(
             user_id=111,
             project_id=project_id,
