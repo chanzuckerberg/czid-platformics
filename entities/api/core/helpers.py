@@ -82,5 +82,7 @@ async def get_db_rows(
 ) -> typing.Sequence[E]:
     action = CerbosAction.VIEW
     query = get_db_query(model_cls, action, cerbos_client, principal, where)
+    if order_by:
+        query = query.order_by(*order_by)  # type: ignore
     result = await session.execute(query)
     return result.scalars().all()

@@ -101,22 +101,6 @@ class EntityLoader:
             return self._loaders[relationship]
 
 
-def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]:
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def resolve_entity(
-        id: typing.Optional[uuid.UUID] = None,
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(require_auth_principal),
-    ) -> typing.Sequence[E]:
-        filters = []
-        if id:
-            filters.append(sql_model.id == id)
-        return await get_db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-
-    return typing.cast(typing.Sequence[T], resolve_entity)
-
-
 def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def create(
@@ -133,8 +117,6 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
         if not cerbos_client.is_allowed("create", principal, resource):
             raise Exception("Unauthorized: Cannot create entity in this collection")
 
-        # TODO: User must have permissions to the sample
-
         # Save to DB
         params["owner_user_id"] = int(principal.id)
         new_entity = sql_model(**params)
@@ -147,7 +129,6 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     return typing.cast(T, create)
 
 
-# FIXME: error: Name "db.Entity" is not defined
 def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # type: ignore
     @strawberry.field(extensions=[DependencyExtension()])
     async def update(
@@ -187,7 +168,6 @@ def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # typ
 
 
 # Infer Strawberry arguments from SQLAlchemy columns
-# FIXME: error: Name "db.Entity" is not defined
 def generate_strawberry_arguments(
     action: str, sql_model: type[db.Entity | db.Base], gql_type: type[T]  # type: ignore
 ) -> list[StrawberryArgument]:
