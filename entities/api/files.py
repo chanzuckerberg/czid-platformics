@@ -350,6 +350,13 @@ async def create_or_upload_file(
     if not hasattr(entity, entity_property_name):
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
 
+    # Unlink the File(s) currently connected to this entity (only commit to DB once add the new File below)
+    query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
+    query = query.filter(db.File.entity_id == entity_id)
+    current_files = (await session.execute(query)).scalars().all()
+    for current_file in current_files:
+        current_file.entity_id = None
+
     # Set file parameters based on user inputs
     file_id = uuid6.uuid7()
     if isinstance(file, FileUpload):
