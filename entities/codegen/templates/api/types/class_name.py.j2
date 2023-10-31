@@ -172,15 +172,23 @@ def load_files_from(attr_name):
         session = keys[0]["session"]
         cerbos_client = keys[0]["cerbos_client"]
         principal = keys[0]["principal"]
-        ids = [key["id"] for key in keys]
+        entity_ids = [key["id"] for key in keys]
 
+        # Retrieve files
         query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
         query = query.filter(
-            db.File.entity_id.in_(ids),
+            db.File.entity_id.in_(entity_ids),
             db.File.entity_field_name == attr_name
         )
-        result = await session.execute(query)
-        return result.scalars().all()
+        all_files = (await session.execute(query)).scalars().all()
+
+        # Order files so they are in the same order as `entity_ids`
+        result = []
+        for entity_id in entity_ids:
+            matching = [f for f in all_files if f.entity_id == entity_id]
+            assert len(matching) == 1
+            result.append(matching[0])
+        return result
 
     file_loader = DataLoader(load_fn=batch_files, cache_key_fn=cache_key)
 

@@ -3,7 +3,7 @@
 
 import uuid
 import typing
-from typing import Any, Mapping, Optional, Tuple
+from typing import Optional
 
 import database.models as db
 import strawberry
@@ -12,13 +12,10 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUIDComparators
 from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from sqlalchemy import ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import UUID
 from strawberry.dataloader import DataLoader
 from typing_extensions import TypedDict
 from api.core.helpers import get_db_rows
@@ -38,8 +35,11 @@ else:
 # Dataloaders
 # ------------------------------------------------------------------------------
 
+
 def cache_key(key: dict) -> str:
     return key["id"]
+
+
 # Given a list of Sample ids, return a list of lists, where the inner lists correspond to the
 # sequencing_reads associated with each Sample id.
 async def batch_sequencing_reads(
@@ -68,6 +68,7 @@ async def batch_sequencing_reads(
         result += [grouped_sequencing_reads]
     return result
 
+
 sequencing_reads_loader = DataLoader(load_fn=batch_sequencing_reads, cache_key_fn=cache_key)
 
 
@@ -82,9 +83,11 @@ async def load_sequencing_reads(
         {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
     )
 
+
 # ------------------------------------------------------------------------------
 # Dataloader for File object
 # ------------------------------------------------------------------------------
+
 
 # Given a list of Sample IDs for a certain file type, return related Files
 def load_files_from(attr_name):
@@ -92,15 +95,20 @@ def load_files_from(attr_name):
         session = keys[0]["session"]
         cerbos_client = keys[0]["cerbos_client"]
         principal = keys[0]["principal"]
-        ids = [key["id"] for key in keys]
+        entity_ids = [key["id"] for key in keys]
 
+        # Retrieve files
         query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
-        query = query.filter(
-            db.File.entity_id.in_(ids),
-            db.File.entity_field_name == attr_name
-        )
-        result = await session.execute(query)
-        return result.scalars().all()
+        query = query.filter(db.File.entity_id.in_(entity_ids), db.File.entity_field_name == attr_name)
+        all_files = (await session.execute(query)).scalars().all()
+
+        # Order files so they are in the same order as `entity_ids`
+        result = []
+        for entity_id in entity_ids:
+            matching = [f for f in all_files if f.entity_id == entity_id]
+            assert len(matching) == 1
+            result.append(matching[0])
+        return result
 
     file_loader = DataLoader(load_fn=batch_files, cache_key_fn=cache_key)
 
@@ -117,9 +125,11 @@ def load_files_from(attr_name):
 
     return load_files
 
+
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
+
 
 # Supported WHERE clause attributes
 @strawberry.input
@@ -133,6 +143,7 @@ class SampleWhereClause(TypedDict):
     sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
     entity_id: Optional[UUIDComparators] | None
 
+
 # Define Sample type
 @strawberry.type
 class Sample(EntityInterface):
@@ -142,14 +153,16 @@ class Sample(EntityInterface):
     collection_id: int
     name: str
     location: str
-    sequencing_reads: typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]] = load_sequencing_reads
+    sequencing_reads: typing.Sequence[
+        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
+    ] = load_sequencing_reads
     entity_id: uuid.UUID
+
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-Sample.__strawberry_definition__.is_type_of = (
-    lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
-)
+Sample.__strawberry_definition__.is_type_of = lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
+
 
 # Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
