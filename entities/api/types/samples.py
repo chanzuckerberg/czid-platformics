@@ -90,9 +90,9 @@ async def load_sequencing_reads(
     relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)
 
-    return await sequencing_reads_loader.load(
-        {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
-    )
+#    return await sequencing_reads_loader.load(
+#        {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
+#    )
 
 
 # ------------------------------------------------------------------------------

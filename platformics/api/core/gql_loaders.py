@@ -84,7 +84,7 @@ class EntityLoader:
                 filters = []
                 for _, remote in relationship.local_remote_pairs:
                     filters.append(remote.in_(keys))
-                order_by: list[tuple[ColumnElement[Any], ...]] = []
+                order_by: list[ColumnElement[Any], ...] = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
                 query = get_db_query(
@@ -96,6 +96,8 @@ class EntityLoader:
                 )
                 for item in filters:
                     query = query.where(item)
+                for item in order_by:
+                    query = query.order_by(item)
                 db_session = self.engine.session()
                 rows = (await db_session.execute(query)).scalars().all()
                 await db_session.close()
@@ -106,7 +108,7 @@ class EntityLoader:
                     # TODO -- Technically, SA supports multiple field filters in a relationship! We'll need to handle this case
                     return [getattr(row, remote.key) for _, remote in relationship.local_remote_pairs if remote.key][0]
 
-                grouped_keys: Mapping[Tuple, list[Any]] = defaultdict(list)
+                grouped_keys: Mapping[Any, list[Any]] = defaultdict(list)
                 for row in rows:
                     grouped_keys[group_by_remote_key(row)].append(row)
                 if relationship.uselist:
