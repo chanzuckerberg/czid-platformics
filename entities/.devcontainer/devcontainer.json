@@ -5,7 +5,6 @@
     ],
     "service": "entities",
     "workspaceFolder": "/czid-platformics/entities",
-    "shutdownAction": "echo shutting down",
     "customizations": {
         "vscode": {
             "settings": {

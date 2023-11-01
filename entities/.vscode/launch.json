@@ -10,9 +10,9 @@
             "request": "launch",
             "module": "api.main",
 	    // Stop the normal webserver so we can start a new one attached to our debugger.
-            "preLaunchTask": "stopservices",
+        //  "preLaunchTask": "stopservices",
 	    // Turn the normal server back on when we're done debugging.
-            "postDebugTask": "startservices",
+        //  "postDebugTask": "startservices",
             "jinja": true,
             "justMyCode": true
         }

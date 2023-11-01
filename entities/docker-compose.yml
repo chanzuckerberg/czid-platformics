@@ -35,6 +35,7 @@ services:
     tty: true # Helps with pdb
     ports:
       - "8008:8008"
+      - "8009:8009"
     environment:
       - CERBOS_URL=http://cerbos:3592
       - PLATFORMICS_DATABASE_HOST=entities-db.czidnet
