@@ -1,7 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import MetaData, Column, Integer, String
 import uuid6
-from sqlalchemy.ext.asyncio import AsyncAttrs
 
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
@@ -23,7 +22,7 @@ meta = MetaData(
 )
 
 
-class Base(AsyncAttrs, DeclarativeBase):
+class Base(DeclarativeBase):
     metadata = meta
 
 
