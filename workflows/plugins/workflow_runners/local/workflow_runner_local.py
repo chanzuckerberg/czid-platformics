@@ -92,7 +92,6 @@ class LocalWorkflowRunner(WorkflowRunner):
     async def run_workflow(
         self,
         event_bus: EventBus,
-        workflow_run_id: str,
         workflow_path: str,
         inputs: dict,
     ) -> str:

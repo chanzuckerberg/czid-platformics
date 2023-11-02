@@ -4,6 +4,7 @@
     "type": "WDL",
     "deprecated": false,
     "description": "A workflow that takes a sequence and returns the first base",
+    "package_uri": "/workflows/test_workflows/static_sample/static_sample.wdl",
     "entity_inputs": [],
     "workflow_inputs": [],
     "input_loaders": [],

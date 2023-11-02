@@ -4,6 +4,7 @@
     "type":"WDL",
     "deprecated": false,
     "description":"A workflow that takes a sequence and returns the first base",
+    "package_uri": "/workflows/test_workflows/first_sequence/first_sequence.wdl",
     "entity_inputs":[
         {
             "name": "fasta",
