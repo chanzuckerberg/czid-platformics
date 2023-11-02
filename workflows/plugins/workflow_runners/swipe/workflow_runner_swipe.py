@@ -72,7 +72,6 @@ class SwipeWorkflowRunner(WorkflowRunner):
     def run_workflow(  # type: ignore
         self,
         on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],  # type: ignore
-        workflow_run_id: str,
         workflow_path: str,
         inputs: dict,
     ) -> str:

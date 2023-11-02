@@ -25,6 +25,7 @@ _type_name_to_graphql_type = {
     "int": "Int",
     "float": "Float",
     "bool": "Boolean",
+    "Optional": "Optional",
 }
 
 
