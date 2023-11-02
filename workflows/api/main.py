@@ -146,7 +146,7 @@ class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
         self,
-        project_id: str,
+        project_id: int,
         workflow_version_id: int,
         workflow_inputs: typing.List[WorkflowInput],
         workflow_runner: str = default_workflow_runner_name,
