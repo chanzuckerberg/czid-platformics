@@ -163,7 +163,7 @@ class Mutation:
         manifest = Manifest.model_validate_json(str(workflow_version.manifest))
         inputs = {input.name: input.value for input in workflow_inputs}
 
-        execution_id = await _workflow_runner.run_workflow(
+        execution_id = _workflow_runner.run_workflow(
             event_bus=event_bus,
             workflow_path=manifest.package_uri,
             inputs=inputs,

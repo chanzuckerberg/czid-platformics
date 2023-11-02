@@ -53,29 +53,35 @@ class LocalWorkflowRunner(WorkflowRunner):
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         # Running docker-in-docker requires the paths to files and outputs to be the same between
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
-            try:
-                p = subprocess.Popen(
-                    ["miniwdl", "run", "--verbose", os.path.abspath(workflow_path)]
-                    + [f"{k}={v}" for k, v in inputs.items()],
-                    cwd=tmpdir,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
-                while True:
-                    assert p.stderr
-                    line = p.stderr.readline().decode()
-                    self._detect_task_output(line)
-                    print(line, file=sys.stderr)
-                    if not line:
-                        break
+            print(os.environ)
+            p = subprocess.Popen(
+                ["miniwdl", "run", "--env", 
+                "AWS_ENDPOINT_URL=http://motoserver.czidnet:4000",
+                "--env",
+                "MINIWDL__TASK_RUNTIME__DEFAULTS='{\"docker_network\":\"czidnet\"}'",
+                "--verbose", os.path.abspath(workflow_path)]
+                + [f"{k}={v}" for k, v in inputs.items()],
+                cwd=tmpdir,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=os.environ
+            )
+            while True:
+                assert p.stderr
+                line = p.stderr.readline().decode()
+                self._detect_task_output(line)
+                print(line, file=sys.stderr)
+                if not line:
+                    break
 
-                assert p.stdout
+            p.wait()
+            assert p.stdout
+
+            if p.returncode:
+                await event_bus.send(WorkflowFailedMessage(runner_id=runner_id))
+            else:
                 outputs = json.loads(p.stdout.read().decode())["outputs"]
                 await event_bus.send(WorkflowSucceededMessage(runner_id=runner_id, outputs=outputs))
-
-            except subprocess.CalledProcessError as e:
-                print(e.output)
-                await event_bus.send(WorkflowFailedMessage(runner_id=runner_id))
 
     def _run_workflow_sync(
         self,

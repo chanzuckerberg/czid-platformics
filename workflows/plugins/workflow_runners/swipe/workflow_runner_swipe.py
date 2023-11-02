@@ -5,7 +5,7 @@ import boto3
 import os
 from datetime import datetime
 
-from plugin_types import WorkflowRunner, WorkflowStatusMessage
+from plugin_types import WorkflowRunner, WorkflowStatusMessage, EventBus
 
 # TODO: maybe split out these decisions into another module, or a YAML file??
 if os.environ.get("ENVIRONMENT", None) == "test":
@@ -27,7 +27,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
 
     def __init__(self, output_path: Optional[str] = None):
         # TODO: remove this
-        self.output_path = output_path or "s3://local-bucket/rlim-test/test-nxtg/"
+        self.output_path = output_path or "s3://idseq-samples-development/rlim-test/test-nxtg2/"
 
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types"""
@@ -65,13 +65,9 @@ class SwipeWorkflowRunner(WorkflowRunner):
             "OutputPrefix": self.output_path,
         }
 
-    # FIXME: error: Return type "str" of "run_workflow" incompatible with return type "Coroutine[Any, Any, str]" in
-    # supertype "WorkflowRunner"
-    # FIXME: error: Argument 1 of "run_workflow" is incompatible with supertype "WorkflowRunner"; supertype defines
-    # the argument type as "EventBus"
     def run_workflow(  # type: ignore
         self,
-        on_complete: Callable[[WorkflowStatusMessage], Coroutine[Any, Any, Any]],  # type: ignore
+        event_bus: EventBus,
         workflow_path: str,
         inputs: dict,
     ) -> str:

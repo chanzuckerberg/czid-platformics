@@ -7,7 +7,10 @@ from plugin_types import EventBus, WorkflowStatusMessage, WorkflowStatus
 
 class EventBusSWIPE(EventBus):
     def __init__(self, settings: SWIPEEventBusSettings) -> None:
-        self.sqs = boto3.client("sqs", endpoint_url=settings.BOTO_ENDPOINT_URL)
+        if settings.BOTO_ENDPOINT_URL == '""':
+            self.sqs = boto3.client("sqs")
+        else:
+            self.sqs = boto3.client("sqs", endpoint_url=settings.BOTO_ENDPOINT_URL)
         self.settings = settings
         if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")
@@ -58,12 +61,14 @@ class EventBusSWIPE(EventBus):
 
         for message in messages:
             if message["source"] == "aws.states":
+                print(message)
                 workflow_status = WorkflowStatusMessage(
                     runner_id=message["detail"]["executionArn"],
                     status=self.create_workflow_status(message["detail"]["status"]),
                 )
                 workflow_statuses.append(workflow_status)
             elif message["source"] == "aws.batch":
+                print(message)
                 # TODO: return step status messages
                 pass
 

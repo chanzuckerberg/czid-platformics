@@ -12,6 +12,8 @@ if __name__ == "__main__":
     session = app_db.session()
 
     event_bus = load_event_bus(settings)
+
+    print(f"Running event bus {event_bus.__class__.__name__}")
     loader = LoaderDriver(session, event_bus)
 
     # call main in it's own thread
