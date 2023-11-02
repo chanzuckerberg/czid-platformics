@@ -52,7 +52,7 @@ async def load_samples(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["sample"]
-    return await dataloader.loader_for(relationship, where).load(root.sample_id)
+    return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
 @strawberry.field(extensions=[DependencyExtension()])
@@ -64,7 +64,7 @@ async def load_contigs(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["contigs"]
-    return await dataloader.loader_for(relationship, where).load(root.id)
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 # ------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ async def load_contigs(
 
 
 # Given a list of SequencingRead IDs for a certain file type, return related Files
-def load_files_from(attr_name):
+def load_files_from(attr_name: str) -> typing.Callable:
     @strawberry.field(extensions=[DependencyExtension()])
     async def load_files(
         root: "SequencingRead",
@@ -83,7 +83,7 @@ def load_files_from(attr_name):
         dataloader = info.context["sqlalchemy_loader"]
         mapper = inspect(db.SequencingRead)
         relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))
+        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
 
     return load_files
 
@@ -119,7 +119,7 @@ class SequencingRead(EntityInterface):
     sequence: str
     protocol: SequencingProtocol
     sequence_file_id: uuid.UUID
-    sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")
+    sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")  # type: ignore
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples
     contigs: typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs
     entity_id: uuid.UUID
@@ -127,7 +127,7 @@ class SequencingRead(EntityInterface):
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-SequencingRead.__strawberry_definition__.is_type_of = (
+SequencingRead.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.SequencingRead or type(obj) == SequencingRead
 )
 

@@ -77,9 +77,9 @@ async def load_{{ related_field.name }}s(
     mapper = inspect(db.{{ cls.name }})
     relationship = mapper.relationships["{{ related_field.name }}"]
         {%- if related_field.multivalued %}
-    return await dataloader.loader_for(relationship, where).load(root.id)
+    return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
         {%- else %}
-    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id)
+    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id) # type:ignore
         {%- endif %}
     {%- endif %}
 {%- endfor %}
@@ -89,7 +89,7 @@ async def load_{{ related_field.name }}s(
 # ------------------------------------------------------------------------------
 
 # Given a list of {{ cls.name }} IDs for a certain file type, return related Files
-def load_files_from(attr_name):
+def load_files_from(attr_name: str) -> typing.Callable:
     @strawberry.field(extensions=[DependencyExtension()])
     async def load_files(
         root: "{{ cls.name }}",
@@ -99,7 +99,7 @@ def load_files_from(attr_name):
         dataloader = info.context["sqlalchemy_loader"]
         mapper = inspect(db.{{ cls.name }})
         relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))
+        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id")) # type:ignore
 
     return load_files
 
@@ -150,7 +150,7 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: int
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: uuid.UUID
-    {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")
+    {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")  # type: ignore
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
     {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]] = load_{{ attr.name }}
@@ -162,7 +162,7 @@ class {{ cls.name }}(EntityInterface):
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-{{ cls.name }}.__strawberry_definition__.is_type_of = (
+{{ cls.name }}.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.{{ cls.name }} or type(obj) == {{ cls.name }}
 )
 

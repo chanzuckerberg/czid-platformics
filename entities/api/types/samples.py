@@ -48,7 +48,7 @@ async def load_sequencing_reads(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["sequencing_reads"]
-    return await dataloader.loader_for(relationship, where).load(root.id)
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 # ------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ async def load_sequencing_reads(
 
 
 # Given a list of Sample IDs for a certain file type, return related Files
-def load_files_from(attr_name):
+def load_files_from(attr_name: str) -> typing.Callable:
     @strawberry.field(extensions=[DependencyExtension()])
     async def load_files(
         root: "Sample",
@@ -67,7 +67,7 @@ def load_files_from(attr_name):
         dataloader = info.context["sqlalchemy_loader"]
         mapper = inspect(db.Sample)
         relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))
+        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
 
     return load_files
 
@@ -107,7 +107,9 @@ class Sample(EntityInterface):
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-Sample.__strawberry_definition__.is_type_of = lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
+Sample.__strawberry_definition__.is_type_of = (  # type: ignore
+    lambda obj, info: type(obj) == db.Sample or type(obj) == Sample
+)
 
 
 # Resolvers used in api/queries

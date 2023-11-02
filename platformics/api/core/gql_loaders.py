@@ -23,7 +23,7 @@ E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
 
 class Hashabledict(dict):
-    def __hash__(self):
+    def __hash__(self):  # type: ignore
         return hash(frozenset(self))
 
 def make_hashable(whereclause: dict) -> Hashabledict:
@@ -72,7 +72,7 @@ class EntityLoader:
             where = {}
         where_str = make_hashable(where)
         try:
-            return self._loaders[(relationship, where_str)]
+            return self._loaders[(relationship, where_str)] # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
@@ -83,7 +83,7 @@ class EntityLoader:
                 filters = []
                 for _, remote in relationship.local_remote_pairs:
                     filters.append(remote.in_(keys))
-                order_by: list[ColumnElement[Any], ...] = []
+                order_by: list = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
                 query = get_db_query(
@@ -115,8 +115,8 @@ class EntityLoader:
                 else:
                     return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
-            self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn)
-            return self._loaders[(relationship, where_str)]
+            self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn) # type: ignore
+            return self._loaders[(relationship, where_str)] # type: ignore
 
 
 def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:

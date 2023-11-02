@@ -86,7 +86,7 @@ def cache_key(key: dict) -> str:
 
 async def batch_entities(
     keys: list[dict],
-) -> typing.Annotated["Entity", strawberry.lazy("api.types.entities")]:
+) -> list:
     session = keys[0]["session"]
     cerbos_client = keys[0]["cerbos_client"]
     principal = keys[0]["principal"]
@@ -112,7 +112,7 @@ async def batch_entities(
     return result
 
 
-entity_loader = DataLoader(load_fn=batch_entities, cache_key_fn=cache_key)
+entity_loader = DataLoader(load_fn=batch_entities, cache_key_fn=cache_key)  # type: ignore
 
 
 @strawberry.field(extensions=[DependencyExtension()])
@@ -395,6 +395,6 @@ async def create_or_upload_file(
     # If new file, create an STS token for multipart upload
     else:
         return MultipartUploadResponse(
-            file=new_file,
+            file=new_file,  # type: ignore
             credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
         )

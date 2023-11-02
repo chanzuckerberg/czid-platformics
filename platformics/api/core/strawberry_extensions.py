@@ -37,13 +37,12 @@ class DependencyExtension(FieldExtension):
 
 
     def apply(self, field: StrawberryField) -> None:
-        func = field.base_resolver.wrapped_func
-        func = get_func_with_only_deps(func)
+        func = field.base_resolver.wrapped_func # type: ignore
+        func = get_func_with_only_deps(func) # type: ignore
         self.dependant: Dependant = deputils.get_dependant(
             path="/", call=func  # type: ignore
         )
-        # Remove fastapi Depends arguments from the list that strawberry tries
-        # to resolve
+        # Remove fastapi Depends arguments from the list that strawberry tries to resolve
         field.arguments = [item for item in field.arguments if not isinstance(item.default, DependsClass)]
 
     async def resolve_async(

@@ -6,17 +6,17 @@ functions to keep complicated LinkML-specific logic out of our Jinja2 templates.
 from functools import cached_property
 
 import strcase
-from linkml_runtime.linkml_model.meta import ClassDefinition, EnumDefinition
+from linkml_runtime.linkml_model.meta import ClassDefinition, EnumDefinition, SlotDefinition
 from linkml_runtime.utils.schemaview import SchemaView
 
 
 class FieldWrapper:
-    def __init__(self, view: SchemaView, wrapped_field):
+    def __init__(self, view: SchemaView, wrapped_field: SlotDefinition):
         self.view = view
         self.wrapped_field = wrapped_field
 
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr: str):
+    def __getattr__(self, attr: str) -> str:
         raise NotImplementedError(f"please define field property {attr}")
 
     @cached_property
@@ -75,12 +75,12 @@ class FieldWrapper:
 
 
 class EnumWrapper:
-    def __init__(self, view: SchemaView, wrapped_class):
+    def __init__(self, view: SchemaView, wrapped_class: EnumDefinition):
         self.view = view
         self.wrapped_class = wrapped_class
 
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr: str):
+    def __getattr__(self, attr: str) -> str:
         raise NotImplementedError(f"please define enum property {attr}")
 
     @cached_property
@@ -93,12 +93,12 @@ class EnumWrapper:
 
 
 class EntityWrapper:
-    def __init__(self, view: SchemaView, wrapped_class):
+    def __init__(self, view: SchemaView, wrapped_class: ClassDefinition):
         self.view = view
         self.wrapped_class = wrapped_class
 
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr: str):
+    def __getattr__(self, attr: str) -> str:
         raise NotImplementedError(f"please define entity property {attr}")
 
     @cached_property
@@ -136,6 +136,7 @@ class EntityWrapper:
         for field in self.all_fields:
             if field.identifier:
                 return field.name
+        raise Exception("No identifier found")
 
     @cached_property
     def readable_fields(self) -> list[FieldWrapper]:
@@ -154,13 +155,13 @@ class EntityWrapper:
         ]
 
     @cached_property
-    def enum_fields(self) -> list[FieldWrapper, None, None]:
+    def enum_fields(self) -> list[FieldWrapper]:
         enumfields = self.view.all_enums()
         class_names = [k for k, _ in enumfields.items()]
         return [field for field in self.all_fields if field.type in class_names]
 
     @cached_property
-    def related_fields(self) -> list[FieldWrapper, None, None]:
+    def related_fields(self) -> list[FieldWrapper]:
         return [field for field in self.all_fields if field.is_entity]
 
 
@@ -169,11 +170,11 @@ class ViewWrapper:
         self.view = view
 
     # Blow up if a property doesn't exist
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> str:
         raise NotImplementedError(f"please define view property {attr}")
 
     @cached_property
-    def enums(self) -> list[FieldWrapper]:
+    def enums(self) -> list[EnumWrapper]:
         enums = []
         for enum_name in self.view.all_enums():
             enum = self.view.get_element(enum_name)

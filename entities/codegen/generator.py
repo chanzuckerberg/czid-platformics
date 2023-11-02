@@ -47,7 +47,6 @@ def generate_entity_subclass_files(
     template = environment.get_template(f"{template_filename}.j2")
     logging.debug("generating enums")
 
-    classes = []
     for entity in view.entities:
         content = template.render(
             cls=entity,
@@ -57,7 +56,6 @@ def generate_entity_subclass_files(
         with open(os.path.join(output_prefix, dest_filename), mode="w", encoding="utf-8") as outfile:
             outfile.write(content)
             print(f"... wrote {dest_filename}")
-    return classes
 
 
 def generate_entity_import_files(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
@@ -80,7 +78,6 @@ def generate_gql_type_files(
     template = environment.get_template(f"{template_filename}.j2")
     logging.debug("generating gql types")
 
-    types = []
     for entity in view.entities:
         content = template.render(
             cls=entity,
@@ -90,7 +87,6 @@ def generate_gql_type_files(
         with open(os.path.join(output_prefix, dest_filename), mode="w", encoding="utf-8") as outfile:
             outfile.write(content)
             print(f"... wrote {dest_filename}")
-    return types
 
 
 def generate_cerbos_policies(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:

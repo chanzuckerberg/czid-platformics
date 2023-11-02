@@ -128,14 +128,8 @@ class FancySQLAlchemyMapper(StrawberrySQLAlchemyMapper):
         """
         connection_type = self._connection_type_for(type_name)
         edge_type = self._edge_type_for(type_name)
-        try:
-            print(f"got live where clause type {type_name}")
-            where_clause = self.where_clause_builder._cached_where_args[type_name]
-        except KeyError:
-            print(f"bbb where key error sadface {type_name}")
-            where_clause = str
 
-        async def wrapper(self, info: Info, where: Optional[str] = strawberry.UNSET):
+        async def wrapper(self: typing.Self, info: Info, where: Optional[str] = strawberry.UNSET) -> Any:
             return connection_type(
                 edges=[
                     edge_type(
@@ -154,16 +148,15 @@ class FancySQLAlchemyMapper(StrawberrySQLAlchemyMapper):
         Return an async field resolver for the given relationship,
         so as to avoid n+1 query problem.
         """
-        type_name = (self.model_to_type_or_interface_name(relationship.entity.entity),)
-        where_clause = str
-
-        async def resolve(self, info: Info, where: Optional[str] = strawberry.UNSET):
-            print(f"WHERE DATA IS {where}")
+        async def resolve(self: typing.Self, info: Info, where: Optional[str] = strawberry.UNSET) -> list | None:
             instance_state = cast(InstanceState, inspect(self))
             if relationship.key not in instance_state.unloaded:
                 related_objects = getattr(self, relationship.key)
             else:
-                relationship_key = tuple([getattr(self, local.key) for local, _ in relationship.local_remote_pairs])
+                relationship_key = tuple([
+                    getattr(self, local.key)  # type: ignore
+                    for local, _ in relationship.local_remote_pairs]  # type: ignore
+                )
                 if any(item is None for item in relationship_key):
                     if relationship.uselist:
                         return []
@@ -189,7 +182,7 @@ class WhereClauseBuilder(SSAPlugin):
 
     def build_where_argument(
         self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper, sa_mapper: Mapper, mapped_type: Any
-    ):
+    ) -> Any:
         try:
             return self._cached_where_args[mapped_type.__name__]
         except KeyError:
@@ -204,20 +197,20 @@ class WhereClauseBuilder(SSAPlugin):
         return self._cached_where_args[mapped_type.__name__]
 
     def on_type_definition(
-        self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper, sa_mapper: Mapper, mapped_type: T
+        self: typing.Self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper, sa_mapper: Mapper, mapped_type: T
     ) -> T:
         self.build_where_argument(strawberry_sqlalchemy_mapper, sa_mapper, mapped_type)
         return mapped_type
 
     def mutate_connection_type(
-        self,
+        self: typing.Self,
         strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper,
-        strawberry_type,
+        strawberry_type: Any,
         field: StrawberryField,
         relationship: RelationshipProperty,
     ) -> None:
         relationship_model = relationship.entity.entity
-        type_name = strawberry_sqlalchemy_mapper.model_to_type_or_interface_name(relationship_model)
+        type_name = strawberry_sqlalchemy_mapper.model_to_type_or_interface_name(relationship_model) # type: ignore
         try:
             whereclause = None
             try:
@@ -227,20 +220,20 @@ class WhereClauseBuilder(SSAPlugin):
             if not whereclause:
                 whereclause = self._cached_where_args[type_name]
             field.arguments.append(
-                StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), None)
+                StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), False)
             )
         except KeyError:
             self._todo_where_args.append((type_name, field))
 
-    def finalize(self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper):
+    def finalize(self, strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper) -> None:
         for type_name, field in self._todo_where_args:
             whereclause = self._cached_where_args[type_name]
             field.arguments.append(
-                StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), None)
+                StrawberryArgument("where", "where", StrawberryAnnotation(Optional[whereclause]), False)
             )
 
 
 # TODO this initialize-on-import is gross but we can refactor it later :'(
 where_clause_builder = WhereClauseBuilder()
 strawberry_sqlalchemy_mapper: FancySQLAlchemyMapper = FancySQLAlchemyMapper(global_plugins=[where_clause_builder])
-strawberry_sqlalchemy_mapper.where_clause_builder = where_clause_builder
+strawberry_sqlalchemy_mapper.where_clause_builder = where_clause_builder  # type: ignore

@@ -21,7 +21,7 @@ def convert_where_clauses_to_sql(
     principal: Principal,
     cerbos_client: CerbosClient,
     action: str,
-    query,
+    query: Select,
     sa_model: Base,
     whereClause: dict[str, Any],
     depth: int,
@@ -34,9 +34,11 @@ def convert_where_clauses_to_sql(
             # so that these type checks could be smarter, but TypedDict doesn't support type checks like that
             if isinstance(value, dict):
                 mapper = inspect(sa_model)
-                relationship = mapper.relationships[k]
+                relationship = mapper.relationships[k]  # type: ignore
                 related_cls = relationship.mapper.entity
-                subquery = get_db_query(related_cls, action, cerbos_client, principal, v, depth).subquery()
+                subquery = get_db_query(
+                    related_cls, action, cerbos_client, principal, v, depth
+                ).subquery()  # type: ignore
                 query_alias = aliased(related_cls, subquery)
                 joincondition_a = [
                     (getattr(sa_model, local.key) == getattr(query_alias, remote.key))
@@ -59,7 +61,7 @@ def get_db_query(
     principal: Principal,
     where: dict[str, Any],
     depth: Optional[int] = None,
-) -> typing.Sequence[E]:
+) -> Select:
     if not depth:
         depth = 0
     depth += 1
@@ -68,12 +70,14 @@ def get_db_query(
         raise Exception("Max filter depth exceeded")
     action = CerbosAction.VIEW
     query = get_resource_query(principal, cerbos_client, action, model_cls)
-    query = convert_where_clauses_to_sql(principal, cerbos_client, action, query, model_cls, where, depth)
+    query = convert_where_clauses_to_sql(
+        principal, cerbos_client, action, query, model_cls, where, depth  # type: ignore
+    )
     return query
 
 
 async def get_db_rows(
-    model_cls: type[E],
+    model_cls: type[E],  # type: ignore
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
