@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Annotated, Optional
 import database.models as db
 import strawberry
 from api.core.helpers import get_db_rows
-from api.files import File
+from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
@@ -16,10 +16,8 @@ from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
-from strawberry.dataloader import DataLoader
 from strawberry.types import Info
 from typing_extensions import TypedDict
 from support.enums import Nucleotide, SequencingProtocol
@@ -76,37 +74,16 @@ async def load_contigs(
 
 # Given a list of SequencingRead IDs for a certain file type, return related Files
 def load_files_from(attr_name):
-    async def batch_files(keys: list[dict]) -> Annotated["File", strawberry.lazy("api.files")]:
-        session = keys[0]["session"]
-        cerbos_client = keys[0]["cerbos_client"]
-        principal = keys[0]["principal"]
-        entity_ids = [key["id"] for key in keys]
-
-        # Retrieve files
-        query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
-        query = query.filter(db.File.entity_id.in_(entity_ids), db.File.entity_field_name == attr_name)
-        all_files = (await session.execute(query)).scalars().all()
-
-        # Order files so they are in the same order as `entity_ids`
-        result = []
-        for entity_id in entity_ids:
-            matching = [f for f in all_files if f.entity_id == entity_id]
-            assert len(matching) == 1
-            result.append(matching[0])
-        return result
-
-    file_loader = DataLoader(load_fn=batch_files, cache_key_fn=cache_key)
-
     @strawberry.field(extensions=[DependencyExtension()])
     async def load_files(
         root: "SequencingRead",
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(require_auth_principal),
-    ) -> Annotated["SequencingRead", strawberry.lazy("api.files")]:
-        return await file_loader.load(
-            {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
-        )
+        info: Info,
+        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
+    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
+        dataloader = info.context["sqlalchemy_loader"]
+        mapper = inspect(db.SequencingRead)
+        relationship = mapper.relationships[attr_name]
+        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))
 
     return load_files
 

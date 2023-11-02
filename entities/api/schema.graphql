@@ -1,1 +1,263 @@
-Error: No module named 'mypy_boto3_sts'
+type Contig implements EntityInterface {
+  id: UUID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
+  sequence: String!
+  entityId: UUID!
+}
+
+input ContigWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  sequencingRead: SequencingReadWhereClause
+  sequence: StrComparators
+  entityId: UUIDComparators
+}
+
+type Entity {
+  id: UUID!
+  type: String!
+  producingRunId: UUID!
+  ownerUserId: Int!
+  collectionId: Int!
+}
+
+interface EntityInterface {
+  id: UUID!
+}
+
+type File {
+  id: UUID!
+  entityId: UUID!
+  entityFieldName: String!
+  entity: Entity!
+  status: FileStatus!
+  protocol: String!
+  namespace: String!
+  path: String!
+  fileFormat: String!
+  compressionType: Int
+  size: Int
+  downloadLink(expiration: Int! = 3600): SignedURL
+}
+
+input FileCreate {
+  name: String!
+  fileFormat: String!
+  compressionType: String = null
+  protocol: String!
+  namespace: String!
+  path: String!
+}
+
+enum FileStatus {
+  SUCCESS
+  FAILED
+  PENDING
+}
+
+input FileStatusEnumComparators {
+  _eq: FileStatus
+  _neq: FileStatus
+  _in: [FileStatus!]
+  _nin: [FileStatus!]
+  _gt: FileStatus
+  _gte: FileStatus
+  _lt: FileStatus
+  _lte: FileStatus
+  _is_null: FileStatus
+}
+
+input FileUpload {
+  name: String!
+  fileFormat: String!
+  compressionType: String = null
+}
+
+input FileWhereClause {
+  id: UUIDComparators
+  status: FileStatusEnumComparators
+  protocol: StrComparators
+  namespace: StrComparators
+  path: StrComparators
+  compressionType: StrComparators
+  size: IntComparators
+}
+
+input IntComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type MultipartUploadCredentials {
+  protocol: String!
+  namespace: String!
+  path: String!
+  accessKeyId: String!
+  secretAccessKey: String!
+  sessionToken: String!
+  expiration: String!
+}
+
+type MultipartUploadResponse {
+  credentials: MultipartUploadCredentials!
+  file: File!
+}
+
+type Mutation {
+  createSample(name: String!, location: String!, collectionId: Int!): Sample!
+  createSequencingRead(nucleotide: Nucleotide!, sequence: String!, protocol: SequencingProtocol!, sequenceFileId: UUID!, collectionId: Int!): SequencingRead!
+  updateSample(name: String!, location: String!, entityId: UUID!): Sample!
+  createFile(entityId: UUID!, entityFieldName: String!, file: FileCreate!): File!
+  uploadFile(entityId: UUID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
+  markUploadComplete(fileId: UUID!): File!
+}
+
+enum Nucleotide {
+  RNA
+  DNA
+}
+
+input NucleotideEnumComparators {
+  _eq: Nucleotide
+  _neq: Nucleotide
+  _in: [Nucleotide!]
+  _nin: [Nucleotide!]
+  _gt: Nucleotide
+  _gte: Nucleotide
+  _lt: Nucleotide
+  _lte: Nucleotide
+  _is_null: Nucleotide
+}
+
+type Query {
+  samples(where: SampleWhereClause = null): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  contigs(where: ContigWhereClause = null): [Contig!]!
+  files(where: FileWhereClause = null): [File!]!
+}
+
+type Sample implements EntityInterface {
+  id: UUID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  name: String!
+  location: String!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  entityId: UUID!
+}
+
+input SampleWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: StrComparators
+  location: StrComparators
+  sequencingReads: SequencingReadWhereClause
+  entityId: UUIDComparators
+}
+
+enum SequencingProtocol {
+  MNGS
+  TARGETED
+  MSSPE
+}
+
+input SequencingProtocolEnumComparators {
+  _eq: SequencingProtocol
+  _neq: SequencingProtocol
+  _in: [SequencingProtocol!]
+  _nin: [SequencingProtocol!]
+  _gt: SequencingProtocol
+  _gte: SequencingProtocol
+  _lt: SequencingProtocol
+  _lte: SequencingProtocol
+  _is_null: SequencingProtocol
+}
+
+type SequencingRead implements EntityInterface {
+  id: UUID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  nucleotide: Nucleotide!
+  sequence: String!
+  protocol: SequencingProtocol!
+  sequenceFileId: UUID!
+  sequenceFile(where: FileWhereClause = null): File!
+  sample(where: SampleWhereClause = null): Sample
+  contigs(where: ContigWhereClause = null): [Contig!]!
+  entityId: UUID!
+}
+
+input SequencingReadWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  nucleotide: NucleotideEnumComparators
+  sequence: StrComparators
+  protocol: SequencingProtocolEnumComparators
+  sample: SampleWhereClause
+  contigs: ContigWhereClause
+  entityId: UUIDComparators
+}
+
+type SignedURL {
+  url: String!
+  protocol: String!
+  method: String!
+  expiration: Int!
+  fields: JSON
+}
+
+input StrComparators {
+  _eq: String
+  _neq: String
+  _in: [String!]
+  _nin: [String!]
+  _is_null: Int
+  _gt: String
+  _gte: String
+  _lt: String
+  _lte: String
+  _like: String
+  _nlike: String
+  _ilike: String
+  _nilike: String
+  _regex: String
+  _nregex: String
+  _iregex: String
+  _niregex: String
+}
+
+scalar UUID
+
+input UUIDComparators {
+  _eq: UUID
+  _neq: UUID
+  _in: [UUID!]
+  _nin: [UUID!]
+  _gt: UUID
+  _gte: UUID
+  _lt: UUID
+  _lte: UUID
+}
