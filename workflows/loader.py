@@ -101,7 +101,7 @@ class LoaderDriver:
             for event in await self.bus.poll():
                 print("event", event, file=sys.stderr)
                 if isinstance(event, WorkflowSucceededMessage):
-                    manifest = load_manifest(open("sequence_manifest.json").read())
+                    manifest = load_manifest(open("/workflows/manifests/sequence_manifest.json").read())
                     _event: WorkflowSucceededMessage = event
                     # run = (await self.session.execute(
                     #     select(Run).where(Run.runner_assigned_id == _event.runner_id)
