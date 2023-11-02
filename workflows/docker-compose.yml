@@ -27,6 +27,8 @@ x-workflow-variables: &workflow-variables
   ? DEFAULT_UPLOAD_PROTOCOL=S3 # don't need this in workflows
   ? PLATFORMICS_WORKFLOW_RUNNER_PLUGIN=local
   ? PLATFORMICS_EVENT_BUS_PLUGIN=redis
+  ? PLATFORMICS_EVENT_BUS__SWIPE__BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
+  ? PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL=http://motoserver.czidnet:4000/123456789012/swipe-test-notifications-sfn-notifications-queue
 
 x-cerbos-variables: &cerbos-variables
   ? CERBOS_URL=http://wf-cerbos:3592
