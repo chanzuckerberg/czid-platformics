@@ -2,7 +2,6 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-import uuid
 from typing import TYPE_CHECKING, Annotated, Optional
 
 import database.models as db
@@ -135,13 +134,13 @@ class {{ cls.name }}WhereClause(TypedDict):
 # Define {{ cls.name }} type
 @strawberry.type
 class {{ cls.name }}(EntityInterface):
-    id: uuid.UUID
+    id: strawberry.ID
     producing_run_id: int
     owner_user_id: int
     collection_id: int
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "uuid" %}
-    {{ attr.name }}: uuid.UUID
+    {{ attr.name }}: strawberry.ID
         {%- elif attr.type == "string" %}
     {{ attr.name }}: str
         {%- elif attr.is_enum %}
@@ -149,7 +148,7 @@ class {{ cls.name }}(EntityInterface):
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: int
         {%- elif attr.type == "File" %}
-    {{ attr.name }}_id: uuid.UUID
+    {{ attr.name }}_id: strawberry.ID
     {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")  # type: ignore
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}

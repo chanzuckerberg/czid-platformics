@@ -15,6 +15,8 @@ class FileStatus(sgqlc.types.Enum):
     __choices__ = ("FAILED", "PENDING", "SUCCESS")
 
 
+ID = sgqlc.types.ID
+
 Int = sgqlc.types.Int
 
 
@@ -256,15 +258,15 @@ class UUIDComparators(sgqlc.types.Input):
 class EntityInterface(sgqlc.types.Interface):
     __schema__ = gql_schema
     __field_names__ = ("id",)
-    id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="id")
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
 
 
 class Entity(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("id", "type", "producing_run_id", "owner_user_id", "collection_id")
-    id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="id")
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="type")
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="producingRunId")
+    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
@@ -285,8 +287,8 @@ class File(sgqlc.types.Type):
         "size",
         "download_link",
     )
-    id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="id")
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="entityId")
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
     entity_field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="entityFieldName")
     entity = sgqlc.types.Field(sgqlc.types.non_null(Entity), graphql_name="entity")
     status = sgqlc.types.Field(sgqlc.types.non_null(FileStatus), graphql_name="status")
@@ -372,7 +374,7 @@ class Mutation(sgqlc.types.Type):
                 ),
                 (
                     "sequence_file_id",
-                    sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="sequenceFileId", default=None),
+                    sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="sequenceFileId", default=None),
                 ),
                 (
                     "collection_id",
@@ -388,7 +390,7 @@ class Mutation(sgqlc.types.Type):
             (
                 ("name", sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="name", default=None)),
                 ("location", sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="location", default=None)),
-                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="entityId", default=None)),
+                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="entityId", default=None)),
             )
         ),
     )
@@ -397,7 +399,7 @@ class Mutation(sgqlc.types.Type):
         graphql_name="createFile",
         args=sgqlc.types.ArgDict(
             (
-                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="entityId", default=None)),
+                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="entityId", default=None)),
                 (
                     "entity_field_name",
                     sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="entityFieldName", default=None),
@@ -411,7 +413,7 @@ class Mutation(sgqlc.types.Type):
         graphql_name="uploadFile",
         args=sgqlc.types.ArgDict(
             (
-                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="entityId", default=None)),
+                ("entity_id", sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="entityId", default=None)),
                 (
                     "entity_field_name",
                     sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name="entityFieldName", default=None),
@@ -425,7 +427,7 @@ class Mutation(sgqlc.types.Type):
         sgqlc.types.non_null(File),
         graphql_name="markUploadComplete",
         args=sgqlc.types.ArgDict(
-            (("file_id", sgqlc.types.Arg(sgqlc.types.non_null(UUID), graphql_name="fileId", default=None)),)
+            (("file_id", sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="fileId", default=None)),)
         ),
     )
 
@@ -481,7 +483,7 @@ class Contig(sgqlc.types.Type, EntityInterface):
         ),
     )
     sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="entityId")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class Sample(sgqlc.types.Type, EntityInterface):
@@ -507,7 +509,7 @@ class Sample(sgqlc.types.Type, EntityInterface):
             (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="entityId")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class SequencingRead(sgqlc.types.Type, EntityInterface):
@@ -531,7 +533,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface):
     nucleotide = sgqlc.types.Field(sgqlc.types.non_null(Nucleotide), graphql_name="nucleotide")
     sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
     protocol = sgqlc.types.Field(sgqlc.types.non_null(SequencingProtocol), graphql_name="protocol")
-    sequence_file_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="sequenceFileId")
+    sequence_file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceFileId")
     sequence_file = sgqlc.types.Field(
         sgqlc.types.non_null(File),
         graphql_name="sequenceFile",
@@ -547,7 +549,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface):
         graphql_name="contigs",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(UUID), graphql_name="entityId")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 ########################################################################

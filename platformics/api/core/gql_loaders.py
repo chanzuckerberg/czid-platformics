@@ -79,7 +79,6 @@ class EntityLoader:
             async def load_fn(keys: list[Any]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
-                print(f"WHERE IS {where}")
                 filters = []
                 for _, remote in relationship.local_remote_pairs:
                     filters.append(remote.in_(keys))
@@ -150,7 +149,7 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
 def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # type: ignore
     @strawberry.field(extensions=[DependencyExtension()])
     async def update(
-        entity_id: uuid.UUID,
+        entity_id: strawberry.ID,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),

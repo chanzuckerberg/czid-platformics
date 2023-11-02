@@ -363,7 +363,6 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         edge_type = self._edge_type_for(type_name)
 
         async def wrapper(self, info: Info, where: strawberry.Private[str]):
-            print(f"where is {where}")
             return connection_type(
                 edges=[
                     edge_type(
@@ -558,13 +557,6 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
                     generated_field_keys,
                 )
                 field = strawberry.field(resolver=self.connection_resolver_for(relationship))
-                print("===")
-                print(type_)
-                print(type(type_))
-                print(strawberry_type)
-                print(type(strawberry_type))
-                print(field)
-                print(type(field))
                 for plugin in self.global_plugins:
                     plugin.mutate_connection_type(self, type_, field, relationship)
                 assert not field.init

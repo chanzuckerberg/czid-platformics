@@ -2,7 +2,6 @@ import json
 import typing
 import database.models as db
 import strawberry
-import uuid
 import uuid6
 from fastapi import Depends
 from typing_extensions import TypedDict
@@ -134,8 +133,8 @@ async def load_entities(
 
 @strawberry.type
 class File:
-    id: uuid.UUID
-    entity_id: uuid.UUID
+    id: strawberry.ID
+    entity_id: strawberry.ID
     entity_field_name: str
     entity: typing.Annotated["Entity", strawberry.lazy("api.types.entities")] = load_entities
     status: FileStatus
@@ -256,7 +255,7 @@ def generate_multipart_upload_token(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def mark_upload_complete(
-    file_id: uuid.UUID,
+    file_id: strawberry.ID,
     principal: Principal = Depends(require_auth_principal),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -276,7 +275,7 @@ async def mark_upload_complete(
 # Strawberry is unhappy with a mutation returning a union type.
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file(
-    entity_id: uuid.UUID,
+    entity_id: strawberry.ID,
     entity_field_name: str,
     file: FileCreate,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -295,7 +294,7 @@ async def create_file(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def upload_file(
-    entity_id: uuid.UUID,
+    entity_id: strawberry.ID,
     entity_field_name: str,
     file: FileUpload,
     expiration: int = 3600,
@@ -323,7 +322,7 @@ async def upload_file(
 
 
 async def create_or_upload_file(
-    entity_id: uuid.UUID,
+    entity_id: strawberry.ID,
     entity_field_name: str,
     file: FileCreate | FileUpload,
     expiration: int = 3600,

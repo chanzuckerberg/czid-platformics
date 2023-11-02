@@ -1,11 +1,11 @@
 type Contig implements EntityInterface {
-  id: UUID!
+  id: ID!
   producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
   sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
   sequence: String!
-  entityId: UUID!
+  entityId: ID!
 }
 
 input ContigWhereClause {
@@ -19,20 +19,20 @@ input ContigWhereClause {
 }
 
 type Entity {
-  id: UUID!
+  id: ID!
   type: String!
-  producingRunId: UUID!
+  producingRunId: ID!
   ownerUserId: Int!
   collectionId: Int!
 }
 
 interface EntityInterface {
-  id: UUID!
+  id: ID!
 }
 
 type File {
-  id: UUID!
-  entityId: UUID!
+  id: ID!
+  entityId: ID!
   entityFieldName: String!
   entity: Entity!
   status: FileStatus!
@@ -122,11 +122,11 @@ type MultipartUploadResponse {
 
 type Mutation {
   createSample(name: String!, location: String!, collectionId: Int!): Sample!
-  createSequencingRead(nucleotide: Nucleotide!, sequence: String!, protocol: SequencingProtocol!, sequenceFileId: UUID!, collectionId: Int!): SequencingRead!
-  updateSample(name: String!, location: String!, entityId: UUID!): Sample!
-  createFile(entityId: UUID!, entityFieldName: String!, file: FileCreate!): File!
-  uploadFile(entityId: UUID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
-  markUploadComplete(fileId: UUID!): File!
+  createSequencingRead(nucleotide: Nucleotide!, sequence: String!, protocol: SequencingProtocol!, sequenceFileId: ID!, collectionId: Int!): SequencingRead!
+  updateSample(name: String!, location: String!, entityId: ID!): Sample!
+  createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
+  uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
+  markUploadComplete(fileId: ID!): File!
 }
 
 enum Nucleotide {
@@ -154,14 +154,14 @@ type Query {
 }
 
 type Sample implements EntityInterface {
-  id: UUID!
+  id: ID!
   producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
   name: String!
   location: String!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  entityId: UUID!
+  entityId: ID!
 }
 
 input SampleWhereClause {
@@ -194,18 +194,18 @@ input SequencingProtocolEnumComparators {
 }
 
 type SequencingRead implements EntityInterface {
-  id: UUID!
+  id: ID!
   producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
   nucleotide: Nucleotide!
   sequence: String!
   protocol: SequencingProtocol!
-  sequenceFileId: UUID!
+  sequenceFileId: ID!
   sequenceFile(where: FileWhereClause = null): File!
   sample(where: SampleWhereClause = null): Sample
   contigs(where: ContigWhereClause = null): [Contig!]!
-  entityId: UUID!
+  entityId: ID!
 }
 
 input SequencingReadWhereClause {

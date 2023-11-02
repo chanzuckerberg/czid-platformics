@@ -2,7 +2,6 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-import uuid
 from typing import TYPE_CHECKING, Annotated, Optional
 
 import database.models as db
@@ -111,18 +110,18 @@ class SequencingReadWhereClause(TypedDict):
 # Define SequencingRead type
 @strawberry.type
 class SequencingRead(EntityInterface):
-    id: uuid.UUID
+    id: strawberry.ID
     producing_run_id: int
     owner_user_id: int
     collection_id: int
     nucleotide: Nucleotide
     sequence: str
     protocol: SequencingProtocol
-    sequence_file_id: uuid.UUID
+    sequence_file_id: strawberry.ID
     sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")  # type: ignore
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples
     contigs: typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs
-    entity_id: uuid.UUID
+    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

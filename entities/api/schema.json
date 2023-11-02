@@ -243,7 +243,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -352,7 +352,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -381,7 +381,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -415,7 +415,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "SCALAR",
-          "name": "UUID",
+          "name": "ID",
           "possibleTypes": null
         },
         {
@@ -447,7 +447,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -538,7 +538,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -624,7 +624,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -688,7 +688,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -701,7 +701,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -856,7 +856,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -882,7 +882,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -1188,6 +1188,15 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "UUIDComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "UUID",
           "possibleTypes": null
         },
         {
@@ -2063,7 +2072,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -2147,7 +2156,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "UUID",
+                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -2270,7 +2279,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "UUID",
+                      "name": "ID",
                       "ofType": null
                     }
                   }
@@ -2336,7 +2345,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "UUID",
+                      "name": "ID",
                       "ofType": null
                     }
                   }
@@ -2363,7 +2372,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "UUID",
+                      "name": "ID",
                       "ofType": null
                     }
                   }
@@ -2416,7 +2425,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "UUID",
+                      "name": "ID",
                       "ofType": null
                     }
                   }
@@ -2482,7 +2491,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "UUID",
+                      "name": "ID",
                       "ofType": null
                     }
                   }

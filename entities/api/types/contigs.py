@@ -2,7 +2,6 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-import uuid
 from typing import TYPE_CHECKING, Annotated, Optional
 
 import database.models as db
@@ -92,7 +91,7 @@ class ContigWhereClause(TypedDict):
 # Define Contig type
 @strawberry.type
 class Contig(EntityInterface):
-    id: uuid.UUID
+    id: strawberry.ID
     producing_run_id: int
     owner_user_id: int
     collection_id: int
@@ -100,7 +99,7 @@ class Contig(EntityInterface):
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
     ] = load_sequencing_reads
     sequence: str
-    entity_id: uuid.UUID
+    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
