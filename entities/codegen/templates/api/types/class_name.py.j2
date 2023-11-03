@@ -87,7 +87,6 @@ async def load_{{ related_field.name }}s(
 {%- endfor %}
 
 
-{# {%- if len[ f for f in cls.owned_fields if f.type == "File" ]) > 0 %} #}
 {%- if cls.owned_fields | map(attribute="type") | select("equalto", "File") | list | length > 0 %}
 # ------------------------------------------------------------------------------
 # Dataloader for File object
