@@ -17,6 +17,7 @@ from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, Str
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 from support.enums import Nucleotide, SequencingProtocol
@@ -54,7 +55,7 @@ async def load_samples(
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contigs")]])
 async def load_contigs(
     root: "SequencingRead",
     info: Info,

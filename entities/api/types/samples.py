@@ -17,6 +17,7 @@ from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUID
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -38,7 +39,7 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]])
 async def load_sequencing_reads(
     root: "Sample",
     info: Info,

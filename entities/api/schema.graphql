@@ -8,6 +8,24 @@ type Contig implements EntityInterface {
   entityId: ID!
 }
 
+"""A connection to a list of items."""
+type ContigConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ContigEdge!]!
+}
+
+"""An edge in a connection."""
+type ContigEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Contig!
+}
+
 input ContigWhereClause {
   id: UUIDComparators
   producingRunId: IntComparators
@@ -146,6 +164,21 @@ input NucleotideEnumComparators {
   _is_null: Nucleotide
 }
 
+"""Information to aid in pagination."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
 type Query {
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
@@ -160,7 +193,21 @@ type Sample implements EntityInterface {
   collectionId: Int!
   name: String!
   location: String!
-  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
   entityId: ID!
 }
 
@@ -204,8 +251,40 @@ type SequencingRead implements EntityInterface {
   sequenceFileId: ID!
   sequenceFile(where: FileWhereClause = null): File!
   sample(where: SampleWhereClause = null): Sample
-  contigs(where: ContigWhereClause = null): [Contig!]!
+  contigs(
+    where: ContigWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ContigConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type SequencingReadConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [SequencingReadEdge!]!
+}
+
+"""An edge in a connection."""
+type SequencingReadEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: SequencingRead!
 }
 
 input SequencingReadWhereClause {

@@ -19,6 +19,7 @@ from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.dataloader import DataLoader
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -57,15 +58,15 @@ def cache_key(key: dict) -> str:
 
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
-
-@strawberry.field(extensions=[DependencyExtension()])
         {%- if related_field.multivalued %}
+@relay.connection(relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]])
 async def load_{{ related_field.name }}(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.name }}")] | None = None,
 ) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
         {%- else %}
+@strawberry.field(extensions=[DependencyExtension()])
 async def load_{{ related_field.name }}s(
     root: "{{ cls.name }}",
     info: Info,

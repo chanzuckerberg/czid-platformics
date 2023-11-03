@@ -1,7 +1,13 @@
 import sgqlc.types
+import sgqlc.types.relay
 
 
 gql_schema = sgqlc.types.Schema()
+
+
+# Unexport Node/PageInfo, let schema re-declare them
+gql_schema -= sgqlc.types.relay.Node
+gql_schema -= sgqlc.types.relay.PageInfo
 
 
 ########################################################################
@@ -261,6 +267,22 @@ class EntityInterface(sgqlc.types.Interface):
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
 
 
+class ContigConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("ContigEdge"))), graphql_name="edges"
+    )
+
+
+class ContigEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("Contig"), graphql_name="node")
+
+
 class Entity(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("id", "type", "producing_run_id", "owner_user_id", "collection_id")
@@ -432,6 +454,15 @@ class Mutation(sgqlc.types.Type):
     )
 
 
+class PageInfo(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("has_next_page", "has_previous_page", "start_cursor", "end_cursor")
+    has_next_page = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="hasNextPage")
+    has_previous_page = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="hasPreviousPage")
+    start_cursor = sgqlc.types.Field(String, graphql_name="startCursor")
+    end_cursor = sgqlc.types.Field(String, graphql_name="endCursor")
+
+
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("samples", "sequencing_reads", "contigs", "files")
@@ -457,6 +488,22 @@ class Query(sgqlc.types.Type):
         graphql_name="files",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
+
+
+class SequencingReadConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null(PageInfo), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequencingReadEdge"))), graphql_name="edges"
+    )
+
+
+class SequencingReadEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("SequencingRead"), graphql_name="node")
 
 
 class SignedURL(sgqlc.types.Type):
@@ -503,10 +550,16 @@ class Sample(sgqlc.types.Type, EntityInterface):
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     location = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="location")
     sequencing_reads = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequencingRead"))),
+        sgqlc.types.non_null(SequencingReadConnection),
         graphql_name="sequencingReads",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -545,9 +598,17 @@ class SequencingRead(sgqlc.types.Type, EntityInterface):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(SampleWhereClause, graphql_name="where", default=None)),)),
     )
     contigs = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Contig))),
+        sgqlc.types.non_null(ContigConnection),
         graphql_name="contigs",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
