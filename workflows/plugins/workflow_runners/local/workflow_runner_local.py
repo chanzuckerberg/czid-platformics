@@ -53,9 +53,13 @@ class LocalWorkflowRunner(WorkflowRunner):
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         # Running docker-in-docker requires the paths to files and outputs to be the same between
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
+            config_path = "/workflows/test_workflows/miniwdl.cfg"
             try:
                 p = subprocess.Popen(
-                    ["miniwdl", "run", "--verbose", os.path.abspath(workflow_path)]
+                    ["miniwdl", "run", 
+                    "--env", "AWS_ENDPOINT_URL=http://motoserver.czidnet:4000",
+                    "--cfg", config_path, 
+                    "--verbose", os.path.abspath(workflow_path)]
                     + [f"{k}={v}" for k, v in inputs.items()],
                     cwd=tmpdir,
                     stdout=subprocess.PIPE,
