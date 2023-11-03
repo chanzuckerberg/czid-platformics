@@ -1,87 +1,20 @@
 import typing
 
-import database.models as db
-import strawberry
 import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.gql_loaders import EntityLoader
 from platformics.settings import APISettings
-from platformics.api.core.gql_loaders import (
-    EntityLoader,
-    get_base_creator,
-    get_base_loader,
-    get_base_updater,
-    get_file_loader,
-)
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 from platformics.database.connect import AsyncDB
+
+import strawberry
+from api.queries import Query
+from api.mutations import Mutation
+from strawberry.schema.config import StrawberryConfig
 from strawberry.fastapi import GraphQLRouter
-from api.strawberry import strawberry_sqlalchemy_mapper
-from api.files import File, MultipartUploadCredentials, mark_upload_complete, create_file, upload_file
-
-######################
-# Strawberry-GraphQL #
-######################
-
-
-@strawberry_sqlalchemy_mapper.interface(db.Entity)
-class EntityInterface:
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.Sample)
-class Sample(EntityInterface):
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.SequencingRead)
-class SequencingRead(EntityInterface):
-    pass
-
-
-@strawberry_sqlalchemy_mapper.type(db.Contig)
-class Contig(EntityInterface):
-    pass
-
-
-# --------------------
-# Queries
-# --------------------
-
-
-@strawberry.type
-class Query:
-    samples: typing.Sequence[Sample] = get_base_loader(db.Sample, Sample)
-    sequencing_reads: typing.Sequence[SequencingRead] = get_base_loader(db.SequencingRead, SequencingRead)
-    contigs: typing.Sequence[Contig] = get_base_loader(db.Contig, Contig)
-    files: typing.Sequence[File] = get_file_loader(db.File, File)
-
-
-# --------------------
-# Mutations
-# --------------------
-
-
-@strawberry.type
-class Mutation:
-    # Create
-    create_sample: Sample = get_base_creator(db.Sample, Sample)  # type: ignore
-    create_sequencing_read: SequencingRead = get_base_creator(db.SequencingRead, SequencingRead)  # type: ignore
-    create_contig: Contig = get_base_creator(db.Contig, Contig)  # type: ignore
-
-    # Update
-    update_sample: Sample = get_base_updater(db.Sample, Sample)  # type: ignore
-
-    # File management
-    create_file: File = create_file
-    upload_file: MultipartUploadCredentials = upload_file
-    mark_upload_complete: File = mark_upload_complete
-
-
-# --------------------
-# Initialize app
-# --------------------
 
 
 def get_context(
@@ -94,18 +27,23 @@ def get_context(
     }
 
 
-# call finalize() before using the schema:
-# (note that models that are related to models that are in the schema
-# are automatically mapped at this stage
-strawberry_sqlalchemy_mapper.finalize()
+# Arg/Field names that start with _ are not camel-cased
+class CustomNameConverter(NameConverter):
+    def get_graphql_name(self, obj: HasGraphQLName) -> str:
+        if obj.python_name.startswith("_"):
+            return obj.python_name
+        return super().get_graphql_name(obj)
+
+
 # only needed if you have polymorphic types
-additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
+# additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
 # strawberry graphql schema
 # start server with strawberry server app
 schema = strawberry.Schema(
     query=Query,
     mutation=Mutation,
-    types=additional_types,
+    config=StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter()),
+    # types=additional_types,
 )
 
 
@@ -130,6 +68,6 @@ def get_app() -> FastAPI:
 app = get_app()
 
 if __name__ == "__main__":
-    config = uvicorn.Config("api.main:app", host="0.0.0.0", port=8008, log_level="info")
+    config = uvicorn.Config("api.main:app", host="0.0.0.0", port=8009, log_level="info")
     server = uvicorn.Server(config)
     server.run()

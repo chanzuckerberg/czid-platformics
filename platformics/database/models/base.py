@@ -1,12 +1,13 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import MetaData, Column, Integer, String
 import uuid6
+
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from database.models.files import File
+    from database.models.file import File
 else:
     File = "File"
 

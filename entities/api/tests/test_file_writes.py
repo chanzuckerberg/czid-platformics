@@ -129,11 +129,13 @@ async def test_upload_file(
                 fileFormat: "fastq"
             }}
         ) {{
-            namespace
-            path
-            accessKeyId
-            secretAccessKey
-            expiration
+            credentials {{
+                namespace
+                path
+                accessKeyId
+                secretAccessKey
+                expiration
+            }}
           }}
         }}
     """
@@ -146,8 +148,8 @@ async def test_upload_file(
         return
 
     # Moto produces a hard-coded tokens
-    assert output["data"]["uploadFile"]["accessKeyId"].endswith("EXAMPLE")
-    assert output["data"]["uploadFile"]["secretAccessKey"].endswith("EXAMPLEKEY")
+    assert output["data"]["uploadFile"]["credentials"]["accessKeyId"].endswith("EXAMPLE")
+    assert output["data"]["uploadFile"]["credentials"]["secretAccessKey"].endswith("EXAMPLEKEY")
 
 
 # Test adding an existing file to the entities service

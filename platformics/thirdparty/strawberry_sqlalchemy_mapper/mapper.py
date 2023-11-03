@@ -88,6 +88,22 @@ _IS_GENERATED_CONNECTION_TYPE_KEY = "_is_generated_connection_type"
 _IS_GENERATED_RESOLVER_KEY = "_is_generated_resolver"
 
 
+class SSAPlugin:
+    def __init__(self) -> None:
+        pass
+
+    def on_type_definition(
+        self, strawberry_sqlalchemy_mapper: "StrawberrySQLAlchemyMapper", sa_mapper: Mapper, mapped_type: Any
+    ) -> Any:
+        return mapped_type
+
+    def finalize(self, strawberry_sqlalchemy_mapper: "StrawberrySQLAlchemyMapper") -> None:
+        pass
+
+    def resolve(self):
+        pass
+
+
 class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
     """
     Mapper for SQLAlchemy models to Strawberry types.
@@ -145,6 +161,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         model_to_type_name: Optional[Callable[[Type[BaseModelType]], str]] = None,
         model_to_interface_name: Optional[Callable[[Type[BaseModelType]], str]] = None,
         extra_sqlalchemy_type_to_strawberry_type_map: Optional[Mapping[Type[TypeEngine], Type[Any]]] = None,
+        global_plugins: Optional[list[SSAPlugin]] = None,
     ) -> None:
         if model_to_type_name is None:
             model_to_type_name = self._default_model_to_type_name
@@ -161,6 +178,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         self.mapped_interfaces = {}
         self._related_type_models = set()
         self._related_interface_models = set()
+        self.global_plugins: list[SSAPlugin] = global_plugins or []
 
     @staticmethod
     def _default_model_to_type_name(model: Type[BaseModelType]) -> str:
@@ -344,7 +362,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         connection_type = self._connection_type_for(type_name)
         edge_type = self._edge_type_for(type_name)
 
-        async def wrapper(self, info: Info):
+        async def wrapper(self, info: Info, where: strawberry.Private[str]):
             return connection_type(
                 edges=[
                     edge_type(
@@ -483,6 +501,7 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         model: Type[BaseModelType],
         make_interface=False,
         use_federation=False,
+        plugins: Optional[list[SSAPlugin]] = None,
     ) -> Callable[[Type[object]], Any]:
         """
         Decorate a type with this to register it as a strawberry type
@@ -538,6 +557,8 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
                     generated_field_keys,
                 )
                 field = strawberry.field(resolver=self.connection_resolver_for(relationship))
+                for plugin in self.global_plugins:
+                    plugin.mutate_connection_type(self, type_, field, relationship)
                 assert not field.init
                 setattr(
                     type_,
@@ -610,6 +631,9 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
             self.mapped_types[type_.__name__] = mapped_type
             setattr(mapped_type, _GENERATED_FIELD_KEYS_KEY, generated_field_keys)
             setattr(mapped_type, _ORIGINAL_TYPE_KEY, type_)
+
+            for plugin in self.global_plugins + (plugins or []):
+                mapped_type = plugin.on_type_definition(self, mapper, mapped_type)
             return mapped_type
 
         return convert
@@ -631,6 +655,8 @@ class StrawberrySQLAlchemyMapper(Generic[BaseModelType]):
         """
         self._map_unmapped_relationships()
         self._fix_annotation_namespaces()
+        for plugin in self.global_plugins:
+            plugin.finalize(self)
 
     def _fix_annotation_namespaces(self) -> None:
         """

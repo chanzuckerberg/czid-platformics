@@ -4,7 +4,7 @@ resourcePolicy:
   version: "default"
   importDerivedRoles:
     - common_roles
-  resource: "sequencing_read"
+  resource: "{{cls.snake_name}}"
   rules:
     - actions: ['view', 'create', 'update']
       effect: EFFECT_ALLOW

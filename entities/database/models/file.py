@@ -10,7 +10,7 @@ import strawberry
 import enum
 
 if TYPE_CHECKING:
-    from database.models.samples import SequencingRead
+    from database.models.sample import SequencingRead
 else:
     SequencingRead = "SequencingRead"
 

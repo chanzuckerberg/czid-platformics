@@ -1,0 +1,12 @@
+import strawberry
+import enum
+{%- for enum in enums %}
+
+
+@strawberry.enum
+class {{enum.name}}(enum.Enum):
+    {%- for value in enum.permissible_values %}
+    {{value}} = "{{value}}"
+    {%- endfor %}
+{%- endfor %}
+

@@ -54,9 +54,12 @@ local-tests: ## Run entities tests
 
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
+	$(docker_compose) exec entities python3 codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix .
 	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
+	$(docker_compose_run) $(FOLDER) black database/models/ api/types/
+	$(docker_compose_run) $(FOLDER) ruff check --fix database/models/ api/types/
 
 ### CERBOS #############################################
 cerbos-tests:

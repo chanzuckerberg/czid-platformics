@@ -1,49 +1,53 @@
 type Contig implements EntityInterface {
-  id: UUID!
-  type: String!
-  producingRunId: Int
+  id: ID!
+  producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
-  entityId: UUID!
+  sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
   sequence: String!
-  sequencingReadId: UUID!
-  sequencingRead: SequencingRead!
+  entityId: ID!
 }
 
-type ContigConnection {
-  edges: [ContigEdge!]!
+input ContigWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  sequencingRead: SequencingReadWhereClause
+  sequence: StrComparators
+  entityId: UUIDComparators
 }
 
-type ContigEdge {
-  node: Contig!
+type Entity {
+  id: ID!
+  type: String!
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
 }
 
 interface EntityInterface {
-  id: UUID!
-  type: String!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
+  id: ID!
 }
 
 type File {
-  id: UUID!
-  entityId: UUID
+  id: ID!
+  entityId: ID!
   entityFieldName: String!
+  entity: Entity!
   status: FileStatus!
   protocol: String!
   namespace: String!
   path: String!
   fileFormat: String!
-  compressionType: String
+  compressionType: Int
   size: Int
-  entity: EntityInterface
   downloadLink(expiration: Int! = 3600): SignedURL
 }
 
 input FileCreate {
   name: String!
-  fileFormat: String = null
+  fileFormat: String!
   compressionType: String = null
   protocol: String!
   namespace: String!
@@ -56,10 +60,44 @@ enum FileStatus {
   PENDING
 }
 
+input FileStatusEnumComparators {
+  _eq: FileStatus
+  _neq: FileStatus
+  _in: [FileStatus!]
+  _nin: [FileStatus!]
+  _gt: FileStatus
+  _gte: FileStatus
+  _lt: FileStatus
+  _lte: FileStatus
+  _is_null: FileStatus
+}
+
 input FileUpload {
   name: String!
-  fileFormat: String = null
+  fileFormat: String!
   compressionType: String = null
+}
+
+input FileWhereClause {
+  id: UUIDComparators
+  status: FileStatusEnumComparators
+  protocol: StrComparators
+  namespace: StrComparators
+  path: StrComparators
+  compressionType: StrComparators
+  size: IntComparators
+}
+
+input IntComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
 }
 
 """
@@ -77,58 +115,110 @@ type MultipartUploadCredentials {
   expiration: String!
 }
 
+type MultipartUploadResponse {
+  credentials: MultipartUploadCredentials!
+  file: File!
+}
+
 type Mutation {
   createSample(name: String!, location: String!, collectionId: Int!): Sample!
-  createSequencingRead(nucleotide: String!, sequence: String!, protocol: String!, sequenceFileId: UUID, sampleId: UUID!, collectionId: Int!): SequencingRead!
-  createContig(sequence: String!, sequencingReadId: UUID!, collectionId: Int!): Contig!
-  updateSample(entityId: UUID!, name: String!, location: String!): Sample!
-  createFile(entityId: UUID!, entityFieldName: String!, file: FileCreate!): File!
-  uploadFile(entityId: UUID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadCredentials!
-  markUploadComplete(fileId: UUID!): File!
+  createSequencingRead(nucleotide: Nucleotide!, sequence: String!, protocol: SequencingProtocol!, sequenceFileId: ID!, collectionId: Int!): SequencingRead!
+  updateSample(name: String!, location: String!, entityId: ID!): Sample!
+  createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
+  uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
+  markUploadComplete(fileId: ID!): File!
+}
+
+enum Nucleotide {
+  RNA
+  DNA
+}
+
+input NucleotideEnumComparators {
+  _eq: Nucleotide
+  _neq: Nucleotide
+  _in: [Nucleotide!]
+  _nin: [Nucleotide!]
+  _gt: Nucleotide
+  _gte: Nucleotide
+  _lt: Nucleotide
+  _lte: Nucleotide
+  _is_null: Nucleotide
 }
 
 type Query {
-  samples(id: UUID = null): [Sample!]!
-  sequencingReads(id: UUID = null): [SequencingRead!]!
-  contigs(id: UUID = null): [Contig!]!
-  files(id: UUID = null): [File!]!
+  samples(where: SampleWhereClause = null): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  contigs(where: ContigWhereClause = null): [Contig!]!
+  files(where: FileWhereClause = null): [File!]!
 }
 
 type Sample implements EntityInterface {
-  id: UUID!
-  type: String!
-  producingRunId: Int
+  id: ID!
+  producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
-  entityId: UUID!
   name: String!
   location: String!
-  sequencingReads: SequencingReadConnection!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  entityId: ID!
+}
+
+input SampleWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: StrComparators
+  location: StrComparators
+  sequencingReads: SequencingReadWhereClause
+  entityId: UUIDComparators
+}
+
+enum SequencingProtocol {
+  MNGS
+  TARGETED
+  MSSPE
+}
+
+input SequencingProtocolEnumComparators {
+  _eq: SequencingProtocol
+  _neq: SequencingProtocol
+  _in: [SequencingProtocol!]
+  _nin: [SequencingProtocol!]
+  _gt: SequencingProtocol
+  _gte: SequencingProtocol
+  _lt: SequencingProtocol
+  _lte: SequencingProtocol
+  _is_null: SequencingProtocol
 }
 
 type SequencingRead implements EntityInterface {
-  id: UUID!
-  type: String!
-  producingRunId: Int
+  id: ID!
+  producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
-  entityId: UUID!
-  nucleotide: String!
+  nucleotide: Nucleotide!
   sequence: String!
-  protocol: String!
-  sequenceFileId: UUID
-  sampleId: UUID!
-  sequenceFile: File
-  sample: Sample!
-  contigs: ContigConnection!
+  protocol: SequencingProtocol!
+  sequenceFileId: ID!
+  sequenceFile(where: FileWhereClause = null): File!
+  sample(where: SampleWhereClause = null): Sample
+  contigs(where: ContigWhereClause = null): [Contig!]!
+  entityId: ID!
 }
 
-type SequencingReadConnection {
-  edges: [SequencingReadEdge!]!
-}
-
-type SequencingReadEdge {
-  node: SequencingRead!
+input SequencingReadWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  nucleotide: NucleotideEnumComparators
+  sequence: StrComparators
+  protocol: SequencingProtocolEnumComparators
+  sample: SampleWhereClause
+  contigs: ContigWhereClause
+  entityId: UUIDComparators
 }
 
 type SignedURL {
@@ -139,4 +229,35 @@ type SignedURL {
   fields: JSON
 }
 
+input StrComparators {
+  _eq: String
+  _neq: String
+  _in: [String!]
+  _nin: [String!]
+  _is_null: Int
+  _gt: String
+  _gte: String
+  _lt: String
+  _lte: String
+  _like: String
+  _nlike: String
+  _ilike: String
+  _nilike: String
+  _regex: String
+  _nregex: String
+  _iregex: String
+  _niregex: String
+}
+
 scalar UUID
+
+input UUIDComparators {
+  _eq: UUID
+  _neq: UUID
+  _in: [UUID!]
+  _nin: [UUID!]
+  _gt: UUID
+  _gte: UUID
+  _lt: UUID
+  _lte: UUID
+}

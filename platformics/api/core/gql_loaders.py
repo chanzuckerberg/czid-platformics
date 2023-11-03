@@ -17,10 +17,22 @@ from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
 from platformics.security.authorization import get_resource_query, CerbosAction
+from api.core.helpers import get_db_query
 
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
 
+class Hashabledict(dict):
+    def __hash__(self):  # type: ignore
+        return hash(frozenset(self))
+
+def make_hashable(whereclause: dict) -> Hashabledict:
+    res = {}
+    for k, v in whereclause.items():
+        if type(v) == dict:
+            v = make_hashable(v)
+        res[k] = v
+    return Hashabledict(res)
 
 async def get_db_rows(
     model_cls: type[E],
@@ -52,43 +64,49 @@ class EntityLoader:
         self.cerbos_client = cerbos_client
         self.principal = principal
 
-    def loader_for(self, relationship: RelationshipProperty) -> DataLoader:
+    def loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None) -> DataLoader:
         """
         Retrieve or create a DataLoader for the given relationship
         """
+        if not where:
+            where = {}
+        where_str = make_hashable(where)
         try:
-            return self._loaders[relationship]
+            return self._loaders[(relationship, where_str)] # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
-            load_method = get_db_rows  # type: ignore
-
-            async def load_fn(keys: list[Tuple]) -> typing.Sequence[Any]:
+            async def load_fn(keys: list[Any]) -> typing.Sequence[Any]:
                 if not relationship.local_remote_pairs:
                     raise Exception("invalid relationship")
-                filters = [tuple_(*[remote for _, remote in relationship.local_remote_pairs]).in_(keys)]
-                order_by: list[tuple[ColumnElement[Any], ...]] = []
+                filters = []
+                for _, remote in relationship.local_remote_pairs:
+                    filters.append(remote.in_(keys))
+                order_by: list = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
-                db_session = self.engine.session()
-                rows = await load_method(
+                query = get_db_query(
                     related_model,  # type: ignore
-                    db_session,
+                    CerbosAction.VIEW,
                     self.cerbos_client,
                     self.principal,
-                    filters,  # type: ignore
-                    order_by,
+                    where
                 )
+                for item in filters:
+                    query = query.where(item)
+                for item in order_by:
+                    query = query.order_by(item)
+                db_session = self.engine.session()
+                rows = (await db_session.execute(query)).scalars().all()
                 await db_session.close()
 
                 def group_by_remote_key(row: Any) -> Tuple:
                     if not relationship.local_remote_pairs:
                         raise Exception("invalid relationship")
-                    return tuple(
-                        [getattr(row, remote.key) for _, remote in relationship.local_remote_pairs if remote.key]
-                    )
+                    # TODO -- Technically, SA supports multiple field filters in a relationship! We'll need to handle this case
+                    return [getattr(row, remote.key) for _, remote in relationship.local_remote_pairs if remote.key][0]
 
-                grouped_keys: Mapping[Tuple, list[Any]] = defaultdict(list)
+                grouped_keys: Mapping[Any, list[Any]] = defaultdict(list)
                 for row in rows:
                     grouped_keys[group_by_remote_key(row)].append(row)
                 if relationship.uselist:
@@ -96,41 +114,8 @@ class EntityLoader:
                 else:
                     return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
-            self._loaders[relationship] = DataLoader(load_fn=load_fn)
-            return self._loaders[relationship]
-
-
-def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]:
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def resolve_entity(
-        id: typing.Optional[uuid.UUID] = None,
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(require_auth_principal),
-    ) -> typing.Sequence[E]:
-        filters = []
-        if id:
-            filters.append(sql_model.id == id)
-        return await get_db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-
-    return typing.cast(typing.Sequence[T], resolve_entity)
-
-
-# FIXME: error: Name "db.File" is not defined
-def get_file_loader(sql_model: type[db.File], gql_type: type[T]) -> typing.Sequence[T]:  # type: ignore
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def resolve_file(
-        id: typing.Optional[uuid.UUID] = None,
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(require_auth_principal),
-    ) -> typing.Sequence[db.File]:  # type: ignore
-        filters = []
-        if id:
-            filters.append(sql_model.id == id)
-        return await get_db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-
-    return typing.cast(typing.Sequence[T], resolve_file)
+            self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn) # type: ignore
+            return self._loaders[(relationship, where_str)] # type: ignore
 
 
 def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
@@ -149,8 +134,6 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
         if not cerbos_client.is_allowed("create", principal, resource):
             raise Exception("Unauthorized: Cannot create entity in this collection")
 
-        # TODO: User must have permissions to the sample
-
         # Save to DB
         params["owner_user_id"] = int(principal.id)
         new_entity = sql_model(**params)
@@ -163,11 +146,10 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     return typing.cast(T, create)
 
 
-# FIXME: error: Name "db.Entity" is not defined
 def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # type: ignore
     @strawberry.field(extensions=[DependencyExtension()])
     async def update(
-        entity_id: uuid.UUID,
+        entity_id: strawberry.ID,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
@@ -203,7 +185,6 @@ def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # typ
 
 
 # Infer Strawberry arguments from SQLAlchemy columns
-# FIXME: error: Name "db.Entity" is not defined
 def generate_strawberry_arguments(
     action: str, sql_model: type[db.Entity | db.Base], gql_type: type[T]  # type: ignore
 ) -> list[StrawberryArgument]:

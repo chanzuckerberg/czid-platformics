@@ -1,0 +1,173 @@
+id: https://czid.org/entities/schema/platformics
+title: CZID Platformics Bio-Entities Schema
+name: platformics
+default_range: string
+
+types:
+  string:
+    uri: xsd:string
+    base: str
+    description: A character string
+
+  integer:
+    uri: xsd:integer
+    base: int
+    description: An integer
+
+  uuid:
+    uri: xsd:string
+    typeof: str
+    base: str
+    description: A UUID
+
+enums:
+  FileStatus:
+    permissible_values:
+      SUCCESS:
+        description: This file has been uploaded and validated successfully
+      FAILED:
+        description: This file failed to upload or failed validation
+      PENDING:
+        description: This file is a placeholder and awaiting a successful upload
+  FileAcessProtocol:
+    permissible_values:
+      s3:
+        description: This file is accessible via the (AWS) S3 protocol
+  Nucleotide:
+    permissible_values:
+      RNA:
+        description: DNA nucleotide
+      DNA:
+        description: RNA nucleotide
+  SequencingProtocol:
+    permissible_values:
+      MNGS:
+        description: Metagenomics sequencing read
+      TARGETED:
+        description: Targeted (amplified via primers) sequencing read
+      MSSPE:
+        description: MSSPE Sequencing Read
+ 
+classes:
+  Entity:
+    attributes:
+      id:
+        identifier: true
+        range: uuid
+      type:
+        range: string
+        required: true
+        designates_type: true
+      producing_run_id:
+        range: int
+        minimum_value: 0
+      owner_user_id:
+        range: int
+        minimum_value: 0
+      collection_id:
+        range: int
+        minimum_value: 0
+    # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
+    # we're using an annotation here to tack on the extra functionality that we need. We do this because
+    # English pluralization is hard, and we don't want to have to write a custom pluralization function.
+    # This basically means we now have our own "dialect" of LinkML to worry about. We may want to see if
+    # pluralization can be added to the core spec in the future.
+    annotations:
+      plural: Entities
+ 
+  File:
+    attributes:
+      id:
+        identifier: true
+        range: uuid
+      entity_field_name:
+        range: string
+        required: true
+      entity:
+        range: Entity
+        required: true
+      status:
+        range: FileStatus
+        required: true
+      protocol:
+        range: FileAccessProtocol
+        required: true
+      namespace:
+        range: string
+        required: true
+      path:
+        range: string
+        required: true
+      file_format:
+        range: string
+        required: true
+      compression_type:
+       range: string
+      size:
+        range: int
+        minimum_value: 0
+
+  Sample:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        required: true
+      location:
+        required: true
+      sequencing_reads:
+        range: SequencingRead
+        multivalued: true
+        inverse: SequencingRead.sample
+    annotations:
+      plural: Samples
+
+  SequencingRead:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      nucleotide:
+        range: Nucleotide
+        required: true
+      sequence:
+        range: string
+        pattern: "^[AGTCUN]+$"
+        required: true
+      protocol:
+        range: SequencingProtocol
+        required: true
+      sequence_file:
+        range: File
+      sample:
+        range: Sample
+        inverse: Sample.sequencing_reads
+      contigs:
+        range: Contig
+        multivalued: true
+        inverse: Contig.sequencing_read
+    annotations:
+      plural: SequencingReads
+
+  Contig:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      sequencing_read:
+        range: SequencingRead
+        inverse: Sample.contigs
+      sequence:
+        required: true
+    annotations:
+      plural: Contigs
+
+  EntityMixin:
+    mixin: true
+    attributes:
+      entity_id:
+        readonly: true
+        range: uuid
+        identifier: true
+        inverse: entity.id

@@ -2,16 +2,16 @@ import json
 import typing
 import database.models as db
 import strawberry
-import uuid
 import uuid6
 from fastapi import Depends
+from typing_extensions import TypedDict
 from mypy_boto3_s3.client import S3Client
 from mypy_boto3_sts.client import STSClient
 from platformics.api.core.deps import get_s3_client
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from api.strawberry import strawberry_sqlalchemy_mapper
+from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from strawberry.scalars import JSON
-
+from strawberry.dataloader import DataLoader
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.api.core.deps import (
@@ -25,10 +25,13 @@ from platformics.settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.security.authorization import CerbosAction, get_resource_query
 from files.format_handlers import get_validator
+from api.core.helpers import get_db_rows
+from api.types.entities import Entity
+from database.models import FileStatus
 
 
 # ------------------------------------------------------------------------------
-# Types and inputs
+# Utility types/inputs
 # ------------------------------------------------------------------------------
 
 
@@ -57,22 +60,91 @@ class MultipartUploadCredentials:
 @strawberry.input()
 class FileUpload:
     name: str
-    file_format: typing.Optional[str] = None
+    file_format: str
     compression_type: typing.Optional[str] = None
 
 
 @strawberry.input()
 class FileCreate:
     name: str
-    file_format: typing.Optional[str] = None
+    file_format: str
     compression_type: typing.Optional[str] = None
     protocol: str
     namespace: str
     path: str
 
 
-@strawberry_sqlalchemy_mapper.type(db.File)
+# ------------------------------------------------------------------------------
+# Data loader for fetching a File's related entity
+# ------------------------------------------------------------------------------
+
+
+def cache_key(key: dict) -> str:
+    return key["id"]
+
+
+async def batch_entities(
+    keys: list[dict],
+) -> list:
+    session = keys[0]["session"]
+    cerbos_client = keys[0]["cerbos_client"]
+    principal = keys[0]["principal"]
+    file_ids = [key["id"] for key in keys]
+
+    # Infer entity IDs from each file ID
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.File)
+    query = query.filter(db.File.id.in_(file_ids))
+    all_files = (await session.execute(query)).scalars().all()
+    entity_ids = [file.entity_id for file in all_files]
+
+    # Fetch Entity objects by ID
+    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, db.Entity)
+    query = query.filter(db.Entity.id.in_(entity_ids))
+    all_entities = (await session.execute(query)).scalars().all()
+
+    # Group the results by Entity id (each file has exactly one entity it relates to)
+    result = []
+    for id in entity_ids:
+        matching_entities = [e for e in all_entities if e.entity_id == id]
+        assert len(matching_entities) == 1
+        result.append(matching_entities[0])
+    return result
+
+
+entity_loader = DataLoader(load_fn=batch_entities, cache_key_fn=cache_key)  # type: ignore
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def load_entities(
+    root: "Entity",
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> typing.Annotated["Entity", strawberry.lazy("api.types.entities")]:
+    return await entity_loader.load(
+        {"session": session, "cerbos_client": cerbos_client, "principal": principal, "id": root.id}
+    )
+
+
+# ------------------------------------------------------------------------------
+# Main types/inputs
+# ------------------------------------------------------------------------------
+
+
+@strawberry.type
 class File:
+    id: strawberry.ID
+    entity_id: strawberry.ID
+    entity_field_name: str
+    entity: typing.Annotated["Entity", strawberry.lazy("api.types.entities")] = load_entities
+    status: FileStatus
+    protocol: str
+    namespace: str
+    path: str
+    file_format: str
+    compression_type: typing.Optional[int] = None
+    size: typing.Optional[int] = None
+
     @strawberry.field(extensions=[DependencyExtension()])
     def download_link(
         self,
@@ -87,6 +159,34 @@ class File:
             ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration
         )
         return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
+
+
+@strawberry.type
+class MultipartUploadResponse:
+    credentials: MultipartUploadCredentials
+    file: File
+
+
+@strawberry.input
+class FileWhereClause(TypedDict):
+    id: typing.Optional[UUIDComparators]
+    status: typing.Optional[EnumComparators[FileStatus]]
+    protocol: typing.Optional[StrComparators]
+    namespace: typing.Optional[StrComparators]
+    path: typing.Optional[StrComparators]
+    compression_type: typing.Optional[StrComparators]
+    size: typing.Optional[IntComparators]
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_files(
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: typing.Optional[FileWhereClause] = None,
+) -> typing.Sequence[File]:
+    rows = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
+    return rows  # type: ignore
 
 
 # ------------------------------------------------------------------------------
@@ -155,7 +255,7 @@ def generate_multipart_upload_token(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def mark_upload_complete(
-    file_id: uuid.UUID,
+    file_id: strawberry.ID,
     principal: Principal = Depends(require_auth_principal),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -175,7 +275,7 @@ async def mark_upload_complete(
 # Strawberry is unhappy with a mutation returning a union type.
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_file(
-    entity_id: uuid.UUID,
+    entity_id: strawberry.ID,
     entity_field_name: str,
     file: FileCreate,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -194,7 +294,7 @@ async def create_file(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def upload_file(
-    entity_id: uuid.UUID,
+    entity_id: strawberry.ID,
     entity_field_name: str,
     file: FileUpload,
     expiration: int = 3600,
@@ -204,8 +304,8 @@ async def upload_file(
     s3_client: S3Client = Depends(get_s3_client),
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
-) -> MultipartUploadCredentials:
-    credentials = await create_or_upload_file(
+) -> MultipartUploadResponse:
+    response = await create_or_upload_file(
         entity_id,
         entity_field_name,
         file,
@@ -217,12 +317,12 @@ async def upload_file(
         sts_client,
         settings,
     )
-    assert isinstance(credentials, MultipartUploadCredentials)  # reassure mypy that we're returning the right type
-    return credentials
+    assert isinstance(response, MultipartUploadResponse)  # reassure mypy that we're returning the right type
+    return response
 
 
 async def create_or_upload_file(
-    entity_id: uuid.UUID,
+    entity_id: strawberry.ID,
     entity_field_name: str,
     file: FileCreate | FileUpload,
     expiration: int = 3600,
@@ -232,7 +332,7 @@ async def create_or_upload_file(
     s3_client: S3Client = Depends(get_s3_client),
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
-) -> db.File | MultipartUploadCredentials:
+) -> db.File | MultipartUploadResponse:
     # Basic validation
     if "/" in file.name:
         raise Exception("File name should not contain /")
@@ -248,6 +348,13 @@ async def create_or_upload_file(
     entity_property_name = f"{entity_field_name}_id"
     if not hasattr(entity, entity_property_name):
         raise Exception(f"This entity does not have a corresponding file of type {entity_field_name}")
+
+    # Unlink the File(s) currently connected to this entity (only commit to DB once add the new File below)
+    query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
+    query = query.filter(db.File.entity_id == entity_id)
+    current_files = (await session.execute(query)).scalars().all()
+    for current_file in current_files:
+        current_file.entity_id = None
 
     # Set file parameters based on user inputs
     file_id = uuid6.uuid7()
@@ -286,4 +393,7 @@ async def create_or_upload_file(
 
     # If new file, create an STS token for multipart upload
     else:
-        return generate_multipart_upload_token(new_file, expiration, sts_client)
+        return MultipartUploadResponse(
+            file=new_file,  # type: ignore
+            credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
+        )
