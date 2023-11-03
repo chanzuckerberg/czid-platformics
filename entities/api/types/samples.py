@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Annotated, Optional
 import database.models as db
 import strawberry
 from api.core.helpers import get_db_rows
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
@@ -39,7 +38,9 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@relay.connection(relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]])
+@relay.connection(
+    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]  # type:ignore
+)
 async def load_sequencing_reads(
     root: "Sample",
     info: Info,
@@ -49,27 +50,6 @@ async def load_sequencing_reads(
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-# ------------------------------------------------------------------------------
-# Dataloader for File object
-# ------------------------------------------------------------------------------
-
-
-# Given a list of Sample IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def load_files(
-        root: "Sample",
-        info: Info,
-        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
-    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
-        dataloader = info.context["sqlalchemy_loader"]
-        mapper = inspect(db.Sample)
-        relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
-
-    return load_files
 
 
 # ------------------------------------------------------------------------------

@@ -59,7 +59,9 @@ def cache_key(key: dict) -> str:
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
         {%- if related_field.multivalued %}
-@relay.connection(relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]])
+@relay.connection(
+    relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]  # type:ignore
+)
 async def load_{{ related_field.name }}(
     root: "{{ cls.name }}",
     info: Info,
@@ -84,9 +86,13 @@ async def load_{{ related_field.name }}s(
     {%- endif %}
 {%- endfor %}
 
+
+{# {%- if len[ f for f in cls.owned_fields if f.type == "File" ]) > 0 %} #}
+{%- if cls.owned_fields | map(attribute="type") | select("equalto", "File") | list | length > 0 %}
 # ------------------------------------------------------------------------------
 # Dataloader for File object
 # ------------------------------------------------------------------------------
+
 
 # Given a list of {{ cls.name }} IDs for a certain file type, return related Files
 def load_files_from(attr_name: str) -> typing.Callable:
@@ -102,6 +108,8 @@ def load_files_from(attr_name: str) -> typing.Callable:
         return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
 
     return load_files
+{%- endif %}
+
 
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types

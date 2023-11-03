@@ -8,6 +8,7 @@ from collections import defaultdict
 from test_infra import factories as fa
 from api.conftest import GQLTestClient
 
+
 @pytest.mark.asyncio
 async def test_nested_query(
     sync_db: SyncDB,

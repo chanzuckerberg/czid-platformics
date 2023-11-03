@@ -55,7 +55,9 @@ async def load_samples(
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
-@relay.connection(relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contigs")]])
+@relay.connection(
+    relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contigs")]]  # type:ignore
+)
 async def load_contigs(
     root: "SequencingRead",
     info: Info,
