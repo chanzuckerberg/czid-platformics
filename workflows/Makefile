@@ -42,6 +42,7 @@ local-init: .env.localdev ## initialize service containers
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
 	$(docker_compose_run) $(FOLDER) alembic upgrade head
 	$(MAKE) local-seed
+	$(MAKE) local-editable-plugins
 	
 .PHONY: local-start
 local-start: .env.localdev ## Start a local dev environment that's been stopped.
@@ -51,6 +52,9 @@ local-start: .env.localdev ## Start a local dev environment that's been stopped.
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
+.PHONY: local-editable-plugins
+local-editable-plugins:
+	$(docker_compose) exec workflows bash -c 'for plugin in plugins/*/*; do pip install -e "$$plugin"; done'
 
 .PHONY: local-db-tests
 local-db-tests: ## Run workflow db tests
