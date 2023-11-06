@@ -68,7 +68,7 @@ async def load_{{ related_field.name }}(
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.name }}")] | None = None,
 ) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
         {%- else %}
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_{{ related_field.name }}s(
     root: "{{ cls.name }}",
     info: Info,
@@ -95,7 +95,7 @@ async def load_{{ related_field.name }}s(
 
 # Given a list of {{ cls.name }} IDs for a certain file type, return related Files
 def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
+    @strawberry.field
     async def load_files(
         root: "{{ cls.name }}",
         info: Info,

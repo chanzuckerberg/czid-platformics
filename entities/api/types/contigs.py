@@ -37,7 +37,7 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_sequencing_reads(
     root: "Contig",
     info: Info,

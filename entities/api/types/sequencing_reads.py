@@ -43,7 +43,7 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_samples(
     root: "SequencingRead",
     info: Info,
@@ -76,7 +76,7 @@ async def load_contigs(
 
 # Given a list of SequencingRead IDs for a certain file type, return related Files
 def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
+    @strawberry.field
     async def load_files(
         root: "SequencingRead",
         info: Info,
