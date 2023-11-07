@@ -21,6 +21,10 @@ class FileStatus(sgqlc.types.Enum):
     __choices__ = ("FAILED", "PENDING", "SUCCESS")
 
 
+class GlobalID(sgqlc.types.Scalar):
+    __schema__ = gql_schema
+
+
 ID = sgqlc.types.ID
 
 Int = sgqlc.types.Int
@@ -68,6 +72,16 @@ class ContigWhereClause(sgqlc.types.Input):
     sequencing_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingRead")
     sequence = sgqlc.types.Field("StrComparators", graphql_name="sequence")
     entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class EntityWhereClause(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id", "entity_id", "producing_run_id", "owner_user_id", "collection_id")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
 
 
 class FileCreate(sgqlc.types.Input):
@@ -261,10 +275,16 @@ class UUIDComparators(sgqlc.types.Input):
 ########################################################################
 # Output Objects and Interfaces
 ########################################################################
+class Node(sgqlc.types.Interface):
+    __schema__ = gql_schema
+    __field_names__ = ("_id",)
+    _id = sgqlc.types.Field(sgqlc.types.non_null(GlobalID), graphql_name="_id")
+
+
 class EntityInterface(sgqlc.types.Interface):
     __schema__ = gql_schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    __field_names__ = ("_id",)
+    _id = sgqlc.types.Field(sgqlc.types.non_null(GlobalID), graphql_name="_id")
 
 
 class ContigConnection(sgqlc.types.relay.Connection):
@@ -312,7 +332,11 @@ class File(sgqlc.types.Type):
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
     entity_field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="entityFieldName")
-    entity = sgqlc.types.Field(sgqlc.types.non_null(Entity), graphql_name="entity")
+    entity = sgqlc.types.Field(
+        Entity,
+        graphql_name="entity",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(EntityWhereClause, graphql_name="where", default=None)),)),
+    )
     status = sgqlc.types.Field(sgqlc.types.non_null(FileStatus), graphql_name="status")
     protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
     namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
@@ -465,7 +489,14 @@ class PageInfo(sgqlc.types.Type):
 
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("samples", "sequencing_reads", "contigs", "files")
+    __field_names__ = ("node", "samples", "sequencing_reads", "contigs", "files")
+    node = sgqlc.types.Field(
+        sgqlc.types.non_null(Node),
+        graphql_name="node",
+        args=sgqlc.types.ArgDict(
+            (("id", sgqlc.types.Arg(sgqlc.types.non_null(GlobalID), graphql_name="id", default=None)),)
+        ),
+    )
     samples = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Sample"))),
         graphql_name="samples",
@@ -516,9 +547,18 @@ class SignedURL(sgqlc.types.Type):
     fields = sgqlc.types.Field(JSON, graphql_name="fields")
 
 
-class Contig(sgqlc.types.Type, EntityInterface):
+class Contig(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "sequencing_read", "sequence", "entity_id")
+    __field_names__ = (
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "sequencing_read",
+        "sequence",
+        "entity_id",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
@@ -533,9 +573,10 @@ class Contig(sgqlc.types.Type, EntityInterface):
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
-class Sample(sgqlc.types.Type, EntityInterface):
+class Sample(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
     __field_names__ = (
+        "id",
         "producing_run_id",
         "owner_user_id",
         "collection_id",
@@ -544,6 +585,7 @@ class Sample(sgqlc.types.Type, EntityInterface):
         "sequencing_reads",
         "entity_id",
     )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
@@ -565,9 +607,10 @@ class Sample(sgqlc.types.Type, EntityInterface):
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
-class SequencingRead(sgqlc.types.Type, EntityInterface):
+class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
     __field_names__ = (
+        "id",
         "producing_run_id",
         "owner_user_id",
         "collection_id",
@@ -580,6 +623,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface):
         "contigs",
         "entity_id",
     )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")

@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -65,7 +65,7 @@ async def load_{{ related_field.name }}(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.name }}")] | None = None,
-) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
+) -> Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
         {%- else %}
 @strawberry.field
 async def load_{{ related_field.name }}s(
@@ -93,7 +93,7 @@ async def load_{{ related_field.name }}s(
 
 
 # Given a list of {{ cls.name }} IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
+def load_files_from(attr_name: str) -> Callable:
     @strawberry.field
     async def load_files(
         root: "{{ cls.name }}",
@@ -159,9 +159,13 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")  # type: ignore
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
-    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]] = load_{{ attr.name }}
+    {{ attr.name }}: Sequence[
+        Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]
+    ] = load_{{ attr.name }}  # type: ignore
             {%- else %}
-    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]] = load_{{ attr.name }}s
+    {{ attr.name }}: Optional[
+        Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]
+    ] = load_{{ attr.name }}s  # type: ignore
             {%- endif %}
         {%- endif %}
     {%- endfor %}

@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
@@ -45,7 +45,7 @@ async def load_sequencing_reads(
     root: "Sample",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None = None,
-) -> typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
+) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["sequencing_reads"]
@@ -79,9 +79,9 @@ class Sample(EntityInterface):
     collection_id: int
     name: str
     location: str
-    sequencing_reads: typing.Sequence[
+    sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
-    ] = load_sequencing_reads
+    ] = load_sequencing_reads  # type: ignore
     entity_id: strawberry.ID
 
 

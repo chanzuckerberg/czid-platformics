@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -62,7 +62,7 @@ async def load_contigs(
     root: "SequencingRead",
     info: Info,
     where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contigs")] | None = None,
-) -> typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]]:
+) -> Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["contigs"]
@@ -75,7 +75,7 @@ async def load_contigs(
 
 
 # Given a list of SequencingRead IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
+def load_files_from(attr_name: str) -> Callable:
     @strawberry.field
     async def load_files(
         root: "SequencingRead",
@@ -122,8 +122,8 @@ class SequencingRead(EntityInterface):
     protocol: SequencingProtocol
     sequence_file_id: strawberry.ID
     sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")  # type: ignore
-    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples
-    contigs: typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs
+    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples  # type: ignore
+    contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs  # type: ignore
     entity_id: strawberry.ID
 
 

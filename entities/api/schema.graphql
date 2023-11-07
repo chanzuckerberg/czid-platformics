@@ -1,4 +1,6 @@
-type Contig implements EntityInterface {
+type Contig implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
   id: ID!
   producingRunId: Int!
   ownerUserId: Int!
@@ -44,15 +46,24 @@ type Entity {
   collectionId: Int!
 }
 
-interface EntityInterface {
-  id: ID!
+interface EntityInterface implements Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+}
+
+input EntityWhereClause {
+  id: UUIDComparators
+  entityId: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
 }
 
 type File {
   id: ID!
   entityId: ID!
   entityFieldName: String!
-  entity: Entity!
+  entity(where: EntityWhereClause = null): Entity
   status: FileStatus!
   protocol: String!
   namespace: String!
@@ -106,6 +117,11 @@ input FileWhereClause {
   size: IntComparators
 }
 
+"""
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+"""
+scalar GlobalID @specifiedBy(url: "https://relay.dev/graphql/objectidentification.htm")
+
 input IntComparators {
   _eq: Int
   _neq: Int
@@ -147,6 +163,12 @@ type Mutation {
   markUploadComplete(fileId: ID!): File!
 }
 
+"""An object with a Globally Unique ID"""
+interface Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+}
+
 enum Nucleotide {
   RNA
   DNA
@@ -180,13 +202,19 @@ type PageInfo {
 }
 
 type Query {
+  node(
+    """The ID of the object."""
+    id: GlobalID!
+  ): Node!
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
   contigs(where: ContigWhereClause = null): [Contig!]!
   files(where: FileWhereClause = null): [File!]!
 }
 
-type Sample implements EntityInterface {
+type Sample implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
   id: ID!
   producingRunId: Int!
   ownerUserId: Int!
@@ -240,7 +268,9 @@ input SequencingProtocolEnumComparators {
   _is_null: SequencingProtocol
 }
 
-type SequencingRead implements EntityInterface {
+type SequencingRead implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
   id: ID!
   producingRunId: Int!
   ownerUserId: Int!

@@ -1,8 +1,6 @@
 import typing
-import uuid
 from collections import defaultdict
-from typing import Any, Mapping, Optional, Tuple
-
+from typing import Any, Mapping, Optional, Tuple, Sequence
 import database.models as db
 import strawberry
 from cerbos.sdk.client import CerbosClient
@@ -11,7 +9,7 @@ from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
-from sqlalchemy import ColumnElement, ColumnExpressionArgument, tuple_
+from sqlalchemy import ColumnElement, ColumnExpressionArgument
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.arguments import StrawberryArgument
@@ -64,7 +62,7 @@ class EntityLoader:
         self.cerbos_client = cerbos_client
         self.principal = principal
 
-    async def resolve_nodes(self, cls, node_ids) -> list[E]:
+    async def resolve_nodes(self, cls: Any, node_ids: list[str]) -> Sequence[E]:
         """
         Given a list of node IDs from a Relay `node()` query, return corresponding entities
         """
