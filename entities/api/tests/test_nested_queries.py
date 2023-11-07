@@ -48,12 +48,13 @@ async def test_nested_query(
     # Fetch samples and nested sequencing reads AND nested samples again!
     query = """
         query MyQuery {
-          samples {
+          samples (where: { name: { _ilike: "Sample%" } }) {
             id
             name
+            location
             ownerUserId
             collectionId
-            sequencingReads {
+            sequencingReads(where: { collectionId: { _eq: 888 } }) {
               edges {
                 node {
                   collectionId
@@ -65,6 +66,13 @@ async def test_nested_query(
                     ownerUserId
                     collectionId
                     name
+                    sequencingReads {
+                      edges {
+                        node {
+                          sequence
+                        }
+                      }
+                    }
                   }
                 }
               }
