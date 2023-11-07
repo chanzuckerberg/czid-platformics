@@ -2,6 +2,7 @@
 Tests for nested queries + authorization
 """
 
+import base64
 import pytest
 from platformics.database.connect import SyncDB
 from collections import defaultdict
@@ -105,3 +106,33 @@ async def test_nested_query(
         assert actual_sequences_by_owner[userid] == expected_sequences_by_owner[userid]
     for userid in expected_samples_by_owner:
         assert actual_samples_by_owner[userid] == expected_samples_by_owner[userid]
+
+
+@pytest.mark.asyncio
+async def test_relay_node_queries(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    # Create mock data
+    with sync_db.session() as session:
+        fa.SessionStorage.set_session(session)
+        sample = fa.SampleFactory(owner_user_id=111, collection_id=888)
+        entity_id = sample.entity_id
+
+        node_id = f"Sample:{entity_id}".encode("ascii")
+        node_id_base64 = base64.b64encode(node_id).decode("utf-8")
+
+    # Fetch sample by node ID
+    query = f"""
+        query MyQuery {{
+          node(id: "{node_id_base64}") {{
+            ... on Sample {{
+              name
+              location
+            }}
+          }}
+        }}
+    """
+
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    assert results["data"]["node"]["name"] == sample.name
