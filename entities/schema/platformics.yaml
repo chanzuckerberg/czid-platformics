@@ -335,6 +335,8 @@ classes:
         required: true
       intermediate_outputs:
         range: File
+    annotations:
+      plural: ConsensusGenomes
 
   MetricConsensusGenome:
     is_a: Entity
@@ -369,6 +371,8 @@ classes:
       coverage_viz_summary_file:
         range: File
         required: true
+    annotations:
+      plural: MetricsConsensusGenomes
 
   CoverageViz:
     is_a: Entity
@@ -381,6 +385,8 @@ classes:
       coverage_viz_file:
         range: File
         required: true
+    annotations:
+      plural: CoverageVizes
 
   Taxon:
     is_a: Entity
@@ -435,6 +441,8 @@ classes:
       tax_id_kingdom:
         range: int
         required: true
+    annotations:
+      plural: Taxa
 
   UpstreamDatabase:
     is_a: Entity
@@ -444,6 +452,8 @@ classes:
       name:
         range: string
         required: true
+    annotations:
+      plural: UpstreamDatabases
 
   Contig:
     is_a: Entity
