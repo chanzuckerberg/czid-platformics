@@ -47,6 +47,28 @@ enums:
         description: Targeted (amplified via primers) sequencing read
       MSSPE:
         description: MSSPE Sequencing Read
+  SequencingTechnology:
+    permissible_values:
+      Illumina:
+        description: Illumina sequencing technology
+      Nanopore:
+        description: Nanopore sequencing technology
+  AlignmentTool:
+    permissible_values:
+      bowtie2:
+        description: Bowtie2 alignment tool
+      minimap2:
+        description: Minimap2 alignment tool
+      ncbi:
+        description: NCBI alignment tool
+  TaxonLevel:
+    permissible_values:
+      species:
+        description: Species-level taxon
+      genus:
+        description: Genus-level taxon
+      family:
+        description: Family-level taxon
  
 classes:
   Entity:
@@ -114,8 +136,22 @@ classes:
     attributes:
       name:
         required: true
-      location:
+      sample_type:
+        range: string
         required: true
+      water_control:
+        range: boolean
+        required: true
+      collection_date:
+        range: date
+      collection_location:
+        range: string
+        required: true
+      description:
+        range: string
+      host_taxon:
+        range: Taxon
+        inverse: Taxon.samples
       sequencing_reads:
         range: SequencingRead
         multivalued: true
@@ -128,27 +164,286 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      nucleotide:
-        range: Nucleotide
-        required: true
-      sequence:
-        range: string
-        pattern: "^[AGTCUN]+$"
-        required: true
-      protocol:
-        range: SequencingProtocol
-        required: true
-      sequence_file:
-        range: File
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
-      contigs:
-        range: Contig
-        multivalued: true
-        inverse: Contig.sequencing_read
+      protocol:
+        range: SequencingProtocol
+        required: true
+      r1_file:
+        range: File
+        required: true
+      r2_file:
+        range: File
+      techonology:
+        range: SequencingTechnology
+        required: true
+      nucleotide:
+        range: Nucleotide
+        required: true
+      has_ercc:
+        range: boolean
+        required: true
+      taxon:
+        range: Taxon
+      primer_file:
+        range: File
     annotations:
       plural: SequencingReads
+
+  GenomicRange:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      reference_genome:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.genomic_ranges
+        required: true
+      file:
+        range: File
+        required: true
+    annotations:
+      plural: GenomicRanges
+
+  ReferenceGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      file:
+        range: File
+        required: true
+      file_index:
+        range: File
+      name:
+        range: string
+        required: true
+      description:
+        range: string
+        required: true
+      taxon:
+        range: Taxon
+        required: true
+      # TODO: Uncomment this when we have support for backgrounds
+      # background:
+      #   range: Background
+      accession:
+        range: SequenceAlignmentIndex
+        inverse: SequenceAlignmentIndex.reference_genome
+    annotations:
+      plural: ReferenceGenomes
+  
+  SequenceAlignmentIndex:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      index_file:
+        range: File
+        required: true
+      reference_genome:
+        range: ReferenceGenome
+        required: true
+      tool:
+        range: AlignmentTool
+        required: true
+    annotations:
+      plural: SequenceAlignmentIndices
+
+  Metadata:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      sample:
+        range: Sample
+        inverse: Sample.metadata
+        required: true
+      metadata_field:
+        range: MetadataField
+        required: true
+      value:
+        range: string
+        required: true
+
+  MetadataField:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      field_group:
+        range: MetadataFieldProject
+        inverse: MetadataFieldProject.metadata_field
+        required: true
+      field_name:
+        range: string
+        required: true
+      description:
+        range: string
+        required: true
+      field_type:
+        range: string
+        required: true
+      is_required:
+        range: boolean
+        required: true
+      options:
+        range: string
+      default_value:
+        range: string
+    annotations:
+      plural: MetadataFields
+
+  MetadataFieldProject:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      project_id:
+        range: int
+        required: true
+      metadata_field:
+        range: MetadataField
+        inverse: MetadataField.metadata_field_projects
+        required: true
+    annotations:
+      plural: MetadataFieldProjects
+
+  ConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      taxon:
+        range: Taxon
+        required: true
+      sequence_read:
+        range: SequencingRead
+        required: true
+      genomic_range:
+        range: GenomicRange
+        required: true
+      reference_genome:
+        range: ReferenceGenome
+        required: true
+      sequence:
+        range: File
+        required: true
+      is_reverse_complement:
+        range: boolean
+        required: true
+      intermediate_outputs:
+        range: File
+
+  MetricConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      consensus_genome:
+        range: ConsensusGenome
+        required: true
+      coverage_depth:
+        range: float
+      reference_genome_length:
+        range: float
+      percent_genome_called:
+        range: float
+      percent_identity:
+        range: float
+      gc_percent:
+        range: float
+      total_reads:
+        range: int
+      mapped_reads:
+        range: int
+      ref_snps:
+        range: int
+      n_actg:
+        range: int
+      n_missing:
+        range: int
+      n_ambiguous:
+        range: int
+      coverage_viz_summary_file:
+        range: File
+        required: true
+
+  CoverageViz:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      accession_id:
+        range: string
+        required: true
+      coverage_viz_file:
+        range: File
+        required: true
+
+  Taxon:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      wikipedia_id:
+        range: string
+      description:
+        range: string
+      common_name:
+        range: string
+      name:
+        range: string
+        required: true
+      is_phage:
+        range: boolean
+        required: true
+      upstream_database:
+        range: UpstreamDatabase
+        required: true
+      upstream_database_identifier:
+        range: string
+        required: true
+      level:
+        range: TaxonLevel
+        required: true
+      tax_id:
+        range: int
+        required: true
+      tax_id_parent:
+        range: int
+        required: true
+      tax_id_species:
+        range: int
+        required: true
+      tax_id_genus:
+        range: int
+        required: true
+      tax_id_family:
+        range: int
+        required: true
+      tax_id_order:
+        range: int
+        required: true
+      tax_id_class:
+        range: int
+        required: true
+      tax_id_phylum:
+        range: int
+        required: true
+      tax_id_kingdom:
+        range: int
+        required: true
+
+  UpstreamDatabase:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
 
   Contig:
     is_a: Entity
