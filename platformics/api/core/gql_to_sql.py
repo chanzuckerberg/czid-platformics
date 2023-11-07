@@ -4,10 +4,8 @@ import uuid
 from typing import Any, Awaitable, Callable, Generic, Optional, TypeVar, cast
 
 import strawberry
-from platformics.thirdparty.strawberry_sqlalchemy_mapper import (
-    SSAPlugin, StrawberrySQLAlchemyMapper)
-from platformics.thirdparty.strawberry_sqlalchemy_mapper.mapper import \
-    _IS_GENERATED_RESOLVER_KEY
+from platformics.thirdparty.strawberry_sqlalchemy_mapper import SSAPlugin, StrawberrySQLAlchemyMapper
+from platformics.thirdparty.strawberry_sqlalchemy_mapper.mapper import _IS_GENERATED_RESOLVER_KEY
 from sqlalchemy import inspect
 from sqlalchemy.orm import Mapper, RelationshipProperty
 from sqlalchemy.orm.state import InstanceState

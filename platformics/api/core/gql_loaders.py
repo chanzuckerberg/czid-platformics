@@ -64,6 +64,16 @@ class EntityLoader:
         self.cerbos_client = cerbos_client
         self.principal = principal
 
+    async def resolve_nodes(self, cls, node_ids) -> list[E]:
+        """
+        Given a list of node IDs from a Relay `node()` query, return corresponding entities
+        """
+        filters = [cls.entity_id.in_(node_ids)]
+        db_session = self.engine.session()
+        rows = await get_db_rows(cls, db_session, self.cerbos_client, self.principal, filters, [])
+        await db_session.close()
+        return rows
+
     def loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None) -> DataLoader:
         """
         Retrieve or create a DataLoader for the given relationship
