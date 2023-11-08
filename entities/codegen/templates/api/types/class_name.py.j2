@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
+import datetime
 from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -13,7 +14,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
@@ -37,9 +38,10 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     {%- for related_field in cls.related_fields %}
         {%- if related_field.related_class.name not in ["File", "Entity"] %}
-    from api.types.{{related_field.related_class.snake_name}}s import ({{related_field.related_class.name}}WhereClause, {{related_field.related_class.name}})
+    from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}WhereClause, {{related_field.related_class.name}})
         {%- endif %}
     {%- endfor %}
+    pass
 else:
     {%- for related_field in cls.related_fields %}
         {%- if related_field.related_class.name not in ["File", "Entity"] %}
@@ -47,40 +49,33 @@ else:
     {{related_field.related_class.name}} = "{{related_field.related_class.name}}"
         {%- endif %}
     {%- endfor %}
+    pass
+
 
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
 
-def cache_key(key: dict) -> str:
-    return key["id"]
-
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def load_{{ related_field.related_class.snake_name }}_rows(
+    root: "{{ cls.name }}",
+    info: Info,
+    where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")] | None = None,
         {%- if related_field.multivalued %}
-@relay.connection(
-    relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]  # type:ignore
-)
-async def load_{{ related_field.name }}(
-    root: "{{ cls.name }}",
-    info: Info,
-    where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.name }}")] | None = None,
-) -> Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
+) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- else %}
-@strawberry.field
-async def load_{{ related_field.name }}s(
-    root: "{{ cls.name }}",
-    info: Info,
-    where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.name }}s")] | None = None,
-) -> Optional[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}s")]]:
+) -> Optional[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.{{ cls.name }})
-    relationship = mapper.relationships["{{ related_field.name }}"]
+    relationship = mapper.relationships["{{ related_field.related_class.snake_name }}"]
         {%- if related_field.multivalued %}
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}
-    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.related_class.snake_name }}_id) # type:ignore
         {%- endif %}
     {%- endif %}
 {%- endfor %}
@@ -127,14 +122,14 @@ class {{ cls.name }}WhereClause(TypedDict):
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.is_enum %}
     {{ attr.name }}: Optional[EnumComparators[{{ attr.type }}]] | None
-        {%- elif attr.type == "integer" %}
+        {%- elif attr.type == "int" %}
     {{ attr.name }}: Optional[IntComparators] | None
+        {%- elif attr.type == "boolean" %}
+    {{ attr.name }}: Optional[BoolComparators] | None
+        {%- elif attr.type == "date" %}
+    {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.inverse %}
-            {%- if attr.multivalued %}
-    {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.name }}")]]
-            {%- else %}
-    {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.name }}s")]]
-            {%- endif%}
+    {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
         {%- endif %}
     {%- endfor %}
 
@@ -152,20 +147,20 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: str
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ attr.type }}
-        {%- elif attr.type == "integer" %}
+        {%- elif attr.type == "int" %}
     {{ attr.name }}: int
+        {%- elif attr.type == "boolean" %}
+    {{ attr.name }}: bool
+        {%- elif attr.type == "date" %}
+    {{ attr.name }}: datetime.datetime
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: strawberry.ID
     {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")  # type: ignore
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
-    {{ attr.name }}: Sequence[
-        Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]
-    ] = load_{{ attr.name }}  # type: ignore
+    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows
             {%- else %}
-    {{ attr.name }}: Optional[
-        Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]
-    ] = load_{{ attr.name }}s  # type: ignore
+    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows
             {%- endif %}
         {%- endif %}
     {%- endfor %}
@@ -178,7 +173,7 @@ class {{ cls.name }}(EntityInterface):
 
 # Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_{{ cls.snake_name|lower }}s(
+async def resolve_{{ cls.snake_name|lower }}(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

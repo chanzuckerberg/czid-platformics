@@ -83,7 +83,7 @@ def generate_gql_type_files(
             cls=entity,
             view=view,
         )
-        dest_filename = str(template_filename).replace("class_name", (entity.snake_name + "s"))
+        dest_filename = str(template_filename).replace("class_name", (entity.snake_name))
         with open(os.path.join(output_prefix, dest_filename), mode="w", encoding="utf-8") as outfile:
             outfile.write(content)
             print(f"... wrote {dest_filename}")

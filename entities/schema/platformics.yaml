@@ -125,6 +125,7 @@ classes:
       - EntityMixin
     attributes:
       name:
+        range: string
         required: true
       sample_type:
         range: string
@@ -146,7 +147,7 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
-      metadata:
+      metadatas:
         range: Metadatum
         inverse: Metadatum.sample
         multivalued: true
@@ -186,6 +187,10 @@ classes:
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
+        multivalued: true
+      contigs:
+        range: Contig
+        inverse: Contig.sequencing_read
         multivalued: true
     annotations:
       plural: SequencingReads
@@ -274,17 +279,17 @@ classes:
     attributes:
       sample:
         range: Sample
-        inverse: Sample.metadata
+        inverse: Sample.metadatas
         required: true
       metadata_field:
         range: MetadataField
         required: true
-        inverse: MetadataField.metadata
+        inverse: MetadataField.metadatas
       value:
         range: string
         required: true
     annotations:
-      plural: Metadata
+      plural: Metadatas
 
   MetadataField:
     is_a: Entity
@@ -312,7 +317,7 @@ classes:
         range: string
       default_value:
         range: string
-      metadata:
+      metadatas:
         range: Metadatum
         inverse: Metadatum.metadata_field
         multivalued: true
@@ -367,6 +372,7 @@ classes:
       metrics:
         range: MetricConsensusGenome
         inverse: MetricConsensusGenome.consensus_genome
+        multivalued: true
     annotations:
       plural: ConsensusGenomes
 
@@ -486,6 +492,10 @@ classes:
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.taxon
+        multivalued: true
+      samples:
+        range: Sample
+        inverse: Sample.host_taxon
         multivalued: true
     annotations:
       plural: Taxa
