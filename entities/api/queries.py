@@ -12,6 +12,7 @@ class Query:
     # Allow queries by node ID
     node: relay.Node = relay.node()
 
+    # Queries for each entity
     samples: typing.Sequence[Sample] = resolve_sample
     sequencing_reads: typing.Sequence[SequencingRead] = resolve_sequencing_read
     contigs: typing.Sequence[Contig] = resolve_contig
