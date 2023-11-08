@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -17,6 +17,7 @@ from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, Str
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 from support.enums import Nucleotide, SequencingProtocol
@@ -42,7 +43,7 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_samples(
     root: "SequencingRead",
     info: Info,
@@ -54,12 +55,14 @@ async def load_samples(
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contigs")]]  # type:ignore
+)
 async def load_contigs(
     root: "SequencingRead",
     info: Info,
     where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contigs")] | None = None,
-) -> typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]]:
+) -> Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["contigs"]
@@ -72,8 +75,8 @@ async def load_contigs(
 
 
 # Given a list of SequencingRead IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
+def load_files_from(attr_name: str) -> Callable:
+    @strawberry.field
     async def load_files(
         root: "SequencingRead",
         info: Info,
@@ -119,8 +122,8 @@ class SequencingRead(EntityInterface):
     protocol: SequencingProtocol
     sequence_file_id: strawberry.ID
     sequence_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence_file")  # type: ignore
-    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples
-    contigs: typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs
+    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.samples")]] = load_samples  # type: ignore
+    contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contigs")]] = load_contigs  # type: ignore
     entity_id: strawberry.ID
 
 

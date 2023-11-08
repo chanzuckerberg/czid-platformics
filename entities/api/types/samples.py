@@ -2,12 +2,11 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
 from api.core.helpers import get_db_rows
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
@@ -17,6 +16,7 @@ from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUID
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -38,37 +38,18 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]  # type:ignore
+)
 async def load_sequencing_reads(
     root: "Sample",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None = None,
-) -> typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
+) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-# ------------------------------------------------------------------------------
-# Dataloader for File object
-# ------------------------------------------------------------------------------
-
-
-# Given a list of Sample IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def load_files(
-        root: "Sample",
-        info: Info,
-        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
-    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
-        dataloader = info.context["sqlalchemy_loader"]
-        mapper = inspect(db.Sample)
-        relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
-
-    return load_files
 
 
 # ------------------------------------------------------------------------------
@@ -98,9 +79,9 @@ class Sample(EntityInterface):
     collection_id: int
     name: str
     location: str
-    sequencing_reads: typing.Sequence[
+    sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
-    ] = load_sequencing_reads
+    ] = load_sequencing_reads  # type: ignore
     entity_id: strawberry.ID
 
 

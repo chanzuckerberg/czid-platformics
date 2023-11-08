@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -18,7 +18,7 @@ from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
-from strawberry.dataloader import DataLoader
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -57,15 +57,17 @@ def cache_key(key: dict) -> str:
 
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
-
-@strawberry.field(extensions=[DependencyExtension()])
         {%- if related_field.multivalued %}
+@relay.connection(
+    relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]  # type:ignore
+)
 async def load_{{ related_field.name }}(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.name }}")] | None = None,
-) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
+) -> Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.name }}")]]:
         {%- else %}
+@strawberry.field
 async def load_{{ related_field.name }}s(
     root: "{{ cls.name }}",
     info: Info,
@@ -76,20 +78,23 @@ async def load_{{ related_field.name }}s(
     mapper = inspect(db.{{ cls.name }})
     relationship = mapper.relationships["{{ related_field.name }}"]
         {%- if related_field.multivalued %}
-    return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}
-    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id) # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id)  # type:ignore
         {%- endif %}
     {%- endif %}
 {%- endfor %}
 
+
+{%- if cls.owned_fields | map(attribute="type") | select("equalto", "File") | list | length > 0 %}
 # ------------------------------------------------------------------------------
 # Dataloader for File object
 # ------------------------------------------------------------------------------
 
+
 # Given a list of {{ cls.name }} IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
+def load_files_from(attr_name: str) -> Callable:
+    @strawberry.field
     async def load_files(
         root: "{{ cls.name }}",
         info: Info,
@@ -98,9 +103,11 @@ def load_files_from(attr_name: str) -> typing.Callable:
         dataloader = info.context["sqlalchemy_loader"]
         mapper = inspect(db.{{ cls.name }})
         relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id")) # type:ignore
+        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
 
     return load_files
+{%- endif %}
+
 
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types
@@ -152,9 +159,13 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")  # type: ignore
         {%- elif attr.inverse %}
             {%- if attr.multivalued %}
-    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]] = load_{{ attr.name }}
+    {{ attr.name }}: Sequence[
+        Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}")]
+    ] = load_{{ attr.name }}  # type: ignore
             {%- else %}
-    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]] = load_{{ attr.name }}s
+    {{ attr.name }}: Optional[
+        Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.name }}s")]
+    ] = load_{{ attr.name }}s  # type: ignore
             {%- endif %}
         {%- endif %}
     {%- endfor %}

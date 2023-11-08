@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Annotated, Optional
 import database.models as db
 import strawberry
 from api.core.helpers import get_db_rows
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
@@ -38,7 +37,7 @@ def cache_key(key: dict) -> str:
     return key["id"]
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_sequencing_reads(
     root: "Contig",
     info: Info,
@@ -48,27 +47,6 @@ async def load_sequencing_reads(
     mapper = inspect(db.Contig)
     relationship = mapper.relationships["sequencing_read"]
     return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
-
-
-# ------------------------------------------------------------------------------
-# Dataloader for File object
-# ------------------------------------------------------------------------------
-
-
-# Given a list of Contig IDs for a certain file type, return related Files
-def load_files_from(attr_name: str) -> typing.Callable:
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def load_files(
-        root: "Contig",
-        info: Info,
-        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
-    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
-        dataloader = info.context["sqlalchemy_loader"]
-        mapper = inspect(db.Contig)
-        relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
-
-    return load_files
 
 
 # ------------------------------------------------------------------------------
@@ -97,7 +75,7 @@ class Contig(EntityInterface):
     collection_id: int
     sequencing_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
-    ] = load_sequencing_reads
+    ] = load_sequencing_reads  # type: ignore
     sequence: str
     entity_id: strawberry.ID
 
