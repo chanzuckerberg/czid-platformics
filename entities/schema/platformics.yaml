@@ -33,20 +33,18 @@ enums:
     permissible_values:
       s3:
         description: This file is accessible via the (AWS) S3 protocol
-  Nucleotide:
+  NucleicAcid:
     permissible_values:
-      RNA:
-        description: DNA nucleotide
-      DNA:
-        description: RNA nucleotide
+      RNA
+      DNA
   SequencingProtocol:
     permissible_values:
       MNGS:
-        description: Metagenomics sequencing read
+        description: Metagenomics Sequencing
       TARGETED:
-        description: Targeted (amplified via primers) sequencing read
+        description: Targeted Squencing (amplified via primers)
       MSSPE:
-        description: MSSPE Sequencing Read
+        description: MSSPE Sequencing
   SequencingTechnology:
     permissible_values:
       Illumina:
@@ -178,8 +176,8 @@ classes:
       techonology:
         range: SequencingTechnology
         required: true
-      nucleotide:
-        range: Nucleotide
+      nucleic_acid:
+        range: NucleicAcid
         required: true
       has_ercc:
         range: boolean
