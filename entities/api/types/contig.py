@@ -12,7 +12,11 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.gql_to_sql import (
+    IntComparators,
+    StrComparators,
+    UUIDComparators,
+)
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,26 +27,26 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sequencing_reads import SequencingReadWhereClause, SequencingRead
+    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
+
+    pass
 else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
+    pass
+
 
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
 
 
-def cache_key(key: dict) -> str:
-    return key["id"]
-
-
-@strawberry.field
-async def load_sequencing_reads(
+@strawberry.field(extensions=[DependencyExtension()])
+async def load_sequencing_read_rows(
     root: "Contig",
     info: Info,
-    where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None = None,
-) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
+    where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
+) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Contig)
     relationship = mapper.relationships["sequencing_read"]
@@ -61,7 +65,9 @@ class ContigWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    sequencing_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
+    sequencing_read: Optional[
+        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
+    ] | None
     sequence: Optional[StrComparators] | None
     entity_id: Optional[UUIDComparators] | None
 
@@ -74,8 +80,8 @@ class Contig(EntityInterface):
     owner_user_id: int
     collection_id: int
     sequencing_read: Optional[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
-    ] = load_sequencing_reads  # type: ignore
+        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
+    ] = load_sequencing_read_rows
     sequence: str
     entity_id: strawberry.ID
 
@@ -89,7 +95,7 @@ Contig.__strawberry_definition__.is_type_of = (  # type: ignore
 
 # Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_contigs(
+async def resolve_contig(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

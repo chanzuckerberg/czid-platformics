@@ -1,3 +1,67 @@
+enum AlignmentTool {
+  bowtie2
+  minimap2
+  ncbi
+}
+
+input AlignmentToolEnumComparators {
+  _eq: AlignmentTool
+  _neq: AlignmentTool
+  _in: [AlignmentTool!]
+  _nin: [AlignmentTool!]
+  _gt: AlignmentTool
+  _gte: AlignmentTool
+  _lt: AlignmentTool
+  _lte: AlignmentTool
+  _is_null: AlignmentTool
+}
+
+input BoolComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
+}
+
+type ConsensusGenome implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  taxon(where: TaxonWhereClause = null): Taxon
+  sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
+  genomicRange(where: GenomicRangeWhereClause = null): GenomicRange
+  referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
+  sequenceId: ID!
+  sequence(where: FileWhereClause = null): File!
+  isReverseComplement: Boolean!
+  intermediateOutputsId: ID!
+  intermediateOutputs(where: FileWhereClause = null): File!
+  metrics(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
+  entityId: ID!
+}
+
+input ConsensusGenomeWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  taxon: TaxonWhereClause
+  sequenceRead: SequencingReadWhereClause
+  genomicRange: GenomicRangeWhereClause
+  referenceGenome: ReferenceGenomeWhereClause
+  isReverseComplement: BoolComparators
+  metrics: MetricConsensusGenomeWhereClause
+  entityId: UUIDComparators
+}
+
 type Contig implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
@@ -10,24 +74,6 @@ type Contig implements EntityInterface & Node {
   entityId: ID!
 }
 
-"""A connection to a list of items."""
-type ContigConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ContigEdge!]!
-}
-
-"""An edge in a connection."""
-type ContigEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: Contig!
-}
-
 input ContigWhereClause {
   id: UUIDComparators
   producingRunId: IntComparators
@@ -37,6 +83,9 @@ input ContigWhereClause {
   sequence: StrComparators
   entityId: UUIDComparators
 }
+
+"""Date with time (isoformat)"""
+scalar DateTime
 
 type Entity {
   id: ID!
@@ -49,14 +98,6 @@ type Entity {
 interface EntityInterface implements Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
-}
-
-input EntityWhereClause {
-  id: UUIDComparators
-  entityId: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
 }
 
 input EntityWhereClause {
@@ -125,6 +166,30 @@ input FileWhereClause {
   size: IntComparators
 }
 
+type GenomicRange implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
+  fileId: ID!
+  file(where: FileWhereClause = null): File!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  entityId: ID!
+}
+
+input GenomicRangeWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  referenceGenome: ReferenceGenomeWhereClause
+  consensusGenomes: ConsensusGenomeWhereClause
+  entityId: UUIDComparators
+}
+
 """
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 """
@@ -147,6 +212,120 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
+type MetadataField implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  fieldGroup(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
+  fieldName: String!
+  description: String!
+  fieldType: String!
+  isRequired: Boolean!
+  options: String!
+  defaultValue: String!
+  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
+  entityId: ID!
+}
+
+type MetadataFieldProject implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  projectId: Int!
+  metadataField(where: MetadataFieldWhereClause = null): MetadataField
+  entityId: ID!
+}
+
+input MetadataFieldProjectWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  projectId: IntComparators
+  metadataField: MetadataFieldWhereClause
+  entityId: UUIDComparators
+}
+
+input MetadataFieldWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  fieldGroup: MetadataFieldProjectWhereClause
+  fieldName: StrComparators
+  description: StrComparators
+  fieldType: StrComparators
+  isRequired: BoolComparators
+  options: StrComparators
+  defaultValue: StrComparators
+  metadatas: MetadatumWhereClause
+  entityId: UUIDComparators
+}
+
+type Metadatum implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  sample(where: SampleWhereClause = null): Sample
+  metadataField(where: MetadataFieldWhereClause = null): MetadataField
+  value: String!
+  entityId: ID!
+}
+
+input MetadatumWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  sample: SampleWhereClause
+  metadataField: MetadataFieldWhereClause
+  value: StrComparators
+  entityId: UUIDComparators
+}
+
+type MetricConsensusGenome implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  consensusGenome(where: ConsensusGenomeWhereClause = null): ConsensusGenome
+  totalReads: Int!
+  mappedReads: Int!
+  refSnps: Int!
+  nActg: Int!
+  nMissing: Int!
+  nAmbiguous: Int!
+  coverageVizSummaryFileId: ID!
+  coverageVizSummaryFile(where: FileWhereClause = null): File!
+  entityId: ID!
+}
+
+input MetricConsensusGenomeWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  consensusGenome: ConsensusGenomeWhereClause
+  totalReads: IntComparators
+  mappedReads: IntComparators
+  refSnps: IntComparators
+  nActg: IntComparators
+  nMissing: IntComparators
+  nAmbiguous: IntComparators
+  entityId: UUIDComparators
+}
+
 type MultipartUploadCredentials {
   protocol: String!
   namespace: String!
@@ -163,9 +342,9 @@ type MultipartUploadResponse {
 }
 
 type Mutation {
-  createSample(name: String!, location: String!, collectionId: Int!): Sample!
-  createSequencingRead(nucleotide: Nucleotide!, sequence: String!, protocol: SequencingProtocol!, sequenceFileId: ID!, collectionId: Int!): SequencingRead!
-  updateSample(name: String!, location: String!, entityId: ID!): Sample!
+  createSample(name: String!, sampleType: String!, waterControl: Boolean!, collectionDate: DateTime!, collectionLocation: String!, description: String!, collectionId: Int!): Sample!
+  createSequencingRead(protocol: SequencingProtocol!, r1FileId: ID!, r2FileId: ID!, techonology: SequencingTechnology!, nucleicAcid: NucleicAcid!, hasErcc: Boolean!, primerFileId: ID!, collectionId: Int!): SequencingRead!
+  updateSample(name: String!, sampleType: String!, waterControl: Boolean!, collectionDate: DateTime!, collectionLocation: String!, description: String!, entityId: ID!): Sample!
   createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
   uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
   markUploadComplete(fileId: ID!): File!
@@ -177,47 +356,64 @@ interface Node {
   _id: GlobalID!
 }
 
-enum Nucleotide {
+enum NucleicAcid {
   RNA
   DNA
 }
 
-input NucleotideEnumComparators {
-  _eq: Nucleotide
-  _neq: Nucleotide
-  _in: [Nucleotide!]
-  _nin: [Nucleotide!]
-  _gt: Nucleotide
-  _gte: Nucleotide
-  _lt: Nucleotide
-  _lte: Nucleotide
-  _is_null: Nucleotide
-}
-
-"""Information to aid in pagination."""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: String
+input NucleicAcidEnumComparators {
+  _eq: NucleicAcid
+  _neq: NucleicAcid
+  _in: [NucleicAcid!]
+  _nin: [NucleicAcid!]
+  _gt: NucleicAcid
+  _gte: NucleicAcid
+  _lt: NucleicAcid
+  _lte: NucleicAcid
+  _is_null: NucleicAcid
 }
 
 type Query {
-  node(
-    """The ID of the object."""
-    id: GlobalID!
-  ): Node!
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
   contigs(where: ContigWhereClause = null): [Contig!]!
   files(where: FileWhereClause = null): [File!]!
+}
+
+type ReferenceGenome implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  fileId: ID!
+  file(where: FileWhereClause = null): File!
+  fileIndexId: ID!
+  fileIndex(where: FileWhereClause = null): File!
+  name: String!
+  description: String!
+  taxon(where: TaxonWhereClause = null): Taxon
+  accessionId: String!
+  sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
+  entityId: ID!
+}
+
+input ReferenceGenomeWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: StrComparators
+  description: StrComparators
+  taxon: TaxonWhereClause
+  accessionId: StrComparators
+  sequenceAlignmentIndices: SequenceAlignmentIndexWhereClause
+  consensusGenomes: ConsensusGenomeWhereClause
+  genomicRanges: GenomicRangeWhereClause
+  entityId: UUIDComparators
 }
 
 type Sample implements EntityInterface & Node {
@@ -228,22 +424,14 @@ type Sample implements EntityInterface & Node {
   ownerUserId: Int!
   collectionId: Int!
   name: String!
-  location: String!
-  sequencingReads(
-    where: SequencingReadWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): SequencingReadConnection!
+  sampleType: String!
+  waterControl: Boolean!
+  collectionDate: DateTime!
+  collectionLocation: String!
+  description: String!
+  hostTaxon(where: TaxonWhereClause = null): Taxon
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
   entityId: ID!
 }
 
@@ -253,8 +441,38 @@ input SampleWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   name: StrComparators
-  location: StrComparators
+  sampleType: StrComparators
+  waterControl: BoolComparators
+  collectionDate: StrComparators
+  collectionLocation: StrComparators
+  description: StrComparators
+  hostTaxon: TaxonWhereClause
   sequencingReads: SequencingReadWhereClause
+  metadatas: MetadatumWhereClause
+  entityId: UUIDComparators
+}
+
+type SequenceAlignmentIndex implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  indexFileId: ID!
+  indexFile(where: FileWhereClause = null): File!
+  referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
+  tool: AlignmentTool!
+  entityId: ID!
+}
+
+input SequenceAlignmentIndexWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  referenceGenome: ReferenceGenomeWhereClause
+  tool: AlignmentToolEnumComparators
   entityId: UUIDComparators
 }
 
@@ -283,46 +501,21 @@ type SequencingRead implements EntityInterface & Node {
   producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
-  nucleotide: Nucleotide!
-  sequence: String!
-  protocol: SequencingProtocol!
-  sequenceFileId: ID!
-  sequenceFile(where: FileWhereClause = null): File!
   sample(where: SampleWhereClause = null): Sample
-  contigs(
-    where: ContigWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): ContigConnection!
+  protocol: SequencingProtocol!
+  r1FileId: ID!
+  r1File(where: FileWhereClause = null): File!
+  r2FileId: ID!
+  r2File(where: FileWhereClause = null): File!
+  techonology: SequencingTechnology!
+  nucleicAcid: NucleicAcid!
+  hasErcc: Boolean!
+  taxon(where: TaxonWhereClause = null): Taxon
+  primerFileId: ID!
+  primerFile(where: FileWhereClause = null): File!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  contigs(where: ContigWhereClause = null): [Contig!]!
   entityId: ID!
-}
-
-"""A connection to a list of items."""
-type SequencingReadConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [SequencingReadEdge!]!
-}
-
-"""An edge in a connection."""
-type SequencingReadEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: SequencingRead!
 }
 
 input SequencingReadWhereClause {
@@ -330,12 +523,32 @@ input SequencingReadWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  nucleotide: NucleotideEnumComparators
-  sequence: StrComparators
-  protocol: SequencingProtocolEnumComparators
   sample: SampleWhereClause
+  protocol: SequencingProtocolEnumComparators
+  techonology: SequencingTechnologyEnumComparators
+  nucleicAcid: NucleicAcidEnumComparators
+  hasErcc: BoolComparators
+  taxon: TaxonWhereClause
+  consensusGenomes: ConsensusGenomeWhereClause
   contigs: ContigWhereClause
   entityId: UUIDComparators
+}
+
+enum SequencingTechnology {
+  Illumina
+  Nanopore
+}
+
+input SequencingTechnologyEnumComparators {
+  _eq: SequencingTechnology
+  _neq: SequencingTechnology
+  _in: [SequencingTechnology!]
+  _nin: [SequencingTechnology!]
+  _gt: SequencingTechnology
+  _gte: SequencingTechnology
+  _lt: SequencingTechnology
+  _lte: SequencingTechnology
+  _is_null: SequencingTechnology
 }
 
 type SignedURL {
@@ -366,6 +579,84 @@ input StrComparators {
   _niregex: String
 }
 
+type Taxon implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  wikipediaId: String!
+  description: String!
+  commonName: String!
+  name: String!
+  isPhage: Boolean!
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
+  upstreamDatabaseIdentifier: String!
+  level: TaxonLevel!
+  taxId: Int!
+  taxIdParent: Int!
+  taxIdSpecies: Int!
+  taxIdGenus: Int!
+  taxIdFamily: Int!
+  taxIdOrder: Int!
+  taxIdClass: Int!
+  taxIdPhylum: Int!
+  taxIdKingdom: Int!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  samples(where: SampleWhereClause = null): [Sample!]!
+  entityId: ID!
+}
+
+enum TaxonLevel {
+  species
+  genus
+  family
+}
+
+input TaxonLevelEnumComparators {
+  _eq: TaxonLevel
+  _neq: TaxonLevel
+  _in: [TaxonLevel!]
+  _nin: [TaxonLevel!]
+  _gt: TaxonLevel
+  _gte: TaxonLevel
+  _lt: TaxonLevel
+  _lte: TaxonLevel
+  _is_null: TaxonLevel
+}
+
+input TaxonWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  wikipediaId: StrComparators
+  description: StrComparators
+  commonName: StrComparators
+  name: StrComparators
+  isPhage: BoolComparators
+  upstreamDatabase: UpstreamDatabaseWhereClause
+  upstreamDatabaseIdentifier: StrComparators
+  level: TaxonLevelEnumComparators
+  taxId: IntComparators
+  taxIdParent: IntComparators
+  taxIdSpecies: IntComparators
+  taxIdGenus: IntComparators
+  taxIdFamily: IntComparators
+  taxIdOrder: IntComparators
+  taxIdClass: IntComparators
+  taxIdPhylum: IntComparators
+  taxIdKingdom: IntComparators
+  consensusGenomes: ConsensusGenomeWhereClause
+  referenceGenomes: ReferenceGenomeWhereClause
+  sequencingReads: SequencingReadWhereClause
+  samples: SampleWhereClause
+  entityId: UUIDComparators
+}
+
 scalar UUID
 
 input UUIDComparators {
@@ -377,4 +668,26 @@ input UUIDComparators {
   _gte: UUID
   _lt: UUID
   _lte: UUID
+}
+
+type UpstreamDatabase implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  name: String!
+  taxa(where: TaxonWhereClause = null): [Taxon!]!
+  entityId: ID!
+}
+
+input UpstreamDatabaseWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: StrComparators
+  taxa: TaxonWhereClause
+  entityId: UUIDComparators
 }
