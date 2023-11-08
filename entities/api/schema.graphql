@@ -59,6 +59,14 @@ input EntityWhereClause {
   collectionId: IntComparators
 }
 
+input EntityWhereClause {
+  id: UUIDComparators
+  entityId: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+}
+
 type File {
   id: ID!
   entityId: ID!
