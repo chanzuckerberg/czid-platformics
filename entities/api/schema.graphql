@@ -30,11 +30,19 @@ interface EntityInterface {
   id: ID!
 }
 
+input EntityWhereClause {
+  id: UUIDComparators
+  entityId: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+}
+
 type File {
   id: ID!
   entityId: ID!
   entityFieldName: String!
-  entity: Entity!
+  entity(where: EntityWhereClause = null): Entity
   status: FileStatus!
   protocol: String!
   namespace: String!

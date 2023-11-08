@@ -20,6 +20,11 @@ http://localhost:8042/graphql ## workflows
 
 for entities and workflows respectively
 
+### Entities
+
+* ER Diagram: https://github.com/chanzuckerberg/czid-platformics/tree/main/entities/schema
+* YAML: https://github.com/chanzuckerberg/czid-platformics/blob/main/entities/schema/platformics.yaml
+
 ### Deployment
 This project uses [happy](https://github.com/chanzuckerberg/happy/tree/main) for cloud deployment. The happy environments are defined in the [idseq-infra repo](https://github.com/chanzuckerberg/idseq-infra).
 

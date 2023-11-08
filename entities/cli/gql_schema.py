@@ -64,6 +64,16 @@ class ContigWhereClause(sgqlc.types.Input):
     entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
 
 
+class EntityWhereClause(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id", "entity_id", "producing_run_id", "owner_user_id", "collection_id")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+
+
 class FileCreate(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("name", "file_format", "compression_type", "protocol", "namespace", "path")
@@ -290,7 +300,11 @@ class File(sgqlc.types.Type):
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
     entity_field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="entityFieldName")
-    entity = sgqlc.types.Field(sgqlc.types.non_null(Entity), graphql_name="entity")
+    entity = sgqlc.types.Field(
+        Entity,
+        graphql_name="entity",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(EntityWhereClause, graphql_name="where", default=None)),)),
+    )
     status = sgqlc.types.Field(sgqlc.types.non_null(FileStatus), graphql_name="status")
     protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
     namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
