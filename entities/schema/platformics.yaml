@@ -35,8 +35,8 @@ enums:
         description: This file is accessible via the (AWS) S3 protocol
   NucleicAcid:
     permissible_values:
-      RNA
-      DNA
+      RNA:
+      DNA:
   SequencingProtocol:
     permissible_values:
       MNGS:
@@ -48,25 +48,17 @@ enums:
   SequencingTechnology:
     permissible_values:
       Illumina:
-        description: Illumina sequencing technology
       Nanopore:
-        description: Nanopore sequencing technology
   AlignmentTool:
     permissible_values:
       bowtie2:
-        description: Bowtie2 alignment tool
       minimap2:
-        description: Minimap2 alignment tool
       ncbi:
-        description: NCBI alignment tool
   TaxonLevel:
     permissible_values:
       species:
-        description: Species-level taxon
       genus:
-        description: Genus-level taxon
       family:
-        description: Family-level taxon
  
 classes:
   Entity:
@@ -184,8 +176,17 @@ classes:
         required: true
       taxon:
         range: Taxon
+        inverse: Taxon.sequencing_reads
       primer_file:
         range: File
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.sequence_read
+        multivalued: true
+      metadata:
+        range: Metadatum
+        inverse: Metadatum.sample
+        multivalued: true
     annotations:
       plural: SequencingReads
 
@@ -201,6 +202,10 @@ classes:
       file:
         range: File
         required: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.genomic_range
+        multivalued: true
     annotations:
       plural: GenomicRanges
 
@@ -223,12 +228,24 @@ classes:
       taxon:
         range: Taxon
         required: true
+        inverse: Taxon.reference_genomes
       # TODO: Uncomment this when we have support for backgrounds
       # background:
       #   range: Background
-      accession:
+      accession_id:
+        range: string
+      sequence_alignment_indices:
         range: SequenceAlignmentIndex
         inverse: SequenceAlignmentIndex.reference_genome
+        multivalued: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.reference_genome
+        multivalued: true
+      genomic_ranges:
+        range: GenomicRange
+        inverse: GenomicRange.reference_genome
+        multivalued: true
     annotations:
       plural: ReferenceGenomes
   
@@ -243,13 +260,14 @@ classes:
       reference_genome:
         range: ReferenceGenome
         required: true
+        inverse: ReferenceGenome.sequence_alignment_indices
       tool:
         range: AlignmentTool
         required: true
     annotations:
       plural: SequenceAlignmentIndices
 
-  Metadata:
+  Metadatum:
     is_a: Entity
     mixins:
       - EntityMixin
@@ -261,9 +279,12 @@ classes:
       metadata_field:
         range: MetadataField
         required: true
+        inverse: MetadataField.metadata
       value:
         range: string
         required: true
+    annotations:
+      plural: Metadata
 
   MetadataField:
     is_a: Entity
@@ -273,6 +294,7 @@ classes:
       field_group:
         range: MetadataFieldProject
         inverse: MetadataFieldProject.metadata_field
+        multivalued: true
         required: true
       field_name:
         range: string
@@ -290,6 +312,10 @@ classes:
         range: string
       default_value:
         range: string
+      metadata:
+        range: Metadatum
+        inverse: Metadatum.metadata_field
+        multivalued: true
     annotations:
       plural: MetadataFields
 
@@ -298,12 +324,13 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # TODO: should this be replaced with collection_id?
       project_id:
         range: int
         required: true
       metadata_field:
         range: MetadataField
-        inverse: MetadataField.metadata_field_projects
+        inverse: MetadataField.field_group
         required: true
     annotations:
       plural: MetadataFieldProjects
@@ -316,15 +343,19 @@ classes:
       taxon:
         range: Taxon
         required: true
+        inverse: Taxon.consensus_genomes
       sequence_read:
         range: SequencingRead
         required: true
+        inverse: SequencingRead.consensus_genomes
       genomic_range:
         range: GenomicRange
         required: true
+        inverse: GenomicRange.consensus_genomes
       reference_genome:
         range: ReferenceGenome
         required: true
+        inverse: ReferenceGenome.consensus_genomes
       sequence:
         range: File
         required: true
@@ -333,6 +364,9 @@ classes:
         required: true
       intermediate_outputs:
         range: File
+      metrics:
+        range: MetricConsensusGenome
+        inverse: MetricConsensusGenome.consensus_genome
     annotations:
       plural: ConsensusGenomes
 
@@ -344,6 +378,7 @@ classes:
       consensus_genome:
         range: ConsensusGenome
         required: true
+        inverse: ConsensusGenome.metrics
       coverage_depth:
         range: float
       reference_genome_length:
@@ -406,6 +441,7 @@ classes:
       upstream_database:
         range: UpstreamDatabase
         required: true
+        inverse: UpstreamDatabase.taxa
       upstream_database_identifier:
         range: string
         required: true
@@ -439,6 +475,18 @@ classes:
       tax_id_kingdom:
         range: int
         required: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.taxon
+        multivalued: true
+      reference_genomes:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.taxon
+        multivalued: true
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.taxon
+        multivalued: true
     annotations:
       plural: Taxa
 
@@ -450,6 +498,10 @@ classes:
       name:
         range: string
         required: true
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.upstream_database
     annotations:
       plural: UpstreamDatabases
 
