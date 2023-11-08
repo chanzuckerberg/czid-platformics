@@ -146,6 +146,10 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+      metadata:
+        range: Metadatum
+        inverse: Metadatum.sample
+        multivalued: true
     annotations:
       plural: Samples
 
@@ -182,10 +186,6 @@ classes:
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
-        multivalued: true
-      metadata:
-        range: Metadatum
-        inverse: Metadatum.sample
         multivalued: true
     annotations:
       plural: SequencingReads
