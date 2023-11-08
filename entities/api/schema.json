@@ -104,6 +104,33 @@
             {
               "args": [
                 {
+                  "defaultValue": null,
+                  "name": "id",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "GlobalID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "name": "node",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INTERFACE",
+                  "name": "Node",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
                   "defaultValue": "null",
                   "name": "where",
                   "type": {
@@ -230,6 +257,104 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "Query",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "_id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GlobalID",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "INTERFACE",
+          "name": "Node",
+          "possibleTypes": [
+            {
+              "kind": "OBJECT",
+              "name": "Sample",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "Taxon",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "UpstreamDatabase",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "ConsensusGenome",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "SequencingRead",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "Contig",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "GenomicRange",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "ReferenceGenome",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "SequenceAlignmentIndex",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "MetricConsensusGenome",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "Metadatum",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "MetadataField",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "MetadataFieldProject",
+              "ofType": null
+            }
+          ]
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "GlobalID",
           "possibleTypes": null
         },
         {
@@ -584,104 +709,6 @@
               "ofType": null
             }
           ]
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "_id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "GlobalID",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "INTERFACE",
-          "name": "Node",
-          "possibleTypes": [
-            {
-              "kind": "OBJECT",
-              "name": "Sample",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Taxon",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "UpstreamDatabase",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "ConsensusGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "SequencingRead",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Contig",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "GenomicRange",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "ReferenceGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "SequenceAlignmentIndex",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "MetricConsensusGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Metadatum",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "MetadataField",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "MetadataFieldProject",
-              "ofType": null
-            }
-          ]
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "GlobalID",
-          "possibleTypes": null
         },
         {
           "enumValues": null,

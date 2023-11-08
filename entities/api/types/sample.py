@@ -100,6 +100,7 @@ class SampleWhereClause(TypedDict):
     name: Optional[StrComparators] | None
     sample_type: Optional[StrComparators] | None
     water_control: Optional[BoolComparators] | None
+    # TODO: Add proper datetime comparator
     collection_date: Optional[StrComparators] | None
     collection_location: Optional[StrComparators] | None
     description: Optional[StrComparators] | None

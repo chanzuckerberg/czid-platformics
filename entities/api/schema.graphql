@@ -374,6 +374,10 @@ input NucleicAcidEnumComparators {
 }
 
 type Query {
+  node(
+    """The ID of the object."""
+    id: GlobalID!
+  ): Node!
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
   contigs(where: ContigWhereClause = null): [Contig!]!

@@ -127,6 +127,7 @@ class {{ cls.name }}WhereClause(TypedDict):
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: Optional[BoolComparators] | None
         {%- elif attr.type == "date" %}
+    # TODO: Add proper datetime comparator
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
