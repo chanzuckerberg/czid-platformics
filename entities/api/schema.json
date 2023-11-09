@@ -140,7 +140,7 @@
                   }
                 }
               ],
-              "name": "files",
+              "name": "file",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,

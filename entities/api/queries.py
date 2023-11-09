@@ -4,7 +4,7 @@
 import strawberry
 from strawberry import relay
 from typing import Sequence
-from api.files import File, resolve_files
+from api.files import File, resolve_file
 from api.types.sample import Sample, resolve_sample
 from api.types.sequencing_read import SequencingRead, resolve_sequencing_read
 from api.types.genomic_range import GenomicRange, resolve_genomic_range
@@ -27,7 +27,7 @@ class Query:
     node: relay.Node = relay.node()
 
     # Query files
-    files: Sequence[File] = resolve_files
+    file: Sequence[File] = resolve_file
 
     # Query entities
     sample: Sequence[Sample] = resolve_sample

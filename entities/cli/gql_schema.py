@@ -990,7 +990,7 @@ class Query(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
         "node",
-        "files",
+        "file",
         "sample",
         "sequencing_read",
         "genomic_range",
@@ -1013,9 +1013,9 @@ class Query(sgqlc.types.Type):
             (("id", sgqlc.types.Arg(sgqlc.types.non_null(GlobalID), graphql_name="id", default=None)),)
         ),
     )
-    files = sgqlc.types.Field(
+    file = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(File))),
-        graphql_name="files",
+        graphql_name="file",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     sample = sgqlc.types.Field(

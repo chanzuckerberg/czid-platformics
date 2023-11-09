@@ -579,7 +579,7 @@ type Query {
     """The ID of the object."""
     id: GlobalID!
   ): Node!
-  files(where: FileWhereClause = null): [File!]!
+  file(where: FileWhereClause = null): [File!]!
   sample(where: SampleWhereClause = null): [Sample!]!
   sequencingRead(where: SequencingReadWhereClause = null): [SequencingRead!]!
   genomicRange(where: GenomicRangeWhereClause = null): [GenomicRange!]!
