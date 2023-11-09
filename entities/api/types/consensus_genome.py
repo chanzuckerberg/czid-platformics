@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -170,6 +170,9 @@ class ConsensusGenomeWhereClause(TypedDict):
 @strawberry.type
 class ConsensusGenome(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
@@ -180,11 +183,11 @@ class ConsensusGenome(EntityInterface):
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
     ] = load_reference_genome_rows  # type:ignore
-    sequence_id: strawberry.ID
-    sequence: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence")  # type: ignore
+    sequence_id: Optional[strawberry.ID]
+    sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
     is_reverse_complement: bool
-    intermediate_outputs_id: strawberry.ID
-    intermediate_outputs: Annotated["File", strawberry.lazy("api.files")] = load_files_from("intermediate_outputs")  # type: ignore
+    intermediate_outputs_id: Optional[strawberry.ID]
+    intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
     metrics: Sequence[
         Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
     ] = load_metric_consensus_genome_rows  # type:ignore
@@ -205,24 +208,26 @@ ConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class ConsensusGenomeCreateInput:
+    collection_id: int
     taxon_id: strawberry.ID
     sequence_read_id: strawberry.ID
     genomic_range_id: strawberry.ID
     reference_genome_id: strawberry.ID
     sequence_id: strawberry.ID
     is_reverse_complement: bool
-    intermediate_outputs_id: strawberry.ID
+    intermediate_outputs_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
 class ConsensusGenomeUpdateInput:
-    taxon_id: Optional[strawberry.ID]
-    sequence_read_id: Optional[strawberry.ID]
-    genomic_range_id: Optional[strawberry.ID]
-    reference_genome_id: Optional[strawberry.ID]
-    sequence_id: Optional[strawberry.ID]
-    is_reverse_complement: Optional[bool]
-    intermediate_outputs_id: Optional[strawberry.ID]
+    collection_id: Optional[int] = None
+    taxon_id: Optional[strawberry.ID] = None
+    sequence_read_id: Optional[strawberry.ID] = None
+    genomic_range_id: Optional[strawberry.ID] = None
+    reference_genome_id: Optional[strawberry.ID] = None
+    sequence_id: Optional[strawberry.ID] = None
+    is_reverse_complement: Optional[bool] = None
+    intermediate_outputs_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -238,3 +243,26 @@ async def resolve_consensus_genome(
     where: Optional[ConsensusGenomeWhereClause] = None,
 ) -> typing.Sequence[ConsensusGenome]:
     return await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_consensus_genome(
+    self,
+    input: ConsensusGenomeCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> ConsensusGenome:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.ConsensusGenome.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.ConsensusGenome(**params)
+    print(new_entity)
+
+    return new_entity

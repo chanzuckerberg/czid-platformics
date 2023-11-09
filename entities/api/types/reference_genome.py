@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -160,14 +160,17 @@ class ReferenceGenomeWhereClause(TypedDict):
 @strawberry.type
 class ReferenceGenome(EntityInterface):
     id: strawberry.ID
-    file_id: strawberry.ID
-    file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file")  # type: ignore
-    file_index_id: strawberry.ID
-    file_index: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file_index")  # type: ignore
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
+    file_id: Optional[strawberry.ID]
+    file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
+    file_index_id: Optional[strawberry.ID]
+    file_index: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file_index")  # type: ignore
     name: str
     description: str
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    accession_id: str
+    accession_id: Optional[str] = None
     sequence_alignment_indices: Sequence[
         Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]
     ] = load_sequence_alignment_index_rows  # type:ignore
@@ -194,22 +197,24 @@ ReferenceGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class ReferenceGenomeCreateInput:
+    collection_id: int
     file_id: strawberry.ID
-    file_index_id: strawberry.ID
+    file_index_id: Optional[strawberry.ID] = None
     name: str
     description: str
     taxon_id: strawberry.ID
-    accession_id: str
+    accession_id: Optional[str] = None
 
 
 @strawberry.input()
 class ReferenceGenomeUpdateInput:
-    file_id: Optional[strawberry.ID]
-    file_index_id: Optional[strawberry.ID]
-    name: Optional[str]
-    description: Optional[str]
-    taxon_id: Optional[strawberry.ID]
-    accession_id: Optional[str]
+    collection_id: Optional[int] = None
+    file_id: Optional[strawberry.ID] = None
+    file_index_id: Optional[strawberry.ID] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    taxon_id: Optional[strawberry.ID] = None
+    accession_id: Optional[str] = None
 
 
 # ------------------------------------------------------------------------------
@@ -225,3 +230,26 @@ async def resolve_reference_genome(
     where: Optional[ReferenceGenomeWhereClause] = None,
 ) -> typing.Sequence[ReferenceGenome]:
     return await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_reference_genome(
+    self,
+    input: ReferenceGenomeCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> ReferenceGenome:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.ReferenceGenome.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.ReferenceGenome(**params)
+    print(new_entity)
+
+    return new_entity

@@ -66,10 +66,6 @@ classes:
       id:
         identifier: true
         range: uuid
-      type:
-        range: string
-        required: true
-        designates_type: true
       producing_run_id:
         range: int
         minimum_value: 0

@@ -12,7 +12,7 @@ import datetime
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -121,12 +121,15 @@ class SampleWhereClause(TypedDict):
 @strawberry.type
 class Sample(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     name: str
     sample_type: str
     water_control: bool
-    collection_date: datetime.datetime
+    collection_date: Optional[datetime.datetime] = None
     collection_location: str
-    description: str
+    description: Optional[str] = None
     host_taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
@@ -134,7 +137,7 @@ class Sample(EntityInterface):
     metadatas: Sequence[
         Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_rows  # type:ignore
-    entity_id: strawberry.ID
+    entity_id: Optional[strawberry.ID] = None
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
@@ -151,24 +154,26 @@ Sample.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class SampleCreateInput:
+    collection_id: int
     name: str
     sample_type: str
     water_control: bool
-    collection_date: datetime.datetime
+    collection_date: Optional[datetime.datetime] = None
     collection_location: str
-    description: str
-    host_taxon_id: strawberry.ID
+    description: Optional[str] = None
+    host_taxon_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
 class SampleUpdateInput:
-    name: Optional[str]
-    sample_type: Optional[str]
-    water_control: Optional[bool]
-    collection_date: Optional[datetime.datetime]
-    collection_location: Optional[str]
-    description: Optional[str]
-    host_taxon_id: Optional[strawberry.ID]
+    collection_id: Optional[int] = None
+    name: Optional[str] = None
+    sample_type: Optional[str] = None
+    water_control: Optional[bool] = None
+    collection_date: Optional[datetime.datetime] = None
+    collection_location: Optional[str] = None
+    description: Optional[str] = None
+    host_taxon_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -184,3 +189,26 @@ async def resolve_sample(
     where: Optional[SampleWhereClause] = None,
 ) -> typing.Sequence[Sample]:
     return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_sample(
+    self,
+    input: SampleCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sample:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.Sample.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.Sample(**params)
+    print(new_entity)
+
+    return new_entity

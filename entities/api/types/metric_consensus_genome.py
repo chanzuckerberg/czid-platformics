@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -102,17 +102,20 @@ class MetricConsensusGenomeWhereClause(TypedDict):
 @strawberry.type
 class MetricConsensusGenome(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     consensus_genome: Optional[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
-    total_reads: int
-    mapped_reads: int
-    ref_snps: int
-    n_actg: int
-    n_missing: int
-    n_ambiguous: int
-    coverage_viz_summary_file_id: strawberry.ID
-    coverage_viz_summary_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("coverage_viz_summary_file")  # type: ignore
+    total_reads: Optional[int] = None
+    mapped_reads: Optional[int] = None
+    ref_snps: Optional[int] = None
+    n_actg: Optional[int] = None
+    n_missing: Optional[int] = None
+    n_ambiguous: Optional[int] = None
+    coverage_viz_summary_file_id: Optional[strawberry.ID]
+    coverage_viz_summary_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_summary_file")  # type: ignore
     entity_id: strawberry.ID
 
 
@@ -130,26 +133,28 @@ MetricConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class MetricConsensusGenomeCreateInput:
+    collection_id: int
     consensus_genome_id: strawberry.ID
-    total_reads: int
-    mapped_reads: int
-    ref_snps: int
-    n_actg: int
-    n_missing: int
-    n_ambiguous: int
+    total_reads: Optional[int] = None
+    mapped_reads: Optional[int] = None
+    ref_snps: Optional[int] = None
+    n_actg: Optional[int] = None
+    n_missing: Optional[int] = None
+    n_ambiguous: Optional[int] = None
     coverage_viz_summary_file_id: strawberry.ID
 
 
 @strawberry.input()
 class MetricConsensusGenomeUpdateInput:
-    consensus_genome_id: Optional[strawberry.ID]
-    total_reads: Optional[int]
-    mapped_reads: Optional[int]
-    ref_snps: Optional[int]
-    n_actg: Optional[int]
-    n_missing: Optional[int]
-    n_ambiguous: Optional[int]
-    coverage_viz_summary_file_id: Optional[strawberry.ID]
+    collection_id: Optional[int] = None
+    consensus_genome_id: Optional[strawberry.ID] = None
+    total_reads: Optional[int] = None
+    mapped_reads: Optional[int] = None
+    ref_snps: Optional[int] = None
+    n_actg: Optional[int] = None
+    n_missing: Optional[int] = None
+    n_ambiguous: Optional[int] = None
+    coverage_viz_summary_file_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -165,3 +170,26 @@ async def resolve_metric_consensus_genome(
     where: Optional[MetricConsensusGenomeWhereClause] = None,
 ) -> typing.Sequence[MetricConsensusGenome]:
     return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_metric_consensus_genome(
+    self,
+    input: MetricConsensusGenomeCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> MetricConsensusGenome:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.MetricConsensusGenome(**params)
+    print(new_entity)
+
+    return new_entity

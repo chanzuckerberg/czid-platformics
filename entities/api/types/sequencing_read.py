@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -156,18 +156,21 @@ class SequencingReadWhereClause(TypedDict):
 @strawberry.type
 class SequencingRead(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     protocol: SequencingProtocol
-    r1_file_id: strawberry.ID
-    r1_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("r1_file")  # type: ignore
-    r2_file_id: strawberry.ID
-    r2_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("r2_file")  # type: ignore
+    r1_file_id: Optional[strawberry.ID]
+    r1_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r1_file")  # type: ignore
+    r2_file_id: Optional[strawberry.ID]
+    r2_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r2_file")  # type: ignore
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
     has_ercc: bool
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    primer_file_id: strawberry.ID
-    primer_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("primer_file")  # type: ignore
+    primer_file_id: Optional[strawberry.ID]
+    primer_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("primer_file")  # type: ignore
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -189,28 +192,30 @@ SequencingRead.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class SequencingReadCreateInput:
-    sample_id: strawberry.ID
+    collection_id: int
+    sample_id: Optional[strawberry.ID] = None
     protocol: SequencingProtocol
     r1_file_id: strawberry.ID
-    r2_file_id: strawberry.ID
+    r2_file_id: Optional[strawberry.ID] = None
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
     has_ercc: bool
-    taxon_id: strawberry.ID
-    primer_file_id: strawberry.ID
+    taxon_id: Optional[strawberry.ID] = None
+    primer_file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
 class SequencingReadUpdateInput:
-    sample_id: Optional[strawberry.ID]
-    protocol: Optional[SequencingProtocol]
-    r1_file_id: Optional[strawberry.ID]
-    r2_file_id: Optional[strawberry.ID]
-    technology: Optional[SequencingTechnology]
-    nucleic_acid: Optional[NucleicAcid]
-    has_ercc: Optional[bool]
-    taxon_id: Optional[strawberry.ID]
-    primer_file_id: Optional[strawberry.ID]
+    collection_id: Optional[int] = None
+    sample_id: Optional[strawberry.ID] = None
+    protocol: Optional[SequencingProtocol] = None
+    r1_file_id: Optional[strawberry.ID] = None
+    r2_file_id: Optional[strawberry.ID] = None
+    technology: Optional[SequencingTechnology] = None
+    nucleic_acid: Optional[NucleicAcid] = None
+    has_ercc: Optional[bool] = None
+    taxon_id: Optional[strawberry.ID] = None
+    primer_file_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -226,3 +231,26 @@ async def resolve_sequencing_read(
     where: Optional[SequencingReadWhereClause] = None,
 ) -> typing.Sequence[SequencingRead]:
     return await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_sequencing_read(
+    self,
+    input: SequencingReadCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> SequencingRead:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.SequencingRead.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.SequencingRead(**params)
+    print(new_entity)
+
+    return new_entity

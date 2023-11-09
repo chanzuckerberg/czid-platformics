@@ -11,7 +11,7 @@ import strawberry
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -73,6 +73,9 @@ class MetadataFieldProjectWhereClause(TypedDict):
 @strawberry.type
 class MetadataFieldProject(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     project_id: int
     metadata_field: Optional[
         Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
@@ -94,14 +97,16 @@ MetadataFieldProject.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class MetadataFieldProjectCreateInput:
+    collection_id: int
     project_id: int
     metadata_field_id: strawberry.ID
 
 
 @strawberry.input()
 class MetadataFieldProjectUpdateInput:
-    project_id: Optional[int]
-    metadata_field_id: Optional[strawberry.ID]
+    collection_id: Optional[int] = None
+    project_id: Optional[int] = None
+    metadata_field_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -117,3 +122,26 @@ async def resolve_metadata_field_project(
     where: Optional[MetadataFieldProjectWhereClause] = None,
 ) -> typing.Sequence[MetadataFieldProject]:
     return await get_db_rows(db.MetadataFieldProject, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_metadata_field_project(
+    self,
+    input: MetadataFieldProjectCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> MetadataFieldProject:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.MetadataFieldProject.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.MetadataFieldProject(**params)
+    print(new_entity)
+
+    return new_entity

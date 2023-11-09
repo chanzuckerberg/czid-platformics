@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -79,9 +79,12 @@ class CoverageVizWhereClause(TypedDict):
 @strawberry.type
 class CoverageViz(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     accession_id: str
-    coverage_viz_file_id: strawberry.ID
-    coverage_viz_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("coverage_viz_file")  # type: ignore
+    coverage_viz_file_id: Optional[strawberry.ID]
+    coverage_viz_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_file")  # type: ignore
     entity_id: strawberry.ID
 
 
@@ -99,14 +102,16 @@ CoverageViz.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class CoverageVizCreateInput:
+    collection_id: int
     accession_id: str
     coverage_viz_file_id: strawberry.ID
 
 
 @strawberry.input()
 class CoverageVizUpdateInput:
-    accession_id: Optional[str]
-    coverage_viz_file_id: Optional[strawberry.ID]
+    collection_id: Optional[int] = None
+    accession_id: Optional[str] = None
+    coverage_viz_file_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -122,3 +127,26 @@ async def resolve_coverage_viz(
     where: Optional[CoverageVizWhereClause] = None,
 ) -> typing.Sequence[CoverageViz]:
     return await get_db_rows(db.CoverageViz, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_coverage_viz(
+    self,
+    input: CoverageVizCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> CoverageViz:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.CoverageViz.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.CoverageViz(**params)
+    print(new_entity)
+
+    return new_entity

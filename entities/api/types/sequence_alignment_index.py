@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -99,8 +99,11 @@ class SequenceAlignmentIndexWhereClause(TypedDict):
 @strawberry.type
 class SequenceAlignmentIndex(EntityInterface):
     id: strawberry.ID
-    index_file_id: strawberry.ID
-    index_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("index_file")  # type: ignore
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
+    index_file_id: Optional[strawberry.ID]
+    index_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("index_file")  # type: ignore
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
     ] = load_reference_genome_rows  # type:ignore
@@ -122,6 +125,7 @@ SequenceAlignmentIndex.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class SequenceAlignmentIndexCreateInput:
+    collection_id: int
     index_file_id: strawberry.ID
     reference_genome_id: strawberry.ID
     tool: AlignmentTool
@@ -129,9 +133,10 @@ class SequenceAlignmentIndexCreateInput:
 
 @strawberry.input()
 class SequenceAlignmentIndexUpdateInput:
-    index_file_id: Optional[strawberry.ID]
-    reference_genome_id: Optional[strawberry.ID]
-    tool: Optional[AlignmentTool]
+    collection_id: Optional[int] = None
+    index_file_id: Optional[strawberry.ID] = None
+    reference_genome_id: Optional[strawberry.ID] = None
+    tool: Optional[AlignmentTool] = None
 
 
 # ------------------------------------------------------------------------------
@@ -147,3 +152,26 @@ async def resolve_sequence_alignment_index(
     where: Optional[SequenceAlignmentIndexWhereClause] = None,
 ) -> typing.Sequence[SequenceAlignmentIndex]:
     return await get_db_rows(db.SequenceAlignmentIndex, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_sequence_alignment_index(
+    self,
+    input: SequenceAlignmentIndexCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> SequenceAlignmentIndex:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.SequenceAlignmentIndex.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.SequenceAlignmentIndex(**params)
+    print(new_entity)
+
+    return new_entity

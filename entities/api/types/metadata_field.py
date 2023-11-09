@@ -11,7 +11,7 @@ import strawberry
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -106,6 +106,9 @@ class MetadataFieldWhereClause(TypedDict):
 @strawberry.type
 class MetadataField(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     field_group: Sequence[
         Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]
     ] = load_metadata_field_project_rows  # type:ignore
@@ -113,8 +116,8 @@ class MetadataField(EntityInterface):
     description: str
     field_type: str
     is_required: bool
-    options: str
-    default_value: str
+    options: Optional[str] = None
+    default_value: Optional[str] = None
     metadatas: Sequence[
         Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_rows  # type:ignore
@@ -135,22 +138,24 @@ MetadataField.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class MetadataFieldCreateInput:
+    collection_id: int
     field_name: str
     description: str
     field_type: str
     is_required: bool
-    options: str
-    default_value: str
+    options: Optional[str] = None
+    default_value: Optional[str] = None
 
 
 @strawberry.input()
 class MetadataFieldUpdateInput:
-    field_name: Optional[str]
-    description: Optional[str]
-    field_type: Optional[str]
-    is_required: Optional[bool]
-    options: Optional[str]
-    default_value: Optional[str]
+    collection_id: Optional[int] = None
+    field_name: Optional[str] = None
+    description: Optional[str] = None
+    field_type: Optional[str] = None
+    is_required: Optional[bool] = None
+    options: Optional[str] = None
+    default_value: Optional[str] = None
 
 
 # ------------------------------------------------------------------------------
@@ -166,3 +171,26 @@ async def resolve_metadata_field(
     where: Optional[MetadataFieldWhereClause] = None,
 ) -> typing.Sequence[MetadataField]:
     return await get_db_rows(db.MetadataField, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_metadata_field(
+    self,
+    input: MetadataFieldCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> MetadataField:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.MetadataField.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.MetadataField(**params)
+    print(new_entity)
+
+    return new_entity

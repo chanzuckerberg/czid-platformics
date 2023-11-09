@@ -11,7 +11,7 @@ import strawberry
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -76,6 +76,9 @@ class ContigWhereClause(TypedDict):
 @strawberry.type
 class Contig(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     sequencing_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
@@ -97,14 +100,16 @@ Contig.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class ContigCreateInput:
-    sequencing_read_id: strawberry.ID
+    collection_id: int
+    sequencing_read_id: Optional[strawberry.ID] = None
     sequence: str
 
 
 @strawberry.input()
 class ContigUpdateInput:
-    sequencing_read_id: Optional[strawberry.ID]
-    sequence: Optional[str]
+    collection_id: Optional[int] = None
+    sequencing_read_id: Optional[strawberry.ID] = None
+    sequence: Optional[str] = None
 
 
 # ------------------------------------------------------------------------------
@@ -120,3 +125,26 @@ async def resolve_contig(
     where: Optional[ContigWhereClause] = None,
 ) -> typing.Sequence[Contig]:
     return await get_db_rows(db.Contig, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_contig(
+    self,
+    input: ContigCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Contig:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.Contig.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.Contig(**params)
+    print(new_entity)
+
+    return new_entity

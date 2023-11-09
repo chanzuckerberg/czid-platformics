@@ -11,7 +11,7 @@ import strawberry
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -173,9 +173,12 @@ class TaxonWhereClause(TypedDict):
 @strawberry.type
 class Taxon(EntityInterface):
     id: strawberry.ID
-    wikipedia_id: str
-    description: str
-    common_name: str
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
+    wikipedia_id: Optional[str] = None
+    description: Optional[str] = None
+    common_name: Optional[str] = None
     name: str
     is_phage: bool
     upstream_database: Optional[
@@ -219,9 +222,10 @@ Taxon.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class TaxonCreateInput:
-    wikipedia_id: str
-    description: str
-    common_name: str
+    collection_id: int
+    wikipedia_id: Optional[str] = None
+    description: Optional[str] = None
+    common_name: Optional[str] = None
     name: str
     is_phage: bool
     upstream_database_id: strawberry.ID
@@ -240,23 +244,24 @@ class TaxonCreateInput:
 
 @strawberry.input()
 class TaxonUpdateInput:
-    wikipedia_id: Optional[str]
-    description: Optional[str]
-    common_name: Optional[str]
-    name: Optional[str]
-    is_phage: Optional[bool]
-    upstream_database_id: Optional[strawberry.ID]
-    upstream_database_identifier: Optional[str]
-    level: Optional[TaxonLevel]
-    tax_id: Optional[int]
-    tax_id_parent: Optional[int]
-    tax_id_species: Optional[int]
-    tax_id_genus: Optional[int]
-    tax_id_family: Optional[int]
-    tax_id_order: Optional[int]
-    tax_id_class: Optional[int]
-    tax_id_phylum: Optional[int]
-    tax_id_kingdom: Optional[int]
+    collection_id: Optional[int] = None
+    wikipedia_id: Optional[str] = None
+    description: Optional[str] = None
+    common_name: Optional[str] = None
+    name: Optional[str] = None
+    is_phage: Optional[bool] = None
+    upstream_database_id: Optional[strawberry.ID] = None
+    upstream_database_identifier: Optional[str] = None
+    level: Optional[TaxonLevel] = None
+    tax_id: Optional[int] = None
+    tax_id_parent: Optional[int] = None
+    tax_id_species: Optional[int] = None
+    tax_id_genus: Optional[int] = None
+    tax_id_family: Optional[int] = None
+    tax_id_order: Optional[int] = None
+    tax_id_class: Optional[int] = None
+    tax_id_phylum: Optional[int] = None
+    tax_id_kingdom: Optional[int] = None
 
 
 # ------------------------------------------------------------------------------
@@ -272,3 +277,26 @@ async def resolve_taxon(
     where: Optional[TaxonWhereClause] = None,
 ) -> typing.Sequence[Taxon]:
     return await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_taxon(
+    self,
+    input: TaxonCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Taxon:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.Taxon.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.Taxon(**params)
+    print(new_entity)
+
+    return new_entity

@@ -11,7 +11,7 @@ import strawberry
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -77,6 +77,9 @@ class UpstreamDatabaseWhereClause(TypedDict):
 @strawberry.type
 class UpstreamDatabase(EntityInterface):
     id: strawberry.ID
+    producing_run_id: Optional[int]
+    owner_user_id: int
+    collection_id: int
     name: str
     taxa: Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     entity_id: strawberry.ID
@@ -96,12 +99,14 @@ UpstreamDatabase.__strawberry_definition__.is_type_of = (  # type: ignore
 
 @strawberry.input()
 class UpstreamDatabaseCreateInput:
+    collection_id: int
     name: str
 
 
 @strawberry.input()
 class UpstreamDatabaseUpdateInput:
-    name: Optional[str]
+    collection_id: Optional[int] = None
+    name: Optional[str] = None
 
 
 # ------------------------------------------------------------------------------
@@ -117,3 +122,26 @@ async def resolve_upstream_database(
     where: Optional[UpstreamDatabaseWhereClause] = None,
 ) -> typing.Sequence[UpstreamDatabase]:
     return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_upstream_database(
+    self,
+    input: UpstreamDatabaseCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> UpstreamDatabase:
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.UpstreamDatabase.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params = input.__dict__
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.UpstreamDatabase(**params)
+    print(new_entity)
+
+    return new_entity
