@@ -292,3 +292,21 @@ async def update_{{ cls.snake_name|lower }}(
     await session.commit()
     return entities
 
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def delete_{{ cls.snake_name|lower }}(
+    where: {{ cls.name }}WhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> {{ cls.name }}:
+    # Fetch entities for deletion, if we have access to them
+    entities = await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot delete entities")
+
+    # Update DB
+    for entity in entities:
+        session.delete(entity)
+    await session.commit()
+    return entities

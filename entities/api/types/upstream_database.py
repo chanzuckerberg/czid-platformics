@@ -182,3 +182,22 @@ async def update_upstream_database(
                 setattr(entity, key, params[key])
     await session.commit()
     return entities
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def delete_upstream_database(
+    where: UpstreamDatabaseWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> UpstreamDatabase:
+    # Fetch entities for deletion, if we have access to them
+    entities = await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot delete entities")
+
+    # Update DB
+    for entity in entities:
+        session.delete(entity)
+    await session.commit()
+    return entities

@@ -32,18 +32,18 @@ type ConsensusGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   taxon(where: TaxonWhereClause = null): Taxon
   sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
   genomicRange(where: GenomicRangeWhereClause = null): GenomicRange
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
-  sequenceId: ID!
-  sequence(where: FileWhereClause = null): File!
+  sequenceId: ID
+  sequence(where: FileWhereClause = null): File
   isReverseComplement: Boolean!
-  intermediateOutputsId: ID!
-  intermediateOutputs(where: FileWhereClause = null): File!
+  intermediateOutputsId: ID
+  intermediateOutputs(where: FileWhereClause = null): File
   metrics(
     where: MetricConsensusGenomeWhereClause = null
 
@@ -98,7 +98,7 @@ type Contig implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
@@ -138,12 +138,12 @@ type CoverageViz implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   accessionId: String!
-  coverageVizFileId: ID!
-  coverageVizFile(where: FileWhereClause = null): File!
+  coverageVizFileId: ID
+  coverageVizFile(where: FileWhereClause = null): File
   entityId: ID!
 }
 
@@ -242,12 +242,12 @@ type GenomicRange implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
-  fileId: ID!
-  file(where: FileWhereClause = null): File!
+  fileId: ID
+  file(where: FileWhereClause = null): File
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -320,7 +320,7 @@ type MetadataField implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   fieldGroup(
@@ -342,8 +342,8 @@ type MetadataField implements EntityInterface & Node {
   description: String!
   fieldType: String!
   isRequired: Boolean!
-  options: String!
-  defaultValue: String!
+  options: String
+  defaultValue: String
   metadatas(
     where: MetadatumWhereClause = null
 
@@ -366,7 +366,7 @@ type MetadataFieldProject implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   projectId: Int!
@@ -422,7 +422,7 @@ type Metadatum implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   sample(where: SampleWhereClause = null): Sample
@@ -464,18 +464,18 @@ type MetricConsensusGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   consensusGenome(where: ConsensusGenomeWhereClause = null): ConsensusGenome
-  totalReads: Int!
-  mappedReads: Int!
-  refSnps: Int!
-  nActg: Int!
-  nMissing: Int!
-  nAmbiguous: Int!
-  coverageVizSummaryFileId: ID!
-  coverageVizSummaryFile(where: FileWhereClause = null): File!
+  totalReads: Int
+  mappedReads: Int
+  refSnps: Int
+  nActg: Int
+  nMissing: Int
+  nAmbiguous: Int
+  coverageVizSummaryFileId: ID
+  coverageVizSummaryFile(where: FileWhereClause = null): File
   entityId: ID!
 }
 
@@ -528,12 +528,12 @@ type MultipartUploadResponse {
 }
 
 type Mutation {
-  createSample(name: String!, sampleType: String!, waterControl: Boolean!, collectionDate: DateTime!, collectionLocation: String!, description: String!, collectionId: Int!): Sample!
-  createSequencingRead(protocol: SequencingProtocol!, r1FileId: ID!, r2FileId: ID!, techonology: SequencingTechnology!, nucleicAcid: NucleicAcid!, hasErcc: Boolean!, primerFileId: ID!, collectionId: Int!): SequencingRead!
-  updateSample(name: String!, sampleType: String!, waterControl: Boolean!, collectionDate: DateTime!, collectionLocation: String!, description: String!, entityId: ID!): Sample!
   createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
   uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
   markUploadComplete(fileId: ID!): File!
+  createSample(input: SampleCreateInput!): Sample!
+  updateSample(input: SampleUpdateInput!, where: SampleWhereClause!): [Sample!]!
+  deleteSample(where: SampleWhereClause!): [Sample!]!
 }
 
 """An object with a Globally Unique ID"""
@@ -600,17 +600,17 @@ type ReferenceGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  fileId: ID!
-  file(where: FileWhereClause = null): File!
-  fileIndexId: ID!
-  fileIndex(where: FileWhereClause = null): File!
+  fileId: ID
+  file(where: FileWhereClause = null): File
+  fileIndexId: ID
+  fileIndex(where: FileWhereClause = null): File
   name: String!
   description: String!
   taxon(where: TaxonWhereClause = null): Taxon
-  accessionId: String!
+  accessionId: String
   sequenceAlignmentIndices(
     where: SequenceAlignmentIndexWhereClause = null
 
@@ -696,15 +696,15 @@ type Sample implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   name: String!
   sampleType: String!
   waterControl: Boolean!
-  collectionDate: DateTime!
+  collectionDate: DateTime
   collectionLocation: String!
-  description: String!
+  description: String
   hostTaxon(where: TaxonWhereClause = null): Taxon
   sequencingReads(
     where: SequencingReadWhereClause = null
@@ -736,7 +736,7 @@ type Sample implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadatumConnection!
-  entityId: ID!
+  entityId: ID
 }
 
 """A connection to a list of items."""
@@ -748,6 +748,17 @@ type SampleConnection {
   edges: [SampleEdge!]!
 }
 
+input SampleCreateInput {
+  collectionId: Int!
+  name: String!
+  sampleType: String!
+  waterControl: Boolean!
+  collectionDate: DateTime = null
+  collectionLocation: String!
+  description: String = null
+  hostTaxonId: ID = null
+}
+
 """An edge in a connection."""
 type SampleEdge {
   """A cursor for use in pagination"""
@@ -755,6 +766,17 @@ type SampleEdge {
 
   """The item at the end of the edge"""
   node: Sample!
+}
+
+input SampleUpdateInput {
+  collectionId: Int = null
+  name: String = null
+  sampleType: String = null
+  waterControl: Boolean = null
+  collectionDate: DateTime = null
+  collectionLocation: String = null
+  description: String = null
+  hostTaxonId: ID = null
 }
 
 input SampleWhereClause {
@@ -778,11 +800,11 @@ type SequenceAlignmentIndex implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  indexFileId: ID!
-  indexFile(where: FileWhereClause = null): File!
+  indexFileId: ID
+  indexFile(where: FileWhereClause = null): File
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   tool: AlignmentTool!
   entityId: ID!
@@ -838,21 +860,21 @@ type SequencingRead implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   sample(where: SampleWhereClause = null): Sample
   protocol: SequencingProtocol!
-  r1FileId: ID!
-  r1File(where: FileWhereClause = null): File!
-  r2FileId: ID!
-  r2File(where: FileWhereClause = null): File!
-  techonology: SequencingTechnology!
+  r1FileId: ID
+  r1File(where: FileWhereClause = null): File
+  r2FileId: ID
+  r2File(where: FileWhereClause = null): File
+  technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxon(where: TaxonWhereClause = null): Taxon
-  primerFileId: ID!
-  primerFile(where: FileWhereClause = null): File!
+  primerFileId: ID
+  primerFile(where: FileWhereClause = null): File
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -911,7 +933,7 @@ input SequencingReadWhereClause {
   collectionId: IntComparators
   sample: SampleWhereClause
   protocol: SequencingProtocolEnumComparators
-  techonology: SequencingTechnologyEnumComparators
+  technology: SequencingTechnologyEnumComparators
   nucleicAcid: NucleicAcidEnumComparators
   hasErcc: BoolComparators
   taxon: TaxonWhereClause
@@ -969,12 +991,12 @@ type Taxon implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  wikipediaId: String!
-  description: String!
-  commonName: String!
+  wikipediaId: String
+  description: String
+  commonName: String
   name: String!
   isPhage: Boolean!
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
@@ -1134,7 +1156,7 @@ type UpstreamDatabase implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   name: String!

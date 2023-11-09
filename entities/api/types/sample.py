@@ -249,3 +249,22 @@ async def update_sample(
                 setattr(entity, key, params[key])
     await session.commit()
     return entities
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def delete_sample(
+    where: SampleWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sample:
+    # Fetch entities for deletion, if we have access to them
+    entities = await get_db_rows(db.Sample, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot delete entities")
+
+    # Update DB
+    for entity in entities:
+        session.delete(entity)
+    await session.commit()
+    return entities
