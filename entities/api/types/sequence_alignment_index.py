@@ -172,6 +172,7 @@ async def create_sequence_alignment_index(
     params = input.__dict__
     params["owner_user_id"] = int(principal.id)
     new_entity = db.SequenceAlignmentIndex(**params)
-    print(new_entity)
+    session.add(new_entity)
+    await session.commit()
 
     return new_entity

@@ -190,6 +190,7 @@ async def create_genomic_range(
     params = input.__dict__
     params["owner_user_id"] = int(principal.id)
     new_entity = db.GenomicRange(**params)
-    print(new_entity)
+    session.add(new_entity)
+    await session.commit()
 
     return new_entity

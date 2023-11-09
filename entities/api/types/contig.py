@@ -145,6 +145,7 @@ async def create_contig(
     params = input.__dict__
     params["owner_user_id"] = int(principal.id)
     new_entity = db.Contig(**params)
-    print(new_entity)
+    session.add(new_entity)
+    await session.commit()
 
     return new_entity
