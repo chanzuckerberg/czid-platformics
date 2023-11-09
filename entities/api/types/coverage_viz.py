@@ -85,6 +85,13 @@ class CoverageViz(EntityInterface):
     entity_id: strawberry.ID
 
 
+# We need to add this to each Queryable type so that strawberry will accept either our
+# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
+CoverageViz.__strawberry_definition__.is_type_of = (  # type: ignore
+    lambda obj, info: type(obj) == db.CoverageViz or type(obj) == CoverageViz
+)
+
+
 # ------------------------------------------------------------------------------
 # Mutation types
 # ------------------------------------------------------------------------------
@@ -103,17 +110,10 @@ class CoverageVizUpdateInput:
 
 
 # ------------------------------------------------------------------------------
-# Setup and utilities
+# Utilities
 # ------------------------------------------------------------------------------
 
-# We need to add this to each Queryable type so that strawberry will accept either our
-# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-CoverageViz.__strawberry_definition__.is_type_of = (  # type: ignore
-    lambda obj, info: type(obj) == db.CoverageViz or type(obj) == CoverageViz
-)
 
-
-# Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_coverage_viz(
     session: AsyncSession = Depends(get_db_session, use_cache=False),

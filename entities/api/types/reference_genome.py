@@ -180,6 +180,13 @@ class ReferenceGenome(EntityInterface):
     entity_id: strawberry.ID
 
 
+# We need to add this to each Queryable type so that strawberry will accept either our
+# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
+ReferenceGenome.__strawberry_definition__.is_type_of = (  # type: ignore
+    lambda obj, info: type(obj) == db.ReferenceGenome or type(obj) == ReferenceGenome
+)
+
+
 # ------------------------------------------------------------------------------
 # Mutation types
 # ------------------------------------------------------------------------------
@@ -206,17 +213,10 @@ class ReferenceGenomeUpdateInput:
 
 
 # ------------------------------------------------------------------------------
-# Setup and utilities
+# Utilities
 # ------------------------------------------------------------------------------
 
-# We need to add this to each Queryable type so that strawberry will accept either our
-# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-ReferenceGenome.__strawberry_definition__.is_type_of = (  # type: ignore
-    lambda obj, info: type(obj) == db.ReferenceGenome or type(obj) == ReferenceGenome
-)
 
-
-# Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_reference_genome(
     session: AsyncSession = Depends(get_db_session, use_cache=False),

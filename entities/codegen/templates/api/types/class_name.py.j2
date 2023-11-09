@@ -168,6 +168,13 @@ class {{ cls.name }}(EntityInterface):
     {%- endfor %}
 
 
+# We need to add this to each Queryable type so that strawberry will accept either our
+# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
+{{ cls.name }}.__strawberry_definition__.is_type_of = (  # type: ignore
+    lambda obj, info: type(obj) == db.{{ cls.name }} or type(obj) == {{ cls.name }}
+)
+
+
 # ------------------------------------------------------------------------------
 # Mutation types
 # ------------------------------------------------------------------------------
@@ -204,16 +211,9 @@ class {{ cls.name }}{{ action }}Input:
 
 
 # ------------------------------------------------------------------------------
-# Setup and utilities
+# Utilities
 # ------------------------------------------------------------------------------
 
-# We need to add this to each Queryable type so that strawberry will accept either our
-# Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-{{ cls.name }}.__strawberry_definition__.is_type_of = (  # type: ignore
-    lambda obj, info: type(obj) == db.{{ cls.name }} or type(obj) == {{ cls.name }}
-)
-
-# Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_{{ cls.snake_name|lower }}(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -222,3 +222,4 @@ async def resolve_{{ cls.snake_name|lower }}(
     where: Optional[{{ cls.name }}WhereClause] = None,
 ) -> typing.Sequence[{{ cls.name }}]:
     return await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [])  # type: ignore
+
