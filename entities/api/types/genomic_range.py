@@ -128,6 +128,27 @@ class GenomicRange(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class GenomicRangeCreateInput:
+    reference_genome_id: strawberry.ID
+    file_id: strawberry.ID
+
+
+@strawberry.input()
+class GenomicRangeUpdateInput:
+    reference_genome_id: Optional[strawberry.ID]
+    file_id: Optional[strawberry.ID]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 GenomicRange.__strawberry_definition__.is_type_of = (  # type: ignore

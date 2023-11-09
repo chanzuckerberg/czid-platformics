@@ -191,6 +191,37 @@ class ConsensusGenome(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class ConsensusGenomeCreateInput:
+    taxon_id: strawberry.ID
+    sequence_read_id: strawberry.ID
+    genomic_range_id: strawberry.ID
+    reference_genome_id: strawberry.ID
+    sequence_id: strawberry.ID
+    is_reverse_complement: bool
+    intermediate_outputs_id: strawberry.ID
+
+
+@strawberry.input()
+class ConsensusGenomeUpdateInput:
+    taxon_id: Optional[strawberry.ID]
+    sequence_read_id: Optional[strawberry.ID]
+    genomic_range_id: Optional[strawberry.ID]
+    reference_genome_id: Optional[strawberry.ID]
+    sequence_id: Optional[strawberry.ID]
+    is_reverse_complement: Optional[bool]
+    intermediate_outputs_id: Optional[strawberry.ID]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 ConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore

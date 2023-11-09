@@ -205,6 +205,57 @@ class Taxon(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class TaxonCreateInput:
+    wikipedia_id: str
+    description: str
+    common_name: str
+    name: str
+    is_phage: bool
+    upstream_database_id: strawberry.ID
+    upstream_database_identifier: str
+    level: TaxonLevel
+    tax_id: int
+    tax_id_parent: int
+    tax_id_species: int
+    tax_id_genus: int
+    tax_id_family: int
+    tax_id_order: int
+    tax_id_class: int
+    tax_id_phylum: int
+    tax_id_kingdom: int
+
+
+@strawberry.input()
+class TaxonUpdateInput:
+    wikipedia_id: Optional[str]
+    description: Optional[str]
+    common_name: Optional[str]
+    name: Optional[str]
+    is_phage: Optional[bool]
+    upstream_database_id: Optional[strawberry.ID]
+    upstream_database_identifier: Optional[str]
+    level: Optional[TaxonLevel]
+    tax_id: Optional[int]
+    tax_id_parent: Optional[int]
+    tax_id_species: Optional[int]
+    tax_id_genus: Optional[int]
+    tax_id_family: Optional[int]
+    tax_id_order: Optional[int]
+    tax_id_class: Optional[int]
+    tax_id_phylum: Optional[int]
+    tax_id_kingdom: Optional[int]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 Taxon.__strawberry_definition__.is_type_of = (  # type: ignore

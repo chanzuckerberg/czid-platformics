@@ -137,6 +137,37 @@ class Sample(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class SampleCreateInput:
+    name: str
+    sample_type: str
+    water_control: bool
+    collection_date: datetime.datetime
+    collection_location: str
+    description: str
+    host_taxon_id: strawberry.ID
+
+
+@strawberry.input()
+class SampleUpdateInput:
+    name: Optional[str]
+    sample_type: Optional[str]
+    water_control: Optional[bool]
+    collection_date: Optional[datetime.datetime]
+    collection_location: Optional[str]
+    description: Optional[str]
+    host_taxon_id: Optional[strawberry.ID]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 Sample.__strawberry_definition__.is_type_of = (  # type: ignore

@@ -141,7 +141,7 @@ class SequencingReadWhereClause(TypedDict):
     collection_id: IntComparators | None
     sample: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
     protocol: Optional[EnumComparators[SequencingProtocol]] | None
-    techonology: Optional[EnumComparators[SequencingTechnology]] | None
+    technology: Optional[EnumComparators[SequencingTechnology]] | None
     nucleic_acid: Optional[EnumComparators[NucleicAcid]] | None
     has_ercc: Optional[BoolComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
@@ -162,7 +162,7 @@ class SequencingRead(EntityInterface):
     r1_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("r1_file")  # type: ignore
     r2_file_id: strawberry.ID
     r2_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("r2_file")  # type: ignore
-    techonology: SequencingTechnology
+    technology: SequencingTechnology
     nucleic_acid: NucleicAcid
     has_ercc: bool
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
@@ -174,6 +174,41 @@ class SequencingRead(EntityInterface):
     contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
     entity_id: strawberry.ID
 
+
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class SequencingReadCreateInput:
+    sample_id: strawberry.ID
+    protocol: SequencingProtocol
+    r1_file_id: strawberry.ID
+    r2_file_id: strawberry.ID
+    technology: SequencingTechnology
+    nucleic_acid: NucleicAcid
+    has_ercc: bool
+    taxon_id: strawberry.ID
+    primer_file_id: strawberry.ID
+
+
+@strawberry.input()
+class SequencingReadUpdateInput:
+    sample_id: Optional[strawberry.ID]
+    protocol: Optional[SequencingProtocol]
+    r1_file_id: Optional[strawberry.ID]
+    r2_file_id: Optional[strawberry.ID]
+    technology: Optional[SequencingTechnology]
+    nucleic_acid: Optional[NucleicAcid]
+    has_ercc: Optional[bool]
+    taxon_id: Optional[strawberry.ID]
+    primer_file_id: Optional[strawberry.ID]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver

@@ -121,6 +121,35 @@ class MetadataField(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class MetadataFieldCreateInput:
+    field_name: str
+    description: str
+    field_type: str
+    is_required: bool
+    options: str
+    default_value: str
+
+
+@strawberry.input()
+class MetadataFieldUpdateInput:
+    field_name: Optional[str]
+    description: Optional[str]
+    field_type: Optional[str]
+    is_required: Optional[bool]
+    options: Optional[str]
+    default_value: Optional[str]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 MetadataField.__strawberry_definition__.is_type_of = (  # type: ignore

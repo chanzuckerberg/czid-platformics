@@ -116,6 +116,39 @@ class MetricConsensusGenome(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class MetricConsensusGenomeCreateInput:
+    consensus_genome_id: strawberry.ID
+    total_reads: int
+    mapped_reads: int
+    ref_snps: int
+    n_actg: int
+    n_missing: int
+    n_ambiguous: int
+    coverage_viz_summary_file_id: strawberry.ID
+
+
+@strawberry.input()
+class MetricConsensusGenomeUpdateInput:
+    consensus_genome_id: Optional[strawberry.ID]
+    total_reads: Optional[int]
+    mapped_reads: Optional[int]
+    ref_snps: Optional[int]
+    n_actg: Optional[int]
+    n_missing: Optional[int]
+    n_ambiguous: Optional[int]
+    coverage_viz_summary_file_id: Optional[strawberry.ID]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 MetricConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore

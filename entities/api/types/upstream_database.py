@@ -82,6 +82,25 @@ class UpstreamDatabase(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class UpstreamDatabaseCreateInput:
+    name: str
+
+
+@strawberry.input()
+class UpstreamDatabaseUpdateInput:
+    name: Optional[str]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 UpstreamDatabase.__strawberry_definition__.is_type_of = (  # type: ignore

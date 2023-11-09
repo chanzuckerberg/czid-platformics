@@ -98,6 +98,29 @@ class Metadatum(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class MetadatumCreateInput:
+    sample_id: strawberry.ID
+    metadata_field_id: strawberry.ID
+    value: str
+
+
+@strawberry.input()
+class MetadatumUpdateInput:
+    sample_id: Optional[strawberry.ID]
+    metadata_field_id: Optional[strawberry.ID]
+    value: Optional[str]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 Metadatum.__strawberry_definition__.is_type_of = (  # type: ignore

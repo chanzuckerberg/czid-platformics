@@ -83,6 +83,27 @@ class Contig(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class ContigCreateInput:
+    sequencing_read_id: strawberry.ID
+    sequence: str
+
+
+@strawberry.input()
+class ContigUpdateInput:
+    sequencing_read_id: Optional[strawberry.ID]
+    sequence: Optional[str]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 Contig.__strawberry_definition__.is_type_of = (  # type: ignore

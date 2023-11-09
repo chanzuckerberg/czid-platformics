@@ -80,6 +80,27 @@ class MetadataFieldProject(EntityInterface):
     entity_id: strawberry.ID
 
 
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class MetadataFieldProjectCreateInput:
+    project_id: int
+    metadata_field_id: strawberry.ID
+
+
+@strawberry.input()
+class MetadataFieldProjectUpdateInput:
+    project_id: Optional[int]
+    metadata_field_id: Optional[strawberry.ID]
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 MetadataFieldProject.__strawberry_definition__.is_type_of = (  # type: ignore

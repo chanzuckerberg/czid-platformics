@@ -167,6 +167,46 @@ class {{ cls.name }}(EntityInterface):
         {%- endif %}
     {%- endfor %}
 
+
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+{# Macro to output X or Optional[X] #}
+{% macro inputType(action, type) -%}
+    {%- if action == "Create" %} {{ type }}
+    {%- elif action == "Update" %} Optional[{{ type }}]
+    {%- endif %}
+{%- endmacro %}
+
+{# Generate Create and Update Strawberry input types #}
+{%- for action in ["Create", "Update"] %}
+@strawberry.input()
+class {{ cls.name }}{{ action }}Input:
+    {%- for attr in cls.owned_fields %}
+        {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
+        {%- elif attr.type == "string" %}
+    {{ attr.name }}: {{ inputType(action, "str") }}
+        {%- elif attr.is_enum %}
+    {{ attr.name }}: {{ inputType(action, attr.type) }}
+        {%- elif attr.type == "int" %}
+    {{ attr.name }}: {{ inputType(action, "int") }}
+        {%- elif attr.type == "boolean" %}
+    {{ attr.name }}: {{ inputType(action, "bool") }}
+        {%- elif attr.type == "date" %}
+    {{ attr.name }}: {{ inputType(action, "datetime.datetime") }}
+        {%- elif attr.type == "File" %}
+    {{ attr.name }}_id: {{ inputType(action, "strawberry.ID") }}
+        {%- elif attr.inverse and not attr.multivalued %} {# Don't include multivalued fields, only fields where can update an ID #}
+    {{ attr.name }}_id: {{ inputType(action, "strawberry.ID") }}
+        {%- endif %}
+    {%- endfor %}
+{%- endfor %}
+
+
+# ------------------------------------------------------------------------------
+# Setup and utilities
+# ------------------------------------------------------------------------------
+
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
 {{ cls.name }}.__strawberry_definition__.is_type_of = (  # type: ignore
