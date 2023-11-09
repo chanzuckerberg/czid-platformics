@@ -170,9 +170,6 @@ class ConsensusGenomeWhereClause(TypedDict):
 @strawberry.type
 class ConsensusGenome(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]

@@ -20,6 +20,9 @@ class EntityInterface(relay.Node):
     # Otherwise, Strawberry SQLAlchemyMapper errors with: "SequencingRead object has no
     # attribute code" (unless you create a column `code` in the table)
     id: relay.NodeID[str]
+    producing_run_id: int
+    owner_user_id: int
+    collection_id: int
 
     @classmethod
     async def resolve_nodes(cls, *, info: Info, node_ids: Iterable[str], required: bool = False) -> list:

@@ -117,9 +117,6 @@ class GenomicRangeWhereClause(TypedDict):
 @strawberry.type
 class GenomicRange(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
     ] = load_reference_genome_rows  # type:ignore

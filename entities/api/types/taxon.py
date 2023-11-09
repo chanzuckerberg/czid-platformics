@@ -173,9 +173,6 @@ class TaxonWhereClause(TypedDict):
 @strawberry.type
 class Taxon(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     wikipedia_id: str
     description: str
     common_name: str

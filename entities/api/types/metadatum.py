@@ -90,9 +90,6 @@ class MetadatumWhereClause(TypedDict):
 @strawberry.type
 class Metadatum(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     metadata_field: Optional[
         Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]

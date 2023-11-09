@@ -121,9 +121,6 @@ class SampleWhereClause(TypedDict):
 @strawberry.type
 class Sample(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     name: str
     sample_type: str
     water_control: bool

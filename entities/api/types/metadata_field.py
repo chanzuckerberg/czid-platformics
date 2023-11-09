@@ -106,9 +106,6 @@ class MetadataFieldWhereClause(TypedDict):
 @strawberry.type
 class MetadataField(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     field_group: typing.Sequence[
         Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]
     ] = load_metadata_field_project_rows

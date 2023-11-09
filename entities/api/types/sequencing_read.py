@@ -156,9 +156,6 @@ class SequencingReadWhereClause(TypedDict):
 @strawberry.type
 class SequencingRead(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     protocol: SequencingProtocol
     r1_file_id: strawberry.ID

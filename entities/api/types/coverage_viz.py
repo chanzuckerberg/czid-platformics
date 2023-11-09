@@ -79,9 +79,6 @@ class CoverageVizWhereClause(TypedDict):
 @strawberry.type
 class CoverageViz(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     accession_id: str
     coverage_viz_file_id: strawberry.ID
     coverage_viz_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("coverage_viz_file")  # type: ignore

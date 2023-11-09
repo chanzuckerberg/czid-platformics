@@ -76,9 +76,6 @@ class ContigWhereClause(TypedDict):
 @strawberry.type
 class Contig(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     sequencing_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore

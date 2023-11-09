@@ -160,9 +160,6 @@ class ReferenceGenomeWhereClause(TypedDict):
 @strawberry.type
 class ReferenceGenome(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     file_id: strawberry.ID
     file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file")  # type: ignore
     file_index_id: strawberry.ID

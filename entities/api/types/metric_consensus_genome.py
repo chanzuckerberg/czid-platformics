@@ -102,9 +102,6 @@ class MetricConsensusGenomeWhereClause(TypedDict):
 @strawberry.type
 class MetricConsensusGenome(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     consensus_genome: Optional[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore

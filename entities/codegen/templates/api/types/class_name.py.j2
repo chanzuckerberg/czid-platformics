@@ -146,9 +146,6 @@ class {{ cls.name }}WhereClause(TypedDict):
 @strawberry.type
 class {{ cls.name }}(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "uuid" %}
     {{ attr.name }}: strawberry.ID

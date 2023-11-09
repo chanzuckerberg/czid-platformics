@@ -73,9 +73,6 @@ class MetadataFieldProjectWhereClause(TypedDict):
 @strawberry.type
 class MetadataFieldProject(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     project_id: int
     metadata_field: Optional[
         Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]

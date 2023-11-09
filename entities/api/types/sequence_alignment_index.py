@@ -99,9 +99,6 @@ class SequenceAlignmentIndexWhereClause(TypedDict):
 @strawberry.type
 class SequenceAlignmentIndex(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
-    owner_user_id: int
-    collection_id: int
     index_file_id: strawberry.ID
     index_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("index_file")  # type: ignore
     reference_genome: Optional[
