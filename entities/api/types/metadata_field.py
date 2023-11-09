@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
@@ -21,6 +21,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -43,27 +44,31 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[
+        Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]
+    ]  # type:ignore
+)
 async def load_metadata_field_project_rows(
     root: "MetadataField",
     info: Info,
     where: Annotated["MetadataFieldProjectWhereClause", strawberry.lazy("api.types.metadata_field_project")]
     | None = None,
-) -> typing.Sequence[Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]]:
+) -> Sequence[Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetadataField)
     relationship = mapper.relationships["metadata_field_project"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]]  # type:ignore
+)
 async def load_metadatum_rows(
     root: "MetadataField",
     info: Info,
     where: Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")] | None = None,
-) -> typing.Sequence[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]]:
+) -> Sequence[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetadataField)
     relationship = mapper.relationships["metadatum"]

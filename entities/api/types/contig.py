@@ -39,9 +39,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_sequencing_read_rows(
     root: "Contig",
     info: Info,

@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -20,6 +20,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -42,9 +43,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_reference_genome_rows(
     root: "GenomicRange",
     info: Info,
@@ -56,12 +55,14 @@ async def load_reference_genome_rows(
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
+)
 async def load_consensus_genome_rows(
     root: "GenomicRange",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-) -> typing.Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
+) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.GenomicRange)
     relationship = mapper.relationships["consensus_genome"]

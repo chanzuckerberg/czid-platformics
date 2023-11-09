@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -21,6 +21,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -52,9 +53,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_taxon_rows(
     root: "ConsensusGenome",
     info: Info,
@@ -66,7 +65,7 @@ async def load_taxon_rows(
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_sequencing_read_rows(
     root: "ConsensusGenome",
     info: Info,
@@ -78,7 +77,7 @@ async def load_sequencing_read_rows(
     return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_genomic_range_rows(
     root: "ConsensusGenome",
     info: Info,
@@ -90,7 +89,7 @@ async def load_genomic_range_rows(
     return await dataloader.loader_for(relationship, where).load(root.genomic_range_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_reference_genome_rows(
     root: "ConsensusGenome",
     info: Info,
@@ -102,13 +101,17 @@ async def load_reference_genome_rows(
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[
+        Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
+    ]  # type:ignore
+)
 async def load_metric_consensus_genome_rows(
     root: "ConsensusGenome",
     info: Info,
     where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     | None = None,
-) -> typing.Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
+) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["metric_consensus_genome"]

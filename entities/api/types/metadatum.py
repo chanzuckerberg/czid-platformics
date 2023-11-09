@@ -42,9 +42,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_sample_rows(
     root: "Metadatum",
     info: Info,
@@ -56,7 +54,7 @@ async def load_sample_rows(
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_metadata_field_rows(
     root: "Metadatum",
     info: Info,

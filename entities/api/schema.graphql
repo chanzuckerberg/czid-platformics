@@ -44,8 +44,40 @@ type ConsensusGenome implements EntityInterface & Node {
   isReverseComplement: Boolean!
   intermediateOutputsId: ID!
   intermediateOutputs(where: FileWhereClause = null): File!
-  metrics(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
+  metrics(
+    where: MetricConsensusGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): MetricConsensusGenomeConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type ConsensusGenomeConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ConsensusGenomeEdge!]!
+}
+
+"""An edge in a connection."""
+type ConsensusGenomeEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ConsensusGenome!
 }
 
 input ConsensusGenomeWhereClause {
@@ -72,6 +104,24 @@ type Contig implements EntityInterface & Node {
   sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
   sequence: String!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type ContigConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ContigEdge!]!
+}
+
+"""An edge in a connection."""
+type ContigEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Contig!
 }
 
 input ContigWhereClause {
@@ -176,8 +226,40 @@ type GenomicRange implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   fileId: ID!
   file(where: FileWhereClause = null): File!
-  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ConsensusGenomeConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type GenomicRangeConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [GenomicRangeEdge!]!
+}
+
+"""An edge in a connection."""
+type GenomicRangeEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: GenomicRange!
 }
 
 input GenomicRangeWhereClause {
@@ -219,14 +301,42 @@ type MetadataField implements EntityInterface & Node {
   producingRunId: Int!
   ownerUserId: Int!
   collectionId: Int!
-  fieldGroup(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
+  fieldGroup(
+    where: MetadataFieldProjectWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): MetadataFieldProjectConnection!
   fieldName: String!
   description: String!
   fieldType: String!
   isRequired: Boolean!
   options: String!
   defaultValue: String!
-  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
+  metadatas(
+    where: MetadatumWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): MetadatumConnection!
   entityId: ID!
 }
 
@@ -240,6 +350,24 @@ type MetadataFieldProject implements EntityInterface & Node {
   projectId: Int!
   metadataField(where: MetadataFieldWhereClause = null): MetadataField
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type MetadataFieldProjectConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [MetadataFieldProjectEdge!]!
+}
+
+"""An edge in a connection."""
+type MetadataFieldProjectEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: MetadataFieldProject!
 }
 
 input MetadataFieldProjectWhereClause {
@@ -281,6 +409,24 @@ type Metadatum implements EntityInterface & Node {
   entityId: ID!
 }
 
+"""A connection to a list of items."""
+type MetadatumConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [MetadatumEdge!]!
+}
+
+"""An edge in a connection."""
+type MetadatumEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Metadatum!
+}
+
 input MetadatumWhereClause {
   id: UUIDComparators
   producingRunId: IntComparators
@@ -309,6 +455,24 @@ type MetricConsensusGenome implements EntityInterface & Node {
   coverageVizSummaryFileId: ID!
   coverageVizSummaryFile(where: FileWhereClause = null): File!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type MetricConsensusGenomeConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [MetricConsensusGenomeEdge!]!
+}
+
+"""An edge in a connection."""
+type MetricConsensusGenomeEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: MetricConsensusGenome!
 }
 
 input MetricConsensusGenomeWhereClause {
@@ -373,6 +537,21 @@ input NucleicAcidEnumComparators {
   _is_null: NucleicAcid
 }
 
+"""Information to aid in pagination."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
 type Query {
   node(
     """The ID of the object."""
@@ -399,10 +578,70 @@ type ReferenceGenome implements EntityInterface & Node {
   description: String!
   taxon(where: TaxonWhereClause = null): Taxon
   accessionId: String!
-  sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
-  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
-  genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
+  sequenceAlignmentIndices(
+    where: SequenceAlignmentIndexWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequenceAlignmentIndexConnection!
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ConsensusGenomeConnection!
+  genomicRanges(
+    where: GenomicRangeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): GenomicRangeConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type ReferenceGenomeConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ReferenceGenomeEdge!]!
+}
+
+"""An edge in a connection."""
+type ReferenceGenomeEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: ReferenceGenome!
 }
 
 input ReferenceGenomeWhereClause {
@@ -434,9 +673,55 @@ type Sample implements EntityInterface & Node {
   collectionLocation: String!
   description: String!
   hostTaxon(where: TaxonWhereClause = null): Taxon
-  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
+  metadatas(
+    where: MetadatumWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): MetadatumConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type SampleConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [SampleEdge!]!
+}
+
+"""An edge in a connection."""
+type SampleEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Sample!
 }
 
 input SampleWhereClause {
@@ -468,6 +753,24 @@ type SequenceAlignmentIndex implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   tool: AlignmentTool!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type SequenceAlignmentIndexConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [SequenceAlignmentIndexEdge!]!
+}
+
+"""An edge in a connection."""
+type SequenceAlignmentIndexEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: SequenceAlignmentIndex!
 }
 
 input SequenceAlignmentIndexWhereClause {
@@ -517,9 +820,55 @@ type SequencingRead implements EntityInterface & Node {
   taxon(where: TaxonWhereClause = null): Taxon
   primerFileId: ID!
   primerFile(where: FileWhereClause = null): File!
-  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
-  contigs(where: ContigWhereClause = null): [Contig!]!
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ConsensusGenomeConnection!
+  contigs(
+    where: ContigWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ContigConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type SequencingReadConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [SequencingReadEdge!]!
+}
+
+"""An edge in a connection."""
+type SequencingReadEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: SequencingRead!
 }
 
 input SequencingReadWhereClause {
@@ -607,11 +956,85 @@ type Taxon implements EntityInterface & Node {
   taxIdClass: Int!
   taxIdPhylum: Int!
   taxIdKingdom: Int!
-  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
-  referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
-  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  samples(where: SampleWhereClause = null): [Sample!]!
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ConsensusGenomeConnection!
+  referenceGenomes(
+    where: ReferenceGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ReferenceGenomeConnection!
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
+  samples(
+    where: SampleWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SampleConnection!
   entityId: ID!
+}
+
+"""A connection to a list of items."""
+type TaxonConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [TaxonEdge!]!
+}
+
+"""An edge in a connection."""
+type TaxonEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Taxon!
 }
 
 enum TaxonLevel {
@@ -682,7 +1105,21 @@ type UpstreamDatabase implements EntityInterface & Node {
   ownerUserId: Int!
   collectionId: Int!
   name: String!
-  taxa(where: TaxonWhereClause = null): [Taxon!]!
+  taxa(
+    where: TaxonWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): TaxonConnection!
   entityId: ID!
 }
 

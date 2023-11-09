@@ -38,9 +38,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_metadata_field_rows(
     root: "MetadataFieldProject",
     info: Info,

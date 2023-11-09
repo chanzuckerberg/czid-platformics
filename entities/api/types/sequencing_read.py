@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -22,6 +22,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
@@ -51,9 +52,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_sample_rows(
     root: "SequencingRead",
     info: Info,
@@ -65,7 +64,7 @@ async def load_sample_rows(
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_taxon_rows(
     root: "SequencingRead",
     info: Info,
@@ -77,24 +76,28 @@ async def load_taxon_rows(
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
+)
 async def load_consensus_genome_rows(
     root: "SequencingRead",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-) -> typing.Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
+) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["consensus_genome"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contig")]]  # type:ignore
+)
 async def load_contig_rows(
     root: "SequencingRead",
     info: Info,
     where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")] | None = None,
-) -> typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]]:
+) -> Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["contig"]

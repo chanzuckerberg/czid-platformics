@@ -653,6 +653,38 @@ class EntityInterface(sgqlc.types.Interface):
     _id = sgqlc.types.Field(sgqlc.types.non_null(GlobalID), graphql_name="_id")
 
 
+class ConsensusGenomeConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("ConsensusGenomeEdge"))), graphql_name="edges"
+    )
+
+
+class ConsensusGenomeEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("ConsensusGenome"), graphql_name="node")
+
+
+class ContigConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("ContigEdge"))), graphql_name="edges"
+    )
+
+
+class ContigEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("Contig"), graphql_name="node")
+
+
 class Entity(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("id", "type", "producing_run_id", "owner_user_id", "collection_id")
@@ -701,6 +733,72 @@ class File(sgqlc.types.Type):
             (("expiration", sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="expiration", default=3600)),)
         ),
     )
+
+
+class GenomicRangeConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("GenomicRangeEdge"))), graphql_name="edges"
+    )
+
+
+class GenomicRangeEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("GenomicRange"), graphql_name="node")
+
+
+class MetadataFieldProjectConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataFieldProjectEdge"))),
+        graphql_name="edges",
+    )
+
+
+class MetadataFieldProjectEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("MetadataFieldProject"), graphql_name="node")
+
+
+class MetadatumConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadatumEdge"))), graphql_name="edges"
+    )
+
+
+class MetadatumEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("Metadatum"), graphql_name="node")
+
+
+class MetricConsensusGenomeConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetricConsensusGenomeEdge"))),
+        graphql_name="edges",
+    )
+
+
+class MetricConsensusGenomeEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("MetricConsensusGenome"), graphql_name="node")
 
 
 class MultipartUploadCredentials(sgqlc.types.Type):
@@ -868,6 +966,15 @@ class Mutation(sgqlc.types.Type):
     )
 
 
+class PageInfo(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("has_next_page", "has_previous_page", "start_cursor", "end_cursor")
+    has_next_page = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="hasNextPage")
+    has_previous_page = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="hasPreviousPage")
+    start_cursor = sgqlc.types.Field(String, graphql_name="startCursor")
+    end_cursor = sgqlc.types.Field(String, graphql_name="endCursor")
+
+
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("node", "samples", "sequencing_reads", "contigs", "files")
@@ -902,6 +1009,71 @@ class Query(sgqlc.types.Type):
     )
 
 
+class ReferenceGenomeConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null(PageInfo), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("ReferenceGenomeEdge"))), graphql_name="edges"
+    )
+
+
+class ReferenceGenomeEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("ReferenceGenome"), graphql_name="node")
+
+
+class SampleConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null(PageInfo), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SampleEdge"))), graphql_name="edges"
+    )
+
+
+class SampleEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("Sample"), graphql_name="node")
+
+
+class SequenceAlignmentIndexConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null(PageInfo), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequenceAlignmentIndexEdge"))),
+        graphql_name="edges",
+    )
+
+
+class SequenceAlignmentIndexEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("SequenceAlignmentIndex"), graphql_name="node")
+
+
+class SequencingReadConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null(PageInfo), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequencingReadEdge"))), graphql_name="edges"
+    )
+
+
+class SequencingReadEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("SequencingRead"), graphql_name="node")
+
+
 class SignedURL(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("url", "protocol", "method", "expiration", "fields")
@@ -910,6 +1082,22 @@ class SignedURL(sgqlc.types.Type):
     method = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="method")
     expiration = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="expiration")
     fields = sgqlc.types.Field(JSON, graphql_name="fields")
+
+
+class TaxonConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null(PageInfo), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("TaxonEdge"))), graphql_name="edges"
+    )
+
+
+class TaxonEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("Taxon"), graphql_name="node")
 
 
 class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
@@ -975,10 +1163,16 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     metrics = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetricConsensusGenome"))),
+        sgqlc.types.non_null(MetricConsensusGenomeConnection),
         graphql_name="metrics",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -1041,10 +1235,16 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     consensus_genomes = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenome))),
+        sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -1072,10 +1272,16 @@ class MetadataField(sgqlc.types.Type, EntityInterface, Node):
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     field_group = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataFieldProject"))),
+        sgqlc.types.non_null(MetadataFieldProjectConnection),
         graphql_name="fieldGroup",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldProjectWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(MetadataFieldProjectWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldName")
@@ -1085,10 +1291,16 @@ class MetadataField(sgqlc.types.Type, EntityInterface, Node):
     options = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="options")
     default_value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="defaultValue")
     metadatas = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Metadatum"))),
+        sgqlc.types.non_null(MetadatumConnection),
         graphql_name="metadatas",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -1241,24 +1453,42 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
     )
     accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
     sequence_alignment_indices = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequenceAlignmentIndex"))),
+        sgqlc.types.non_null(SequenceAlignmentIndexConnection),
         graphql_name="sequenceAlignmentIndices",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(SequenceAlignmentIndexWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(SequenceAlignmentIndexWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     consensus_genomes = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenome))),
+        sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     genomic_ranges = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(GenomicRange))),
+        sgqlc.types.non_null(GenomicRangeConnection),
         graphql_name="genomicRanges",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -1298,17 +1528,29 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),)),
     )
     sequencing_reads = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("SequencingRead"))),
+        sgqlc.types.non_null(SequencingReadConnection),
         graphql_name="sequencingReads",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     metadatas = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Metadatum))),
+        sgqlc.types.non_null(MetadatumConnection),
         graphql_name="metadatas",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -1408,16 +1650,30 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     consensus_genomes = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenome))),
+        sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     contigs = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Contig))),
+        sgqlc.types.non_null(ContigConnection),
         graphql_name="contigs",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
@@ -1482,30 +1738,56 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
     tax_id_phylum = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdPhylum")
     tax_id_kingdom = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdKingdom")
     consensus_genomes = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenome))),
+        sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     reference_genomes = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(ReferenceGenome))),
+        sgqlc.types.non_null(ReferenceGenomeConnection),
         graphql_name="referenceGenomes",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     sequencing_reads = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(SequencingRead))),
+        sgqlc.types.non_null(SequencingReadConnection),
         graphql_name="sequencingReads",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
+            (
+                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
         ),
     )
     samples = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Sample))),
+        sgqlc.types.non_null(SampleConnection),
         graphql_name="samples",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(SampleWhereClause, graphql_name="where", default=None)),)),
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(SampleWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
@@ -1519,9 +1801,17 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     taxa = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Taxon))),
+        sgqlc.types.non_null(TaxonConnection),
         graphql_name="taxa",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),)),
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
     )
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 

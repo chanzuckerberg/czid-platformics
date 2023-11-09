@@ -2,7 +2,7 @@
 # Make changes to the template codegen/templates/api/types/class_name.py.j2 instead.
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
@@ -22,6 +22,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 from support.enums import TaxonLevel
@@ -54,9 +55,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_upstream_database_rows(
     root: "Taxon",
     info: Info,
@@ -68,48 +67,56 @@ async def load_upstream_database_rows(
     return await dataloader.loader_for(relationship, where).load(root.upstream_database_id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
+)
 async def load_consensus_genome_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-) -> typing.Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
+) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["consensus_genome"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]  # type:ignore
+)
 async def load_reference_genome_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
-) -> typing.Sequence[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
+) -> Sequence[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["reference_genome"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
+)
 async def load_sequencing_read_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
-) -> typing.Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
+) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["sequencing_read"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
-@strawberry.field(extensions=[DependencyExtension()])
+@relay.connection(
+    relay.ListConnection[Annotated["Sample", strawberry.lazy("api.types.sample")]]  # type:ignore
+)
 async def load_sample_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
-) -> typing.Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
+) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["sample"]

@@ -39,9 +39,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_consensus_genome_rows(
     root: "MetricConsensusGenome",
     info: Info,

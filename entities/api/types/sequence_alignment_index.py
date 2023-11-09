@@ -41,9 +41,7 @@ else:
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-@strawberry.field(extensions=[DependencyExtension()])
+@strawberry.field
 async def load_reference_genome_rows(
     root: "SequenceAlignmentIndex",
     info: Info,
