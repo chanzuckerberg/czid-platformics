@@ -105,7 +105,7 @@ class MetricConsensusGenome(EntityInterface):
     collection_id: int
     consensus_genome: Optional[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows
+    ] = load_consensus_genome_rows  # type:ignore
     total_reads: int
     mapped_reads: int
     ref_snps: int

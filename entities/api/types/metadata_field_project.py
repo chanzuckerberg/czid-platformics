@@ -77,7 +77,7 @@ class MetadataFieldProject(EntityInterface):
     project_id: int
     metadata_field: Optional[
         Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
-    ] = load_metadata_field_rows
+    ] = load_metadata_field_rows  # type:ignore
     entity_id: strawberry.ID
 
 

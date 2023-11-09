@@ -171,16 +171,16 @@ class ConsensusGenome(EntityInterface):
     producing_run_id: int
     owner_user_id: int
     collection_id: int
-    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows
+    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows
+    ] = load_sequencing_read_rows  # type:ignore
     genomic_range: Optional[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows
+    ] = load_genomic_range_rows  # type:ignore
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows
+    ] = load_reference_genome_rows  # type:ignore
     sequence_id: strawberry.ID
     sequence: Annotated["File", strawberry.lazy("api.files")] = load_files_from("sequence")  # type: ignore
     is_reverse_complement: bool

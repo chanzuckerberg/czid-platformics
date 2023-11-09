@@ -157,7 +157,7 @@ class SequencingRead(EntityInterface):
     producing_run_id: int
     owner_user_id: int
     collection_id: int
-    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows
+    sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     protocol: SequencingProtocol
     r1_file_id: strawberry.ID
     r1_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("r1_file")  # type: ignore
@@ -166,7 +166,7 @@ class SequencingRead(EntityInterface):
     techonology: SequencingTechnology
     nucleic_acid: NucleicAcid
     has_ercc: bool
-    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows
+    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     primer_file_id: strawberry.ID
     primer_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("primer_file")  # type: ignore
     consensus_genomes: typing.Sequence[

@@ -128,7 +128,7 @@ class Sample(EntityInterface):
     collection_date: datetime.datetime
     collection_location: str
     description: str
-    host_taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows
+    host_taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequencing_reads: typing.Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows

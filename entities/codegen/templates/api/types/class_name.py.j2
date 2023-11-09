@@ -167,7 +167,7 @@ class {{ cls.name }}(EntityInterface):
             {%- if attr.multivalued %}
     {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows
             {%- else %}
-    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows
+    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows  # type:ignore
             {%- endif %}
         {%- endif %}
     {%- endfor %}

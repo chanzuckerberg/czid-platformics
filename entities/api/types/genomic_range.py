@@ -120,7 +120,7 @@ class GenomicRange(EntityInterface):
     collection_id: int
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows
+    ] = load_reference_genome_rows  # type:ignore
     file_id: strawberry.ID
     file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file")  # type: ignore
     consensus_genomes: typing.Sequence[

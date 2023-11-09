@@ -79,7 +79,7 @@ class Contig(EntityInterface):
     collection_id: int
     sequencing_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows
+    ] = load_sequencing_read_rows  # type:ignore
     sequence: str
     entity_id: strawberry.ID
 

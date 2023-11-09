@@ -167,7 +167,7 @@ class ReferenceGenome(EntityInterface):
     file_index: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file_index")  # type: ignore
     name: str
     description: str
-    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows
+    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: str
     sequence_alignment_indices: typing.Sequence[
         Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]

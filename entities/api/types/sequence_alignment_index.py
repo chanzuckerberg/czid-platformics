@@ -104,7 +104,7 @@ class SequenceAlignmentIndex(EntityInterface):
     index_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("index_file")  # type: ignore
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows
+    ] = load_reference_genome_rows  # type:ignore
     tool: AlignmentTool
     entity_id: strawberry.ID
 

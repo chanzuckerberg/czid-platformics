@@ -181,7 +181,7 @@ class Taxon(EntityInterface):
     is_phage: bool
     upstream_database: Optional[
         Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]
-    ] = load_upstream_database_rows
+    ] = load_upstream_database_rows  # type:ignore
     upstream_database_identifier: str
     level: TaxonLevel
     tax_id: int
