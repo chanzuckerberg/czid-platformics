@@ -34,7 +34,7 @@ class SequencingRead(Entity):
     r1_file: Mapped[File] = relationship(File, foreign_keys=r1_file_id)
     r2_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     r2_file: Mapped[File] = relationship(File, foreign_keys=r2_file_id)
-    techonology: Mapped[SequencingTechnology] = mapped_column(
+    technology: Mapped[SequencingTechnology] = mapped_column(
         Enum(SequencingTechnology, native_enum=False), nullable=False
     )
     nucleic_acid: Mapped[NucleicAcid] = mapped_column(Enum(NucleicAcid, native_enum=False), nullable=False)

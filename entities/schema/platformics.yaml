@@ -170,7 +170,7 @@ classes:
         required: true
       r2_file:
         range: File
-      techonology:
+      technology:
         range: SequencingTechnology
         required: true
       nucleic_acid:
