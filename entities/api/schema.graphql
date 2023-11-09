@@ -134,6 +134,28 @@ input ContigWhereClause {
   entityId: UUIDComparators
 }
 
+type CoverageViz implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int!
+  ownerUserId: Int!
+  collectionId: Int!
+  accessionId: String!
+  coverageVizFileId: ID!
+  coverageVizFile(where: FileWhereClause = null): File!
+  entityId: ID!
+}
+
+input CoverageVizWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  accessionId: StrComparators
+  entityId: UUIDComparators
+}
+
 """Date with time (isoformat)"""
 scalar DateTime
 
@@ -557,10 +579,21 @@ type Query {
     """The ID of the object."""
     id: GlobalID!
   ): Node!
-  samples(where: SampleWhereClause = null): [Sample!]!
-  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  contigs(where: ContigWhereClause = null): [Contig!]!
-  files(where: FileWhereClause = null): [File!]!
+  file(where: FileWhereClause = null): [File!]!
+  sample(where: SampleWhereClause = null): [Sample!]!
+  sequencingRead(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  genomicRange(where: GenomicRangeWhereClause = null): [GenomicRange!]!
+  referenceGenome(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
+  sequenceAlignmentIndex(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
+  metadatum(where: MetadatumWhereClause = null): [Metadatum!]!
+  metadataField(where: MetadataFieldWhereClause = null): [MetadataField!]!
+  metadataFieldProject(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
+  consensusGenome(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  metricConsensusGenome(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
+  coverageViz(where: CoverageVizWhereClause = null): [CoverageViz!]!
+  taxon(where: TaxonWhereClause = null): [Taxon!]!
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
+  contig(where: ContigWhereClause = null): [Contig!]!
 }
 
 type ReferenceGenome implements EntityInterface & Node {
