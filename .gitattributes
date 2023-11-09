@@ -1,3 +1,7 @@
 entities/api/schema.json	linguist-generated=true
 entities/api/schema.graphql	linguist-generated=true
 entities/cli/gql_schema.py	linguist-generated=true
+entities/api/types/*	linguist-generated=true
+entities/database/models/*    linguist-generated=true
+entities/cerbos/policies/*    linguist-generated=true
+entities/support/enums.py  linguist-generated=true
