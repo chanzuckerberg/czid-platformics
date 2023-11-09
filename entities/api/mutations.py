@@ -1,8 +1,8 @@
 import strawberry
 import database.models as db
 from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadResponse
-from api.types.samples import Sample
-from api.types.sequencing_reads import SequencingRead
+from api.types.sample import Sample
+from api.types.sequencing_read import SequencingRead
 from platformics.api.core.gql_loaders import get_base_creator, get_base_updater
 
 

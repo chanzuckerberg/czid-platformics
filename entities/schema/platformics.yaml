@@ -33,20 +33,32 @@ enums:
     permissible_values:
       s3:
         description: This file is accessible via the (AWS) S3 protocol
-  Nucleotide:
+  NucleicAcid:
     permissible_values:
       RNA:
-        description: DNA nucleotide
       DNA:
-        description: RNA nucleotide
   SequencingProtocol:
     permissible_values:
       MNGS:
-        description: Metagenomics sequencing read
+        description: Metagenomics Sequencing
       TARGETED:
-        description: Targeted (amplified via primers) sequencing read
+        description: Targeted Squencing (amplified via primers)
       MSSPE:
-        description: MSSPE Sequencing Read
+        description: MSSPE Sequencing
+  SequencingTechnology:
+    permissible_values:
+      Illumina:
+      Nanopore:
+  AlignmentTool:
+    permissible_values:
+      bowtie2:
+      minimap2:
+      ncbi:
+  TaxonLevel:
+    permissible_values:
+      species:
+      genus:
+      family:
  
 classes:
   Entity:
@@ -113,13 +125,32 @@ classes:
       - EntityMixin
     attributes:
       name:
+        range: string
         required: true
-      location:
+      sample_type:
+        range: string
         required: true
+      water_control:
+        range: boolean
+        required: true
+      collection_date:
+        range: date
+      collection_location:
+        range: string
+        required: true
+      description:
+        range: string
+      host_taxon:
+        range: Taxon
+        inverse: Taxon.samples
       sequencing_reads:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+      metadatas:
+        range: Metadatum
+        inverse: Metadatum.sample
+        multivalued: true
     annotations:
       plural: Samples
 
@@ -128,27 +159,361 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      nucleotide:
-        range: Nucleotide
-        required: true
-      sequence:
-        range: string
-        pattern: "^[AGTCUN]+$"
-        required: true
-      protocol:
-        range: SequencingProtocol
-        required: true
-      sequence_file:
-        range: File
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
+      protocol:
+        range: SequencingProtocol
+        required: true
+      r1_file:
+        range: File
+        required: true
+      r2_file:
+        range: File
+      techonology:
+        range: SequencingTechnology
+        required: true
+      nucleic_acid:
+        range: NucleicAcid
+        required: true
+      has_ercc:
+        range: boolean
+        required: true
+      taxon:
+        range: Taxon
+        inverse: Taxon.sequencing_reads
+      primer_file:
+        range: File
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.sequence_read
+        multivalued: true
       contigs:
         range: Contig
-        multivalued: true
         inverse: Contig.sequencing_read
+        multivalued: true
     annotations:
       plural: SequencingReads
+
+  GenomicRange:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      reference_genome:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.genomic_ranges
+        required: true
+      file:
+        range: File
+        required: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.genomic_range
+        multivalued: true
+    annotations:
+      plural: GenomicRanges
+
+  ReferenceGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      file:
+        range: File
+        required: true
+      file_index:
+        range: File
+      name:
+        range: string
+        required: true
+      description:
+        range: string
+        required: true
+      taxon:
+        range: Taxon
+        required: true
+        inverse: Taxon.reference_genomes
+      # TODO: Uncomment this when we have support for backgrounds
+      # background:
+      #   range: Background
+      accession_id:
+        range: string
+      sequence_alignment_indices:
+        range: SequenceAlignmentIndex
+        inverse: SequenceAlignmentIndex.reference_genome
+        multivalued: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.reference_genome
+        multivalued: true
+      genomic_ranges:
+        range: GenomicRange
+        inverse: GenomicRange.reference_genome
+        multivalued: true
+    annotations:
+      plural: ReferenceGenomes
+  
+  SequenceAlignmentIndex:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      index_file:
+        range: File
+        required: true
+      reference_genome:
+        range: ReferenceGenome
+        required: true
+        inverse: ReferenceGenome.sequence_alignment_indices
+      tool:
+        range: AlignmentTool
+        required: true
+    annotations:
+      plural: SequenceAlignmentIndices
+
+  Metadatum:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      sample:
+        range: Sample
+        inverse: Sample.metadatas
+        required: true
+      metadata_field:
+        range: MetadataField
+        required: true
+        inverse: MetadataField.metadatas
+      value:
+        range: string
+        required: true
+    annotations:
+      plural: Metadatas
+
+  MetadataField:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      field_group:
+        range: MetadataFieldProject
+        inverse: MetadataFieldProject.metadata_field
+        multivalued: true
+        required: true
+      field_name:
+        range: string
+        required: true
+      description:
+        range: string
+        required: true
+      field_type:
+        range: string
+        required: true
+      is_required:
+        range: boolean
+        required: true
+      options:
+        range: string
+      default_value:
+        range: string
+      metadatas:
+        range: Metadatum
+        inverse: Metadatum.metadata_field
+        multivalued: true
+    annotations:
+      plural: MetadataFields
+
+  MetadataFieldProject:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      # TODO: should this be replaced with collection_id?
+      project_id:
+        range: int
+        required: true
+      metadata_field:
+        range: MetadataField
+        inverse: MetadataField.field_group
+        required: true
+    annotations:
+      plural: MetadataFieldProjects
+
+  ConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      taxon:
+        range: Taxon
+        required: true
+        inverse: Taxon.consensus_genomes
+      sequence_read:
+        range: SequencingRead
+        required: true
+        inverse: SequencingRead.consensus_genomes
+      genomic_range:
+        range: GenomicRange
+        required: true
+        inverse: GenomicRange.consensus_genomes
+      reference_genome:
+        range: ReferenceGenome
+        required: true
+        inverse: ReferenceGenome.consensus_genomes
+      sequence:
+        range: File
+        required: true
+      is_reverse_complement:
+        range: boolean
+        required: true
+      intermediate_outputs:
+        range: File
+      metrics:
+        range: MetricConsensusGenome
+        inverse: MetricConsensusGenome.consensus_genome
+        multivalued: true
+    annotations:
+      plural: ConsensusGenomes
+
+  MetricConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      consensus_genome:
+        range: ConsensusGenome
+        required: true
+        inverse: ConsensusGenome.metrics
+      coverage_depth:
+        range: float
+      reference_genome_length:
+        range: float
+      percent_genome_called:
+        range: float
+      percent_identity:
+        range: float
+      gc_percent:
+        range: float
+      total_reads:
+        range: int
+      mapped_reads:
+        range: int
+      ref_snps:
+        range: int
+      n_actg:
+        range: int
+      n_missing:
+        range: int
+      n_ambiguous:
+        range: int
+      coverage_viz_summary_file:
+        range: File
+        required: true
+    annotations:
+      plural: MetricsConsensusGenomes
+
+  CoverageViz:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      accession_id:
+        range: string
+        required: true
+      coverage_viz_file:
+        range: File
+        required: true
+    annotations:
+      plural: CoverageVizes
+
+  Taxon:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      wikipedia_id:
+        range: string
+      description:
+        range: string
+      common_name:
+        range: string
+      name:
+        range: string
+        required: true
+      is_phage:
+        range: boolean
+        required: true
+      upstream_database:
+        range: UpstreamDatabase
+        required: true
+        inverse: UpstreamDatabase.taxa
+      upstream_database_identifier:
+        range: string
+        required: true
+      level:
+        range: TaxonLevel
+        required: true
+      tax_id:
+        range: int
+        required: true
+      tax_id_parent:
+        range: int
+        required: true
+      tax_id_species:
+        range: int
+        required: true
+      tax_id_genus:
+        range: int
+        required: true
+      tax_id_family:
+        range: int
+        required: true
+      tax_id_order:
+        range: int
+        required: true
+      tax_id_class:
+        range: int
+        required: true
+      tax_id_phylum:
+        range: int
+        required: true
+      tax_id_kingdom:
+        range: int
+        required: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.taxon
+        multivalued: true
+      reference_genomes:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.taxon
+        multivalued: true
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.taxon
+        multivalued: true
+      samples:
+        range: Sample
+        inverse: Sample.host_taxon
+        multivalued: true
+    annotations:
+      plural: Taxa
+
+  UpstreamDatabase:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.upstream_database
+    annotations:
+      plural: UpstreamDatabases
 
   Contig:
     is_a: Entity

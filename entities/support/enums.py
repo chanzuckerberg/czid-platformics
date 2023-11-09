@@ -15,7 +15,7 @@ class FileAcessProtocol(enum.Enum):
 
 
 @strawberry.enum
-class Nucleotide(enum.Enum):
+class NucleicAcid(enum.Enum):
     RNA = "RNA"
     DNA = "DNA"
 
@@ -25,3 +25,23 @@ class SequencingProtocol(enum.Enum):
     MNGS = "MNGS"
     TARGETED = "TARGETED"
     MSSPE = "MSSPE"
+
+
+@strawberry.enum
+class SequencingTechnology(enum.Enum):
+    Illumina = "Illumina"
+    Nanopore = "Nanopore"
+
+
+@strawberry.enum
+class AlignmentTool(enum.Enum):
+    bowtie2 = "bowtie2"
+    minimap2 = "minimap2"
+    ncbi = "ncbi"
+
+
+@strawberry.enum
+class TaxonLevel(enum.Enum):
+    species = "species"
+    genus = "genus"
+    family = "family"

@@ -12,7 +12,10 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.gql_to_sql import (
+    IntComparators,
+    UUIDComparators,
+)
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,30 +26,28 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sequencing_reads import SequencingReadWhereClause, SequencingRead
+    from api.types.metadata_field import MetadataFieldWhereClause, MetadataField
+
+    pass
 else:
-    SequencingReadWhereClause = "SequencingReadWhereClause"
-    SequencingRead = "SequencingRead"
+    MetadataFieldWhereClause = "MetadataFieldWhereClause"
+    MetadataField = "MetadataField"
+    pass
+
 
 # ------------------------------------------------------------------------------
 # Dataloaders
 # ------------------------------------------------------------------------------
-
-
-def cache_key(key: dict) -> str:
-    return key["id"]
-
-
 @strawberry.field
-async def load_sequencing_reads(
-    root: "Contig",
+async def load_metadata_field_rows(
+    root: "MetadataFieldProject",
     info: Info,
-    where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")] | None = None,
-) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]]:
+    where: Annotated["MetadataFieldWhereClause", strawberry.lazy("api.types.metadata_field")] | None = None,
+) -> Optional[Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]]:
     dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Contig)
-    relationship = mapper.relationships["sequencing_read"]
-    return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
+    mapper = inspect(db.MetadataFieldProject)
+    relationship = mapper.relationships["metadata_field"]
+    return await dataloader.loader_for(relationship, where).load(root.metadata_field_id)  # type:ignore
 
 
 # ------------------------------------------------------------------------------
@@ -56,43 +57,43 @@ async def load_sequencing_reads(
 
 # Supported WHERE clause attributes
 @strawberry.input
-class ContigWhereClause(TypedDict):
+class MetadataFieldProjectWhereClause(TypedDict):
     id: UUIDComparators | None
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    sequencing_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_reads")]]
-    sequence: Optional[StrComparators] | None
+    project_id: Optional[IntComparators] | None
+    metadata_field: Optional[Annotated["MetadataFieldWhereClause", strawberry.lazy("api.types.metadata_field")]] | None
     entity_id: Optional[UUIDComparators] | None
 
 
-# Define Contig type
+# Define MetadataFieldProject type
 @strawberry.type
-class Contig(EntityInterface):
+class MetadataFieldProject(EntityInterface):
     id: strawberry.ID
     producing_run_id: int
     owner_user_id: int
     collection_id: int
-    sequencing_read: Optional[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_reads")]
-    ] = load_sequencing_reads  # type: ignore
-    sequence: str
+    project_id: int
+    metadata_field: Optional[
+        Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
+    ] = load_metadata_field_rows  # type:ignore
     entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
-Contig.__strawberry_definition__.is_type_of = (  # type: ignore
-    lambda obj, info: type(obj) == db.Contig or type(obj) == Contig
+MetadataFieldProject.__strawberry_definition__.is_type_of = (  # type: ignore
+    lambda obj, info: type(obj) == db.MetadataFieldProject or type(obj) == MetadataFieldProject
 )
 
 
 # Resolvers used in api/queries
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_contigs(
+async def resolve_metadata_field_project(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-    where: Optional[ContigWhereClause] = None,
-) -> typing.Sequence[Contig]:
-    return await get_db_rows(db.Contig, session, cerbos_client, principal, where, [])  # type: ignore
+    where: Optional[MetadataFieldProjectWhereClause] = None,
+) -> typing.Sequence[MetadataFieldProject]:
+    return await get_db_rows(db.MetadataFieldProject, session, cerbos_client, principal, where, [])  # type: ignore
