@@ -168,15 +168,15 @@ class ReferenceGenome(EntityInterface):
     description: str
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: str
-    sequence_alignment_indices: typing.Sequence[
+    sequence_alignment_indices: Sequence[
         Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]
-    ] = load_sequence_alignment_index_rows
-    consensus_genomes: typing.Sequence[
+    ] = load_sequence_alignment_index_rows  # type:ignore
+    consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows
-    genomic_ranges: typing.Sequence[
+    ] = load_consensus_genome_rows  # type:ignore
+    genomic_ranges: Sequence[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows
+    ] = load_genomic_range_rows  # type:ignore
     entity_id: strawberry.ID
 
 

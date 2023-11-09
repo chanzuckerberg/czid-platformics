@@ -192,16 +192,16 @@ class Taxon(EntityInterface):
     tax_id_class: int
     tax_id_phylum: int
     tax_id_kingdom: int
-    consensus_genomes: typing.Sequence[
+    consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows
-    reference_genomes: typing.Sequence[
+    ] = load_consensus_genome_rows  # type:ignore
+    reference_genomes: Sequence[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows
-    sequencing_reads: typing.Sequence[
+    ] = load_reference_genome_rows  # type:ignore
+    sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows
-    samples: typing.Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows
+    ] = load_sequencing_read_rows  # type:ignore
+    samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     entity_id: strawberry.ID
 
 

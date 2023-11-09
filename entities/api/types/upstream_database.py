@@ -78,7 +78,7 @@ class UpstreamDatabaseWhereClause(TypedDict):
 class UpstreamDatabase(EntityInterface):
     id: strawberry.ID
     name: str
-    taxa: typing.Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows
+    taxa: Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     entity_id: strawberry.ID
 
 

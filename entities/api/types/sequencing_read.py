@@ -168,10 +168,10 @@ class SequencingRead(EntityInterface):
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     primer_file_id: strawberry.ID
     primer_file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("primer_file")  # type: ignore
-    consensus_genomes: typing.Sequence[
+    consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows
-    contigs: typing.Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows
+    ] = load_consensus_genome_rows  # type:ignore
+    contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
     entity_id: strawberry.ID
 
 

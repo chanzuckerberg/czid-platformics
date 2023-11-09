@@ -106,16 +106,18 @@ class MetadataFieldWhereClause(TypedDict):
 @strawberry.type
 class MetadataField(EntityInterface):
     id: strawberry.ID
-    field_group: typing.Sequence[
+    field_group: Sequence[
         Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]
-    ] = load_metadata_field_project_rows
+    ] = load_metadata_field_project_rows  # type:ignore
     field_name: str
     description: str
     field_type: str
     is_required: bool
     options: str
     default_value: str
-    metadatas: typing.Sequence[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]] = load_metadatum_rows
+    metadatas: Sequence[
+        Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]
+    ] = load_metadatum_rows  # type:ignore
     entity_id: strawberry.ID
 
 

@@ -185,9 +185,9 @@ class ConsensusGenome(EntityInterface):
     is_reverse_complement: bool
     intermediate_outputs_id: strawberry.ID
     intermediate_outputs: Annotated["File", strawberry.lazy("api.files")] = load_files_from("intermediate_outputs")  # type: ignore
-    metrics: typing.Sequence[
+    metrics: Sequence[
         Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
-    ] = load_metric_consensus_genome_rows
+    ] = load_metric_consensus_genome_rows  # type:ignore
     entity_id: strawberry.ID
 
 
