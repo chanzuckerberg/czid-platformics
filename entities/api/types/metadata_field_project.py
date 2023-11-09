@@ -19,6 +19,7 @@ from platformics.api.core.gql_to_sql import (
     UUIDComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.types import Info
@@ -126,12 +127,13 @@ async def resolve_metadata_field_project(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_metadata_field_project(
-    self,
     input: MetadataFieldProjectCreateInput,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
 ) -> MetadataFieldProject:
+    params = input.__dict__
+
     # Validate that user can create entity in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.MetadataFieldProject.__tablename__, attr=attr)
@@ -139,10 +141,46 @@ async def create_metadata_field_project(
         raise Exception("Unauthorized: Cannot create entity in this collection")
 
     # Save to DB
-    params = input.__dict__
     params["owner_user_id"] = int(principal.id)
     new_entity = db.MetadataFieldProject(**params)
     session.add(new_entity)
     await session.commit()
-
     return new_entity
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def update_metadata_field_project(
+    input: MetadataFieldProjectUpdateInput,
+    where: MetadataFieldProjectWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> MetadataFieldProject:
+    params = input.__dict__
+
+    # Need at least one thing to update
+    num_params = len([x for x in params if params[x] is not None])
+    if num_params == 0:
+        raise Exception("No fields to update")
+
+    # Fetch entities for update, if we have access to them
+    entities = await get_db_rows(
+        db.MetadataFieldProject, session, cerbos_client, principal, where, [], CerbosAction.UPDATE
+    )
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot update entities")
+
+    # Validate that the user has access to the new collection ID
+    if input.collection_id:
+        attr = {"collection_id": input.collection_id}
+        resource = Resource(id="SOME_ID", kind=db.MetadataFieldProject.__tablename__, attr=attr)
+        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
+            raise Exception("Unauthorized: Cannot access new collection")
+
+    # Update DB
+    for entity in entities:
+        for key in params:
+            if params[key]:
+                setattr(entity, key, params[key])
+    await session.commit()
+    return entities

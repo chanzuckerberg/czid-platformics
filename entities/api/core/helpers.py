@@ -20,7 +20,7 @@ T = typing.TypeVar("T")
 def convert_where_clauses_to_sql(
     principal: Principal,
     cerbos_client: CerbosClient,
-    action: str,
+    action: CerbosAction,
     query: Select,
     sa_model: Base,
     whereClause: dict[str, Any],
@@ -56,7 +56,7 @@ def convert_where_clauses_to_sql(
 
 def get_db_query(
     model_cls: type[E],
-    action: str,
+    action: CerbosAction,
     cerbos_client: CerbosClient,
     principal: Principal,
     where: dict[str, Any],
@@ -68,7 +68,6 @@ def get_db_query(
     # TODO, this may need to be adjusted, 5 just seemed like a reasonable starting point
     if depth >= 5:
         raise Exception("Max filter depth exceeded")
-    action = CerbosAction.VIEW
     query = get_resource_query(principal, cerbos_client, action, model_cls)
     query = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, depth  # type: ignore
@@ -83,8 +82,8 @@ async def get_db_rows(
     principal: Principal,
     where: Any,
     order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
+    action: CerbosAction = CerbosAction.VIEW,
 ) -> typing.Sequence[E]:
-    action = CerbosAction.VIEW
     query = get_db_query(model_cls, action, cerbos_client, principal, where)
     if order_by:
         query = query.order_by(*order_by)  # type: ignore

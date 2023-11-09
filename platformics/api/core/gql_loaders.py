@@ -126,34 +126,6 @@ class EntityLoader:
             return self._loaders[(relationship, where_str)] # type: ignore
 
 
-def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
-    @strawberry.mutation(extensions=[DependencyExtension()])
-    async def create(
-        principal: Principal = Depends(require_auth_principal),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        **kwargs: typing.Any,
-    ) -> db.Base:
-        params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
-
-        # Validate that user can create entity in this collection
-        attr = {"collection_id": params.get("collection_id")}
-        resource = Resource(id="NEW_ID", kind=sql_model.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed("create", principal, resource):
-            raise Exception("Unauthorized: Cannot create entity in this collection")
-
-        # Save to DB
-        params["owner_user_id"] = int(principal.id)
-        new_entity = sql_model(**params)
-        session.add(new_entity)
-        await session.commit()
-
-        return new_entity
-
-    create.arguments = generate_strawberry_arguments(CerbosAction.CREATE, sql_model, gql_type)
-    return typing.cast(T, create)
-
-
 def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # type: ignore
     @strawberry.field(extensions=[DependencyExtension()])
     async def update(
