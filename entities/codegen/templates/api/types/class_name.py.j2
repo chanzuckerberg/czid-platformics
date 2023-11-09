@@ -58,15 +58,21 @@ else:
 
 {%- for related_field in cls.related_fields %}
     {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
-
-@strawberry.field(extensions=[DependencyExtension()])
+        {%- if related_field.multivalued %}
+@relay.connection(
+        relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]  # type:ignore
+)
 async def load_{{ related_field.related_class.snake_name }}_rows(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")] | None = None,
-        {%- if related_field.multivalued %}
-) -> typing.Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
+) -> Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- else %}
+@strawberry.field
+async def load_{{ related_field.related_class.snake_name }}_rows(
+    root: "{{ cls.name }}",
+    info: Info,
+    where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")] | None = None,
 ) -> Optional[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
