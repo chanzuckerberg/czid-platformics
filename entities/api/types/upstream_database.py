@@ -198,6 +198,6 @@ async def delete_upstream_database(
 
     # Update DB
     for entity in entities:
-        session.delete(entity)
+        await session.delete(entity)
     await session.commit()
     return entities

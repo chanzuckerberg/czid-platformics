@@ -246,6 +246,6 @@ async def delete_genomic_range(
 
     # Update DB
     for entity in entities:
-        session.delete(entity)
+        await session.delete(entity)
     await session.commit()
     return entities

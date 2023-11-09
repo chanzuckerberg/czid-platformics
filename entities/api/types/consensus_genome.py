@@ -319,6 +319,6 @@ async def delete_consensus_genome(
 
     # Update DB
     for entity in entities:
-        session.delete(entity)
+        await session.delete(entity)
     await session.commit()
     return entities
