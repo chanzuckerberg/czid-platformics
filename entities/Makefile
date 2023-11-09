@@ -52,15 +52,20 @@ local-tests: ## Run entities tests
 	$(docker_compose_run) entities bash -c "poetry run pytest -s"
 	$(MAKE) cerbos-tests
 
-CODEGEN_TO_LINT = database/models/ api/types/ cli/gql_schema.py
+DIR_LINT_CODEGEN = database/models/ api/types/
+DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
 	$(docker_compose) exec entities python3 codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix .
+	$(docker_compose_run) $(FOLDER) black $(DIR_LINT_CODEGEN)
+	$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_CODEGEN)
+
 	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
-	$(docker_compose_run) $(FOLDER) black $(CODEGEN_TO_LINT)
-	$(docker_compose_run) $(FOLDER) ruff check --fix $(CODEGEN_TO_LINT)
+	$(docker_compose_run) $(FOLDER) black $(DIR_LINT_GRAPHQL)
+	$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_GRAPHQL)
+
 	$(docker_compose) exec entities gen-erdiagram schema/platformics.yaml > schema/README.md
 
 ### CERBOS #############################################

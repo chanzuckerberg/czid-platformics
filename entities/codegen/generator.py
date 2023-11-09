@@ -59,7 +59,7 @@ def generate_entity_subclass_files(
 
 
 def generate_entity_import_files(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
-    import_templates = ["database/models/__init__.py"]
+    import_templates = ["database/models/__init__.py", "api/queries.py"]
     classes = view.entities
     for filename in import_templates:
         import_template = environment.get_template(f"{filename}.j2")
