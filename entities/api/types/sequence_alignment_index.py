@@ -4,7 +4,7 @@
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -161,7 +161,7 @@ async def create_sequence_alignment_index(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> SequenceAlignmentIndex:
+) -> db.Entity:
     params = input.__dict__
 
     # Validate that user can create entity in this collection
@@ -185,7 +185,7 @@ async def update_sequence_alignment_index(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> SequenceAlignmentIndex:
+) -> Sequence[db.Entity]:
     params = input.__dict__
 
     # Need at least one thing to update
@@ -222,7 +222,7 @@ async def delete_sequence_alignment_index(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> SequenceAlignmentIndex:
+) -> Sequence[db.Entity]:
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(
         db.SequenceAlignmentIndex, session, cerbos_client, principal, where, [], CerbosAction.DELETE

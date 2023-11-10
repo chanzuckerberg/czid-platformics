@@ -131,7 +131,7 @@ async def create_upstream_database(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> UpstreamDatabase:
+) -> db.Entity:
     params = input.__dict__
 
     # Validate that user can create entity in this collection
@@ -155,7 +155,7 @@ async def update_upstream_database(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> UpstreamDatabase:
+) -> Sequence[db.Entity]:
     params = input.__dict__
 
     # Need at least one thing to update
@@ -190,7 +190,7 @@ async def delete_upstream_database(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> UpstreamDatabase:
+) -> Sequence[db.Entity]:
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
     if len(entities) == 0:

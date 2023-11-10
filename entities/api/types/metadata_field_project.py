@@ -4,7 +4,7 @@
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
@@ -131,7 +131,7 @@ async def create_metadata_field_project(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> MetadataFieldProject:
+) -> db.Entity:
     params = input.__dict__
 
     # Validate that user can create entity in this collection
@@ -155,7 +155,7 @@ async def update_metadata_field_project(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> MetadataFieldProject:
+) -> Sequence[db.Entity]:
     params = input.__dict__
 
     # Need at least one thing to update
@@ -192,7 +192,7 @@ async def delete_metadata_field_project(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> MetadataFieldProject:
+) -> Sequence[db.Entity]:
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(
         db.MetadataFieldProject, session, cerbos_client, principal, where, [], CerbosAction.DELETE

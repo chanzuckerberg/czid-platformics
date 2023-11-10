@@ -180,7 +180,7 @@ async def create_metadata_field(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> MetadataField:
+) -> db.Entity:
     params = input.__dict__
 
     # Validate that user can create entity in this collection
@@ -204,7 +204,7 @@ async def update_metadata_field(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> MetadataField:
+) -> Sequence[db.Entity]:
     params = input.__dict__
 
     # Need at least one thing to update
@@ -239,7 +239,7 @@ async def delete_metadata_field(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
-) -> MetadataField:
+) -> Sequence[db.Entity]:
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(db.MetadataField, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
     if len(entities) == 0:
