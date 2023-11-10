@@ -145,6 +145,15 @@ def get_base_loader(sql_model: type[E], gql_type: type[T]) -> typing.Sequence[T]
     return typing.cast(typing.Sequence[T], resolve_entity)
 
 
+def create_validation(sql_model: type[db.Base], principal: Principal, cerbos_client: CerbosClient, attr: dict) -> None:
+    """Validate that user can create entity in this collection"""
+    # attr is a dict of {"collection_id": <collection_id>} where collection_id is the collection you want to validate
+    resource = Resource(id="NEW_ID", kind=sql_model.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+    return
+
+
 def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def create(
@@ -155,11 +164,8 @@ def get_base_creator(sql_model: type[db.Base], gql_type: type[T]) -> T:
     ) -> db.Base:
         params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
 
-        # Validate that user can create entity in this collection
         attr = {"collection_id": params.get("collection_id")}
-        resource = Resource(id="NEW_ID", kind=sql_model.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed("create", principal, resource):
-            raise Exception("Unauthorized: Cannot create entity in this collection")
+        create_validation(sql_model, principal, cerbos_client, attr)
 
         # TODO: User must have permissions to the sample
 

@@ -9,7 +9,13 @@ from cerbos.sdk.model import Principal
 from config import load_event_bus, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI, Request
 from manifest import Manifest
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
+from platformics.api.core.deps import (
+    get_auth_principal,
+    get_cerbos_client,
+    get_db_session,
+    get_engine,
+    require_auth_principal,
+)
 from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
@@ -17,7 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
-from api.core.gql_loaders import WorkflowLoader, get_base_loader
+from api.core.gql_loaders import WorkflowLoader, create_validation, get_base_loader
 from plugin_types import EventBus
 
 ###########
@@ -152,6 +158,8 @@ class Mutation:
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         event_bus: EventBus = Depends(get_event_bus),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
     ) -> Run:
         assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
         _workflow_runner = workflow_runners[workflow_runner]
@@ -163,18 +171,22 @@ class Mutation:
         manifest = Manifest.model_validate_json(str(workflow_version.manifest))
         inputs = {input.name: input.value for input in workflow_inputs}
 
+        create_validation(
+            sql_model=db.Run, principal=principal, cerbos_client=cerbos_client, attr={"project_id": project_id}
+        )
+
         execution_id = await _workflow_runner.run_workflow(
             event_bus=event_bus,
             workflow_path=manifest.package_uri,
             inputs=inputs,
         )
         workflow_run = db.Run(
-            user_id=111,
+            user_id=int(principal.id),
             project_id=project_id,
             execution_id=execution_id,
             inputs_json=json.dumps(inputs),
             status="STARTED",
-            workflow_version_id=1,
+            workflow_version_id=workflow_version_id,
         )
         session.add(workflow_run)
         await session.commit()
