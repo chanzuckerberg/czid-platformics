@@ -52,7 +52,7 @@ local-tests: ## Run entities tests
 	$(docker_compose_run) entities bash -c "poetry run pytest -s"
 	$(MAKE) cerbos-tests
 
-DIR_LINT_CODEGEN = database/models/ api/types/
+DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI

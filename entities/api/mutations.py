@@ -5,19 +5,55 @@ import strawberry
 from typing import Sequence
 from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadResponse
 from api.types.sample import Sample, create_sample, update_sample, delete_sample
-from api.types.sequencing_read import SequencingRead, create_sequencing_read, update_sequencing_read, delete_sequencing_read
+from api.types.sequencing_read import (
+    SequencingRead,
+    create_sequencing_read,
+    update_sequencing_read,
+    delete_sequencing_read,
+)
 from api.types.genomic_range import GenomicRange, create_genomic_range, update_genomic_range, delete_genomic_range
-from api.types.reference_genome import ReferenceGenome, create_reference_genome, update_reference_genome, delete_reference_genome
-from api.types.sequence_alignment_index import SequenceAlignmentIndex, create_sequence_alignment_index, update_sequence_alignment_index, delete_sequence_alignment_index
+from api.types.reference_genome import (
+    ReferenceGenome,
+    create_reference_genome,
+    update_reference_genome,
+    delete_reference_genome,
+)
+from api.types.sequence_alignment_index import (
+    SequenceAlignmentIndex,
+    create_sequence_alignment_index,
+    update_sequence_alignment_index,
+    delete_sequence_alignment_index,
+)
 from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
 from api.types.metadata_field import MetadataField, create_metadata_field, update_metadata_field, delete_metadata_field
-from api.types.metadata_field_project import MetadataFieldProject, create_metadata_field_project, update_metadata_field_project, delete_metadata_field_project
-from api.types.consensus_genome import ConsensusGenome, create_consensus_genome, update_consensus_genome, delete_consensus_genome
-from api.types.metric_consensus_genome import MetricConsensusGenome, create_metric_consensus_genome, update_metric_consensus_genome, delete_metric_consensus_genome
+from api.types.metadata_field_project import (
+    MetadataFieldProject,
+    create_metadata_field_project,
+    update_metadata_field_project,
+    delete_metadata_field_project,
+)
+from api.types.consensus_genome import (
+    ConsensusGenome,
+    create_consensus_genome,
+    update_consensus_genome,
+    delete_consensus_genome,
+)
+from api.types.metric_consensus_genome import (
+    MetricConsensusGenome,
+    create_metric_consensus_genome,
+    update_metric_consensus_genome,
+    delete_metric_consensus_genome,
+)
 from api.types.coverage_viz import CoverageViz, create_coverage_viz, update_coverage_viz, delete_coverage_viz
 from api.types.taxon import Taxon, create_taxon, update_taxon, delete_taxon
-from api.types.upstream_database import UpstreamDatabase, create_upstream_database, update_upstream_database, delete_upstream_database
+from api.types.upstream_database import (
+    UpstreamDatabase,
+    create_upstream_database,
+    update_upstream_database,
+    delete_upstream_database,
+)
 from api.types.contig import Contig, create_contig, update_contig, delete_contig
+
 
 @strawberry.type
 class Mutation:

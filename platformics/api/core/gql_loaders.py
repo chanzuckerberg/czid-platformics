@@ -2,20 +2,13 @@ import typing
 from collections import defaultdict
 from typing import Any, Mapping, Optional, Tuple, Sequence
 import database.models as db
-import strawberry
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource
-from fastapi import Depends
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.strawberry_extensions import DependencyExtension
+from cerbos.sdk.model import Principal
 from platformics.database.connect import AsyncDB
-from sqlalchemy import ColumnElement, ColumnExpressionArgument
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import RelationshipProperty
-from strawberry.arguments import StrawberryArgument
 from strawberry.dataloader import DataLoader
-from platformics.security.authorization import get_resource_query, CerbosAction
-from api.core.helpers import get_db_query
+from platformics.security.authorization import CerbosAction
+from api.core.helpers import get_db_query, get_db_rows
 
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
@@ -31,22 +24,6 @@ def make_hashable(whereclause: dict) -> Hashabledict:
             v = make_hashable(v)
         res[k] = v
     return Hashabledict(res)
-
-async def get_db_rows(
-    model_cls: type[E],
-    session: AsyncSession,
-    cerbos_client: CerbosClient,
-    principal: Principal,
-    filters: Optional[list[ColumnExpressionArgument]] = [],
-    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
-) -> typing.Sequence[E]:
-    query = get_resource_query(principal, cerbos_client, CerbosAction.VIEW, model_cls)
-    if filters:
-        query = query.filter(*filters)  # type: ignore
-    if order_by:
-        query = query.order_by(*order_by)  # type: ignore
-    result = await session.execute(query)
-    return result.scalars().all()
 
 
 class EntityLoader:
@@ -66,9 +43,9 @@ class EntityLoader:
         """
         Given a list of node IDs from a Relay `node()` query, return corresponding entities
         """
-        filters = [cls.entity_id.in_(node_ids)]
         db_session = self.engine.session()
-        rows = await get_db_rows(cls, db_session, self.cerbos_client, self.principal, filters, [])
+        where = {"entity_id": {"_in": node_ids}}
+        rows = await get_db_rows(cls, db_session, self.cerbos_client, self.principal, where)
         await db_session.close()
         return rows
 
@@ -124,69 +101,3 @@ class EntityLoader:
 
             self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn) # type: ignore
             return self._loaders[(relationship, where_str)] # type: ignore
-
-
-def get_base_updater(sql_model: type[db.Entity], gql_type: type[T]) -> T:  # type: ignore
-    @strawberry.field(extensions=[DependencyExtension()])
-    async def update(
-        entity_id: strawberry.ID,
-        session: AsyncSession = Depends(get_db_session, use_cache=False),
-        cerbos_client: CerbosClient = Depends(get_cerbos_client),
-        principal: Principal = Depends(require_auth_principal),
-        **kwargs: typing.Any,
-    ) -> db.Entity:  # type: ignore
-        params = {key: kwargs[key] for key in kwargs if key != "kwargs"}
-
-        # Fetch entity for update, if we have access to it
-        filters = [sql_model.id == entity_id]
-        entities = await get_db_rows(sql_model, session, cerbos_client, principal, filters, [])  # type: ignore
-        if len(entities) != 1:
-            raise Exception("Unauthorized: Cannot retrieve entity")
-        entity = entities[0]
-
-        # Validate that user can update this entity. For now, this is redundant with get_db_rows() above,
-        # but it's possible we'll want "update" actions to require additional permissions in the future.
-        attr = {"collection_id": entity.collection_id}
-        resource = Resource(id=str(entity.id), kind=sql_model.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise Exception("Unauthorized: Cannot update entity")
-
-        # Update DB
-        for key in params:
-            if params[key]:
-                setattr(entity, key, params[key])
-        await session.commit()
-
-        return entity
-
-    update.arguments = generate_strawberry_arguments(CerbosAction.UPDATE, sql_model, gql_type)
-
-    return typing.cast(T, update)
-
-
-# Infer Strawberry arguments from SQLAlchemy columns
-def generate_strawberry_arguments(
-    action: str, sql_model: type[db.Entity | db.Base], gql_type: type[T]  # type: ignore
-) -> list[StrawberryArgument]:
-    sql_columns = [column.name for column in sql_model.__table__.columns]
-
-    # Always create an entity within a collection ID so need to specify it
-    if action == CerbosAction.CREATE:
-        sql_columns.append("collection_id")
-
-    gql_arguments = []
-    for sql_column in sql_columns:
-        # Entity ID is autogenerated, so don't let user specify it unless updating a field
-        if action != CerbosAction.UPDATE and sql_column == "entity_id":
-            continue
-
-        # Get GQL field
-        field = gql_type.__strawberry_definition__.get_field(sql_column)  # type: ignore
-        if field:
-            # When updating an entity, only entity ID is required
-            is_optional_field = action == CerbosAction.UPDATE and field.name != "entity_id"
-            default = None if is_optional_field else strawberry.UNSET
-            argument = StrawberryArgument(field.name, field.graphql_name, field.type_annotation, default=default)
-            gql_arguments.append(argument)
-
-    return gql_arguments
