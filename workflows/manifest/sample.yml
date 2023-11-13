@@ -1,0 +1,119 @@
+workflow_name: consensus-genome
+workflow_version: 3.4.17
+entity_inputs:
+  sample:
+    name: Sample
+    description: Your sample
+    entity_type: sample
+  reference_genome:
+    name: Reference Genome
+    description: Your reference genome
+    entity_type: reference_genome
+raw_inputs:
+  clearlabs:
+    name: Used clear labs
+    description: Did you use clear labs?
+    kind: boolean
+    default: false
+  medaka_model:
+    name: Medaka Model
+    description: Your medaka model
+    kind: enum
+    default: r941_min_high_g360
+    options:
+      - r941_min_high_g360
+      - r941_min_fast_g303
+      - r941_min_high_g303
+      - r941_min_high_g330
+      - r941_min_high_g340_rle
+      - r941_min_high_g344
+      - r941_min_high_g351
+      - r103_prom_high_g360
+      - r103_prom_snp_g3210
+      - r103_prom_variant_g3210
+      - r941_prom_fast_g303
+      - r941_prom_high_g303
+      - r941_prom_high_g330
+      - r941_prom_high_g344
+      - r941_prom_high_g360
+      - r941_prom_high_g4011
+      - r941_prom_snp_g303
+      - r941_prom_snp_g322
+      - r941_prom_snp_g360
+      - r941_prom_variant_g303
+      - r941_prom_variant_g322
+      - r941_prom_variant_g360
+  creation_source:
+    name: Creation Source
+    description: Which view in the CZID web app are you launching this from?
+    kind: enum
+    default: viral_cg_upload
+    options:
+      - sars_cov_2_upload
+      - viral_cg_upload
+      - mngs_report
+input_loaders:
+  - loader_name: sample_loader
+    inputs:
+      - entity_input: sample
+        loader_input: sample
+    outputs:
+      - loader_output: r1_file
+        workflow_input: fastqs_0 
+      - loader_output: r2_file
+        workflow_input: fastqs_1
+      - loader_output: name
+        workflow_input: sample
+  - loader_name: primer_loader
+    inputs:
+      - entity_input: sample
+        loader_input: sample
+    outputs:
+      - loader_output: primer_set
+        workflow_input: primer_set
+      - loader_output: primer_schemes
+        workflow_input: primer_schemes
+      - loader_output: primer_bed
+        workflow_input: primer_bed
+  - loader_name: reference_genome_loader
+    inputs:
+      - entity_input: reference_genome
+        loader_input: reference_genome
+    outputs:
+      - loader_output: ref_fasta
+        workflow_input: ref_fasta
+      - loader_output: ref_accession_id
+        workflow_input: ref_accession_id
+  - loader_name: docker_image_loader
+    outputs:
+      - loader_output: docker_image_id
+        workflow_input: docker_image_id
+  - loader_name: passthrough_loader
+    inputs:
+      - raw_input: medaka_model
+        loader_input: value
+    outputs:
+      - loader_output: value
+        loader_input: medaka_model
+  - loader_name: consensus_genomes_default_inputs_loader
+    inputs:
+      - entity_input: sample
+        loader_input: sample
+      - raw_input: creation_source
+        loader_input: creation_source
+    outputs:
+      - loader_output: ref_host
+        workflow_input: ref_host
+      - loader_output: kraken2_db_tar_gz
+        workflow_input: kraken2_db_tar_gz
+      - loader_output: ercc_fasta
+        workflow_input: ercc_fasta
+      - loader_output: filter_reads
+        workflow_input: filter_reads
+      - loader_output: apply_length_filter
+        workflow_input: apply_length_filter
+      - loader_output: output_refseq
+        workflow_input: output_refseq
+      - loader_output: output_bed
+        workflow_input: output_bed
+

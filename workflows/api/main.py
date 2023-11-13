@@ -76,9 +76,16 @@ class WorkflowRunner:
 
 
 @strawberry.input
-class WorkflowInput:
+class EntityInput:
     name: str
-    value: str
+    entityType: str
+    entityId: str
+
+
+@strawberry.input
+class RawInput:
+    name: str
+    value: typing.Any
 
 
 @strawberry.type
@@ -148,7 +155,8 @@ class Mutation:
         self,
         project_id: int,
         workflow_version_id: int,
-        workflow_inputs: typing.List[WorkflowInput],
+        entity_inputs: typing.List[EntityInput],
+        raw_inputs: typing.List[RawInput],
         workflow_runner: str = default_workflow_runner_name,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         event_bus: EventBus = Depends(get_event_bus),

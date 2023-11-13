@@ -4,7 +4,7 @@ import typing
 from pathlib import Path
 from database.models.workflow import Workflow, WorkflowVersion
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 class PydanticVersion(semver.Version):
@@ -27,35 +27,69 @@ class ManifestModel(BaseModel):
         json_encoders = {PydanticVersion: convert_semver}
 
 
-class WorkflowTypeAnnotation(ManifestModel):
-    name: str
-    version: PydanticVersion
-
-
-class WorkflowInput(ManifestModel):
-    name: str
-    workflow_data_type: str
-    description: str
-    version: PydanticVersion
-    type_annotations: list[WorkflowTypeAnnotation]
-
-
 class EntityInput(ManifestModel):
     name: str
-    entity_type: str
     description: str
+    entity_type: str
+    required: bool = False
 
 
-class EntityInputReference(ManifestModel):
+class RawInput(ManifestModel):
     name: str
-    value: str
+    description: str
+    default: typing.Optional[typing.Any]
+    required: bool = False
+    opions: list[str] = []
+    kind: typing.Literal["string", "int", "float", "boolean", "enum"]
+
+    @model_validator(mode="after")
+    def check_options(self):
+        if self.kind == "enum" and not self.opions:
+            raise ValueError("Must specify options for enum")
+        if self.default is not None and self.default not in self.opions:
+            raise ValueError("Default must be one of options")
+        return self
+
+
+class InputReference(ManifestModel):
+    entity_input: typing.Optional[str]
+    raw_input: typing.Optional[str]
+    _loader_input: typing.Optional[str]
+
+    @property
+    def loader_input(self) -> str:
+        if self._loader_input:
+            return self._loader_input
+        if self.entity_input is not None:
+            return self.entity_input
+        if self.raw_input is not None:
+            return self.raw_input
+        raise ValueError("No input specified")
+
+    @model_validator(mode="after")
+    def check_at_least_one(self):
+        if not (self.entity_input or self.raw_input):
+            raise ValueError("Must specify at least one of entity_input or raw_input")
+        return self
+
+
+class InputLoaderOutputLink(BaseModel):
+    loader_output: str
+    _workflow_input: typing.Optional[str]
+
+    @property
+    def workflow_input(self) -> str:
+        if self._workflow_input:
+            return self._workflow_input
+        return self.loader_output
 
 
 class InputLoader(ManifestModel):
     name: str
     version: PydanticVersion
     workflow_input: str
-    entity_inputs: list[EntityInputReference]
+    inputs: list[InputReference]
+    outputs: list[InputLoaderOutputLink]
 
 
 class EntityOutput(ManifestModel):
@@ -83,17 +117,15 @@ class OutputLoader(ManifestModel):
 
 
 class Manifest(ManifestModel):
-    name: str
-    version: PydanticVersion
-    type: str = "WDL"
-    deprecated: bool = False
+    workflow_name: str
+    workflow_version: PydanticVersion
+    type: typing.Literal["WDL"]
     description: str
     package_uri: str
-    entity_inputs: list[EntityInput]
-    workflow_inputs: list[WorkflowInput]
+    entity_inputs: dict[str, EntityInput]
+    raw_inputs: dict[str, RawInput]
     input_loaders: list[InputLoader]
-    workflow_outputs: list[WorkflowOutput]
-    entity_outputs: list[EntityOutput]
+    entity_outputs: dict[str, EntityOutput]
     output_loaders: list[OutputLoader]
 
 

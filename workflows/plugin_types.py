@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import Dict, List, Literal, Any
+from database.models.workflow import Run
 
 WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
@@ -61,9 +62,11 @@ class WorkflowRunner(ABC):
         raise NotImplementedError()
 
 
+Primitive = str | int | float | bool | None
+
 class EntityInputLoader(ABC):
     @abstractmethod
-    async def load(self, args: Any) -> List[List[Any]]:
+    async def load(self, workflow_run: Run, entity_inputs: dict[str, Entity], raw_inputs: dict[str, Primitive]) -> dict[str, Primitive]:
         """Processes workflow output specified by the type constraints in
         worrkflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities
