@@ -50,7 +50,7 @@ async def load_consensus_genome_rows(
 ) -> Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetricConsensusGenome)
-    relationship = mapper.relationships["consensus_genomes"]
+    relationship = mapper.relationships["consensus_genome"]
     return await dataloader.loader_for(relationship, where).load(root.consensus_genome_id)  # type:ignore
 
 
@@ -164,7 +164,7 @@ class MetricConsensusGenomeUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_metric_consensus_genome(
+async def resolve_metrics_consensus_genomes(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

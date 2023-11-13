@@ -79,10 +79,11 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.{{ cls.name }})
-    relationship = mapper.relationships["{{ related_field.related_class.plural_snake_name }}"]
         {%- if related_field.multivalued %}
+    relationship = mapper.relationships["{{ related_field.related_class.plural_snake_name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}
+    relationship = mapper.relationships["{{ related_field.related_class.snake_name }}"]
     return await dataloader.loader_for(relationship, where).load(root.{{ related_field.related_class.snake_name }}_id) # type:ignore
         {%- endif %}
     {%- endif %}
@@ -226,7 +227,7 @@ class {{ cls.name }}{{ action }}Input:
 # ------------------------------------------------------------------------------
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_{{ cls.snake_name | lower }}(
+async def resolve_{{ cls.plural_snake_name }}(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -235,7 +236,7 @@ async def resolve_{{ cls.snake_name | lower }}(
     return await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [])  # type: ignore
 
 @strawberry.mutation(extensions=[DependencyExtension()])
-async def create_{{ cls.snake_name|lower }}(
+async def create_{{ cls.snake_name }}(
     input: {{ cls.name }}CreateInput,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
@@ -258,7 +259,7 @@ async def create_{{ cls.snake_name|lower }}(
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
-async def update_{{ cls.snake_name|lower }}(
+async def update_{{ cls.snake_name }}(
     input: {{ cls.name }}UpdateInput,
     where: {{ cls.name }}WhereClause,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -294,7 +295,7 @@ async def update_{{ cls.snake_name|lower }}(
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
-async def delete_{{ cls.snake_name|lower }}(
+async def delete_{{ cls.snake_name }}(
     where: {{ cls.name }}WhereClause,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),

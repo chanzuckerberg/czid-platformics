@@ -64,7 +64,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["taxa"]
+    relationship = mapper.relationships["taxon"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -76,7 +76,7 @@ async def load_sequencing_read_rows(
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["sequencing_reads"]
+    relationship = mapper.relationships["sequencing_read"]
     return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
 
 
@@ -88,7 +88,7 @@ async def load_genomic_range_rows(
 ) -> Optional[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["genomic_ranges"]
+    relationship = mapper.relationships["genomic_range"]
     return await dataloader.loader_for(relationship, where).load(root.genomic_range_id)  # type:ignore
 
 
@@ -100,7 +100,7 @@ async def load_reference_genome_rows(
 ) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["reference_genomes"]
+    relationship = mapper.relationships["reference_genome"]
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
 
 
@@ -237,7 +237,7 @@ class ConsensusGenomeUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_consensus_genome(
+async def resolve_consensus_genomes(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

@@ -165,7 +165,7 @@ class MetadataFieldUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_metadata_field(
+async def resolve_metadata_fields(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

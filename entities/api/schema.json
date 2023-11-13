@@ -140,7 +140,7 @@
                   }
                 }
               ],
-              "name": "file",
+              "name": "files",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -171,7 +171,7 @@
                   }
                 }
               ],
-              "name": "sample",
+              "name": "samples",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -202,7 +202,7 @@
                   }
                 }
               ],
-              "name": "sequencingRead",
+              "name": "sequencingReads",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -233,7 +233,7 @@
                   }
                 }
               ],
-              "name": "genomicRange",
+              "name": "genomicRanges",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -264,7 +264,7 @@
                   }
                 }
               ],
-              "name": "referenceGenome",
+              "name": "referenceGenomes",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -295,7 +295,7 @@
                   }
                 }
               ],
-              "name": "sequenceAlignmentIndex",
+              "name": "sequenceAlignmentIndices",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -326,7 +326,7 @@
                   }
                 }
               ],
-              "name": "metadatum",
+              "name": "metadatas",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -357,7 +357,7 @@
                   }
                 }
               ],
-              "name": "metadataField",
+              "name": "metadataFields",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -388,7 +388,7 @@
                   }
                 }
               ],
-              "name": "metadataFieldProject",
+              "name": "metadataFieldProjects",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -419,7 +419,7 @@
                   }
                 }
               ],
-              "name": "consensusGenome",
+              "name": "consensusGenomes",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -450,7 +450,7 @@
                   }
                 }
               ],
-              "name": "metricConsensusGenome",
+              "name": "metricsConsensusGenomes",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -481,7 +481,7 @@
                   }
                 }
               ],
-              "name": "coverageViz",
+              "name": "coverageVizes",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -512,7 +512,7 @@
                   }
                 }
               ],
-              "name": "taxon",
+              "name": "taxa",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -543,7 +543,7 @@
                   }
                 }
               ],
-              "name": "upstreamDatabase",
+              "name": "upstreamDatabases",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -574,7 +574,7 @@
                   }
                 }
               ],
-              "name": "contig",
+              "name": "contigs",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,

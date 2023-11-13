@@ -746,21 +746,21 @@ type Query {
     """The ID of the object."""
     id: GlobalID!
   ): Node!
-  file(where: FileWhereClause = null): [File!]!
-  sample(where: SampleWhereClause = null): [Sample!]!
-  sequencingRead(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  genomicRange(where: GenomicRangeWhereClause = null): [GenomicRange!]!
-  referenceGenome(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
-  sequenceAlignmentIndex(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
-  metadatum(where: MetadatumWhereClause = null): [Metadatum!]!
-  metadataField(where: MetadataFieldWhereClause = null): [MetadataField!]!
-  metadataFieldProject(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
-  consensusGenome(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
-  metricConsensusGenome(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
-  coverageViz(where: CoverageVizWhereClause = null): [CoverageViz!]!
-  taxon(where: TaxonWhereClause = null): [Taxon!]!
-  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
-  contig(where: ContigWhereClause = null): [Contig!]!
+  files(where: FileWhereClause = null): [File!]!
+  samples(where: SampleWhereClause = null): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
+  referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
+  sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
+  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
+  metadataFields(where: MetadataFieldWhereClause = null): [MetadataField!]!
+  metadataFieldProjects(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
+  coverageVizes(where: CoverageVizWhereClause = null): [CoverageViz!]!
+  taxa(where: TaxonWhereClause = null): [Taxon!]!
+  upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
+  contigs(where: ContigWhereClause = null): [Contig!]!
 }
 
 type ReferenceGenome implements EntityInterface & Node {

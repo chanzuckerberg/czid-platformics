@@ -50,7 +50,7 @@ async def load_sequencing_read_rows(
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Contig)
-    relationship = mapper.relationships["sequencing_reads"]
+    relationship = mapper.relationships["sequencing_read"]
     return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
 
 
@@ -119,7 +119,7 @@ class ContigUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_contig(
+async def resolve_contigs(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

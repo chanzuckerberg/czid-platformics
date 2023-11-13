@@ -121,7 +121,7 @@ class CoverageVizUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_coverage_viz(
+async def resolve_coverage_vizes(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

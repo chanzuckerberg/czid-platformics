@@ -53,7 +53,7 @@ async def load_sample_rows(
 ) -> Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Metadatum)
-    relationship = mapper.relationships["samples"]
+    relationship = mapper.relationships["sample"]
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
@@ -65,7 +65,7 @@ async def load_metadata_field_rows(
 ) -> Optional[Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Metadatum)
-    relationship = mapper.relationships["metadata_fields"]
+    relationship = mapper.relationships["metadata_field"]
     return await dataloader.loader_for(relationship, where).load(root.metadata_field_id)  # type:ignore
 
 
@@ -136,7 +136,7 @@ class MetadatumUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_metadatum(
+async def resolve_metadatas(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

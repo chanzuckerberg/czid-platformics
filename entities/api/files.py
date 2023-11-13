@@ -154,7 +154,7 @@ class FileWhereClause(TypedDict):
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_file(
+async def resolve_files(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

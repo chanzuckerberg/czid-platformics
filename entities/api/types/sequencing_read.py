@@ -63,7 +63,7 @@ async def load_sample_rows(
 ) -> Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["samples"]
+    relationship = mapper.relationships["sample"]
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
@@ -75,7 +75,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["taxa"]
+    relationship = mapper.relationships["taxon"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -225,7 +225,7 @@ class SequencingReadUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_sequencing_read(
+async def resolve_sequencing_reads(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

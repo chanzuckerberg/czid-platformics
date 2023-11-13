@@ -52,7 +52,7 @@ async def load_reference_genome_rows(
 ) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequenceAlignmentIndex)
-    relationship = mapper.relationships["reference_genomes"]
+    relationship = mapper.relationships["reference_genome"]
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
 
 
@@ -146,7 +146,7 @@ class SequenceAlignmentIndexUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_sequence_alignment_index(
+async def resolve_sequence_alignment_indices(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

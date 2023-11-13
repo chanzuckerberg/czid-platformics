@@ -27,19 +27,19 @@ async def test_collection_authorization(
     # Create mock data
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
-        fa.SampleFactory.create_batch(2, location="City1", owner_user_id=owner_user_id, collection_id=333)
-        fa.SampleFactory.create_batch(2, location="City2", owner_user_id=owner_user_id, collection_id=444)
-        fa.SampleFactory.create_batch(2, location="City3", owner_user_id=owner_user_id, collection_id=555)
+        fa.SampleFactory.create_batch(2, collection_location="City1", owner_user_id=owner_user_id, collection_id=333)
+        fa.SampleFactory.create_batch(2, collection_location="City2", owner_user_id=owner_user_id, collection_id=444)
+        fa.SampleFactory.create_batch(2, collection_location="City3", owner_user_id=owner_user_id, collection_id=555)
 
     # Fetch all samples
     query = """
         query MyQuery {
             samples {
-                id,
-                location
+                id
+                collectionLocation
             }
         }
     """
     output = await gql_client.query(query, user_id=user_id, member_projects=project_ids)
     assert len(output["data"]["samples"]) == num_results
-    assert {sample["location"] for sample in output["data"]["samples"]} == set(cities)
+    assert {sample["collectionLocation"] for sample in output["data"]["samples"]} == set(cities)

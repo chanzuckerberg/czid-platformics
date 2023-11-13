@@ -66,7 +66,7 @@ async def load_upstream_database_rows(
 ) -> Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["upstream_databases"]
+    relationship = mapper.relationships["upstream_database"]
     return await dataloader.loader_for(relationship, where).load(root.upstream_database_id)  # type:ignore
 
 
@@ -271,7 +271,7 @@ class TaxonUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_taxon(
+async def resolve_taxa(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

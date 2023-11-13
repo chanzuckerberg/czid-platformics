@@ -52,7 +52,7 @@ async def test_nested_query(
           samples (where: { name: { _ilike: "Sample%" } }) {
             id
             name
-            location
+            collectionLocation
             ownerUserId
             collectionId
             sequencingReads(where: { collectionId: { _eq: 888 } }) {
@@ -60,8 +60,8 @@ async def test_nested_query(
                 node {
                   collectionId
                   ownerUserId
-                  sequence
-                  nucleotide
+                  protocol
+                  nucleicAcid
                   sample {
                     id
                     ownerUserId
@@ -70,7 +70,7 @@ async def test_nested_query(
                     sequencingReads {
                       edges {
                         node {
-                          sequence
+                          protocol
                         }
                       }
                     }
@@ -128,7 +128,7 @@ async def test_relay_node_queries(
           node(id: "{node_id_base64}") {{
             ... on Sample {{
               name
-              location
+              collectionLocation
             }}
           }}
         }}

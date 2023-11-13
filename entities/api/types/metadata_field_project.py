@@ -49,7 +49,7 @@ async def load_metadata_field_rows(
 ) -> Optional[Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetadataFieldProject)
-    relationship = mapper.relationships["metadata_fields"]
+    relationship = mapper.relationships["metadata_field"]
     return await dataloader.loader_for(relationship, where).load(root.metadata_field_id)  # type:ignore
 
 
@@ -116,7 +116,7 @@ class MetadataFieldProjectUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_metadata_field_project(
+async def resolve_metadata_field_projects(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

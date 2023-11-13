@@ -59,7 +59,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
-    relationship = mapper.relationships["taxa"]
+    relationship = mapper.relationships["taxon"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -183,7 +183,7 @@ class SampleUpdateInput:
 
 
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_sample(
+async def resolve_samples(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
