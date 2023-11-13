@@ -11,7 +11,7 @@ import strawberry
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -22,6 +22,7 @@ from platformics.api.core.gql_to_sql import (
     BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
@@ -79,7 +80,7 @@ async def load_consensus_genome_rows(
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["consensus_genome"]
+    relationship = mapper.relationships["consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -93,7 +94,7 @@ async def load_reference_genome_rows(
 ) -> Sequence[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["reference_genome"]
+    relationship = mapper.relationships["reference_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -107,7 +108,7 @@ async def load_sequencing_read_rows(
 ) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["sequencing_read"]
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -121,7 +122,7 @@ async def load_sample_rows(
 ) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["sample"]
+    relationship = mapper.relationships["samples"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -173,12 +174,12 @@ class TaxonWhereClause(TypedDict):
 @strawberry.type
 class Taxon(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
+    producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
-    wikipedia_id: str
-    description: str
-    common_name: str
+    wikipedia_id: Optional[str] = None
+    description: Optional[str] = None
+    common_name: Optional[str] = None
     name: str
     is_phage: bool
     upstream_database: Optional[
@@ -195,16 +196,16 @@ class Taxon(EntityInterface):
     tax_id_class: int
     tax_id_phylum: int
     tax_id_kingdom: int
-    consensus_genomes: typing.Sequence[
+    consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows
-    reference_genomes: typing.Sequence[
+    ] = load_consensus_genome_rows  # type:ignore
+    reference_genomes: Sequence[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows
-    sequencing_reads: typing.Sequence[
+    ] = load_reference_genome_rows  # type:ignore
+    sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows
-    samples: typing.Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows
+    ] = load_sequencing_read_rows  # type:ignore
+    samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     entity_id: strawberry.ID
 
 
@@ -215,12 +216,143 @@ Taxon.__strawberry_definition__.is_type_of = (  # type: ignore
 )
 
 
-# Resolvers used in api/queries
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class TaxonCreateInput:
+    collection_id: int
+    wikipedia_id: Optional[str] = None
+    description: Optional[str] = None
+    common_name: Optional[str] = None
+    name: str
+    is_phage: bool
+    upstream_database_id: strawberry.ID
+    upstream_database_identifier: str
+    level: TaxonLevel
+    tax_id: int
+    tax_id_parent: int
+    tax_id_species: int
+    tax_id_genus: int
+    tax_id_family: int
+    tax_id_order: int
+    tax_id_class: int
+    tax_id_phylum: int
+    tax_id_kingdom: int
+
+
+@strawberry.input()
+class TaxonUpdateInput:
+    collection_id: Optional[int] = None
+    wikipedia_id: Optional[str] = None
+    description: Optional[str] = None
+    common_name: Optional[str] = None
+    name: Optional[str] = None
+    is_phage: Optional[bool] = None
+    upstream_database_id: Optional[strawberry.ID] = None
+    upstream_database_identifier: Optional[str] = None
+    level: Optional[TaxonLevel] = None
+    tax_id: Optional[int] = None
+    tax_id_parent: Optional[int] = None
+    tax_id_species: Optional[int] = None
+    tax_id_genus: Optional[int] = None
+    tax_id_family: Optional[int] = None
+    tax_id_order: Optional[int] = None
+    tax_id_class: Optional[int] = None
+    tax_id_phylum: Optional[int] = None
+    tax_id_kingdom: Optional[int] = None
+
+
+# ------------------------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------------------------
+
+
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_taxon(
+async def resolve_taxa(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[TaxonWhereClause] = None,
 ) -> typing.Sequence[Taxon]:
     return await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_taxon(
+    input: TaxonCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> db.Entity:
+    params = input.__dict__
+
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.Taxon.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.Taxon(**params)
+    session.add(new_entity)
+    await session.commit()
+    return new_entity
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def update_taxon(
+    input: TaxonUpdateInput,
+    where: TaxonWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sequence[db.Entity]:
+    params = input.__dict__
+
+    # Need at least one thing to update
+    num_params = len([x for x in params if params[x] is not None])
+    if num_params == 0:
+        raise Exception("No fields to update")
+
+    # Fetch entities for update, if we have access to them
+    entities = await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot update entities")
+
+    # Validate that the user has access to the new collection ID
+    if input.collection_id:
+        attr = {"collection_id": input.collection_id}
+        resource = Resource(id="SOME_ID", kind=db.Taxon.__tablename__, attr=attr)
+        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
+            raise Exception("Unauthorized: Cannot access new collection")
+
+    # Update DB
+    for entity in entities:
+        for key in params:
+            if params[key]:
+                setattr(entity, key, params[key])
+    await session.commit()
+    return entities
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def delete_taxon(
+    where: TaxonWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sequence[db.Entity]:
+    # Fetch entities for deletion, if we have access to them
+    entities = await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot delete entities")
+
+    # Update DB
+    for entity in entities:
+        await session.delete(entity)
+    await session.commit()
+    return entities

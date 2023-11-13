@@ -52,7 +52,6 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
         # What fields do we try to match to existing db rows to determine whether we
         # should create a new row or not?
         sqlalchemy_get_or_create = ("namespace", "path")
-        # exclude = ("sample_organ",)
 
     status = factory.Faker("enum", enum_cls=FileStatus)
     protocol = fuzzy.FuzzyChoice(["S3", "GCP"])
@@ -69,7 +68,7 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
             raise Exception("No session found")
         session.execute(
             sa.text(
-                "UPDATE sequencing_read SET sequence_file_id = file.id "
+                "UPDATE sequencing_read SET r1_file_id = file.id "
                 "FROM file WHERE sequencing_read.entity_id = file.entity_id",
             )
         )
@@ -82,43 +81,31 @@ class SampleFactory(CommonFactory):
         model = Sample
         # What fields do we try to match to existing db rows to determine whether we
         # should create a new row or not?
-        sqlalchemy_get_or_create = ("name", "location")
+        sqlalchemy_get_or_create = ("name", "collection_location")
 
-        # The field in the exclusion list are for internal use only and don't get
-        # persisted to the db.
-        exclude = ("sample_organ",)
-
-    # This is in the exclusion list so it doesn't get added to our db model.
-    sample_organ = factory.Faker("organ")
-
-    name = factory.LazyAttribute(lambda o: "Sample %s" % o.sample_organ)
-    location = factory.Faker("city")
+    sample_type = factory.Faker("organ")
+    name = factory.LazyAttribute(lambda o: "Sample %s" % o.sample_type)
+    collection_location = factory.Faker("city")
+    water_control = factory.Faker("boolean")
 
 
 class SequencingReadFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = SequencingRead
-        sqlalchemy_get_or_create = (
-            "nucleotide",
-            "sequence",
-            "protocol",
-        )
 
     sample = factory.SubFactory(
         SampleFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    nucleotide = fuzzy.FuzzyChoice(["RNA", "DNA"])
-    # Workaround for a bug in bioseq's handling of randomness and DNA string generation.
-    sequence = fuzzy.FuzzyText(length=100, chars="ACTG")
-    # sequence = factory.Faker('dna', length=100)
+    nucleic_acid = fuzzy.FuzzyChoice(["RNA", "DNA"])
     protocol = fuzzy.FuzzyChoice(["TARGETED", "MNGS", "MSSPE"])
-
-    sequence_file = factory.RelatedFactory(
+    technology = fuzzy.FuzzyChoice(["Illumina", "Nanopore"])
+    has_ercc = factory.Faker("boolean")
+    r1_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
-        entity_field_name="sequence_file",
+        entity_field_name="r1_file",
         file_format="fastq",
     )

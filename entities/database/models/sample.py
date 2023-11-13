@@ -39,4 +39,4 @@ class Sample(Entity):
     metadatas: Mapped[list[Metadatum]] = relationship(
         "Metadatum", back_populates="sample", uselist=True, foreign_keys="Metadatum.sample_id"
     )
-    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=True, primary_key=True)
+    entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

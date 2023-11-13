@@ -30,7 +30,7 @@ async def test_file_query(
 
     # Fetch all samples
     query = """
-        query MyQuery {
+      query MyQuery {
         files {
           entity {
             collectionId
@@ -75,13 +75,13 @@ async def test_nested_files(
     query = """
         query MyQuery {
           sequencingReads {
-            sequenceFile {
+            r1File {
               entityId
               fileFormat
               path
               size
             }
-            nucleotide
+            nucleicAcid
             id
             ownerUserId
           }
@@ -89,7 +89,8 @@ async def test_nested_files(
     """
     output = await gql_client.query(query, member_projects=[project1_id])
     assert len(output["data"]["sequencingReads"]) == 8
+
     for read in output["data"]["sequencingReads"]:
-        assert read["sequenceFile"] is not None
-        assert read["sequenceFile"]["entityId"] == read["id"]
-        assert read["sequenceFile"]["path"]
+        assert read["r1File"] is not None
+        assert read["r1File"]["entityId"] == read["id"]
+        assert read["r1File"]["path"]

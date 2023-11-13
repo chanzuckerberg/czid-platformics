@@ -200,7 +200,7 @@ def upgrade() -> None:
         sa.Column("r1_file_id", sa.UUID(), nullable=False),
         sa.Column("r2_file_id", sa.UUID(), nullable=True),
         sa.Column(
-            "techonology",
+            "technology",
             sa.Enum("Illumina", "Nanopore", name="sequencingtechnology", native_enum=False),
             nullable=False,
         ),

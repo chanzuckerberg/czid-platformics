@@ -11,7 +11,7 @@ resourcePolicy:
       derivedRoles:
         - project_member
 
-    - actions: ['download']
+    - actions: ['download', 'delete']
       effect: EFFECT_ALLOW
       derivedRoles:
         - owner

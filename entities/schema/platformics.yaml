@@ -66,10 +66,6 @@ classes:
       id:
         identifier: true
         range: uuid
-      type:
-        range: string
-        required: true
-        designates_type: true
       producing_run_id:
         range: int
         minimum_value: 0
@@ -167,10 +163,9 @@ classes:
         required: true
       r1_file:
         range: File
-        required: true
       r2_file:
         range: File
-      techonology:
+      technology:
         range: SequencingTechnology
         required: true
       nucleic_acid:
@@ -532,6 +527,7 @@ classes:
     mixin: true
     attributes:
       entity_id:
+        required: true
         readonly: true
         range: uuid
         identifier: true

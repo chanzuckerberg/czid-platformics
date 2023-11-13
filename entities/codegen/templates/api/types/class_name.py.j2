@@ -13,7 +13,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
@@ -79,10 +79,11 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.{{ cls.name }})
-    relationship = mapper.relationships["{{ related_field.related_class.snake_name }}"]
         {%- if related_field.multivalued %}
+    relationship = mapper.relationships["{{ related_field.related_class.plural_snake_name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}
+    relationship = mapper.relationships["{{ related_field.related_class.snake_name }}"]
     return await dataloader.loader_for(relationship, where).load(root.{{ related_field.related_class.snake_name }}_id) # type:ignore
         {%- endif %}
     {%- endif %}
@@ -142,37 +143,41 @@ class {{ cls.name }}WhereClause(TypedDict):
         {%- endif %}
     {%- endfor %}
 
+{# Macro to output "X" or "Optional[X]" #}
+{% macro getType(type, required) -%}
+    {%- if required %} {{ type }}
+    {%- else %} Optional[{{ type }}] = None
+    {%- endif %}
+{%- endmacro %}
+
 # Define {{ cls.name }} type
 @strawberry.type
 class {{ cls.name }}(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
+    producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "uuid" %}
-    {{ attr.name }}: strawberry.ID
+    {{ attr.name }}: {{ getType("strawberry.ID", attr.required) }}
         {%- elif attr.type == "string" %}
-    {{ attr.name }}: str
+    {{ attr.name }}: {{ getType("str", attr.required) }}
         {%- elif attr.is_enum %}
-    {{ attr.name }}: {{ attr.type }}
+    {{ attr.name }}: {{ getType(attr.type, attr.required) }}
         {%- elif attr.type == "int" %}
-    {{ attr.name }}: int
+    {{ attr.name }}: {{ getType("int", attr.required) }}
         {%- elif attr.type == "boolean" %}
-    {{ attr.name }}: bool
+    {{ attr.name }}: {{ getType("bool", attr.required) }}
         {%- elif attr.type == "date" %}
-    {{ attr.name }}: datetime.datetime
+    {{ attr.name }}: {{ getType("datetime.datetime", attr.required) }}
         {%- elif attr.type == "File" %}
-    {{ attr.name }}_id: strawberry.ID
-    {{ attr.name }}: Annotated["File", strawberry.lazy("api.files")] = load_files_from("{{ attr.name }}")  # type: ignore
+    {{ attr.name }}_id: Optional[strawberry.ID]
+    {{ attr.name }}: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("{{ attr.name }}")  # type: ignore
         {%- elif attr.inverse %}
-            {%- if attr.multivalued %}
-    {{ attr.name }}: typing.Sequence[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows
-            {%- else %}
-    {{ attr.name }}: Optional[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows  # type:ignore
-            {%- endif %}
+    {{ attr.name }}: {{ "Sequence" if attr.multivalued else "Optional" }}[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows  # type:ignore
         {%- endif %}
     {%- endfor %}
+
 
 # We need to add this to each Queryable type so that strawberry will accept either our
 # Strawberry type *or* a SQLAlchemy model instance as a valid response class from a resolver
@@ -180,12 +185,129 @@ class {{ cls.name }}(EntityInterface):
     lambda obj, info: type(obj) == db.{{ cls.name }} or type(obj) == {{ cls.name }}
 )
 
-# Resolvers used in api/queries
+
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+{# Macro for mutations to output X or Optional[X] #}
+{% macro getTypeMutation(action, type, required) -%}
+    {%- if action == "Create" and required %} {{ type }}
+    {%- else %} Optional[{{ type }}] = None
+    {%- endif %}
+{%- endmacro %}
+
+{# Generate Create and Update Strawberry input types #}
+{%- for action in ["Create", "Update"] %}
+@strawberry.input()
+class {{ cls.name }}{{ action }}Input:
+    collection_id: {{ getTypeMutation(action, "int", true) }}
+    {%- for attr in cls.owned_fields %}
+        {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
+        {%- elif attr.type == "string" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
+        {%- elif attr.is_enum %}
+    {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
+        {%- elif attr.type == "int" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "int", attr.required) }}
+        {%- elif attr.type == "boolean" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "bool", attr.required) }}
+        {%- elif attr.type == "date" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "datetime.datetime", attr.required) }}
+        {%- elif attr.type == "File" %}
+    {{ attr.name }}_id: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
+        {%- elif attr.inverse and not attr.multivalued %} {# Don't include multivalued fields, only fields where can update an ID #}
+    {{ attr.name }}_id: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
+        {%- endif %}
+    {%- endfor %}
+{%- endfor %}
+
+
+# ------------------------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------------------------
+
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_{{ cls.snake_name|lower }}(
+async def resolve_{{ cls.plural_snake_name }}(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[{{ cls.name }}WhereClause] = None,
 ) -> typing.Sequence[{{ cls.name }}]:
     return await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [])  # type: ignore
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_{{ cls.snake_name }}(
+    input: {{ cls.name }}CreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> db.Entity:
+    params = input.__dict__
+
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.{{ cls.name }}(**params)
+    session.add(new_entity)
+    await session.commit()
+    return new_entity
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def update_{{ cls.snake_name }}(
+    input: {{ cls.name }}UpdateInput,
+    where: {{ cls.name }}WhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sequence[db.Entity]:
+    params = input.__dict__
+    
+    # Need at least one thing to update
+    num_params = len([x for x in params if params[x] is not None])
+    if num_params == 0:
+        raise Exception("No fields to update")
+
+    # Fetch entities for update, if we have access to them
+    entities = await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot update entities")
+
+    # Validate that the user has access to the new collection ID
+    if input.collection_id:
+        attr = {"collection_id": input.collection_id}
+        resource = Resource(id="SOME_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
+        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
+            raise Exception("Unauthorized: Cannot access new collection")
+
+    # Update DB
+    for entity in entities:
+        for key in params:
+            if params[key]:
+                setattr(entity, key, params[key])
+    await session.commit()
+    return entities
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def delete_{{ cls.snake_name }}(
+    where: {{ cls.name }}WhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sequence[db.Entity]:
+    # Fetch entities for deletion, if we have access to them
+    entities = await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot delete entities")
+
+    # Update DB
+    for entity in entities:
+        await session.delete(entity)
+    await session.commit()
+    return entities

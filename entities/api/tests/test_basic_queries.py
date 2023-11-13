@@ -21,21 +21,27 @@ async def test_graphql_query(
     # Create mock data
     with sync_db.session() as session:
         fa.SessionStorage.set_session(session)
-        fa.SampleFactory.create_batch(2, location="San Francisco, CA", owner_user_id=user_id, collection_id=project_id)
-        fa.SampleFactory.create_batch(6, location="Mountain View, CA", owner_user_id=user_id, collection_id=project_id)
-        fa.SampleFactory.create_batch(4, location="Phoenix, AZ", owner_user_id=secondary_user_id, collection_id=9999)
+        fa.SampleFactory.create_batch(
+            2, collection_location="San Francisco, CA", owner_user_id=user_id, collection_id=project_id
+        )
+        fa.SampleFactory.create_batch(
+            6, collection_location="Mountain View, CA", owner_user_id=user_id, collection_id=project_id
+        )
+        fa.SampleFactory.create_batch(
+            4, collection_location="Phoenix, AZ", owner_user_id=secondary_user_id, collection_id=9999
+        )
 
     # Fetch all samples
     query = """
         query MyQuery {
             samples {
                 id,
-                location
+                collectionLocation
             }
         }
     """
     output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
-    locations = [sample["location"] for sample in output["data"]["samples"]]
+    locations = [sample["collectionLocation"] for sample in output["data"]["samples"]]
     assert "San Francisco, CA" in locations
     assert "Mountain View, CA" in locations
     assert "Phoenix, AZ" not in locations
@@ -54,9 +60,15 @@ async def test_graphql_mutations(
     project_id = 123
     query = """
         mutation createOneSample {
-            createSample(name: "Test Sample", location: "San Francisco, CA", collectionId: 123) {
+            createSample(input: {
+                name: "Test Sample"
+                sampleType: "Type 1"
+                waterControl: false
+                collectionLocation: "San Francisco, CA"
+                collectionId: 123
+            }) {
                 id,
-                location
+                collectionLocation
             }
         }
     """
@@ -69,16 +81,23 @@ async def test_graphql_mutations(
 
     # Otherwise, modify the sample we created (note the {{ so we don't treat them as variables)
     else:
-        assert output["data"]["createSample"]["location"] == "San Francisco, CA"
+        assert output["data"]["createSample"]["collectionLocation"] == "San Francisco, CA"
 
         new_location = "Chicago, IL"
         query = f"""
             mutation modifyOneSample {{
-                updateSample(entityId: "{output["data"]["createSample"]["id"]}", location: "{new_location}") {{
+                updateSample(
+                    input: {{
+                        collectionLocation: "{new_location}"
+                    }}
+                    where: {{
+                        id: {{ _eq: "{output["data"]["createSample"]["id"]}" }}
+                    }}
+                ) {{
                     id,
-                    location
+                    collectionLocation
                 }}
             }}
         """
         output = await gql_client.query(query, member_projects=projects_allowed)
-        assert output["data"]["updateSample"]["location"] == new_location
+        assert output["data"]["updateSample"][0]["collectionLocation"] == new_location

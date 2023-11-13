@@ -2,7 +2,6 @@
 erDiagram
 Entity {
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -27,19 +26,17 @@ Sample {
     string description  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
 }
 SequencingRead {
     SequencingProtocol protocol  
-    SequencingTechnology techonology  
+    SequencingTechnology technology  
     NucleicAcid nucleic_acid  
     boolean has_ercc  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -47,7 +44,6 @@ SequencingRead {
 GenomicRange {
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -58,7 +54,6 @@ ReferenceGenome {
     string accession_id  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -67,7 +62,6 @@ SequenceAlignmentIndex {
     AlignmentTool tool  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -76,7 +70,6 @@ Metadatum {
     string value  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -90,7 +83,6 @@ MetadataField {
     string default_value  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -99,7 +91,6 @@ MetadataFieldProject {
     int project_id  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -108,7 +99,6 @@ ConsensusGenome {
     boolean is_reverse_complement  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -127,7 +117,6 @@ MetricConsensusGenome {
     int n_ambiguous  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -136,7 +125,6 @@ CoverageViz {
     string accession_id  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -160,7 +148,6 @@ Taxon {
     int tax_id_kingdom  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -169,7 +156,6 @@ UpstreamDatabase {
     string name  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -178,7 +164,6 @@ Contig {
     string sequence  
     uuid entity_id  
     uuid id  
-    string type  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
@@ -192,7 +177,7 @@ Sample ||--|o Taxon : "host_taxon"
 Sample ||--}o SequencingRead : "sequencing_reads"
 Sample ||--}o Metadatum : "metadatas"
 SequencingRead ||--|o Sample : "sample"
-SequencingRead ||--|| File : "r1_file"
+SequencingRead ||--|o File : "r1_file"
 SequencingRead ||--|o File : "r2_file"
 SequencingRead ||--|o Taxon : "taxon"
 SequencingRead ||--|o File : "primer_file"

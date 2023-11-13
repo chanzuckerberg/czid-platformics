@@ -32,18 +32,18 @@ type ConsensusGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   taxon(where: TaxonWhereClause = null): Taxon
   sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
   genomicRange(where: GenomicRangeWhereClause = null): GenomicRange
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
-  sequenceId: ID!
-  sequence(where: FileWhereClause = null): File!
+  sequenceId: ID
+  sequence(where: FileWhereClause = null): File
   isReverseComplement: Boolean!
-  intermediateOutputsId: ID!
-  intermediateOutputs(where: FileWhereClause = null): File!
+  intermediateOutputsId: ID
+  intermediateOutputs(where: FileWhereClause = null): File
   metrics(
     where: MetricConsensusGenomeWhereClause = null
 
@@ -71,6 +71,17 @@ type ConsensusGenomeConnection {
   edges: [ConsensusGenomeEdge!]!
 }
 
+input ConsensusGenomeCreateInput {
+  collectionId: Int!
+  taxonId: ID!
+  sequenceReadId: ID!
+  genomicRangeId: ID!
+  referenceGenomeId: ID!
+  sequenceId: ID!
+  isReverseComplement: Boolean!
+  intermediateOutputsId: ID = null
+}
+
 """An edge in a connection."""
 type ConsensusGenomeEdge {
   """A cursor for use in pagination"""
@@ -78,6 +89,17 @@ type ConsensusGenomeEdge {
 
   """The item at the end of the edge"""
   node: ConsensusGenome!
+}
+
+input ConsensusGenomeUpdateInput {
+  collectionId: Int = null
+  taxonId: ID = null
+  sequenceReadId: ID = null
+  genomicRangeId: ID = null
+  referenceGenomeId: ID = null
+  sequenceId: ID = null
+  isReverseComplement: Boolean = null
+  intermediateOutputsId: ID = null
 }
 
 input ConsensusGenomeWhereClause {
@@ -98,7 +120,7 @@ type Contig implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
@@ -115,6 +137,12 @@ type ContigConnection {
   edges: [ContigEdge!]!
 }
 
+input ContigCreateInput {
+  collectionId: Int!
+  sequencingReadId: ID = null
+  sequence: String!
+}
+
 """An edge in a connection."""
 type ContigEdge {
   """A cursor for use in pagination"""
@@ -122,6 +150,12 @@ type ContigEdge {
 
   """The item at the end of the edge"""
   node: Contig!
+}
+
+input ContigUpdateInput {
+  collectionId: Int = null
+  sequencingReadId: ID = null
+  sequence: String = null
 }
 
 input ContigWhereClause {
@@ -138,13 +172,25 @@ type CoverageViz implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   accessionId: String!
-  coverageVizFileId: ID!
-  coverageVizFile(where: FileWhereClause = null): File!
+  coverageVizFileId: ID
+  coverageVizFile(where: FileWhereClause = null): File
   entityId: ID!
+}
+
+input CoverageVizCreateInput {
+  collectionId: Int!
+  accessionId: String!
+  coverageVizFileId: ID!
+}
+
+input CoverageVizUpdateInput {
+  collectionId: Int = null
+  accessionId: String = null
+  coverageVizFileId: ID = null
 }
 
 input CoverageVizWhereClause {
@@ -242,12 +288,12 @@ type GenomicRange implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
-  fileId: ID!
-  file(where: FileWhereClause = null): File!
+  fileId: ID
+  file(where: FileWhereClause = null): File
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -275,6 +321,12 @@ type GenomicRangeConnection {
   edges: [GenomicRangeEdge!]!
 }
 
+input GenomicRangeCreateInput {
+  collectionId: Int!
+  referenceGenomeId: ID!
+  fileId: ID!
+}
+
 """An edge in a connection."""
 type GenomicRangeEdge {
   """A cursor for use in pagination"""
@@ -282,6 +334,12 @@ type GenomicRangeEdge {
 
   """The item at the end of the edge"""
   node: GenomicRange!
+}
+
+input GenomicRangeUpdateInput {
+  collectionId: Int = null
+  referenceGenomeId: ID = null
+  fileId: ID = null
 }
 
 input GenomicRangeWhereClause {
@@ -320,7 +378,7 @@ type MetadataField implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   fieldGroup(
@@ -342,8 +400,8 @@ type MetadataField implements EntityInterface & Node {
   description: String!
   fieldType: String!
   isRequired: Boolean!
-  options: String!
-  defaultValue: String!
+  options: String
+  defaultValue: String
   metadatas(
     where: MetadatumWhereClause = null
 
@@ -362,11 +420,21 @@ type MetadataField implements EntityInterface & Node {
   entityId: ID!
 }
 
+input MetadataFieldCreateInput {
+  collectionId: Int!
+  fieldName: String!
+  description: String!
+  fieldType: String!
+  isRequired: Boolean!
+  options: String = null
+  defaultValue: String = null
+}
+
 type MetadataFieldProject implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   projectId: Int!
@@ -383,6 +451,12 @@ type MetadataFieldProjectConnection {
   edges: [MetadataFieldProjectEdge!]!
 }
 
+input MetadataFieldProjectCreateInput {
+  collectionId: Int!
+  projectId: Int!
+  metadataFieldId: ID!
+}
+
 """An edge in a connection."""
 type MetadataFieldProjectEdge {
   """A cursor for use in pagination"""
@@ -390,6 +464,12 @@ type MetadataFieldProjectEdge {
 
   """The item at the end of the edge"""
   node: MetadataFieldProject!
+}
+
+input MetadataFieldProjectUpdateInput {
+  collectionId: Int = null
+  projectId: Int = null
+  metadataFieldId: ID = null
 }
 
 input MetadataFieldProjectWhereClause {
@@ -400,6 +480,16 @@ input MetadataFieldProjectWhereClause {
   projectId: IntComparators
   metadataField: MetadataFieldWhereClause
   entityId: UUIDComparators
+}
+
+input MetadataFieldUpdateInput {
+  collectionId: Int = null
+  fieldName: String = null
+  description: String = null
+  fieldType: String = null
+  isRequired: Boolean = null
+  options: String = null
+  defaultValue: String = null
 }
 
 input MetadataFieldWhereClause {
@@ -422,7 +512,7 @@ type Metadatum implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   sample(where: SampleWhereClause = null): Sample
@@ -440,6 +530,13 @@ type MetadatumConnection {
   edges: [MetadatumEdge!]!
 }
 
+input MetadatumCreateInput {
+  collectionId: Int!
+  sampleId: ID!
+  metadataFieldId: ID!
+  value: String!
+}
+
 """An edge in a connection."""
 type MetadatumEdge {
   """A cursor for use in pagination"""
@@ -447,6 +544,13 @@ type MetadatumEdge {
 
   """The item at the end of the edge"""
   node: Metadatum!
+}
+
+input MetadatumUpdateInput {
+  collectionId: Int = null
+  sampleId: ID = null
+  metadataFieldId: ID = null
+  value: String = null
 }
 
 input MetadatumWhereClause {
@@ -464,18 +568,18 @@ type MetricConsensusGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   consensusGenome(where: ConsensusGenomeWhereClause = null): ConsensusGenome
-  totalReads: Int!
-  mappedReads: Int!
-  refSnps: Int!
-  nActg: Int!
-  nMissing: Int!
-  nAmbiguous: Int!
-  coverageVizSummaryFileId: ID!
-  coverageVizSummaryFile(where: FileWhereClause = null): File!
+  totalReads: Int
+  mappedReads: Int
+  refSnps: Int
+  nActg: Int
+  nMissing: Int
+  nAmbiguous: Int
+  coverageVizSummaryFileId: ID
+  coverageVizSummaryFile(where: FileWhereClause = null): File
   entityId: ID!
 }
 
@@ -488,6 +592,18 @@ type MetricConsensusGenomeConnection {
   edges: [MetricConsensusGenomeEdge!]!
 }
 
+input MetricConsensusGenomeCreateInput {
+  collectionId: Int!
+  consensusGenomeId: ID!
+  totalReads: Int = null
+  mappedReads: Int = null
+  refSnps: Int = null
+  nActg: Int = null
+  nMissing: Int = null
+  nAmbiguous: Int = null
+  coverageVizSummaryFileId: ID!
+}
+
 """An edge in a connection."""
 type MetricConsensusGenomeEdge {
   """A cursor for use in pagination"""
@@ -495,6 +611,18 @@ type MetricConsensusGenomeEdge {
 
   """The item at the end of the edge"""
   node: MetricConsensusGenome!
+}
+
+input MetricConsensusGenomeUpdateInput {
+  collectionId: Int = null
+  consensusGenomeId: ID = null
+  totalReads: Int = null
+  mappedReads: Int = null
+  refSnps: Int = null
+  nActg: Int = null
+  nMissing: Int = null
+  nAmbiguous: Int = null
+  coverageVizSummaryFileId: ID = null
 }
 
 input MetricConsensusGenomeWhereClause {
@@ -528,12 +656,51 @@ type MultipartUploadResponse {
 }
 
 type Mutation {
-  createSample(name: String!, sampleType: String!, waterControl: Boolean!, collectionDate: DateTime!, collectionLocation: String!, description: String!, collectionId: Int!): Sample!
-  createSequencingRead(protocol: SequencingProtocol!, r1FileId: ID!, r2FileId: ID!, techonology: SequencingTechnology!, nucleicAcid: NucleicAcid!, hasErcc: Boolean!, primerFileId: ID!, collectionId: Int!): SequencingRead!
-  updateSample(name: String!, sampleType: String!, waterControl: Boolean!, collectionDate: DateTime!, collectionLocation: String!, description: String!, entityId: ID!): Sample!
   createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
   uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
   markUploadComplete(fileId: ID!): File!
+  createSample(input: SampleCreateInput!): Sample!
+  updateSample(input: SampleUpdateInput!, where: SampleWhereClause!): [Sample!]!
+  deleteSample(where: SampleWhereClause!): [Sample!]!
+  createSequencingRead(input: SequencingReadCreateInput!): SequencingRead!
+  updateSequencingRead(input: SequencingReadUpdateInput!, where: SequencingReadWhereClause!): [SequencingRead!]!
+  deleteSequencingRead(where: SequencingReadWhereClause!): [SequencingRead!]!
+  createGenomicRange(input: GenomicRangeCreateInput!): GenomicRange!
+  updateGenomicRange(input: GenomicRangeUpdateInput!, where: GenomicRangeWhereClause!): [GenomicRange!]!
+  deleteGenomicRange(where: GenomicRangeWhereClause!): [GenomicRange!]!
+  createReferenceGenome(input: ReferenceGenomeCreateInput!): ReferenceGenome!
+  updateReferenceGenome(input: ReferenceGenomeUpdateInput!, where: ReferenceGenomeWhereClause!): [ReferenceGenome!]!
+  deleteReferenceGenome(where: ReferenceGenomeWhereClause!): [ReferenceGenome!]!
+  createSequenceAlignmentIndex(input: SequenceAlignmentIndexCreateInput!): SequenceAlignmentIndex!
+  updateSequenceAlignmentIndex(input: SequenceAlignmentIndexUpdateInput!, where: SequenceAlignmentIndexWhereClause!): [SequenceAlignmentIndex!]!
+  deleteSequenceAlignmentIndex(where: SequenceAlignmentIndexWhereClause!): [SequenceAlignmentIndex!]!
+  createMetadatum(input: MetadatumCreateInput!): Metadatum!
+  updateMetadatum(input: MetadatumUpdateInput!, where: MetadatumWhereClause!): [Metadatum!]!
+  deleteMetadatum(where: MetadatumWhereClause!): [Metadatum!]!
+  createMetadataField(input: MetadataFieldCreateInput!): MetadataField!
+  updateMetadataField(input: MetadataFieldUpdateInput!, where: MetadataFieldWhereClause!): [MetadataField!]!
+  deleteMetadataField(where: MetadataFieldWhereClause!): [MetadataField!]!
+  createMetadataFieldProject(input: MetadataFieldProjectCreateInput!): MetadataFieldProject!
+  updateMetadataFieldProject(input: MetadataFieldProjectUpdateInput!, where: MetadataFieldProjectWhereClause!): [MetadataFieldProject!]!
+  deleteMetadataFieldProject(where: MetadataFieldProjectWhereClause!): [MetadataFieldProject!]!
+  createConsensusGenome(input: ConsensusGenomeCreateInput!): ConsensusGenome!
+  updateConsensusGenome(input: ConsensusGenomeUpdateInput!, where: ConsensusGenomeWhereClause!): [ConsensusGenome!]!
+  deleteConsensusGenome(where: ConsensusGenomeWhereClause!): [ConsensusGenome!]!
+  createMetricConsensusGenome(input: MetricConsensusGenomeCreateInput!): MetricConsensusGenome!
+  updateMetricConsensusGenome(input: MetricConsensusGenomeUpdateInput!, where: MetricConsensusGenomeWhereClause!): [MetricConsensusGenome!]!
+  deleteMetricConsensusGenome(where: MetricConsensusGenomeWhereClause!): [MetricConsensusGenome!]!
+  createCoverageViz(input: CoverageVizCreateInput!): CoverageViz!
+  updateCoverageViz(input: CoverageVizUpdateInput!, where: CoverageVizWhereClause!): [CoverageViz!]!
+  deleteCoverageViz(where: CoverageVizWhereClause!): [CoverageViz!]!
+  createTaxon(input: TaxonCreateInput!): Taxon!
+  updateTaxon(input: TaxonUpdateInput!, where: TaxonWhereClause!): [Taxon!]!
+  deleteTaxon(where: TaxonWhereClause!): [Taxon!]!
+  createUpstreamDatabase(input: UpstreamDatabaseCreateInput!): UpstreamDatabase!
+  updateUpstreamDatabase(input: UpstreamDatabaseUpdateInput!, where: UpstreamDatabaseWhereClause!): [UpstreamDatabase!]!
+  deleteUpstreamDatabase(where: UpstreamDatabaseWhereClause!): [UpstreamDatabase!]!
+  createContig(input: ContigCreateInput!): Contig!
+  updateContig(input: ContigUpdateInput!, where: ContigWhereClause!): [Contig!]!
+  deleteContig(where: ContigWhereClause!): [Contig!]!
 }
 
 """An object with a Globally Unique ID"""
@@ -579,38 +746,38 @@ type Query {
     """The ID of the object."""
     id: GlobalID!
   ): Node!
-  file(where: FileWhereClause = null): [File!]!
-  sample(where: SampleWhereClause = null): [Sample!]!
-  sequencingRead(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  genomicRange(where: GenomicRangeWhereClause = null): [GenomicRange!]!
-  referenceGenome(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
-  sequenceAlignmentIndex(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
-  metadatum(where: MetadatumWhereClause = null): [Metadatum!]!
-  metadataField(where: MetadataFieldWhereClause = null): [MetadataField!]!
-  metadataFieldProject(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
-  consensusGenome(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
-  metricConsensusGenome(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
-  coverageViz(where: CoverageVizWhereClause = null): [CoverageViz!]!
-  taxon(where: TaxonWhereClause = null): [Taxon!]!
-  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
-  contig(where: ContigWhereClause = null): [Contig!]!
+  files(where: FileWhereClause = null): [File!]!
+  samples(where: SampleWhereClause = null): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
+  referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
+  sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
+  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
+  metadataFields(where: MetadataFieldWhereClause = null): [MetadataField!]!
+  metadataFieldProjects(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
+  metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
+  coverageVizes(where: CoverageVizWhereClause = null): [CoverageViz!]!
+  taxa(where: TaxonWhereClause = null): [Taxon!]!
+  upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
+  contigs(where: ContigWhereClause = null): [Contig!]!
 }
 
 type ReferenceGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  fileId: ID!
-  file(where: FileWhereClause = null): File!
-  fileIndexId: ID!
-  fileIndex(where: FileWhereClause = null): File!
+  fileId: ID
+  file(where: FileWhereClause = null): File
+  fileIndexId: ID
+  fileIndex(where: FileWhereClause = null): File
   name: String!
   description: String!
   taxon(where: TaxonWhereClause = null): Taxon
-  accessionId: String!
+  accessionId: String
   sequenceAlignmentIndices(
     where: SequenceAlignmentIndexWhereClause = null
 
@@ -668,6 +835,16 @@ type ReferenceGenomeConnection {
   edges: [ReferenceGenomeEdge!]!
 }
 
+input ReferenceGenomeCreateInput {
+  collectionId: Int!
+  fileId: ID!
+  fileIndexId: ID = null
+  name: String!
+  description: String!
+  taxonId: ID!
+  accessionId: String = null
+}
+
 """An edge in a connection."""
 type ReferenceGenomeEdge {
   """A cursor for use in pagination"""
@@ -675,6 +852,16 @@ type ReferenceGenomeEdge {
 
   """The item at the end of the edge"""
   node: ReferenceGenome!
+}
+
+input ReferenceGenomeUpdateInput {
+  collectionId: Int = null
+  fileId: ID = null
+  fileIndexId: ID = null
+  name: String = null
+  description: String = null
+  taxonId: ID = null
+  accessionId: String = null
 }
 
 input ReferenceGenomeWhereClause {
@@ -696,15 +883,15 @@ type Sample implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   name: String!
   sampleType: String!
   waterControl: Boolean!
-  collectionDate: DateTime!
+  collectionDate: DateTime
   collectionLocation: String!
-  description: String!
+  description: String
   hostTaxon(where: TaxonWhereClause = null): Taxon
   sequencingReads(
     where: SequencingReadWhereClause = null
@@ -748,6 +935,17 @@ type SampleConnection {
   edges: [SampleEdge!]!
 }
 
+input SampleCreateInput {
+  collectionId: Int!
+  name: String!
+  sampleType: String!
+  waterControl: Boolean!
+  collectionDate: DateTime = null
+  collectionLocation: String!
+  description: String = null
+  hostTaxonId: ID = null
+}
+
 """An edge in a connection."""
 type SampleEdge {
   """A cursor for use in pagination"""
@@ -755,6 +953,17 @@ type SampleEdge {
 
   """The item at the end of the edge"""
   node: Sample!
+}
+
+input SampleUpdateInput {
+  collectionId: Int = null
+  name: String = null
+  sampleType: String = null
+  waterControl: Boolean = null
+  collectionDate: DateTime = null
+  collectionLocation: String = null
+  description: String = null
+  hostTaxonId: ID = null
 }
 
 input SampleWhereClause {
@@ -778,11 +987,11 @@ type SequenceAlignmentIndex implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  indexFileId: ID!
-  indexFile(where: FileWhereClause = null): File!
+  indexFileId: ID
+  indexFile(where: FileWhereClause = null): File
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   tool: AlignmentTool!
   entityId: ID!
@@ -797,6 +1006,13 @@ type SequenceAlignmentIndexConnection {
   edges: [SequenceAlignmentIndexEdge!]!
 }
 
+input SequenceAlignmentIndexCreateInput {
+  collectionId: Int!
+  indexFileId: ID!
+  referenceGenomeId: ID!
+  tool: AlignmentTool!
+}
+
 """An edge in a connection."""
 type SequenceAlignmentIndexEdge {
   """A cursor for use in pagination"""
@@ -804,6 +1020,13 @@ type SequenceAlignmentIndexEdge {
 
   """The item at the end of the edge"""
   node: SequenceAlignmentIndex!
+}
+
+input SequenceAlignmentIndexUpdateInput {
+  collectionId: Int = null
+  indexFileId: ID = null
+  referenceGenomeId: ID = null
+  tool: AlignmentTool = null
 }
 
 input SequenceAlignmentIndexWhereClause {
@@ -838,21 +1061,21 @@ type SequencingRead implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   sample(where: SampleWhereClause = null): Sample
   protocol: SequencingProtocol!
-  r1FileId: ID!
-  r1File(where: FileWhereClause = null): File!
-  r2FileId: ID!
-  r2File(where: FileWhereClause = null): File!
-  techonology: SequencingTechnology!
+  r1FileId: ID
+  r1File(where: FileWhereClause = null): File
+  r2FileId: ID
+  r2File(where: FileWhereClause = null): File
+  technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxon(where: TaxonWhereClause = null): Taxon
-  primerFileId: ID!
-  primerFile(where: FileWhereClause = null): File!
+  primerFileId: ID
+  primerFile(where: FileWhereClause = null): File
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -895,6 +1118,19 @@ type SequencingReadConnection {
   edges: [SequencingReadEdge!]!
 }
 
+input SequencingReadCreateInput {
+  collectionId: Int!
+  sampleId: ID = null
+  protocol: SequencingProtocol!
+  r1FileId: ID = null
+  r2FileId: ID = null
+  technology: SequencingTechnology!
+  nucleicAcid: NucleicAcid!
+  hasErcc: Boolean!
+  taxonId: ID = null
+  primerFileId: ID = null
+}
+
 """An edge in a connection."""
 type SequencingReadEdge {
   """A cursor for use in pagination"""
@@ -904,6 +1140,19 @@ type SequencingReadEdge {
   node: SequencingRead!
 }
 
+input SequencingReadUpdateInput {
+  collectionId: Int = null
+  sampleId: ID = null
+  protocol: SequencingProtocol = null
+  r1FileId: ID = null
+  r2FileId: ID = null
+  technology: SequencingTechnology = null
+  nucleicAcid: NucleicAcid = null
+  hasErcc: Boolean = null
+  taxonId: ID = null
+  primerFileId: ID = null
+}
+
 input SequencingReadWhereClause {
   id: UUIDComparators
   producingRunId: IntComparators
@@ -911,7 +1160,7 @@ input SequencingReadWhereClause {
   collectionId: IntComparators
   sample: SampleWhereClause
   protocol: SequencingProtocolEnumComparators
-  techonology: SequencingTechnologyEnumComparators
+  technology: SequencingTechnologyEnumComparators
   nucleicAcid: NucleicAcidEnumComparators
   hasErcc: BoolComparators
   taxon: TaxonWhereClause
@@ -969,12 +1218,12 @@ type Taxon implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  wikipediaId: String!
-  description: String!
-  commonName: String!
+  wikipediaId: String
+  description: String
+  commonName: String
   name: String!
   isPhage: Boolean!
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
@@ -1061,6 +1310,27 @@ type TaxonConnection {
   edges: [TaxonEdge!]!
 }
 
+input TaxonCreateInput {
+  collectionId: Int!
+  wikipediaId: String = null
+  description: String = null
+  commonName: String = null
+  name: String!
+  isPhage: Boolean!
+  upstreamDatabaseId: ID!
+  upstreamDatabaseIdentifier: String!
+  level: TaxonLevel!
+  taxId: Int!
+  taxIdParent: Int!
+  taxIdSpecies: Int!
+  taxIdGenus: Int!
+  taxIdFamily: Int!
+  taxIdOrder: Int!
+  taxIdClass: Int!
+  taxIdPhylum: Int!
+  taxIdKingdom: Int!
+}
+
 """An edge in a connection."""
 type TaxonEdge {
   """A cursor for use in pagination"""
@@ -1086,6 +1356,27 @@ input TaxonLevelEnumComparators {
   _lt: TaxonLevel
   _lte: TaxonLevel
   _is_null: TaxonLevel
+}
+
+input TaxonUpdateInput {
+  collectionId: Int = null
+  wikipediaId: String = null
+  description: String = null
+  commonName: String = null
+  name: String = null
+  isPhage: Boolean = null
+  upstreamDatabaseId: ID = null
+  upstreamDatabaseIdentifier: String = null
+  level: TaxonLevel = null
+  taxId: Int = null
+  taxIdParent: Int = null
+  taxIdSpecies: Int = null
+  taxIdGenus: Int = null
+  taxIdFamily: Int = null
+  taxIdOrder: Int = null
+  taxIdClass: Int = null
+  taxIdPhylum: Int = null
+  taxIdKingdom: Int = null
 }
 
 input TaxonWhereClause {
@@ -1134,7 +1425,7 @@ type UpstreamDatabase implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int!
+  producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
   name: String!
@@ -1154,6 +1445,16 @@ type UpstreamDatabase implements EntityInterface & Node {
     last: Int = null
   ): TaxonConnection!
   entityId: ID!
+}
+
+input UpstreamDatabaseCreateInput {
+  collectionId: Int!
+  name: String!
+}
+
+input UpstreamDatabaseUpdateInput {
+  collectionId: Int = null
+  name: String = null
 }
 
 input UpstreamDatabaseWhereClause {

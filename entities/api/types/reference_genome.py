@@ -12,7 +12,7 @@ from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
@@ -21,6 +21,7 @@ from platformics.api.core.gql_to_sql import (
     UUIDComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
@@ -77,7 +78,7 @@ async def load_sequence_alignment_index_rows(
 ) -> Sequence[Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["sequence_alignment_index"]
+    relationship = mapper.relationships["sequence_alignment_indices"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -91,7 +92,7 @@ async def load_consensus_genome_rows(
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["consensus_genome"]
+    relationship = mapper.relationships["consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -105,7 +106,7 @@ async def load_genomic_range_rows(
 ) -> Sequence[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["genomic_range"]
+    relationship = mapper.relationships["genomic_ranges"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -160,26 +161,26 @@ class ReferenceGenomeWhereClause(TypedDict):
 @strawberry.type
 class ReferenceGenome(EntityInterface):
     id: strawberry.ID
-    producing_run_id: int
+    producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
-    file_id: strawberry.ID
-    file: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file")  # type: ignore
-    file_index_id: strawberry.ID
-    file_index: Annotated["File", strawberry.lazy("api.files")] = load_files_from("file_index")  # type: ignore
+    file_id: Optional[strawberry.ID]
+    file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
+    file_index_id: Optional[strawberry.ID]
+    file_index: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file_index")  # type: ignore
     name: str
     description: str
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    accession_id: str
-    sequence_alignment_indices: typing.Sequence[
+    accession_id: Optional[str] = None
+    sequence_alignment_indices: Sequence[
         Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]
-    ] = load_sequence_alignment_index_rows
-    consensus_genomes: typing.Sequence[
+    ] = load_sequence_alignment_index_rows  # type:ignore
+    consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows
-    genomic_ranges: typing.Sequence[
+    ] = load_consensus_genome_rows  # type:ignore
+    genomic_ranges: Sequence[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows
+    ] = load_genomic_range_rows  # type:ignore
     entity_id: strawberry.ID
 
 
@@ -190,12 +191,121 @@ ReferenceGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 )
 
 
-# Resolvers used in api/queries
+# ------------------------------------------------------------------------------
+# Mutation types
+# ------------------------------------------------------------------------------
+
+
+@strawberry.input()
+class ReferenceGenomeCreateInput:
+    collection_id: int
+    file_id: strawberry.ID
+    file_index_id: Optional[strawberry.ID] = None
+    name: str
+    description: str
+    taxon_id: strawberry.ID
+    accession_id: Optional[str] = None
+
+
+@strawberry.input()
+class ReferenceGenomeUpdateInput:
+    collection_id: Optional[int] = None
+    file_id: Optional[strawberry.ID] = None
+    file_index_id: Optional[strawberry.ID] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    taxon_id: Optional[strawberry.ID] = None
+    accession_id: Optional[str] = None
+
+
+# ------------------------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------------------------
+
+
 @strawberry.field(extensions=[DependencyExtension()])
-async def resolve_reference_genome(
+async def resolve_reference_genomes(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ReferenceGenomeWhereClause] = None,
 ) -> typing.Sequence[ReferenceGenome]:
     return await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_reference_genome(
+    input: ReferenceGenomeCreateInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> db.Entity:
+    params = input.__dict__
+
+    # Validate that user can create entity in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.ReferenceGenome.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise Exception("Unauthorized: Cannot create entity in this collection")
+
+    # Save to DB
+    params["owner_user_id"] = int(principal.id)
+    new_entity = db.ReferenceGenome(**params)
+    session.add(new_entity)
+    await session.commit()
+    return new_entity
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def update_reference_genome(
+    input: ReferenceGenomeUpdateInput,
+    where: ReferenceGenomeWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sequence[db.Entity]:
+    params = input.__dict__
+
+    # Need at least one thing to update
+    num_params = len([x for x in params if params[x] is not None])
+    if num_params == 0:
+        raise Exception("No fields to update")
+
+    # Fetch entities for update, if we have access to them
+    entities = await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot update entities")
+
+    # Validate that the user has access to the new collection ID
+    if input.collection_id:
+        attr = {"collection_id": input.collection_id}
+        resource = Resource(id="SOME_ID", kind=db.ReferenceGenome.__tablename__, attr=attr)
+        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
+            raise Exception("Unauthorized: Cannot access new collection")
+
+    # Update DB
+    for entity in entities:
+        for key in params:
+            if params[key]:
+                setattr(entity, key, params[key])
+    await session.commit()
+    return entities
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def delete_reference_genome(
+    where: ReferenceGenomeWhereClause,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> Sequence[db.Entity]:
+    # Fetch entities for deletion, if we have access to them
+    entities = await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities) == 0:
+        raise Exception("Unauthorized: Cannot delete entities")
+
+    # Update DB
+    for entity in entities:
+        await session.delete(entity)
+    await session.commit()
+    return entities

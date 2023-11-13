@@ -4,21 +4,21 @@
 import strawberry
 from strawberry import relay
 from typing import Sequence
-from api.files import File, resolve_file
-from api.types.sample import Sample, resolve_sample
-from api.types.sequencing_read import SequencingRead, resolve_sequencing_read
-from api.types.genomic_range import GenomicRange, resolve_genomic_range
-from api.types.reference_genome import ReferenceGenome, resolve_reference_genome
-from api.types.sequence_alignment_index import SequenceAlignmentIndex, resolve_sequence_alignment_index
-from api.types.metadatum import Metadatum, resolve_metadatum
-from api.types.metadata_field import MetadataField, resolve_metadata_field
-from api.types.metadata_field_project import MetadataFieldProject, resolve_metadata_field_project
-from api.types.consensus_genome import ConsensusGenome, resolve_consensus_genome
-from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_metric_consensus_genome
-from api.types.coverage_viz import CoverageViz, resolve_coverage_viz
-from api.types.taxon import Taxon, resolve_taxon
-from api.types.upstream_database import UpstreamDatabase, resolve_upstream_database
-from api.types.contig import Contig, resolve_contig
+from api.files import File, resolve_files
+from api.types.sample import Sample, resolve_samples
+from api.types.sequencing_read import SequencingRead, resolve_sequencing_reads
+from api.types.genomic_range import GenomicRange, resolve_genomic_ranges
+from api.types.reference_genome import ReferenceGenome, resolve_reference_genomes
+from api.types.sequence_alignment_index import SequenceAlignmentIndex, resolve_sequence_alignment_indices
+from api.types.metadatum import Metadatum, resolve_metadatas
+from api.types.metadata_field import MetadataField, resolve_metadata_fields
+from api.types.metadata_field_project import MetadataFieldProject, resolve_metadata_field_projects
+from api.types.consensus_genome import ConsensusGenome, resolve_consensus_genomes
+from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_metrics_consensus_genomes
+from api.types.coverage_viz import CoverageViz, resolve_coverage_vizes
+from api.types.taxon import Taxon, resolve_taxa
+from api.types.upstream_database import UpstreamDatabase, resolve_upstream_databases
+from api.types.contig import Contig, resolve_contigs
 
 
 @strawberry.type
@@ -27,20 +27,20 @@ class Query:
     node: relay.Node = relay.node()
 
     # Query files
-    file: Sequence[File] = resolve_file
+    files: Sequence[File] = resolve_files
 
     # Query entities
-    sample: Sequence[Sample] = resolve_sample
-    sequencing_read: Sequence[SequencingRead] = resolve_sequencing_read
-    genomic_range: Sequence[GenomicRange] = resolve_genomic_range
-    reference_genome: Sequence[ReferenceGenome] = resolve_reference_genome
-    sequence_alignment_index: Sequence[SequenceAlignmentIndex] = resolve_sequence_alignment_index
-    metadatum: Sequence[Metadatum] = resolve_metadatum
-    metadata_field: Sequence[MetadataField] = resolve_metadata_field
-    metadata_field_project: Sequence[MetadataFieldProject] = resolve_metadata_field_project
-    consensus_genome: Sequence[ConsensusGenome] = resolve_consensus_genome
-    metric_consensus_genome: Sequence[MetricConsensusGenome] = resolve_metric_consensus_genome
-    coverage_viz: Sequence[CoverageViz] = resolve_coverage_viz
-    taxon: Sequence[Taxon] = resolve_taxon
-    upstream_database: Sequence[UpstreamDatabase] = resolve_upstream_database
-    contig: Sequence[Contig] = resolve_contig
+    samples: Sequence[Sample] = resolve_samples
+    sequencing_reads: Sequence[SequencingRead] = resolve_sequencing_reads
+    genomic_ranges: Sequence[GenomicRange] = resolve_genomic_ranges
+    reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
+    sequence_alignment_indices: Sequence[SequenceAlignmentIndex] = resolve_sequence_alignment_indices
+    metadatas: Sequence[Metadatum] = resolve_metadatas
+    metadata_fields: Sequence[MetadataField] = resolve_metadata_fields
+    metadata_field_projects: Sequence[MetadataFieldProject] = resolve_metadata_field_projects
+    consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
+    metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
+    coverage_vizes: Sequence[CoverageViz] = resolve_coverage_vizes
+    taxa: Sequence[Taxon] = resolve_taxa
+    upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
+    contigs: Sequence[Contig] = resolve_contigs
