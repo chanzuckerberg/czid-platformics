@@ -783,7 +783,7 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
     protocol = sgqlc.types.Field(sgqlc.types.non_null(SequencingProtocol), graphql_name="protocol")
-    r1_file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="r1FileId")
+    r1_file_id = sgqlc.types.Field(ID, graphql_name="r1FileId")
     r2_file_id = sgqlc.types.Field(ID, graphql_name="r2FileId")
     technology = sgqlc.types.Field(sgqlc.types.non_null(SequencingTechnology), graphql_name="technology")
     nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name="nucleicAcid")
@@ -2651,7 +2651,7 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(ID, graphql_name="entityId")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class SequenceAlignmentIndex(sgqlc.types.Type, EntityInterface, Node):

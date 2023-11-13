@@ -923,7 +923,7 @@ type Sample implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadatumConnection!
-  entityId: ID
+  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -1122,7 +1122,7 @@ input SequencingReadCreateInput {
   collectionId: Int!
   sampleId: ID = null
   protocol: SequencingProtocol!
-  r1FileId: ID!
+  r1FileId: ID = null
   r2FileId: ID = null
   technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!

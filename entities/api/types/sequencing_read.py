@@ -196,7 +196,7 @@ class SequencingReadCreateInput:
     collection_id: int
     sample_id: Optional[strawberry.ID] = None
     protocol: SequencingProtocol
-    r1_file_id: strawberry.ID
+    r1_file_id: Optional[strawberry.ID] = None
     r2_file_id: Optional[strawberry.ID] = None
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
