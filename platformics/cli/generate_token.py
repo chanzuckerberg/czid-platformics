@@ -5,6 +5,7 @@ import click
 from platformics.settings import Settings
 from platformics.security.token_auth import ProjectRole, create_token
 
+
 @click.group()
 @click.option(
     "--debug",
@@ -18,7 +19,6 @@ from platformics.security.token_auth import ProjectRole, create_token
     help="Auth token to use for requests",
     envvar="PLATFORMICS_AUTH_TOKEN",
 )
-
 @click.pass_context
 def cli(ctx: click.Context, debug: bool, token: str) -> None:
     logger = logging.getLogger()
@@ -44,7 +44,6 @@ def auth() -> None:
     default=["123:admin", "123:member", "456:member"],
     multiple=True,
 )
-
 @click.pass_context
 def generate_token(ctx: click.Context, userid: int, project: list[str], expiration: int) -> None:
     settings = Settings.model_validate({})
