@@ -53,7 +53,7 @@ async def load_taxon_rows(
 ) -> Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.UpstreamDatabase)
-    relationship = mapper.relationships["taxon"]
+    relationship = mapper.relationships["taxa"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 

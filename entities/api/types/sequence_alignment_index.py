@@ -52,7 +52,7 @@ async def load_reference_genome_rows(
 ) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequenceAlignmentIndex)
-    relationship = mapper.relationships["reference_genome"]
+    relationship = mapper.relationships["reference_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
 
 

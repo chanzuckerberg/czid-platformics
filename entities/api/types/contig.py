@@ -50,7 +50,7 @@ async def load_sequencing_read_rows(
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Contig)
-    relationship = mapper.relationships["sequencing_read"]
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
 
 

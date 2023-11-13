@@ -66,7 +66,7 @@ async def load_upstream_database_rows(
 ) -> Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["upstream_database"]
+    relationship = mapper.relationships["upstream_databases"]
     return await dataloader.loader_for(relationship, where).load(root.upstream_database_id)  # type:ignore
 
 
@@ -80,7 +80,7 @@ async def load_consensus_genome_rows(
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["consensus_genome"]
+    relationship = mapper.relationships["consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -94,7 +94,7 @@ async def load_reference_genome_rows(
 ) -> Sequence[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["reference_genome"]
+    relationship = mapper.relationships["reference_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -108,7 +108,7 @@ async def load_sequencing_read_rows(
 ) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["sequencing_read"]
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -122,7 +122,7 @@ async def load_sample_rows(
 ) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["sample"]
+    relationship = mapper.relationships["samples"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 

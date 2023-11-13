@@ -50,7 +50,7 @@ async def load_consensus_genome_rows(
 ) -> Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetricConsensusGenome)
-    relationship = mapper.relationships["consensus_genome"]
+    relationship = mapper.relationships["consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.consensus_genome_id)  # type:ignore
 
 

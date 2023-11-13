@@ -59,7 +59,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
-    relationship = mapper.relationships["taxon"]
+    relationship = mapper.relationships["taxa"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -73,7 +73,7 @@ async def load_sequencing_read_rows(
 ) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
-    relationship = mapper.relationships["sequencing_read"]
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -87,7 +87,7 @@ async def load_metadatum_rows(
 ) -> Sequence[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
-    relationship = mapper.relationships["metadatum"]
+    relationship = mapper.relationships["metadatas"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 

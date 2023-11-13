@@ -79,7 +79,7 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.{{ cls.name }})
-    relationship = mapper.relationships["{{ related_field.related_class.snake_name }}"]
+    relationship = mapper.relationships["{{ related_field.related_class.plural_snake_name }}"]
         {%- if related_field.multivalued %}
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}

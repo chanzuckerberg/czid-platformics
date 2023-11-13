@@ -107,11 +107,11 @@ class EntityWrapper:
 
     @cached_property
     def plural_camel_name(self) -> str:
-        return self.wrapped_class.annotations.plural
+        return self.wrapped_class.annotations["plural"].value
 
     @cached_property
     def plural_snake_name(self) -> str:
-        return strcase.to_snakee(self.wrapped_class.annotations.plural)
+        return strcase.to_snake(self.plural_camel_name)
 
     @cached_property
     def camel_name(self) -> str:

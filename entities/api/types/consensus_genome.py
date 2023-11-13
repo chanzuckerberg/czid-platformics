@@ -64,7 +64,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["taxon"]
+    relationship = mapper.relationships["taxa"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -76,7 +76,7 @@ async def load_sequencing_read_rows(
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["sequencing_read"]
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
 
 
@@ -88,7 +88,7 @@ async def load_genomic_range_rows(
 ) -> Optional[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["genomic_range"]
+    relationship = mapper.relationships["genomic_ranges"]
     return await dataloader.loader_for(relationship, where).load(root.genomic_range_id)  # type:ignore
 
 
@@ -100,7 +100,7 @@ async def load_reference_genome_rows(
 ) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["reference_genome"]
+    relationship = mapper.relationships["reference_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
 
 
@@ -117,7 +117,7 @@ async def load_metric_consensus_genome_rows(
 ) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["metric_consensus_genome"]
+    relationship = mapper.relationships["metrics_consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 

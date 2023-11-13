@@ -63,7 +63,7 @@ async def load_sample_rows(
 ) -> Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["sample"]
+    relationship = mapper.relationships["samples"]
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
 
 
@@ -75,7 +75,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["taxon"]
+    relationship = mapper.relationships["taxa"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -89,7 +89,7 @@ async def load_consensus_genome_rows(
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["consensus_genome"]
+    relationship = mapper.relationships["consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -103,7 +103,7 @@ async def load_contig_rows(
 ) -> Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["contig"]
+    relationship = mapper.relationships["contigs"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 

@@ -61,7 +61,7 @@ async def load_taxon_rows(
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["taxon"]
+    relationship = mapper.relationships["taxa"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
@@ -78,7 +78,7 @@ async def load_sequence_alignment_index_rows(
 ) -> Sequence[Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["sequence_alignment_index"]
+    relationship = mapper.relationships["sequence_alignment_indices"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -92,7 +92,7 @@ async def load_consensus_genome_rows(
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["consensus_genome"]
+    relationship = mapper.relationships["consensus_genomes"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -106,7 +106,7 @@ async def load_genomic_range_rows(
 ) -> Sequence[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["genomic_range"]
+    relationship = mapper.relationships["genomic_ranges"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
