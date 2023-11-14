@@ -109,7 +109,6 @@ class SequenceAlignmentIndex(EntityInterface):
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
     ] = load_reference_genome_rows  # type:ignore
     tool: AlignmentTool
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

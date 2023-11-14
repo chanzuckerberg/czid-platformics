@@ -181,7 +181,6 @@ class ReferenceGenome(EntityInterface):
     genomic_ranges: Sequence[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
     ] = load_genomic_range_rows  # type:ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

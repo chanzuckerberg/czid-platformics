@@ -117,7 +117,6 @@ class MetricConsensusGenome(EntityInterface):
     n_ambiguous: Optional[int] = None
     coverage_viz_summary_file_id: Optional[strawberry.ID]
     coverage_viz_summary_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_summary_file")  # type: ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

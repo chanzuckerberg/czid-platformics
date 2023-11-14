@@ -83,7 +83,6 @@ class UpstreamDatabase(EntityInterface):
     collection_id: int
     name: str
     taxa: Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

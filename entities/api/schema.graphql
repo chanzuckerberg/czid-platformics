@@ -59,7 +59,6 @@ type ConsensusGenome implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetricConsensusGenomeConnection!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -125,7 +124,6 @@ type Contig implements EntityInterface & Node {
   collectionId: Int!
   sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
   sequence: String!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -178,7 +176,6 @@ type CoverageViz implements EntityInterface & Node {
   accessionId: String!
   coverageVizFileId: ID
   coverageVizFile(where: FileWhereClause = null): File
-  entityId: ID!
 }
 
 input CoverageVizCreateInput {
@@ -309,7 +306,6 @@ type GenomicRange implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ConsensusGenomeConnection!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -417,7 +413,6 @@ type MetadataField implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadatumConnection!
-  entityId: ID!
 }
 
 input MetadataFieldCreateInput {
@@ -439,7 +434,6 @@ type MetadataFieldProject implements EntityInterface & Node {
   collectionId: Int!
   projectId: Int!
   metadataField(where: MetadataFieldWhereClause = null): MetadataField
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -518,7 +512,6 @@ type Metadatum implements EntityInterface & Node {
   sample(where: SampleWhereClause = null): Sample
   metadataField(where: MetadataFieldWhereClause = null): MetadataField
   value: String!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -580,7 +573,6 @@ type MetricConsensusGenome implements EntityInterface & Node {
   nAmbiguous: Int
   coverageVizSummaryFileId: ID
   coverageVizSummaryFile(where: FileWhereClause = null): File
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -823,7 +815,6 @@ type ReferenceGenome implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): GenomicRangeConnection!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -923,7 +914,6 @@ type Sample implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadatumConnection!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -994,7 +984,6 @@ type SequenceAlignmentIndex implements EntityInterface & Node {
   indexFile(where: FileWhereClause = null): File
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   tool: AlignmentTool!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -1106,7 +1095,6 @@ type SequencingRead implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ContigConnection!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -1298,7 +1286,6 @@ type Taxon implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): SampleConnection!
-  entityId: ID!
 }
 
 """A connection to a list of items."""
@@ -1444,7 +1431,6 @@ type UpstreamDatabase implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): TaxonConnection!
-  entityId: ID!
 }
 
 input UpstreamDatabaseCreateInput {

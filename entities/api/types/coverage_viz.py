@@ -86,7 +86,6 @@ class CoverageViz(EntityInterface):
     accession_id: str
     coverage_viz_file_id: Optional[strawberry.ID]
     coverage_viz_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_file")  # type: ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
