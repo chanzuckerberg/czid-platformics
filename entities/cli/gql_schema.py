@@ -2189,7 +2189,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "intermediate_outputs_id",
         "intermediate_outputs",
         "metrics",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2247,20 +2246,11 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class Contig(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "sequencing_read",
-        "sequence",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_read", "sequence")
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
@@ -2273,7 +2263,6 @@ class Contig(sgqlc.types.Type, EntityInterface, Node):
         ),
     )
     sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class CoverageViz(sgqlc.types.Type, EntityInterface, Node):
@@ -2286,7 +2275,6 @@ class CoverageViz(sgqlc.types.Type, EntityInterface, Node):
         "accession_id",
         "coverage_viz_file_id",
         "coverage_viz_file",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2299,7 +2287,6 @@ class CoverageViz(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="coverageVizFile",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
@@ -2313,7 +2300,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         "file_id",
         "file",
         "consensus_genomes",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2345,7 +2331,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class MetadataField(sgqlc.types.Type, EntityInterface, Node):
@@ -2363,7 +2348,6 @@ class MetadataField(sgqlc.types.Type, EntityInterface, Node):
         "options",
         "default_value",
         "metadatas",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2401,20 +2385,11 @@ class MetadataField(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class MetadataFieldProject(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "project_id",
-        "metadata_field",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "project_id", "metadata_field")
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
@@ -2427,21 +2402,11 @@ class MetadataFieldProject(sgqlc.types.Type, EntityInterface, Node):
             (("where", sgqlc.types.Arg(MetadataFieldWhereClause, graphql_name="where", default=None)),)
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class Metadatum(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "sample",
-        "metadata_field",
-        "value",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sample", "metadata_field", "value")
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
@@ -2459,7 +2424,6 @@ class Metadatum(sgqlc.types.Type, EntityInterface, Node):
         ),
     )
     value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="value")
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
@@ -2478,7 +2442,6 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "n_ambiguous",
         "coverage_viz_summary_file_id",
         "coverage_viz_summary_file",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2503,7 +2466,6 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="coverageVizSummaryFile",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
@@ -2524,7 +2486,6 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         "sequence_alignment_indices",
         "consensus_genomes",
         "genomic_ranges",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2589,7 +2550,6 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class Sample(sgqlc.types.Type, EntityInterface, Node):
@@ -2608,7 +2568,6 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
         "host_taxon",
         "sequencing_reads",
         "metadatas",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2651,7 +2610,6 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class SequenceAlignmentIndex(sgqlc.types.Type, EntityInterface, Node):
@@ -2665,7 +2623,6 @@ class SequenceAlignmentIndex(sgqlc.types.Type, EntityInterface, Node):
         "index_file",
         "reference_genome",
         "tool",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2685,7 +2642,6 @@ class SequenceAlignmentIndex(sgqlc.types.Type, EntityInterface, Node):
         ),
     )
     tool = sgqlc.types.Field(sgqlc.types.non_null(AlignmentTool), graphql_name="tool")
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
@@ -2709,7 +2665,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "primer_file",
         "consensus_genomes",
         "contigs",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2773,7 +2728,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class Taxon(sgqlc.types.Type, EntityInterface, Node):
@@ -2804,7 +2758,6 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         "reference_genomes",
         "sequencing_reads",
         "samples",
-        "entity_id",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2887,12 +2840,11 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "name", "taxa", "entity_id")
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "name", "taxa")
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
@@ -2911,7 +2863,6 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
 
 
 ########################################################################

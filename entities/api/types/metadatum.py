@@ -99,7 +99,6 @@ class Metadatum(EntityInterface):
         Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
     ] = load_metadata_field_rows  # type:ignore
     value: str
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

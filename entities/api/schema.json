@@ -1976,19 +1976,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -2640,19 +2627,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -2804,19 +2778,6 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "TaxonConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -5477,19 +5438,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -5864,19 +5812,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -6071,19 +6006,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -6269,19 +6191,6 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "ConsensusGenomeConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -6654,19 +6563,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -6886,19 +6782,6 @@
                 "ofType": {
                   "kind": "ENUM",
                   "name": "AlignmentTool",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
                   "ofType": null
                 }
               }
@@ -7244,19 +7127,6 @@
                 "kind": "OBJECT",
                 "name": "File",
                 "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
               }
             }
           ],
@@ -7711,19 +7581,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -7994,19 +7851,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -8201,19 +8045,6 @@
                 "name": "MetadataField",
                 "ofType": null
               }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": null,
@@ -8336,19 +8167,6 @@
                 "kind": "OBJECT",
                 "name": "File",
                 "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
               }
             }
           ],
