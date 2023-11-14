@@ -96,11 +96,8 @@ def get_s3_client(
         config=Config(signature_version="s3v4"),
     )
 
+
 def get_sts_client(
     settings: APISettings = Depends(get_settings),
 ) -> STSClient:
-    return boto3.client(
-        "sts", 
-        region_name=settings.AWS_REGION,
-        endpoint_url=settings.BOTO_ENDPOINT_URL
-    )
+    return boto3.client("sts", region_name=settings.AWS_REGION, endpoint_url=settings.BOTO_ENDPOINT_URL)

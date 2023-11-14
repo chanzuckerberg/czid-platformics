@@ -13,9 +13,11 @@ from api.core.helpers import get_db_query, get_db_rows
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
 
+
 class Hashabledict(dict):
     def __hash__(self):  # type: ignore
         return hash(frozenset(self))
+
 
 def make_hashable(whereclause: dict) -> Hashabledict:
     res = {}
@@ -57,7 +59,7 @@ class EntityLoader:
             where = {}
         where_str = make_hashable(where)
         try:
-            return self._loaders[(relationship, where_str)] # type: ignore
+            return self._loaders[(relationship, where_str)]  # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
@@ -71,11 +73,7 @@ class EntityLoader:
                 if relationship.order_by:
                     order_by = [relationship.order_by]
                 query = get_db_query(
-                    related_model,  # type: ignore
-                    CerbosAction.VIEW,
-                    self.cerbos_client,
-                    self.principal,
-                    where
+                    related_model, CerbosAction.VIEW, self.cerbos_client, self.principal, where  # type: ignore
                 )
                 for item in filters:
                     query = query.where(item)
@@ -99,5 +97,5 @@ class EntityLoader:
                 else:
                     return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
-            self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn) # type: ignore
-            return self._loaders[(relationship, where_str)] # type: ignore
+            self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn)  # type: ignore
+            return self._loaders[(relationship, where_str)]  # type: ignore

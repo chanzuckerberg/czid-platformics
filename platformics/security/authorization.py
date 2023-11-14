@@ -27,7 +27,7 @@ def get_resource_query(
             "request.resource.attr.owner_user_id": db.Entity.owner_user_id,  # type: ignore
             "request.resource.attr.collection_id": db.Entity.collection_id,  # type: ignore
         }
-        joins = ([(db.Entity, db.File.entity_id == db.Entity.id)])  # type: ignore
+        joins = [(db.Entity, db.File.entity_id == db.Entity.id)]  # type: ignore
     else:
         attr_map = {
             "request.resource.attr.owner_user_id": model_cls.owner_user_id,  # type: ignore

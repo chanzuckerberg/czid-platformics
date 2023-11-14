@@ -40,7 +40,6 @@ operator_map = {
 }
 
 
-
 @strawberry.input()
 class EnumComparators(TypedDict, Generic[T]):
     _eq: Optional[T]
@@ -146,14 +145,16 @@ class FancySQLAlchemyMapper(StrawberrySQLAlchemyMapper):
         Return an async field resolver for the given relationship,
         so as to avoid n+1 query problem.
         """
+
         async def resolve(self: typing.Self, info: Info, where: Optional[str] = strawberry.UNSET) -> list | None:
             instance_state = cast(InstanceState, inspect(self))
             if relationship.key not in instance_state.unloaded:
                 related_objects = getattr(self, relationship.key)
             else:
-                relationship_key = tuple([
-                    getattr(self, local.key)  # type: ignore
-                    for local, _ in relationship.local_remote_pairs]  # type: ignore
+                relationship_key = tuple(
+                    [
+                        getattr(self, local.key) for local, _ in relationship.local_remote_pairs  # type: ignore
+                    ]  # type: ignore
                 )
                 if any(item is None for item in relationship_key):
                     if relationship.uselist:
@@ -208,7 +209,7 @@ class WhereClauseBuilder(SSAPlugin):
         relationship: RelationshipProperty,
     ) -> None:
         relationship_model = relationship.entity.entity
-        type_name = strawberry_sqlalchemy_mapper.model_to_type_or_interface_name(relationship_model) # type: ignore
+        type_name = strawberry_sqlalchemy_mapper.model_to_type_or_interface_name(relationship_model)  # type: ignore
         try:
             whereclause = None
             try:
