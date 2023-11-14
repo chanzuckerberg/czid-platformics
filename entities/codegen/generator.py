@@ -6,6 +6,8 @@ from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 from codegen.lib.linkml_wrappers import ViewWrapper
 
+DIR_CODEGEN = ["support", "api/types", "database/models", "cerbos/policies"]
+
 
 @click.group()
 @click.option(
@@ -122,6 +124,9 @@ def api_generate(ctx: click.Context, schemafile: str, output_prefix: str) -> Non
     view = SchemaView(schemafile)
     view.imports_closure()
     wrapped_view = ViewWrapper(view)
+
+    for dir in DIR_CODEGEN:
+        os.makedirs(f"{output_prefix}/{dir}", exist_ok=True)
 
     logging.debug("generating api code")
     generate_enums(output_prefix, environment, wrapped_view)
