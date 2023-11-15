@@ -44,11 +44,12 @@ class CustomNameConverter(NameConverter):
 def get_app(use_test_schema=False) -> FastAPI:
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
-    # Add a global settings object to the app that we can use as a dependency
     graphql_schema = schema_test if use_test_schema else schema
+    title = "Codegen Tests" if use_test_schema else settings.SERVICE_NAME
     graphql_app: GraphQLRouter = GraphQLRouter(graphql_schema, context_getter=get_context, graphiql=True)
-    _app = FastAPI(title=settings.SERVICE_NAME, debug=settings.DEBUG)
+    _app = FastAPI(title=title, debug=settings.DEBUG)
     _app.include_router(graphql_app, prefix="/graphql")
+    # Add a global settings object to the app that we can use as a dependency
     _app.state.entities_settings = settings
 
     return _app

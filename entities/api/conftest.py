@@ -106,7 +106,7 @@ def overwrite_api(api: FastAPI, async_db: AsyncDB) -> None:
 
 @pytest_asyncio.fixture()
 async def api(async_db: AsyncDB) -> FastAPI:
-    api = get_app(use_test_schema=True)
+    api = get_app(use_test_schema=False)
     overwrite_api(api, async_db)
     return api
 
