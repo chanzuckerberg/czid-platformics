@@ -2,7 +2,8 @@ import os
 import pytest
 from api.conftest import GQLTestClient
 from platformics.database.connect import SyncDB
-from test_infra import factories as fa
+from test_infra.factories.main import SessionStorage, FileFactory
+from test_infra.factories.sequencing_read import SequencingReadFactory
 from mypy_boto3_s3.client import S3Client
 from database.models import File, FileStatus, SequencingRead
 import sqlalchemy as sa
@@ -20,9 +21,9 @@ async def test_file_validation(
 
     # Create mock data
     with sync_db.session() as session:
-        fa.SessionStorage.set_session(session)
-        fa.SequencingReadFactory.create(owner_user_id=user1_id, collection_id=project1_id)
-        fa.FileFactory.update_file_ids()
+        SessionStorage.set_session(session)
+        SequencingReadFactory.create(owner_user_id=user1_id, collection_id=project1_id)
+        FileFactory.update_file_ids()
         session.commit()
         file = session.execute(sa.select(File)).scalars().one()
 
@@ -48,6 +49,7 @@ async def test_file_validation(
 
     # Make sure the file was updated in the database
     with sync_db.session() as session:
+        # FIXME
         file = session.execute(sa.select(File)).scalars().one()
         assert file.status == FileStatus.SUCCESS
         assert file.size == file_size
@@ -65,9 +67,9 @@ async def test_invalid_fastq(
 
     # Create mock data
     with sync_db.session() as session:
-        fa.SessionStorage.set_session(session)
-        fa.SequencingReadFactory.create(owner_user_id=user1_id, collection_id=project1_id)
-        fa.FileFactory.update_file_ids()
+        SessionStorage.set_session(session)
+        SequencingReadFactory.create(owner_user_id=user1_id, collection_id=project1_id)
+        FileFactory.update_file_ids()
         session.commit()
         file = session.execute(sa.select(File)).scalars().one()
 
@@ -84,6 +86,7 @@ async def test_invalid_fastq(
         }}
       }}
     """
+    # FIXME
     res = await gql_client.query(query, member_projects=[project1_id])
     fileinfo = res["data"]["markUploadComplete"]
     assert fileinfo["status"] == "FAILED"
@@ -110,9 +113,9 @@ async def test_upload_file(
 
     # Create mock data
     with sync_db.session() as session:
-        fa.SessionStorage.set_session(session)
-        fa.SequencingReadFactory.create(owner_user_id=user_id, collection_id=project_id)
-        fa.FileFactory.update_file_ids()
+        SessionStorage.set_session(session)
+        SequencingReadFactory.create(owner_user_id=user_id, collection_id=project_id)
+        FileFactory.update_file_ids()
         session.commit()
 
         sequencing_read = session.execute(sa.select(SequencingRead)).scalars().one()
@@ -139,6 +142,7 @@ async def test_upload_file(
           }}
         }}
     """
+    # FIXME
     output = await gql_client.query(mutation, member_projects=member_projects)
 
     # If don't have access to this entity, or trying to link an entity with a made up file type, should get an error
@@ -162,9 +166,9 @@ async def test_create_file(
     # Create mock data
     with sync_db.session() as session:
         # Create sequencing read and file
-        fa.SessionStorage.set_session(session)
-        fa.SequencingReadFactory.create(owner_user_id=12345, collection_id=123)
-        fa.FileFactory.update_file_ids()
+        SessionStorage.set_session(session)
+        SequencingReadFactory.create(owner_user_id=12345, collection_id=123)
+        FileFactory.update_file_ids()
         session.commit()
 
         sequencing_read = session.execute(sa.select(SequencingRead)).scalars().one()
