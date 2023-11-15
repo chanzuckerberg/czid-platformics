@@ -4,21 +4,25 @@
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
 import datetime
 from api.core.helpers import get_db_rows
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
+from platformics.api.core.gql_to_sql import (
+    IntComparators,
+    StrComparators,
+    UUIDComparators,
+    BoolComparators,
+)
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction, get_resource_query
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
@@ -29,7 +33,8 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sequencing_read import (SequencingReadWhereClause, SequencingRead)
+    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
+
     pass
 else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
@@ -41,7 +46,7 @@ else:
 # Dataloaders
 # ------------------------------------------------------------------------------
 @relay.connection(
-        relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
+    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
 )
 async def load_sequencing_read_rows(
     root: "Sample",
@@ -58,6 +63,7 @@ async def load_sequencing_read_rows(
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
 
+
 # Supported WHERE clause attributes
 @strawberry.input
 class SampleWhereClause(TypedDict):
@@ -72,10 +78,10 @@ class SampleWhereClause(TypedDict):
     collection_date: Optional[StrComparators] | None
     collection_location: Optional[StrComparators] | None
     description: Optional[StrComparators] | None
-    sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    sequencing_reads: Optional[
+        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
+    ] | None
     entity_id: Optional[UUIDComparators] | None
-
-
 
 
 # Define Sample type
@@ -85,14 +91,16 @@ class Sample(EntityInterface):
     producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
-    name:  str
-    sample_type:  str
-    water_control:  bool
-    collection_date:  Optional[datetime.datetime] = None
-    collection_location:  str
-    description:  Optional[str] = None
-    sequencing_reads: Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = load_sequencing_read_rows  # type:ignore
-    entity_id:  strawberry.ID
+    name: str
+    sample_type: str
+    water_control: bool
+    collection_date: Optional[datetime.datetime] = None
+    collection_location: str
+    description: Optional[str] = None
+    sequencing_reads: Sequence[
+        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
+    ] = load_sequencing_read_rows  # type:ignore
+    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
@@ -107,31 +115,32 @@ Sample.__strawberry_definition__.is_type_of = (  # type: ignore
 # ------------------------------------------------------------------------------
 
 
-
-
 @strawberry.input()
 class SampleCreateInput:
-    collection_id:  int
-    name:  str
-    sample_type:  str
-    water_control:  bool
-    collection_date:  Optional[datetime.datetime] = None
-    collection_location:  str
-    description:  Optional[str] = None 
+    collection_id: int
+    name: str
+    sample_type: str
+    water_control: bool
+    collection_date: Optional[datetime.datetime] = None
+    collection_location: str
+    description: Optional[str] = None
+
+
 @strawberry.input()
 class SampleUpdateInput:
-    collection_id:  Optional[int] = None
-    name:  Optional[str] = None
-    sample_type:  Optional[str] = None
-    water_control:  Optional[bool] = None
-    collection_date:  Optional[datetime.datetime] = None
-    collection_location:  Optional[str] = None
-    description:  Optional[str] = None 
+    collection_id: Optional[int] = None
+    name: Optional[str] = None
+    sample_type: Optional[str] = None
+    water_control: Optional[bool] = None
+    collection_date: Optional[datetime.datetime] = None
+    collection_location: Optional[str] = None
+    description: Optional[str] = None
 
 
 # ------------------------------------------------------------------------------
 # Utilities
 # ------------------------------------------------------------------------------
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples(
@@ -141,6 +150,7 @@ async def resolve_samples(
     where: Optional[SampleWhereClause] = None,
 ) -> typing.Sequence[Sample]:
     return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_sample(
@@ -174,7 +184,7 @@ async def update_sample(
     principal: Principal = Depends(require_auth_principal),
 ) -> Sequence[db.Entity]:
     params = input.__dict__
-    
+
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:

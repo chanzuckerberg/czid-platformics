@@ -2,11 +2,10 @@
 # Make changes to the template codegen/templates/database/models/class_name.py.j2 instead.
 
 import uuid
-import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Float, Integer, Enum, Boolean, DateTime
+from sqlalchemy import ForeignKey, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
@@ -31,10 +30,14 @@ class SequencingRead(Entity):
     r1_file: Mapped[File] = relationship(File, foreign_keys=r1_file_id)
     r2_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     r2_file: Mapped[File] = relationship(File, foreign_keys=r2_file_id)
-    technology: Mapped[SequencingTechnology] = mapped_column(Enum(SequencingTechnology, native_enum=False), nullable=False)
+    technology: Mapped[SequencingTechnology] = mapped_column(
+        Enum(SequencingTechnology, native_enum=False), nullable=False
+    )
     nucleic_acid: Mapped[NucleicAcid] = mapped_column(Enum(NucleicAcid, native_enum=False), nullable=False)
     has_ercc: Mapped[bool] = mapped_column(Boolean, nullable=False)
     primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     primer_file: Mapped[File] = relationship(File, foreign_keys=primer_file_id)
-    contigs: Mapped[list[Contig]] = relationship("Contig", back_populates="sequencing_read", uselist=True, foreign_keys="Contig.sequencing_read_id")
+    contigs: Mapped[list[Contig]] = relationship(
+        "Contig", back_populates="sequencing_read", uselist=True, foreign_keys="Contig.sequencing_read_id"
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

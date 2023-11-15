@@ -5,8 +5,14 @@ import strawberry
 from typing import Sequence
 from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadResponse
 from api.types.sample import Sample, create_sample, update_sample, delete_sample
-from api.types.sequencing_read import SequencingRead, create_sequencing_read, update_sequencing_read, delete_sequencing_read
+from api.types.sequencing_read import (
+    SequencingRead,
+    create_sequencing_read,
+    update_sequencing_read,
+    delete_sequencing_read,
+)
 from api.types.contig import Contig, create_contig, update_contig, delete_contig
+
 
 @strawberry.type
 class Mutation:

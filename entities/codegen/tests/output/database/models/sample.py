@@ -6,8 +6,7 @@ import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Float, Integer, Enum, Boolean, DateTime
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey, String, Boolean, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
@@ -27,5 +26,7 @@ class Sample(Entity):
     collection_date: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
     collection_location: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    sequencing_reads: Mapped[list[SequencingRead]] = relationship("SequencingRead", back_populates="sample", uselist=True, foreign_keys="SequencingRead.sample_id")
+    sequencing_reads: Mapped[list[SequencingRead]] = relationship(
+        "SequencingRead", back_populates="sample", uselist=True, foreign_keys="SequencingRead.sample_id"
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

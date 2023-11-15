@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
-import datetime
 from api.core.helpers import get_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -16,9 +15,14 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
+from platformics.api.core.gql_to_sql import (
+    EnumComparators,
+    IntComparators,
+    UUIDComparators,
+    BoolComparators,
+)
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction, get_resource_query
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
@@ -30,8 +34,9 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sample import (SampleWhereClause, Sample)
-    from api.types.contig import (ContigWhereClause, Contig)
+    from api.types.sample import SampleWhereClause, Sample
+    from api.types.contig import ContigWhereClause, Contig
+
     pass
 else:
     SampleWhereClause = "SampleWhereClause"
@@ -53,9 +58,11 @@ async def load_sample_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["sample"]
-    return await dataloader.loader_for(relationship, where).load(root.sample_id) # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
+
+
 @relay.connection(
-        relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contig")]]  # type:ignore
+    relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contig")]]  # type:ignore
 )
 async def load_contig_rows(
     root: "SequencingRead",
@@ -66,6 +73,8 @@ async def load_contig_rows(
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["contigs"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
 # ------------------------------------------------------------------------------
 # Dataloader for File object
 # ------------------------------------------------------------------------------
@@ -91,6 +100,7 @@ def load_files_from(attr_name: str) -> Callable:
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
 
+
 # Supported WHERE clause attributes
 @strawberry.input
 class SequencingReadWhereClause(TypedDict):
@@ -107,8 +117,6 @@ class SequencingReadWhereClause(TypedDict):
     entity_id: Optional[UUIDComparators] | None
 
 
-
-
 # Define SequencingRead type
 @strawberry.type
 class SequencingRead(EntityInterface):
@@ -117,18 +125,18 @@ class SequencingRead(EntityInterface):
     owner_user_id: int
     collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
-    protocol:  SequencingProtocol
+    protocol: SequencingProtocol
     r1_file_id: Optional[strawberry.ID]
     r1_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r1_file")  # type: ignore
     r2_file_id: Optional[strawberry.ID]
     r2_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r2_file")  # type: ignore
-    technology:  SequencingTechnology
-    nucleic_acid:  NucleicAcid
-    has_ercc:  bool
+    technology: SequencingTechnology
+    nucleic_acid: NucleicAcid
+    has_ercc: bool
     primer_file_id: Optional[strawberry.ID]
     primer_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("primer_file")  # type: ignore
     contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
-    entity_id:  strawberry.ID
+    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
@@ -143,35 +151,36 @@ SequencingRead.__strawberry_definition__.is_type_of = (  # type: ignore
 # ------------------------------------------------------------------------------
 
 
-
-
 @strawberry.input()
 class SequencingReadCreateInput:
-    collection_id:  int 
-    sample_id:  Optional[strawberry.ID] = None
-    protocol:  SequencingProtocol
-    r1_file_id:  Optional[strawberry.ID] = None
-    r2_file_id:  Optional[strawberry.ID] = None
-    technology:  SequencingTechnology
-    nucleic_acid:  NucleicAcid
-    has_ercc:  bool
-    primer_file_id:  Optional[strawberry.ID] = None 
+    collection_id: int
+    sample_id: Optional[strawberry.ID] = None
+    protocol: SequencingProtocol
+    r1_file_id: Optional[strawberry.ID] = None
+    r2_file_id: Optional[strawberry.ID] = None
+    technology: SequencingTechnology
+    nucleic_acid: NucleicAcid
+    has_ercc: bool
+    primer_file_id: Optional[strawberry.ID] = None
+
+
 @strawberry.input()
 class SequencingReadUpdateInput:
-    collection_id:  Optional[int] = None 
-    sample_id:  Optional[strawberry.ID] = None
-    protocol:  Optional[SequencingProtocol] = None
-    r1_file_id:  Optional[strawberry.ID] = None
-    r2_file_id:  Optional[strawberry.ID] = None
-    technology:  Optional[SequencingTechnology] = None
-    nucleic_acid:  Optional[NucleicAcid] = None
-    has_ercc:  Optional[bool] = None
-    primer_file_id:  Optional[strawberry.ID] = None 
+    collection_id: Optional[int] = None
+    sample_id: Optional[strawberry.ID] = None
+    protocol: Optional[SequencingProtocol] = None
+    r1_file_id: Optional[strawberry.ID] = None
+    r2_file_id: Optional[strawberry.ID] = None
+    technology: Optional[SequencingTechnology] = None
+    nucleic_acid: Optional[NucleicAcid] = None
+    has_ercc: Optional[bool] = None
+    primer_file_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
 # Utilities
 # ------------------------------------------------------------------------------
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_sequencing_reads(
@@ -181,6 +190,7 @@ async def resolve_sequencing_reads(
     where: Optional[SequencingReadWhereClause] = None,
 ) -> typing.Sequence[SequencingRead]:
     return await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [])  # type: ignore
+
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_sequencing_read(
@@ -214,7 +224,7 @@ async def update_sequencing_read(
     principal: Principal = Depends(require_auth_principal),
 ) -> Sequence[db.Entity]:
     params = input.__dict__
-    
+
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:

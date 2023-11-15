@@ -4,24 +4,25 @@
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
-import datetime
 from api.core.helpers import get_db_rows
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
+from platformics.api.core.gql_to_sql import (
+    IntComparators,
+    StrComparators,
+    UUIDComparators,
+)
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction, get_resource_query
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
-from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 
@@ -29,7 +30,8 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sequencing_read import (SequencingReadWhereClause, SequencingRead)
+    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
+
     pass
 else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
@@ -49,12 +51,13 @@ async def load_sequencing_read_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Contig)
     relationship = mapper.relationships["sequencing_read"]
-    return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id) # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
 
 
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
+
 
 # Supported WHERE clause attributes
 @strawberry.input
@@ -63,11 +66,11 @@ class ContigWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    sequencing_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    sequencing_read: Optional[
+        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
+    ] | None
     sequence: Optional[StrComparators] | None
     entity_id: Optional[UUIDComparators] | None
-
-
 
 
 # Define Contig type
@@ -77,9 +80,11 @@ class Contig(EntityInterface):
     producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
-    sequencing_read: Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = load_sequencing_read_rows  # type:ignore
-    sequence:  str
-    entity_id:  strawberry.ID
+    sequencing_read: Optional[
+        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
+    ] = load_sequencing_read_rows  # type:ignore
+    sequence: str
+    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our
@@ -94,23 +99,24 @@ Contig.__strawberry_definition__.is_type_of = (  # type: ignore
 # ------------------------------------------------------------------------------
 
 
-
-
 @strawberry.input()
 class ContigCreateInput:
-    collection_id:  int 
-    sequencing_read_id:  Optional[strawberry.ID] = None
-    sequence:  str 
+    collection_id: int
+    sequencing_read_id: Optional[strawberry.ID] = None
+    sequence: str
+
+
 @strawberry.input()
 class ContigUpdateInput:
-    collection_id:  Optional[int] = None 
-    sequencing_read_id:  Optional[strawberry.ID] = None
-    sequence:  Optional[str] = None 
+    collection_id: Optional[int] = None
+    sequencing_read_id: Optional[strawberry.ID] = None
+    sequence: Optional[str] = None
 
 
 # ------------------------------------------------------------------------------
 # Utilities
 # ------------------------------------------------------------------------------
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_contigs(
@@ -120,6 +126,7 @@ async def resolve_contigs(
     where: Optional[ContigWhereClause] = None,
 ) -> typing.Sequence[Contig]:
     return await get_db_rows(db.Contig, session, cerbos_client, principal, where, [])  # type: ignore
+
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_contig(
@@ -153,7 +160,7 @@ async def update_contig(
     principal: Principal = Depends(require_auth_principal),
 ) -> Sequence[db.Entity]:
     params = input.__dict__
-    
+
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
