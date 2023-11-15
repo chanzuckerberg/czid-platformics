@@ -5,7 +5,7 @@
 
 import factory
 from database.models import Taxon
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.upstream_database import UpstreamDatabaseFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -21,32 +21,43 @@ class TaxonFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = Taxon
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
-    wikipedia_id = factory.Faker("string") 
-    description = factory.Faker("string") 
-    common_name = factory.Faker("string") 
-    name = factory.Faker("string") 
-    is_phage = factory.Faker("boolean") 
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "name",
+            "is_phage",
+            "upstream_database",
+            "upstream_database_identifier",
+            "level",
+            "tax_id",
+            "tax_id_parent",
+            "tax_id_species",
+            "tax_id_genus",
+            "tax_id_family",
+            "tax_id_order",
+            "tax_id_class",
+            "tax_id_phylum",
+            "tax_id_kingdom",
+        )
+
+    wikipedia_id = fuzzy.FuzzyText()
+    description = fuzzy.FuzzyText()
+    common_name = fuzzy.FuzzyText()
+    name = fuzzy.FuzzyText()
+    is_phage = factory.Faker("boolean")
     upstream_database = factory.SubFactory(
         UpstreamDatabaseFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    upstream_database_identifier = factory.Faker("string") 
-    level = fuzzy.FuzzyChoice([
-        "species", 
-        "genus", 
-        "family"
-    ])
-    tax_id = factory.Faker("int") 
-    tax_id_parent = factory.Faker("int") 
-    tax_id_species = factory.Faker("int") 
-    tax_id_genus = factory.Faker("int") 
-    tax_id_family = factory.Faker("int") 
-    tax_id_order = factory.Faker("int") 
-    tax_id_class = factory.Faker("int") 
-    tax_id_phylum = factory.Faker("int") 
-    tax_id_kingdom = factory.Faker("int") 
+    upstream_database_identifier = fuzzy.FuzzyText()
+    level = fuzzy.FuzzyChoice(["species", "genus", "family"])
+    tax_id = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_parent = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_species = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_genus = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_family = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_order = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_class = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_phylum = fuzzy.FuzzyInteger(1, 1000)
+    tax_id_kingdom = fuzzy.FuzzyInteger(1, 1000)

@@ -11,10 +11,12 @@ Faker.add_provider(Bioseq)
 Faker.add_provider(Organ)
 Faker.add_provider(EnumProvider)
 
+
 def generate_relative_file_path(obj) -> str:  # type: ignore
     fake = faker.Faker()
     # Can't use absolute=True param because that requires newer version of faker than faker-biology supports
     return fake.file_path(depth=3, extension=obj.file_format).lstrip("/")
+
 
 # TODO, this is a lame singleton to prevent this library from
 # requiring an active SA session at import-time. We should try

@@ -21,27 +21,32 @@ class ReferenceGenomeFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = ReferenceGenome
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "file",
+            "name",
+            "description",
+            "taxon",
+        )
+
     file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
         entity_field_name="file",
-        file_format="fastq", 
+        file_format="fastq",
     )
     file_index = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
         entity_field_name="file_index",
-        file_format="fastq", 
+        file_format="fastq",
     )
-    name = factory.Faker("string") 
-    description = factory.Faker("string") 
+    name = fuzzy.FuzzyText()
+    description = fuzzy.FuzzyText()
     taxon = factory.SubFactory(
         TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    accession_id = factory.Faker("string") 
+    accession_id = fuzzy.FuzzyText()

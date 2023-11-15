@@ -7,7 +7,7 @@ import factory
 from database.models import GenomicRange
 from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.reference_genome import ReferenceGenomeFactory
-from factory import Faker, fuzzy
+from factory import Faker
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
 from faker_enum import EnumProvider
@@ -21,10 +21,13 @@ class GenomicRangeFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = GenomicRange
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "reference_genome",
+            "file",
+        )
+
     reference_genome = factory.SubFactory(
         ReferenceGenomeFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
@@ -34,5 +37,5 @@ class GenomicRangeFactory(CommonFactory):
         FileFactory,
         factory_related_name="entity",
         entity_field_name="file",
-        file_format="fastq", 
+        file_format="fastq",
     )

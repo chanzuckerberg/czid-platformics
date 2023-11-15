@@ -10,7 +10,7 @@ from test_infra.factories.taxon import TaxonFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
 from test_infra.factories.genomic_range import GenomicRangeFactory
 from test_infra.factories.reference_genome import ReferenceGenomeFactory
-from factory import Faker, fuzzy
+from factory import Faker
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
 from faker_enum import EnumProvider
@@ -24,10 +24,17 @@ class ConsensusGenomeFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = ConsensusGenome
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "taxon",
+            "sequence_read",
+            "genomic_range",
+            "reference_genome",
+            "sequence",
+            "is_reverse_complement",
+        )
+
     taxon = factory.SubFactory(
         TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
@@ -52,12 +59,12 @@ class ConsensusGenomeFactory(CommonFactory):
         FileFactory,
         factory_related_name="entity",
         entity_field_name="sequence",
-        file_format="fastq", 
+        file_format="fastq",
     )
-    is_reverse_complement = factory.Faker("boolean") 
+    is_reverse_complement = factory.Faker("boolean")
     intermediate_outputs = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
         entity_field_name="intermediate_outputs",
-        file_format="fastq", 
+        file_format="fastq",
     )

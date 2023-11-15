@@ -21,23 +21,23 @@ class SequenceAlignmentIndexFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = SequenceAlignmentIndex
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "index_file",
+            "reference_genome",
+            "tool",
+        )
+
     index_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
         entity_field_name="index_file",
-        file_format="fastq", 
+        file_format="fastq",
     )
     reference_genome = factory.SubFactory(
         ReferenceGenomeFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    tool = fuzzy.FuzzyChoice([
-        "bowtie2", 
-        "minimap2", 
-        "ncbi"
-    ])
+    tool = fuzzy.FuzzyChoice(["bowtie2", "minimap2", "ncbi"])

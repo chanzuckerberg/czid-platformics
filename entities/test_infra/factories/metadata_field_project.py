@@ -5,7 +5,7 @@
 
 import factory
 from database.models import MetadataFieldProject
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.metadata_field import MetadataFieldFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -21,11 +21,14 @@ class MetadataFieldProjectFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = MetadataFieldProject
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
-    project_id = factory.Faker("int") 
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "project_id",
+            "metadata_field",
+        )
+
+    project_id = fuzzy.FuzzyInteger(1, 1000)
     metadata_field = factory.SubFactory(
         MetadataFieldFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

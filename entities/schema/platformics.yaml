@@ -123,11 +123,11 @@ classes:
       name:
         range: string
         required: true
-        annotations:
-          test_type: name
       sample_type:
         range: string
         required: true
+        annotations:
+          factory_type: organ
       water_control:
         range: boolean
         required: true
@@ -137,7 +137,7 @@ classes:
         range: string
         required: true
         annotations:
-          test_type: city
+          factory_type: city
       description:
         range: string
       host_taxon:

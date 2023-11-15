@@ -3,9 +3,8 @@
 
 # ruff: noqa: E501 Line too long
 
-import factory
 from database.models import UpstreamDatabase
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -20,8 +19,8 @@ class UpstreamDatabaseFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = UpstreamDatabase
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
-    name = factory.Faker("string") 
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = ("name",)
+
+    name = fuzzy.FuzzyText()

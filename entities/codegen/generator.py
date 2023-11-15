@@ -70,9 +70,11 @@ def generate_entity_import_files(output_prefix: str, environment: Environment, v
             outfile.write(content)
             print(f"... wrote {filename}")
 
+
 def generate_factories(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
     filename = "test_infra/factories/class_name.py"
     generate_entity_subclass_files(output_prefix, filename, environment, view)
+
 
 def generate_cerbos_policies(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
     filename = "cerbos/policies/class_name.yaml"
@@ -109,11 +111,11 @@ def api_generate(ctx: click.Context, schemafile: str, output_prefix: str) -> Non
     wrapped_view = ViewWrapper(view)
 
     logging.debug("generating api code")
-    # generate_enums(output_prefix, environment, wrapped_view)
-    # generate_db_models(output_prefix, environment, wrapped_view)
-    # generate_cerbos_policies(output_prefix, environment, wrapped_view)
-    # generate_entity_import_files(output_prefix, environment, wrapped_view)
-    # generate_gql_types(output_prefix, environment, wrapped_view)
+    generate_enums(output_prefix, environment, wrapped_view)
+    generate_db_models(output_prefix, environment, wrapped_view)
+    generate_cerbos_policies(output_prefix, environment, wrapped_view)
+    generate_entity_import_files(output_prefix, environment, wrapped_view)
+    generate_gql_types(output_prefix, environment, wrapped_view)
     generate_factories(output_prefix, environment, wrapped_view)
 
 

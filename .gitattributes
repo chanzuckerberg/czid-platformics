@@ -9,3 +9,4 @@ entities/cerbos/policies/*	linguist-generated=true
 entities/support/enums.py	linguist-generated=true
 entities/schema/README.md	linguist-generated=true
 entities/test_infra/factories/* linguist-generated=true
+entities/test_infra/factories/main.py linguist-generated=false

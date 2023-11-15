@@ -5,7 +5,7 @@
 
 import factory
 from database.models import Sample
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.taxon import TaxonFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -21,16 +21,21 @@ class SampleFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = Sample
-        # TODO:
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        # sqlalchemy_get_or_create = ("name", "collection_location")
-    name = factory.Faker("name")
-    sample_type = factory.Faker("string") 
-    water_control = factory.Faker("boolean") 
-    collection_date = factory.Faker("date") 
+        # Match required fields with existing db rows to determine whether we should
+        # create a new row or not.
+        sqlalchemy_get_or_create = (
+            "name",
+            "sample_type",
+            "water_control",
+            "collection_location",
+        )
+
+    name = fuzzy.FuzzyText()
+    sample_type = factory.Faker("organ")
+    water_control = factory.Faker("boolean")
+    collection_date = factory.Faker("date")
     collection_location = factory.Faker("city")
-    description = factory.Faker("string") 
+    description = fuzzy.FuzzyText()
     host_taxon = factory.SubFactory(
         TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
