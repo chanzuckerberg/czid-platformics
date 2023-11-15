@@ -1,20 +1,25 @@
+import strawberry
 import typing
-
 import uvicorn
+from codegen.tests.api.queries import Query as QueryCodeGen
+from codegen.tests.api.mutations import Mutation as MutationCodeGen
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from platformics.api.core.gql_loaders import EntityLoader
-from platformics.settings import APISettings
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
-from platformics.database.connect import AsyncDB
-
-import strawberry
-from api.queries import Query
-from api.mutations import Mutation
 from strawberry.schema.config import StrawberryConfig
 from strawberry.fastapi import GraphQLRouter
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.gql_loaders import EntityLoader
+from platformics.database.connect import AsyncDB
+from platformics.settings import APISettings
+from api.queries import Query
+from api.mutations import Mutation
+
+
+# ------------------------------------------------------------------------------
+# Utilities
+# ------------------------------------------------------------------------------
 
 
 def get_context(
@@ -35,36 +40,33 @@ class CustomNameConverter(NameConverter):
         return super().get_graphql_name(obj)
 
 
-# only needed if you have polymorphic types
-# additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
-# strawberry graphql schema
-# start server with strawberry server app
-schema = strawberry.Schema(
-    query=Query,
-    mutation=Mutation,
-    config=StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter()),
-    # types=additional_types,
-)
-
-
 # Make sure tests can get their own instances of the app.
-def get_app() -> FastAPI:
+def get_app(use_test_schema=False) -> FastAPI:
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
-    # Add a global settings object to the app that we can use as a dependency
-    graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
-    _app = FastAPI(
-        title=settings.SERVICE_NAME,
-        debug=settings.DEBUG,
-    )
-    _app.include_router(graphql_app, prefix="/graphql")
+    gql_schema = schema_test if use_test_schema else schema
 
     # Add a global settings object to the app that we can use as a dependency
+    graphql_app: GraphQLRouter = GraphQLRouter(gql_schema, context_getter=get_context, graphiql=True)
+    _app = FastAPI(title=settings.SERVICE_NAME, debug=settings.DEBUG)
+    _app.include_router(graphql_app, prefix="/graphql")
     _app.state.entities_settings = settings
 
     return _app
 
 
+# ------------------------------------------------------------------------------
+# Setup
+# ------------------------------------------------------------------------------
+
+# Main GQL schema
+config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
+schema = strawberry.Schema(query=Query, mutation=Mutation, config=config)
+
+# Schema for testing codegen
+schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=config)
+
+# Create and run app
 app = get_app()
 
 if __name__ == "__main__":
