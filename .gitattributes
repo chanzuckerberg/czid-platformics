@@ -4,6 +4,7 @@ entities/api/schema.graphql	linguist-generated=true
 entities/api/queries.py	linguist-generated=true
 entities/api/mutations.py	linguist-generated=true
 entities/api/types/*	linguist-generated=true
+entities/codegen/tests/output/* linguist-generated=true
 entities/database/models/*	linguist-generated=true
 entities/cerbos/policies/*	linguist-generated=true
 entities/support/enums.py	linguist-generated=true

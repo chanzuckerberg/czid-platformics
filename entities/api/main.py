@@ -1,8 +1,8 @@
 import strawberry
 import typing
 import uvicorn
-from codegen.tests.api.queries import Query as QueryCodeGen
-from codegen.tests.api.mutations import Mutation as MutationCodeGen
+from codegen.tests.output.api.queries import Query as QueryCodeGen
+from codegen.tests.output.api.mutations import Mutation as MutationCodeGen
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
@@ -44,10 +44,9 @@ class CustomNameConverter(NameConverter):
 def get_app(use_test_schema=False) -> FastAPI:
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
-    gql_schema = schema_test if use_test_schema else schema
-
     # Add a global settings object to the app that we can use as a dependency
-    graphql_app: GraphQLRouter = GraphQLRouter(gql_schema, context_getter=get_context, graphiql=True)
+    graphql_schema = schema_test if use_test_schema else schema
+    graphql_app: GraphQLRouter = GraphQLRouter(graphql_schema, context_getter=get_context, graphiql=True)
     _app = FastAPI(title=settings.SERVICE_NAME, debug=settings.DEBUG)
     _app.include_router(graphql_app, prefix="/graphql")
     _app.state.entities_settings = settings
@@ -59,11 +58,9 @@ def get_app(use_test_schema=False) -> FastAPI:
 # Setup
 # ------------------------------------------------------------------------------
 
-# Main GQL schema
+# Define schema and test schema
 config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
 schema = strawberry.Schema(query=Query, mutation=Mutation, config=config)
-
-# Schema for testing codegen
 schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=config)
 
 # Create and run app

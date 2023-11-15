@@ -1,18 +1,11 @@
+import enum
 import uuid
-
 import uuid6
+import strawberry
 from platformics.database.models.base import Base, Entity
 from sqlalchemy import Column, ForeignKey, Integer, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from typing import TYPE_CHECKING
-import strawberry
-import enum
-
-if TYPE_CHECKING:
-    from database.models.sample import SequencingRead
-else:
-    SequencingRead = "SequencingRead"
 
 
 @strawberry.enum
