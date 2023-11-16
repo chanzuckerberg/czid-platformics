@@ -1,4 +1,3 @@
-import configparser
 import typing
 import json
 
@@ -25,6 +24,7 @@ from plugins.plugin_types import EventBus
 ###########
 
 workflow_runners = load_workflow_runners()
+
 
 def get_event_bus(request: Request) -> EventBus:
     """Get the event_bus object from the app state"""
