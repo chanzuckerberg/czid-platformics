@@ -2,7 +2,7 @@ import json
 from typing import List
 
 from settings import RedisEventBusSettings
-from plugin_types import EventBus, WorkflowStatusMessage, parse_workflow_status_message
+from plugins.plugin_types import EventBus, WorkflowStatusMessage, parse_workflow_status_message
 
 import redis.asyncio as aioredis
 

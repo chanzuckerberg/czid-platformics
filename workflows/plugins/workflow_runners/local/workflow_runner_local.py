@@ -9,7 +9,7 @@ from typing import List
 from uuid import uuid4
 import re
 
-from plugin_types import (
+from plugins.plugin_types import (
     EventBus,
     WorkflowFailedMessage,
     WorkflowRunner,
