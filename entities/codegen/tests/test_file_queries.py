@@ -1,5 +1,5 @@
 """
-GraphQL tests
+Test file queries
 """
 
 import pytest
