@@ -19,8 +19,8 @@ class UpstreamDatabaseFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = UpstreamDatabase
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = ("name",)
+        sqlalchemy_get_or_create = ("entity_id",)
 
     name = fuzzy.FuzzyText()

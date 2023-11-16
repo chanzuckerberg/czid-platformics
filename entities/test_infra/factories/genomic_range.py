@@ -21,12 +21,9 @@ class GenomicRangeFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = GenomicRange
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "reference_genome",
-            "file",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     reference_genome = factory.SubFactory(
         ReferenceGenomeFactory,

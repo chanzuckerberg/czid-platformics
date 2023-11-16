@@ -6,6 +6,7 @@ from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
 from faker_enum import EnumProvider
+import uuid6
 
 Faker.add_provider(Bioseq)
 Faker.add_provider(Organ)
@@ -36,6 +37,7 @@ class SessionStorage:
 class CommonFactory(factory.alchemy.SQLAlchemyModelFactory):
     owner_user_id = fuzzy.FuzzyInteger(1, 1000)
     collection_id = fuzzy.FuzzyInteger(1, 1000)
+    entity_id = uuid6.uuid7()
 
     class Meta:
         sqlalchemy_session_factory = SessionStorage.get_session

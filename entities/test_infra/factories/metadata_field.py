@@ -20,15 +20,9 @@ class MetadataFieldFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = MetadataField
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "field_group",
-            "field_name",
-            "description",
-            "field_type",
-            "is_required",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     field_name = fuzzy.FuzzyText()
     description = fuzzy.FuzzyText()

@@ -21,14 +21,9 @@ class SampleFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = Sample
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "name",
-            "sample_type",
-            "water_control",
-            "collection_location",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     name = fuzzy.FuzzyText()
     sample_type = factory.Faker("organ")

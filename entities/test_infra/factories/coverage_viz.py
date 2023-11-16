@@ -20,12 +20,9 @@ class CoverageVizFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = CoverageViz
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "accession_id",
-            "coverage_viz_file",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     accession_id = fuzzy.FuzzyText()
     coverage_viz_file = factory.RelatedFactory(

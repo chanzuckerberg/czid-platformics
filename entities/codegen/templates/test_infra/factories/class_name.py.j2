@@ -26,15 +26,9 @@ class {{ cls.name }}Factory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = {{ cls.name }}
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-        {%- for field in cls.owned_fields %}
-            {%- if field.required and field.name != "entity_id" %}
-            "{{ field.name }}",
-            {%- endif %}
-        {%- endfor %}
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
     {% for field in cls.owned_fields %}
         {%- if field.type != "uuid" %}
             {%- if field.inverse and field.related_class.name != "Entity" %}

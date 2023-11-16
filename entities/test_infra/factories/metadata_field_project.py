@@ -21,12 +21,9 @@ class MetadataFieldProjectFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = MetadataFieldProject
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "project_id",
-            "metadata_field",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     project_id = fuzzy.FuzzyInteger(1, 1000)
     metadata_field = factory.SubFactory(

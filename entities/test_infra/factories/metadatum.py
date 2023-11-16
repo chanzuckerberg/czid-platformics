@@ -22,13 +22,9 @@ class MetadatumFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = Metadatum
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "sample",
-            "metadata_field",
-            "value",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     sample = factory.SubFactory(
         SampleFactory,

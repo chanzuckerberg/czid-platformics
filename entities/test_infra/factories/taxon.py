@@ -21,24 +21,9 @@ class TaxonFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = Taxon
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "name",
-            "is_phage",
-            "upstream_database",
-            "upstream_database_identifier",
-            "level",
-            "tax_id",
-            "tax_id_parent",
-            "tax_id_species",
-            "tax_id_genus",
-            "tax_id_family",
-            "tax_id_order",
-            "tax_id_class",
-            "tax_id_phylum",
-            "tax_id_kingdom",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     wikipedia_id = fuzzy.FuzzyText()
     description = fuzzy.FuzzyText()

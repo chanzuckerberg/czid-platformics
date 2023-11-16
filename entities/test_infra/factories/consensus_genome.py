@@ -24,16 +24,9 @@ class ConsensusGenomeFactory(CommonFactory):
     class Meta:
         sqlalchemy_session = None  # workaround for a bug in factoryboy
         model = ConsensusGenome
-        # Match required fields with existing db rows to determine whether we should
+        # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
-        sqlalchemy_get_or_create = (
-            "taxon",
-            "sequence_read",
-            "genomic_range",
-            "reference_genome",
-            "sequence",
-            "is_reverse_complement",
-        )
+        sqlalchemy_get_or_create = ("entity_id",)
 
     taxon = factory.SubFactory(
         TaxonFactory,
