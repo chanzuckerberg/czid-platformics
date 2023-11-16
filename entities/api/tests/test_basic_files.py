@@ -5,8 +5,7 @@ GraphQL tests
 import pytest
 from api.conftest import GQLTestClient
 from platformics.database.connect import SyncDB
-from test_infra.factories.main import SessionStorage, FileFactory
-from test_infra.factories.sequencing_read import SequencingReadFactory
+from test_infra import factories as fa
 
 
 # Test that we can only fetch files that we have access to
@@ -23,11 +22,11 @@ async def test_file_query(
 
     # Create mock data
     with sync_db.session() as session:
-        SessionStorage.set_session(session)
-        SequencingReadFactory.create_batch(2, owner_user_id=user1_id, collection_id=project1_id)
-        SequencingReadFactory.create_batch(6, owner_user_id=user2_id, collection_id=project1_id)
-        SequencingReadFactory.create_batch(4, owner_user_id=user3_id, collection_id=project2_id)
-        FileFactory.update_file_ids()
+        fa.SessionStorage.set_session(session)
+        fa.SequencingReadFactory.create_batch(2, owner_user_id=user1_id, collection_id=project1_id)
+        fa.SequencingReadFactory.create_batch(6, owner_user_id=user2_id, collection_id=project1_id)
+        fa.SequencingReadFactory.create_batch(4, owner_user_id=user3_id, collection_id=project2_id)
+        fa.FileFactory.update_file_ids()
 
     # Fetch all samples
     query = """
@@ -67,11 +66,11 @@ async def test_nested_files(
 
     # Create mock data
     with sync_db.session() as session:
-        SessionStorage.set_session(session)
-        SequencingReadFactory.create_batch(2, owner_user_id=user1_id, collection_id=project1_id)
-        SequencingReadFactory.create_batch(6, owner_user_id=user2_id, collection_id=project1_id)
-        SequencingReadFactory.create_batch(4, owner_user_id=user3_id, collection_id=project2_id)
-        FileFactory.update_file_ids()
+        fa.SessionStorage.set_session(session)
+        fa.SequencingReadFactory.create_batch(2, owner_user_id=user1_id, collection_id=project1_id)
+        fa.SequencingReadFactory.create_batch(6, owner_user_id=user2_id, collection_id=project1_id)
+        fa.SequencingReadFactory.create_batch(4, owner_user_id=user3_id, collection_id=project2_id)
+        fa.FileFactory.update_file_ids()
 
     # Fetch all samples
     query = """

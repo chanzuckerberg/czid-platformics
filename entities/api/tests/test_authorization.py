@@ -4,8 +4,7 @@ Authorization spot-checks
 
 import pytest
 from platformics.database.connect import SyncDB
-from test_infra.factories.main import SessionStorage
-from test_infra.factories.sample import SampleFactory
+from test_infra import factories as fa
 from api.conftest import GQLTestClient
 
 
@@ -27,10 +26,10 @@ async def test_collection_authorization(
 
     # Create mock data
     with sync_db.session() as session:
-        SessionStorage.set_session(session)
-        SampleFactory.create_batch(2, collection_location="City1", owner_user_id=owner_user_id, collection_id=333)
-        SampleFactory.create_batch(2, collection_location="City2", owner_user_id=owner_user_id, collection_id=444)
-        SampleFactory.create_batch(2, collection_location="City3", owner_user_id=owner_user_id, collection_id=555)
+        fa.SessionStorage.set_session(session)
+        fa.SampleFactory.create_batch(2, collection_location="City1", owner_user_id=owner_user_id, collection_id=333)
+        fa.SampleFactory.create_batch(2, collection_location="City2", owner_user_id=owner_user_id, collection_id=444)
+        fa.SampleFactory.create_batch(2, collection_location="City3", owner_user_id=owner_user_id, collection_id=555)
 
     # Fetch all samples
     query = """
