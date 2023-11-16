@@ -3,9 +3,10 @@ from platformics.database.connect import AsyncDB
 from fastapi import FastAPI
 from httpx import AsyncClient
 from api.main import get_app
-from api.conftest import overwrite_api, gql_client, moto_client
+from api.conftest import overwrite_api, gql_client, moto_client, GQLTestClient
+from test_infra.factories.main import SessionStorage, FileFactory
 
-__all__ = ["gql_client", "moto_client"]  # needed by tests
+__all__ = ["gql_client", "moto_client", "GQLTestClient", "SessionStorage", "FileFactory"]  # needed by tests
 
 
 @pytest_asyncio.fixture()

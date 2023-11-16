@@ -4,9 +4,8 @@ Authorization spot-checks
 
 import pytest
 from platformics.database.connect import SyncDB
-from test_infra.factories.main import SessionStorage
-from test_infra.factories.sample import SampleFactory
-from api.conftest import GQLTestClient
+from codegen.conftest import GQLTestClient, SessionStorage
+from codegen.tests.output.test_infra.factories.sample import SampleFactory
 
 
 @pytest.mark.asyncio

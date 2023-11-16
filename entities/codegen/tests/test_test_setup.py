@@ -4,7 +4,7 @@ Make sure we are testing the mock schema, not the real one
 
 import pytest
 from fastapi import FastAPI
-from api.conftest import GQLTestClient
+from codegen.conftest import GQLTestClient
 
 
 @pytest.mark.asyncio

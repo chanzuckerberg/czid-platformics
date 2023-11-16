@@ -4,12 +4,11 @@ Tests for nested queries + authorization
 
 import base64
 import pytest
-from platformics.database.connect import SyncDB
 from collections import defaultdict
-from test_infra.factories.main import SessionStorage
-from test_infra.factories.sample import SampleFactory
-from test_infra.factories.sequencing_read import SequencingReadFactory
-from api.conftest import GQLTestClient
+from platformics.database.connect import SyncDB
+from codegen.conftest import GQLTestClient, SessionStorage
+from codegen.tests.output.test_infra.factories.sample import SampleFactory
+from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 @pytest.mark.asyncio
