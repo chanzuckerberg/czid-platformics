@@ -3,7 +3,7 @@
 
 import strawberry
 from strawberry import relay
-from typing import Sequence
+from typing import Sequence, List
 from api.files import File, resolve_files
 from api.types.sample import Sample, resolve_samples
 from api.types.sequencing_read import SequencingRead, resolve_sequencing_reads
@@ -13,7 +13,7 @@ from api.types.contig import Contig, resolve_contigs
 @strawberry.type
 class Query:
     # Allow queries by node ID
-    node: relay.Node = relay.node()
+    nodes: List[relay.Node] = relay.node()
 
     # Query files
     files: Sequence[File] = resolve_files

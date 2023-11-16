@@ -125,7 +125,7 @@ async def test_relay_node_queries(
     # Fetch sample by node ID
     query = f"""
         query MyQuery {{
-          node(id: "{node_id_base64}") {{
+          nodes(ids: ["{node_id_base64}"]) {{
             ... on Sample {{
               name
               collectionLocation
@@ -135,4 +135,4 @@ async def test_relay_node_queries(
     """
 
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    assert results["data"]["node"]["name"] == sample.name
+    assert results["data"]["nodes"][0]["name"] == sample.name

@@ -1958,7 +1958,7 @@ class PageInfo(sgqlc.types.Type):
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
-        "node",
+        "nodes",
         "files",
         "samples",
         "sequencing_reads",
@@ -1975,11 +1975,20 @@ class Query(sgqlc.types.Type):
         "upstream_databases",
         "contigs",
     )
-    node = sgqlc.types.Field(
-        sgqlc.types.non_null(Node),
-        graphql_name="node",
+    nodes = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Node))),
+        graphql_name="nodes",
         args=sgqlc.types.ArgDict(
-            (("id", sgqlc.types.Arg(sgqlc.types.non_null(GlobalID), graphql_name="id", default=None)),)
+            (
+                (
+                    "ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(GlobalID))),
+                        graphql_name="ids",
+                        default=None,
+                    ),
+                ),
+            )
         ),
     )
     files = sgqlc.types.Field(
