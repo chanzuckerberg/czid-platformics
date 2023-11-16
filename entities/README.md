@@ -21,7 +21,7 @@ To get a summary of other available `make` targets, run `make help`
 - Run codegen: `make codegen`
 - If changing the database:
   - Run `make alembic-autogenerate MESSAGE="reason for change goes here"`
-  - Double-check that the newly generated files in `database_migrations/versions` match your intent
+  - Double-check that the newly generated files in `database/migrations/versions/` match your intent
   - Run `make alembic-upgrade-head` to apply migrations
 - Test
 - Open a PR for the updated files.
