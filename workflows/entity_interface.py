@@ -30,6 +30,7 @@ _type_name_to_graphql_type = {
 }
 
 
+@dataclass
 class Entity(ABC):
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
     version: Optional[Version] = field(default_factory=lambda: Version(0), init=False)
