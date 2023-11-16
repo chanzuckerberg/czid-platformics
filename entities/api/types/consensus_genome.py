@@ -192,7 +192,6 @@ class ConsensusGenome(EntityInterface):
     metrics: Sequence[
         Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
     ] = load_metric_consensus_genome_rows  # type:ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

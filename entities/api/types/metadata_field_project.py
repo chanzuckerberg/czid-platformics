@@ -81,7 +81,6 @@ class MetadataFieldProject(EntityInterface):
     metadata_field: Optional[
         Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
     ] = load_metadata_field_rows  # type:ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

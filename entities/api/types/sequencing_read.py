@@ -176,7 +176,6 @@ class SequencingRead(EntityInterface):
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
     contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
-    entity_id: strawberry.ID
 
 
 # We need to add this to each Queryable type so that strawberry will accept either our

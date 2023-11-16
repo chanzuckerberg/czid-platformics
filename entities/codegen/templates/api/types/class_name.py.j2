@@ -159,7 +159,9 @@ class {{ cls.name }}(EntityInterface):
     collection_id: int
     {%- for attr in cls.owned_fields %}
         {%- if attr.type == "uuid" %}
+           {%- if attr.name != "entity_id" %}
     {{ attr.name }}: {{ getType("strawberry.ID", attr.required) }}
+           {%- endif %}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getType("str", attr.required) }}
         {%- elif attr.is_enum %}
