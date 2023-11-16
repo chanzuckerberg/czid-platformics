@@ -25,7 +25,7 @@ from platformics.api.core.deps import (
 )
 from platformics.settings import APISettings
 from platformics.security.authorization import CerbosAction, get_resource_query
-from files.format_handlers import get_validator
+from support.format_handlers import get_validator
 from api.core.helpers import get_db_rows
 from api.types.entities import Entity
 from database.models import FileStatus
