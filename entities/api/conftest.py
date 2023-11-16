@@ -89,10 +89,7 @@ async def patched_authprincipal(request: Request) -> Principal:
     return principal
 
 
-@pytest_asyncio.fixture()
-async def api(
-    async_db: AsyncDB,
-) -> FastAPI:
+def overwrite_api(api: FastAPI, async_db: AsyncDB) -> None:
     async def patched_session() -> typing.AsyncGenerator[AsyncSession, None]:
         session = async_db.session()
         try:
@@ -100,12 +97,17 @@ async def api(
         finally:
             await session.close()
 
-    api = get_app()
     api.dependency_overrides[get_engine] = lambda: async_db
     api.dependency_overrides[get_db_session] = patched_session
     api.dependency_overrides[require_auth_principal] = patched_authprincipal
     api.dependency_overrides[get_auth_principal] = patched_authprincipal
     api.dependency_overrides[get_s3_client] = patched_s3_client
+
+
+@pytest_asyncio.fixture()
+async def api(async_db: AsyncDB) -> FastAPI:
+    api = get_app(use_test_schema=False)
+    overwrite_api(api, async_db)
     return api
 
 

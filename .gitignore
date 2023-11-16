@@ -308,3 +308,6 @@ static
 
 # Local env vars.
 .env.localdev
+
+# Codegen on mock schema
+entities/codegen/tests/output/

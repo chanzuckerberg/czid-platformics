@@ -1,12 +1,12 @@
 import os
 import pytest
-from api.conftest import GQLTestClient
-from platformics.database.connect import SyncDB
-from test_infra.factories.main import SessionStorage, FileFactory
-from test_infra.factories.sequencing_read import SequencingReadFactory
-from mypy_boto3_s3.client import S3Client
-from database.models import File, FileStatus, SequencingRead
 import sqlalchemy as sa
+from mypy_boto3_s3.client import S3Client
+from platformics.database.connect import SyncDB
+from database.models import File, FileStatus
+from codegen.conftest import SessionStorage, FileFactory, GQLTestClient
+from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
+from codegen.tests.output.database.models import SequencingRead
 
 
 # Test that we can mark a file upload as complete

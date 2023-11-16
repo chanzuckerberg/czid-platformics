@@ -14,47 +14,58 @@ types:
     base: int
     description: An integer
 
+  uuid:
+    uri: xsd:string
+    typeof: str
+    base: str
+    description: A UUID
+
 enums:
   FileStatus:
     permissible_values:
       SUCCESS:
-        description: This file has been uploaded and validated successfully
       FAILED:
-        description: This file failed to upload or failed validation
       PENDING:
-        description: This file is a placeholder and awaiting a successful upload
   FileAcessProtocol:
     permissible_values:
       s3:
-        description: This file is accessible via the (AWS) S3 protocol
-  Nucleotide:
+  NucleicAcid:
     permissible_values:
       RNA:
-        description: DNA nucleotide
       DNA:
-        description: RNA nucleotide
   SequencingProtocol:
     permissible_values:
       MNGS:
-        description: Metagenomics sequencing read
       TARGETED:
-        description: Targeted (amplified via primers) sequencing read
       MSSPE:
-        description: MSSPE Sequencing Read
- 
+  SequencingTechnology:
+    permissible_values:
+      Illumina:
+      Nanopore:
+
 classes:
   Entity:
     attributes:
       id:
         identifier: true
-      type:
-        range: string
+        range: uuid
       producing_run_id:
+        range: int
+        minimum_value: 0
       owner_user_id:
+        range: int
+        minimum_value: 0
       collection_id:
+        range: int
+        minimum_value: 0
+    annotations:
+      plural: Entities
  
   File:
     attributes:
+      id:
+        identifier: true
+        range: uuid
       entity_field_name:
         range: string
         required: true
@@ -84,36 +95,84 @@ classes:
 
   Sample:
     is_a: Entity
+    mixins:
+      - EntityMixin
     attributes:
       name:
+        range: string
         required: true
-      location:
+      sample_type:
+        range: string
         required: true
+      water_control:
+        range: boolean
+        required: true
+      collection_date:
+        range: date
+      collection_location:
+        range: string
+        required: true
+      description:
+        range: string
       sequencing_reads:
         range: SequencingRead
         multivalued: true
+        inverse: SequencingRead.sample
+    annotations:
+      plural: Samples
 
   SequencingRead:
     is_a: Entity
+    mixins:
+      - EntityMixin
     attributes:
-      nucleotide:
-        range: Nuclotide
-        required: true
-      sequence:
-        range: string
-        pattern: "^[AGTCUN]+$"
-        required: true
+      sample:
+        range: Sample
+        inverse: Sample.sequencing_reads
       protocol:
         range: SequencingProtocol
         required: true
-      sequence_file_id:
-      sample:
-        range: Sample
+      r1_file:
+        range: File
+      r2_file:
+        range: File
+      technology:
+        range: SequencingTechnology
+        required: true
+      nucleic_acid:
+        range: NucleicAcid
+        required: true
+      has_ercc:
+        range: boolean
+        required: true
+      primer_file:
+        range: File
+      contigs:
+        range: Contig
+        inverse: Contig.sequencing_read
+        multivalued: true
+    annotations:
+      plural: SequencingReads
 
   Contig:
     is_a: Entity
+    mixins:
+      - EntityMixin
     attributes:
-      sequencing_read_id:
-        required: true
+      sequencing_read:
+        range: SequencingRead
+        inverse: Sample.contigs
       sequence:
         required: true
+    annotations:
+      plural: Contigs
+
+  EntityMixin:
+    mixin: true
+    attributes:
+      entity_id:
+        required: true
+        readonly: true
+        range: uuid
+        identifier: true
+        inverse: entity.id

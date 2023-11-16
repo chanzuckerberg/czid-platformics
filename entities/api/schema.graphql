@@ -734,10 +734,10 @@ type PageInfo {
 }
 
 type Query {
-  node(
-    """The ID of the object."""
-    id: GlobalID!
-  ): Node!
+  nodes(
+    """The IDs of the objects."""
+    ids: [GlobalID!]!
+  ): [Node!]!
   files(where: FileWhereClause = null): [File!]!
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!

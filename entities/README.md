@@ -1,6 +1,8 @@
 # Entities
 The entities service handles secure data storage, retrieval, and basic transformations.
 
+[YAML Schema](https://github.com/chanzuckerberg/czid-platformics/blob/main/entities/schema/platformics.yaml) | [ER Diagram](https://github.com/chanzuckerberg/czid-platformics/tree/main/entities/schema)
+
 
 ## Getting started
 To run a local development environment, clone this repo and run:
@@ -13,14 +15,16 @@ Then, visit http://localhost:8008/graphql in your favorite web browser.
 
 To get a summary of other available `make` targets, run `make help`
 
-### Making changes to the DB schema:
+### Adding or modifying entities:
 
-1. Update SQLAlchemy models in `database/models`
-2. Run `make alembic-autogenerate MESSAGE="reason for change goes here"`
-3. Double-check that the newly generated files in `database_migrations/versions` match your intent
-4. Run `make alembic-upgrade-head` to apply migrations
-5. Test
-6. Open a PR for the updated files.
+- Update `schema/platformics.yaml`
+- Run codegen: `make codegen`
+- If changing the database:
+  - Run `make alembic-autogenerate MESSAGE="reason for change goes here"`
+  - Double-check that the newly generated files in `database_migrations/versions` match your intent
+  - Run `make alembic-upgrade-head` to apply migrations
+- Test
+- Open a PR for the updated files.
 
 ### Using the CLI:
 ```
@@ -39,4 +43,3 @@ export PLATFORMICS_AUTH_TOKEN=$(./platformics/cli/generate_token.py auth generat
 - You're now editing code directly in the container! This is handy because all of the python packages used by the app are installed in the container and type checking will work properly.
 - You can set breakpoints and click the "debug/play" icon in VSCode to step through your code. 
   - **Note** that you'll generally have to make a request (via cli/browser/???) to actually trigger the section of code you're debugging.
-

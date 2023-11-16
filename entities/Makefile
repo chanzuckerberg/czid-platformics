@@ -49,8 +49,16 @@ local-pgconsole: ## Connect to the local postgres database.
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
+	$(MAKE) codegen-test-schema
 	$(docker_compose_run) entities bash -c "poetry run pytest -s"
 	$(MAKE) cerbos-tests
+
+DIR_LINT_CODEGEN_TEST = codegen/tests/output/
+.PHONY: codegen-test-schema
+codegen-test-schema:  ## Run codegen on the test schema
+	$(docker_compose) exec entities python3 codegen/generator.py api generate --schemafile codegen/tests/test_schemas/platformics.yaml --output-prefix $(DIR_LINT_CODEGEN_TEST)
+	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
+	$(docker_compose_run) $(FOLDER) ruff check --fix  $(DIR_LINT_CODEGEN_TEST)
 
 DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py
 DIR_LINT_GRAPHQL = cli/gql_schema.py

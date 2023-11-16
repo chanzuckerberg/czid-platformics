@@ -3,10 +3,9 @@ GraphQL tests
 """
 
 import pytest
-from api.conftest import GQLTestClient
 from platformics.database.connect import SyncDB
-from test_infra.factories.main import SessionStorage, FileFactory
-from test_infra.factories.sequencing_read import SequencingReadFactory
+from codegen.conftest import SessionStorage, FileFactory, GQLTestClient
+from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 # Test that we can only fetch files that we have access to

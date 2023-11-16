@@ -4,12 +4,11 @@ Tests for nested queries + authorization
 
 import base64
 import pytest
-from platformics.database.connect import SyncDB
 from collections import defaultdict
-from test_infra.factories.main import SessionStorage
-from test_infra.factories.sample import SampleFactory
-from test_infra.factories.sequencing_read import SequencingReadFactory
-from api.conftest import GQLTestClient
+from platformics.database.connect import SyncDB
+from codegen.conftest import GQLTestClient, SessionStorage
+from codegen.tests.output.test_infra.factories.sample import SampleFactory
+from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 @pytest.mark.asyncio
@@ -127,7 +126,7 @@ async def test_relay_node_queries(
     # Fetch sample by node ID
     query = f"""
         query MyQuery {{
-          node(id: "{node_id_base64}") {{
+          nodes(ids: ["{node_id_base64}"]) {{
             ... on Sample {{
               name
               collectionLocation
@@ -137,4 +136,4 @@ async def test_relay_node_queries(
     """
 
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    assert results["data"]["node"]["name"] == sample.name
+    assert results["data"]["nodes"][0]["name"] == sample.name
