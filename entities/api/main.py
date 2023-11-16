@@ -41,7 +41,7 @@ class CustomNameConverter(NameConverter):
 
 
 # Make sure tests can get their own instances of the app.
-def get_app(use_test_schema=False) -> FastAPI:
+def get_app(use_test_schema: bool = False) -> FastAPI:
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     graphql_schema = schema_test if use_test_schema else schema
@@ -60,9 +60,9 @@ def get_app(use_test_schema=False) -> FastAPI:
 # ------------------------------------------------------------------------------
 
 # Define schema and test schema
-config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
-schema = strawberry.Schema(query=Query, mutation=Mutation, config=config)
-schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=config)
+strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
+schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config)
+schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config)
 
 # Create and run app
 app = get_app()
