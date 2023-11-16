@@ -28,7 +28,7 @@ class GenomicRange(Entity):
     reference_genome: Mapped[ReferenceGenome] = relationship(
         ReferenceGenome, back_populates="genomic_ranges", foreign_keys=reference_genome_id
     )
-    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=False)
+    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file: Mapped[File] = relationship(File, foreign_keys=file_id)
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome", back_populates="genomic_range", uselist=True, foreign_keys="ConsensusGenome.genomic_range_id"

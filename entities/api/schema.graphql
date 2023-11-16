@@ -76,7 +76,7 @@ input ConsensusGenomeCreateInput {
   sequenceReadId: ID!
   genomicRangeId: ID!
   referenceGenomeId: ID!
-  sequenceId: ID!
+  sequenceId: ID = null
   isReverseComplement: Boolean!
   intermediateOutputsId: ID = null
 }
@@ -181,7 +181,7 @@ type CoverageViz implements EntityInterface & Node {
 input CoverageVizCreateInput {
   collectionId: Int!
   accessionId: String!
-  coverageVizFileId: ID!
+  coverageVizFileId: ID = null
 }
 
 input CoverageVizUpdateInput {
@@ -320,7 +320,7 @@ type GenomicRangeConnection {
 input GenomicRangeCreateInput {
   collectionId: Int!
   referenceGenomeId: ID!
-  fileId: ID!
+  fileId: ID = null
 }
 
 """An edge in a connection."""
@@ -593,7 +593,7 @@ input MetricConsensusGenomeCreateInput {
   nActg: Int = null
   nMissing: Int = null
   nAmbiguous: Int = null
-  coverageVizSummaryFileId: ID!
+  coverageVizSummaryFileId: ID = null
 }
 
 """An edge in a connection."""
@@ -828,7 +828,7 @@ type ReferenceGenomeConnection {
 
 input ReferenceGenomeCreateInput {
   collectionId: Int!
-  fileId: ID!
+  fileId: ID = null
   fileIndexId: ID = null
   name: String!
   description: String!
@@ -997,7 +997,7 @@ type SequenceAlignmentIndexConnection {
 
 input SequenceAlignmentIndexCreateInput {
   collectionId: Int!
-  indexFileId: ID!
+  indexFileId: ID = null
   referenceGenomeId: ID!
   tool: AlignmentTool!
 }

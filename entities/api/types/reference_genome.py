@@ -198,7 +198,7 @@ ReferenceGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 @strawberry.input()
 class ReferenceGenomeCreateInput:
     collection_id: int
-    file_id: strawberry.ID
+    file_id: Optional[strawberry.ID] = None
     file_index_id: Optional[strawberry.ID] = None
     name: str
     description: str

@@ -44,7 +44,7 @@ class ConsensusGenome(Entity):
     reference_genome: Mapped[ReferenceGenome] = relationship(
         ReferenceGenome, back_populates="consensus_genomes", foreign_keys=reference_genome_id
     )
-    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=False)
+    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped[File] = relationship(File, foreign_keys=sequence_id)
     is_reverse_complement: Mapped[bool] = mapped_column(Boolean, nullable=False)
     intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
