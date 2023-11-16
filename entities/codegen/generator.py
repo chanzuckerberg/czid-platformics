@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 from codegen.lib.linkml_wrappers import ViewWrapper
 
-DIR_CODEGEN = ["support", "api/types", "database/models", "cerbos/policies"]
+DIR_CODEGEN = ["support", "api/types", "database/models", "cerbos/policies", "test_infra/factories"]
 
 
 @click.group()
