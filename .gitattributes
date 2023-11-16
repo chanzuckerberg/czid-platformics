@@ -9,10 +9,5 @@ entities/database/models/*	linguist-generated=true
 entities/cerbos/policies/*	linguist-generated=true
 entities/support/enums.py	linguist-generated=true
 entities/schema/README.md	linguist-generated=true
-
-# Codegen based on mock schema
-entities/codegen/tests/output/api/* linguist-generated=true
-entities/codegen/tests/output/api/types/* linguist-generated=true
-entities/codegen/tests/output/cerbos/policies/*	linguist-generated=true
-entities/codegen/tests/output/database/models/*	linguist-generated=true
-entities/codegen/tests/output/support/*	linguist-generated=true
+entities/test_infra/factories/* linguist-generated=true
+entities/test_infra/factories/main.py linguist-generated=false

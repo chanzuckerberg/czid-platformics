@@ -126,6 +126,8 @@ classes:
       sample_type:
         range: string
         required: true
+        annotations:
+          factory_type: organ
       water_control:
         range: boolean
         required: true
@@ -134,6 +136,8 @@ classes:
       collection_location:
         range: string
         required: true
+        annotations:
+          factory_type: city
       description:
         range: string
       host_taxon:

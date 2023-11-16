@@ -6,7 +6,9 @@ import base64
 import pytest
 from platformics.database.connect import SyncDB
 from collections import defaultdict
-from test_infra import factories as fa
+from test_infra.factories.main import SessionStorage
+from test_infra.factories.sample import SampleFactory
+from test_infra.factories.sequencing_read import SequencingReadFactory
 from api.conftest import GQLTestClient
 
 
@@ -24,22 +26,22 @@ async def test_nested_query(
 
     # Create mock data
     with sync_db.session() as session:
-        fa.SessionStorage.set_session(session)
+        SessionStorage.set_session(session)
         # create some samples with multiple SequencingReads
-        sa1 = fa.SampleFactory(owner_user_id=user1_id, collection_id=project1_id)
-        sa2 = fa.SampleFactory(owner_user_id=user3_id, collection_id=project1_id)
-        sa3 = fa.SampleFactory(owner_user_id=user2_id, collection_id=project2_id)
+        sa1 = SampleFactory(owner_user_id=user1_id, collection_id=project1_id)
+        sa2 = SampleFactory(owner_user_id=user3_id, collection_id=project1_id)
+        sa3 = SampleFactory(owner_user_id=user2_id, collection_id=project2_id)
 
-        seq1 = fa.SequencingReadFactory.create_batch(
+        seq1 = SequencingReadFactory.create_batch(
             3, sample=sa1, owner_user_id=sa1.owner_user_id, collection_id=sa1.collection_id
         )
-        seq2 = fa.SequencingReadFactory.create_batch(
+        seq2 = SequencingReadFactory.create_batch(
             2,
             sample=sa2,
             owner_user_id=sa2.owner_user_id,
             collection_id=sa2.collection_id,
         )
-        seq3 = fa.SequencingReadFactory.create_batch(
+        seq3 = SequencingReadFactory.create_batch(
             2,
             sample=sa3,
             owner_user_id=sa3.owner_user_id,
@@ -49,7 +51,7 @@ async def test_nested_query(
     # Fetch samples and nested sequencing reads AND nested samples again!
     query = """
         query MyQuery {
-          samples (where: { name: { _ilike: "Sample%" } }) {
+          samples {
             id
             name
             collectionLocation
@@ -115,8 +117,8 @@ async def test_relay_node_queries(
 ) -> None:
     # Create mock data
     with sync_db.session() as session:
-        fa.SessionStorage.set_session(session)
-        sample = fa.SampleFactory(owner_user_id=111, collection_id=888)
+        SessionStorage.set_session(session)
+        sample = SampleFactory(owner_user_id=111, collection_id=888)
         entity_id = sample.entity_id
 
         node_id = f"Sample:{entity_id}".encode("ascii")

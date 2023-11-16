@@ -1,11 +1,12 @@
 import factory
 import faker
 import sqlalchemy as sa
-from database.models import File, FileStatus, Sample, SequencingRead
+from database.models import File, FileStatus
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
 from faker_enum import EnumProvider
+import uuid6
 
 Faker.add_provider(Bioseq)
 Faker.add_provider(Organ)
@@ -36,6 +37,7 @@ class SessionStorage:
 class CommonFactory(factory.alchemy.SQLAlchemyModelFactory):
     owner_user_id = fuzzy.FuzzyInteger(1, 1000)
     collection_id = fuzzy.FuzzyInteger(1, 1000)
+    entity_id = uuid6.uuid7()
 
     class Meta:
         sqlalchemy_session_factory = SessionStorage.get_session
@@ -73,39 +75,3 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
             )
         )
         session.commit()
-
-
-class SampleFactory(CommonFactory):
-    class Meta:
-        sqlalchemy_session = None  # workaround for a bug in factoryboy
-        model = Sample
-        # What fields do we try to match to existing db rows to determine whether we
-        # should create a new row or not?
-        sqlalchemy_get_or_create = ("name", "collection_location")
-
-    sample_type = factory.Faker("organ")
-    name = factory.LazyAttribute(lambda o: "Sample %s" % o.sample_type)
-    collection_location = factory.Faker("city")
-    water_control = factory.Faker("boolean")
-
-
-class SequencingReadFactory(CommonFactory):
-    class Meta:
-        sqlalchemy_session = None  # workaround for a bug in factoryboy
-        model = SequencingRead
-
-    sample = factory.SubFactory(
-        SampleFactory,
-        owner_user_id=factory.SelfAttribute("..owner_user_id"),
-        collection_id=factory.SelfAttribute("..collection_id"),
-    )
-    nucleic_acid = fuzzy.FuzzyChoice(["RNA", "DNA"])
-    protocol = fuzzy.FuzzyChoice(["TARGETED", "MNGS", "MSSPE"])
-    technology = fuzzy.FuzzyChoice(["Illumina", "Nanopore"])
-    has_ercc = factory.Faker("boolean")
-    r1_file = factory.RelatedFactory(
-        FileFactory,
-        factory_related_name="entity",
-        entity_field_name="r1_file",
-        file_format="fastq",
-    )
