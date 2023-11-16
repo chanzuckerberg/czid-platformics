@@ -73,6 +73,18 @@ class FieldWrapper:
     def related_class(self) -> "EntityWrapper":
         return EntityWrapper(self.view, self.view.get_element(self.wrapped_field.range))
 
+    @property
+    def related_enum(self) -> "EnumWrapper":
+        return EnumWrapper(self.view, self.view.get_element(self.wrapped_field.range))
+
+    @property
+    def factory_type(self) -> str:
+        return (
+            self.wrapped_field.annotations["factory_type"].value
+            if self.wrapped_field.annotations and self.wrapped_field.annotations["factory_type"]
+            else None
+        )
+
 
 class EnumWrapper:
     def __init__(self, view: SchemaView, wrapped_class: EnumDefinition):
