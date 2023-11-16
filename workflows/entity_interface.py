@@ -1,11 +1,11 @@
+from abc import ABC
 import asyncio
-from dataclasses import field, fields
+from dataclasses import dataclass, field, fields
 import os
 from typing import Generic, Optional
 import typing
 from uuid import UUID
 
-from pydantic import BaseModel
 from semver import Version
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -30,7 +30,7 @@ _type_name_to_graphql_type = {
 }
 
 
-class Entity(BaseModel):
+class Entity(ABC):
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
     version: Optional[Version] = field(default_factory=lambda: Version(0), init=False)
 
@@ -99,6 +99,7 @@ class Entity(BaseModel):
         self.entity_id = entity_id
 
 
+@dataclass
 class Sample(Entity):
     name: str
     location: str
@@ -107,6 +108,7 @@ class Sample(Entity):
 T = typing.TypeVar("T", bound=Entity)
 
 
+@dataclass
 class EntityReference(Generic[T]):
     entity_id: Optional[UUID] = field(default_factory=lambda: None)
     entity: Optional[T] = field(default_factory=lambda: None)
@@ -126,6 +128,7 @@ class EntityReference(Generic[T]):
         pass
 
 
+@dataclass
 class SequencingRead(Entity):
     nucleotide: str
     sequence: str
@@ -133,6 +136,7 @@ class SequencingRead(Entity):
     sample: Optional[EntityReference[Sample]] = field(metadata={"id_name": "sampleId"})
 
 
+@dataclass
 class Contig(Entity):
     sequence: str
     sequencing_read: Optional[EntityReference[SequencingRead]] = field(metadata={"id_name": "sequencingReadId"})
