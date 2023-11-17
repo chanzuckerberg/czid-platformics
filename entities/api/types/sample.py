@@ -60,7 +60,7 @@ async def load_taxon_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["host_taxon"]
-    return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.host_taxon_id)  # type:ignore
 
 
 @relay.connection(

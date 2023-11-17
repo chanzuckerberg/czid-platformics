@@ -77,7 +77,7 @@ async def load_sequencing_read_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["sequence_read"]
-    return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.sequence_read_id)  # type:ignore
 
 
 @strawberry.field

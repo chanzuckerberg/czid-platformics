@@ -26,8 +26,6 @@ def use_factoryboy() -> None:
     SequencingReadFactory.create_batch(3, sample=sa1, owner_user_id=sa1.owner_user_id, collection_id=sa1.collection_id)
     SequencingReadFactory.create_batch(2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id)
 
-    FileFactory.update_file_ids()
-
     # Create some ConsensusGenomes
     cg_1 = ConsensusGenomeFactory(owner_user_id=111, collection_id=444)
     cg_2 = ConsensusGenomeFactory(owner_user_id=222, collection_id=555)
@@ -38,6 +36,8 @@ def use_factoryboy() -> None:
     MetricConsensusGenomeFactory(
         consensus_genome=cg_2, owner_user_id=cg_2.owner_user_id, collection_id=cg_2.collection_id
     )
+
+    FileFactory.update_file_ids()
 
     session.commit()
 
