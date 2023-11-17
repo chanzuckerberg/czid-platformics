@@ -1,5 +1,5 @@
 from typing import List, TypedDict
-from plugin_types import EntityInputLoader
+from plugins.plugin_types import EntityInputLoader
 from entity_interface import SequencingRead
 
 

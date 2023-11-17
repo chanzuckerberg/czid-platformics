@@ -5,7 +5,7 @@ import boto3
 import os
 from datetime import datetime
 
-from plugin_types import WorkflowRunner, WorkflowStatusMessage
+from plugins.plugin_types import WorkflowRunner, WorkflowStatusMessage
 
 # TODO: maybe split out these decisions into another module, or a YAML file??
 if os.environ.get("ENVIRONMENT", None) == "test":

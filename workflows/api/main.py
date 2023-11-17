@@ -1,4 +1,3 @@
-import configparser
 import typing
 import json
 
@@ -6,9 +5,9 @@ import database.models as db
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from config import load_event_bus, load_workflow_runners
+from api.config import load_event_bus, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI, Request
-from manifest import Manifest
+from api.manifest import Manifest
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -18,15 +17,11 @@ from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
-from plugin_types import EventBus
+from plugins.plugin_types import EventBus
 
 ###########
 # Plugins #
 ###########
-
-config = configparser.ConfigParser()
-config.read("defaults.cfg")
-default_workflow_runner_name = config.get("plugins", "default_workflow_runner")
 
 workflow_runners = load_workflow_runners()
 
@@ -149,7 +144,7 @@ class Mutation:
         project_id: int,
         workflow_version_id: int,
         workflow_inputs: typing.List[WorkflowInput],
-        workflow_runner: str = default_workflow_runner_name,
+        workflow_runner: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         event_bus: EventBus = Depends(get_event_bus),
     ) -> Run:

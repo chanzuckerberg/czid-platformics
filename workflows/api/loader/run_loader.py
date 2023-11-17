@@ -1,7 +1,7 @@
 import asyncio
 
-from config import load_event_bus
-from loader import LoaderDriver
+from api.config import load_event_bus
+from api.loader.loader import LoaderDriver
 from settings import APISettings
 from platformics.database.connect import init_async_db
 
