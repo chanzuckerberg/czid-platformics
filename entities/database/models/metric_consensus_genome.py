@@ -37,6 +37,6 @@ class MetricConsensusGenome(Entity):
     n_actg: Mapped[int] = mapped_column(Integer, nullable=True)
     n_missing: Mapped[int] = mapped_column(Integer, nullable=True)
     n_ambiguous: Mapped[int] = mapped_column(Integer, nullable=True)
-    coverage_viz_summary_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=False)
+    coverage_viz_summary_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     coverage_viz_summary_file: Mapped[File] = relationship(File, foreign_keys=coverage_viz_summary_file_id)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

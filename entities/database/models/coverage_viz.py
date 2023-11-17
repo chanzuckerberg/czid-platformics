@@ -19,6 +19,6 @@ class CoverageViz(Entity):
     __tablename__ = "coverage_viz"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     accession_id: Mapped[str] = mapped_column(String, nullable=False)
-    coverage_viz_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=False)
+    coverage_viz_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     coverage_viz_file: Mapped[File] = relationship(File, foreign_keys=coverage_viz_file_id)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

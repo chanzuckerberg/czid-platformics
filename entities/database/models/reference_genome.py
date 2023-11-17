@@ -26,7 +26,7 @@ else:
 class ReferenceGenome(Entity):
     __tablename__ = "reference_genome"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=False)
+    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file: Mapped[File] = relationship(File, foreign_keys=file_id)
     file_index_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file_index: Mapped[File] = relationship(File, foreign_keys=file_index_id)

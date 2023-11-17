@@ -205,7 +205,6 @@ classes:
         required: true
       file:
         range: File
-        required: true
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.genomic_range
@@ -220,7 +219,6 @@ classes:
     attributes:
       file:
         range: File
-        required: true
       file_index:
         range: File
       name:
@@ -260,7 +258,6 @@ classes:
     attributes:
       index_file:
         range: File
-        required: true
       reference_genome:
         range: ReferenceGenome
         required: true
@@ -362,7 +359,6 @@ classes:
         inverse: ReferenceGenome.consensus_genomes
       sequence:
         range: File
-        required: true
       is_reverse_complement:
         range: boolean
         required: true
@@ -408,7 +404,6 @@ classes:
         range: int
       coverage_viz_summary_file:
         range: File
-        required: true
     annotations:
       plural: MetricsConsensusGenomes
 
@@ -422,7 +417,6 @@ classes:
         required: true
       coverage_viz_file:
         range: File
-        required: true
     annotations:
       plural: CoverageVizes
 

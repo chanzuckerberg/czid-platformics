@@ -1,7 +1,7 @@
 import factory
 import faker
 import sqlalchemy as sa
-from database.models import File, FileStatus
+from database.models import File, FileStatus, Entity
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -68,10 +68,19 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
         session = SessionStorage.get_session()
         if not session:
             raise Exception("No session found")
-        session.execute(
-            sa.text(
-                "UPDATE sequencing_read SET r1_file_id = file.id "
-                "FROM file WHERE sequencing_read.entity_id = file.entity_id",
-            )
-        )
+        # For each file, find the entity associated with it
+        # and update the file_id for that entity.
+        files = session.query(File).all()
+        for file in files:
+            if file.entity_id:
+                entity_field_name = file.entity_field_name
+                entity = session.query(Entity).filter(Entity.id == file.entity_id).first()
+                if entity:
+                    entity_name = entity.type
+                    session.execute(
+                        sa.text(
+                            f"""UPDATE {entity_name} SET {entity_field_name}_id = file.id
+                            FROM file WHERE {entity_name}.entity_id = file.entity_id""",
+                        )
+                    )
         session.commit()

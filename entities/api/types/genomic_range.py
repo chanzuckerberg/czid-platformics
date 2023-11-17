@@ -147,7 +147,7 @@ GenomicRange.__strawberry_definition__.is_type_of = (  # type: ignore
 class GenomicRangeCreateInput:
     collection_id: int
     reference_genome_id: strawberry.ID
-    file_id: strawberry.ID
+    file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()

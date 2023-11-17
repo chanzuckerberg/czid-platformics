@@ -117,7 +117,7 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
     genomic_range_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="genomicRangeId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
-    sequence_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceId")
+    sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     is_reverse_complement = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
@@ -213,7 +213,7 @@ class CoverageVizCreateInput(sgqlc.types.Input):
     __field_names__ = ("collection_id", "accession_id", "coverage_viz_file_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
-    coverage_viz_file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="coverageVizFileId")
+    coverage_viz_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizFileId")
 
 
 class CoverageVizUpdateInput(sgqlc.types.Input):
@@ -295,7 +295,7 @@ class GenomicRangeCreateInput(sgqlc.types.Input):
     __field_names__ = ("collection_id", "reference_genome_id", "file_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
-    file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="fileId")
+    file_id = sgqlc.types.Field(ID, graphql_name="fileId")
 
 
 class GenomicRangeUpdateInput(sgqlc.types.Input):
@@ -509,7 +509,7 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     n_actg = sgqlc.types.Field(Int, graphql_name="nActg")
     n_missing = sgqlc.types.Field(Int, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(Int, graphql_name="nAmbiguous")
-    coverage_viz_summary_file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="coverageVizSummaryFileId")
+    coverage_viz_summary_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizSummaryFileId")
 
 
 class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
@@ -584,7 +584,7 @@ class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("collection_id", "file_id", "file_index_id", "name", "description", "taxon_id", "accession_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="fileId")
+    file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     file_index_id = sgqlc.types.Field(ID, graphql_name="fileIndexId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     description = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="description")
@@ -718,7 +718,7 @@ class SequenceAlignmentIndexCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("collection_id", "index_file_id", "reference_genome_id", "tool")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    index_file_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="indexFileId")
+    index_file_id = sgqlc.types.Field(ID, graphql_name="indexFileId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
     tool = sgqlc.types.Field(sgqlc.types.non_null(AlignmentTool), graphql_name="tool")
 

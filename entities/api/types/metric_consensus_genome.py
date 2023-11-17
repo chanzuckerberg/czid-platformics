@@ -141,7 +141,7 @@ class MetricConsensusGenomeCreateInput:
     n_actg: Optional[int] = None
     n_missing: Optional[int] = None
     n_ambiguous: Optional[int] = None
-    coverage_viz_summary_file_id: strawberry.ID
+    coverage_viz_summary_file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()

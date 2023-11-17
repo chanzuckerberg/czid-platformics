@@ -104,7 +104,7 @@ CoverageViz.__strawberry_definition__.is_type_of = (  # type: ignore
 class CoverageVizCreateInput:
     collection_id: int
     accession_id: str
-    coverage_viz_file_id: strawberry.ID
+    coverage_viz_file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()

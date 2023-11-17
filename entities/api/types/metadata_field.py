@@ -60,7 +60,7 @@ async def load_metadata_field_project_rows(
 ) -> Sequence[Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetadataField)
-    relationship = mapper.relationships["metadata_field_projects"]
+    relationship = mapper.relationships["field_group"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 

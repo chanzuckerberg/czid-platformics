@@ -21,7 +21,7 @@ else:
 class SequenceAlignmentIndex(Entity):
     __tablename__ = "sequence_alignment_index"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    index_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=False)
+    index_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     index_file: Mapped[File] = relationship(File, foreign_keys=index_file_id)
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
         UUID, ForeignKey("reference_genome.entity_id"), nullable=False

@@ -2,6 +2,8 @@ from platformics.database.connect import init_sync_db
 from test_infra.factories.main import SessionStorage, FileFactory
 from test_infra.factories.sample import SampleFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
+from test_infra.factories.consensus_genome import ConsensusGenomeFactory
+from test_infra.factories.metric_consensus_genome import MetricConsensusGenomeFactory
 import factory.random
 from platformics.settings import CLISettings
 
@@ -23,6 +25,17 @@ def use_factoryboy() -> None:
 
     SequencingReadFactory.create_batch(3, sample=sa1, owner_user_id=sa1.owner_user_id, collection_id=sa1.collection_id)
     SequencingReadFactory.create_batch(2, sample=sa2, owner_user_id=sa2.owner_user_id, collection_id=sa2.collection_id)
+
+    # Create some ConsensusGenomes
+    cg_1 = ConsensusGenomeFactory(owner_user_id=111, collection_id=444)
+    cg_2 = ConsensusGenomeFactory(owner_user_id=222, collection_id=555)
+
+    MetricConsensusGenomeFactory(
+        consensus_genome=cg_1, owner_user_id=cg_1.owner_user_id, collection_id=cg_1.collection_id
+    )
+    MetricConsensusGenomeFactory(
+        consensus_genome=cg_2, owner_user_id=cg_2.owner_user_id, collection_id=cg_2.collection_id
+    )
 
     FileFactory.update_file_ids()
 

@@ -80,11 +80,11 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.{{ cls.name }})
         {%- if related_field.multivalued %}
-    relationship = mapper.relationships["{{ related_field.related_class.plural_snake_name }}"]
+    relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}
-    relationship = mapper.relationships["{{ related_field.related_class.snake_name }}"]
-    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.related_class.snake_name }}_id) # type:ignore
+    relationship = mapper.relationships["{{ related_field.name }}"]
+    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id) # type:ignore
         {%- endif %}
     {%- endif %}
 {%- endfor %}
