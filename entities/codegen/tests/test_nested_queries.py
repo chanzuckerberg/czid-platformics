@@ -28,7 +28,7 @@ async def test_nested_query(
         SessionStorage.set_session(session)
         # create some samples with multiple SequencingReads
         sa1 = SampleFactory(owner_user_id=user1_id, collection_id=project1_id)
-        sa2 = SampleFactory(owner_user_id=user3_id, collection_id=project1_id)
+        sa2 = SampleFactory(owner_user_id=user2_id, collection_id=project1_id)
         sa3 = SampleFactory(owner_user_id=user2_id, collection_id=project2_id)
 
         seq1 = SequencingReadFactory.create_batch(
@@ -40,7 +40,7 @@ async def test_nested_query(
             owner_user_id=sa2.owner_user_id,
             collection_id=sa2.collection_id,
         )
-        seq3 = SequencingReadFactory.create_batch(
+        SequencingReadFactory.create_batch(
             2,
             sample=sa3,
             owner_user_id=sa3.owner_user_id,
@@ -85,16 +85,7 @@ async def test_nested_query(
 
     # Make sure user1 can only see samples from project1
     results = await gql_client.query(query, user_id=user1_id, member_projects=[project1_id])
-    expected_samples_by_owner = {
-        user1_id: 1,
-        user2_id: 1,
-        user3_id: 1,
-    }
-    expected_sequences_by_owner = {
-        user1_id: len(seq1),
-        user2_id: len(seq3),
-        user3_id: len(seq2),
-    }
+    expected_sequences_by_owner = { user1_id: len(seq1), user2_id: len(seq2) }
     actual_samples_by_owner: dict[int, int] = defaultdict(int)
     actual_sequences_by_owner: dict[int, int] = defaultdict(int)
     for sample in results["data"]["samples"]:
@@ -105,8 +96,8 @@ async def test_nested_query(
 
     for userid in expected_sequences_by_owner:
         assert actual_sequences_by_owner[userid] == expected_sequences_by_owner[userid]
-    for userid in expected_samples_by_owner:
-        assert actual_samples_by_owner[userid] == expected_samples_by_owner[userid]
+    for userid in [user1_id, user2_id]:
+        assert actual_samples_by_owner[userid] == 1
 
 
 @pytest.mark.asyncio
@@ -117,23 +108,36 @@ async def test_relay_node_queries(
     # Create mock data
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        sample = SampleFactory(owner_user_id=111, collection_id=888)
-        entity_id = sample.entity_id
+        sample1 = SampleFactory(owner_user_id=111, collection_id=888)
+        sample2 = SampleFactory(owner_user_id=111, collection_id=888)
+        node1_id = f"Sample:{sample1.entity_id}".encode("ascii")
+        node2_id = f"Sample:{sample2.entity_id}".encode("ascii")
+        node1_id_base64 = base64.b64encode(node1_id).decode("utf-8")
+        node2_id_base64 = base64.b64encode(node2_id).decode("utf-8")
 
-        node_id = f"Sample:{entity_id}".encode("ascii")
-        node_id_base64 = base64.b64encode(node_id).decode("utf-8")
-
-    # Fetch sample by node ID
+    # Fetch one node
     query = f"""
         query MyQuery {{
-          nodes(ids: ["{node_id_base64}"]) {{
+          node(id: "{node1_id_base64}") {{
             ... on Sample {{
               name
-              collectionLocation
+            }}
+          }}
+        }}
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    assert results["data"]["node"]["name"] == sample1.name
+
+    # Fetch multiple nodes
+    query = f"""
+        query MyQuery {{
+          nodes(ids: ["{node1_id_base64}", "{node2_id_base64}"]) {{
+            ... on Sample {{
+              name
             }}
           }}
         }}
     """
 
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    assert results["data"]["nodes"][0]["name"] == sample.name
+    assert results["data"]["nodes"][1]["name"] == sample2.name
