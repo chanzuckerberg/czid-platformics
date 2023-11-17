@@ -72,13 +72,14 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
         # and update the file_id for that entity.
         files = session.query(File).all()
         for file in files:
-            entity_field_name = file.entity_field_name
-            entity = session.query(Entity).filter(Entity.id == file.entity_id).first()
-            entity = entity.type
-            session.execute(
-                sa.text(
-                    f"""UPDATE {entity} SET {entity_field_name}_id = file.id
-                    FROM file WHERE {entity}.entity_id = file.entity_id""",
+            if file.entity_id:
+                entity_field_name = file.entity_field_name
+                entity = session.query(Entity).filter(Entity.id == file.entity_id).first()
+                entity = entity.type
+                session.execute(
+                    sa.text(
+                        f"""UPDATE {entity} SET {entity_field_name}_id = file.id
+                        FROM file WHERE {entity}.entity_id = file.entity_id""",
+                    )
                 )
-            )
         session.commit()
