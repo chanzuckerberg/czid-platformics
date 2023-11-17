@@ -25,13 +25,17 @@ class SequencingReadFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-
+    
     sample = factory.SubFactory(
         SampleFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    protocol = fuzzy.FuzzyChoice(["MNGS", "TARGETED", "MSSPE"])
+    protocol = fuzzy.FuzzyChoice([
+        "MNGS", 
+        "TARGETED", 
+        "MSSPE"
+    ])
     r1_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
@@ -44,8 +48,14 @@ class SequencingReadFactory(CommonFactory):
         entity_field_name="r2_file",
         file_format="fastq",
     )
-    technology = fuzzy.FuzzyChoice(["Illumina", "Nanopore"])
-    nucleic_acid = fuzzy.FuzzyChoice(["RNA", "DNA"])
+    technology = fuzzy.FuzzyChoice([
+        "Illumina", 
+        "Nanopore"
+    ])
+    nucleic_acid = fuzzy.FuzzyChoice([
+        "RNA", 
+        "DNA"
+    ])
     has_ercc = factory.Faker("boolean")
     taxon = factory.SubFactory(
         TaxonFactory,

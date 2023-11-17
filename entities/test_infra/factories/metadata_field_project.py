@@ -5,7 +5,7 @@
 
 import factory
 from database.models import MetadataFieldProject
-from test_infra.factories.main import CommonFactory
+from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.metadata_field import MetadataFieldFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -24,7 +24,7 @@ class MetadataFieldProjectFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-
+    
     project_id = fuzzy.FuzzyInteger(1, 1000)
     metadata_field = factory.SubFactory(
         MetadataFieldFactory,

@@ -23,7 +23,7 @@ class CoverageVizFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-
+    
     accession_id = fuzzy.FuzzyText()
     coverage_viz_file = factory.RelatedFactory(
         FileFactory,

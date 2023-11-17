@@ -24,7 +24,7 @@ class SequenceAlignmentIndexFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-
+    
     index_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
@@ -36,4 +36,8 @@ class SequenceAlignmentIndexFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    tool = fuzzy.FuzzyChoice(["bowtie2", "minimap2", "ncbi"])
+    tool = fuzzy.FuzzyChoice([
+        "bowtie2", 
+        "minimap2", 
+        "ncbi"
+    ])
