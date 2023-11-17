@@ -8,8 +8,8 @@ from semver import Version
 from sqlalchemy.ext.asyncio import AsyncSession
 from entity_interface import create_entities
 
-from plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
-from manifest import Manifest, load_manifest
+from plugins.plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
+from api.manifest import Manifest, load_manifest
 
 T = TypeVar("T", bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
 

@@ -2,7 +2,7 @@ import json
 from typing import List, cast
 import boto3
 from settings import SWIPEEventBusSettings
-from plugin_types import EventBus, WorkflowStatusMessage, WorkflowStatus
+from plugins.plugin_types import EventBus, WorkflowStatusMessage, WorkflowStatus
 
 
 class EventBusSWIPE(EventBus):
