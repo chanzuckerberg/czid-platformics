@@ -5,7 +5,7 @@
 
 import factory
 from database.models import Contig
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -24,7 +24,7 @@ class ContigFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-    
+
     sequencing_read = factory.SubFactory(
         SequencingReadFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

@@ -60,7 +60,7 @@ codegen-test-schema:  ## Run codegen on the test schema
 	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) ruff check --fix  $(DIR_LINT_CODEGEN_TEST)
 
-DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py
+DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI

@@ -1958,6 +1958,7 @@ class PageInfo(sgqlc.types.Type):
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
+        "node",
         "nodes",
         "files",
         "samples",
@@ -1974,6 +1975,13 @@ class Query(sgqlc.types.Type):
         "taxa",
         "upstream_databases",
         "contigs",
+    )
+    node = sgqlc.types.Field(
+        sgqlc.types.non_null(Node),
+        graphql_name="node",
+        args=sgqlc.types.ArgDict(
+            (("id", sgqlc.types.Arg(sgqlc.types.non_null(GlobalID), graphql_name="id", default=None)),)
+        ),
     )
     nodes = sgqlc.types.Field(
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Node))),

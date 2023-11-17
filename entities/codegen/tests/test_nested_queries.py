@@ -19,7 +19,6 @@ async def test_nested_query(
     # For now, use the hardcoded user_id for tests
     user1_id = 111
     user2_id = 222
-    user3_id = 222
     project1_id = 888
     project2_id = 999
 
@@ -85,7 +84,7 @@ async def test_nested_query(
 
     # Make sure user1 can only see samples from project1
     results = await gql_client.query(query, user_id=user1_id, member_projects=[project1_id])
-    expected_sequences_by_owner = { user1_id: len(seq1), user2_id: len(seq2) }
+    expected_sequences_by_owner = {user1_id: len(seq1), user2_id: len(seq2)}
     actual_samples_by_owner: dict[int, int] = defaultdict(int)
     actual_sequences_by_owner: dict[int, int] = defaultdict(int)
     for sample in results["data"]["samples"]:

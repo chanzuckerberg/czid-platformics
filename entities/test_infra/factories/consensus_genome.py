@@ -10,7 +10,7 @@ from test_infra.factories.taxon import TaxonFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
 from test_infra.factories.genomic_range import GenomicRangeFactory
 from test_infra.factories.reference_genome import ReferenceGenomeFactory
-from factory import Faker, fuzzy
+from factory import Faker
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
 from faker_enum import EnumProvider
@@ -27,7 +27,7 @@ class ConsensusGenomeFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-    
+
     taxon = factory.SubFactory(
         TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

@@ -24,7 +24,7 @@ class MetricConsensusGenomeFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-    
+
     consensus_genome = factory.SubFactory(
         ConsensusGenomeFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

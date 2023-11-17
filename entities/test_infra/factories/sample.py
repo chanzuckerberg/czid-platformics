@@ -5,7 +5,7 @@
 
 import factory
 from database.models import Sample
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.taxon import TaxonFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -24,7 +24,7 @@ class SampleFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-    
+
     name = fuzzy.FuzzyText()
     sample_type = factory.Faker("organ")
     water_control = factory.Faker("boolean")

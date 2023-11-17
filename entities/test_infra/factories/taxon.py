@@ -5,7 +5,7 @@
 
 import factory
 from database.models import Taxon
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.upstream_database import UpstreamDatabaseFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
@@ -24,7 +24,7 @@ class TaxonFactory(CommonFactory):
         # Match entity_id with existing db rows to determine whether we should
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
-    
+
     wikipedia_id = fuzzy.FuzzyText()
     description = fuzzy.FuzzyText()
     common_name = fuzzy.FuzzyText()
@@ -36,11 +36,7 @@ class TaxonFactory(CommonFactory):
         collection_id=factory.SelfAttribute("..collection_id"),
     )
     upstream_database_identifier = fuzzy.FuzzyText()
-    level = fuzzy.FuzzyChoice([
-        "species", 
-        "genus", 
-        "family"
-    ])
+    level = fuzzy.FuzzyChoice(["species", "genus", "family"])
     tax_id = fuzzy.FuzzyInteger(1, 1000)
     tax_id_parent = fuzzy.FuzzyInteger(1, 1000)
     tax_id_species = fuzzy.FuzzyInteger(1, 1000)
