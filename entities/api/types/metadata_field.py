@@ -83,6 +83,13 @@ async def load_metadatum_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class MetadataFieldWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class MetadataFieldWhereClause(TypedDict):
@@ -100,7 +107,6 @@ class MetadataFieldWhereClause(TypedDict):
     options: Optional[StrComparators] | None
     default_value: Optional[StrComparators] | None
     metadatas: Optional[Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define MetadataField type
@@ -199,7 +205,7 @@ async def create_metadata_field(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_metadata_field(
     input: MetadataFieldUpdateInput,
-    where: MetadataFieldWhereClause,
+    where: MetadataFieldWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -234,7 +240,7 @@ async def update_metadata_field(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_metadata_field(
-    where: MetadataFieldWhereClause,
+    where: MetadataFieldWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

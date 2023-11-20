@@ -59,6 +59,13 @@ async def load_sequencing_read_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class ContigWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class ContigWhereClause(TypedDict):
@@ -70,7 +77,6 @@ class ContigWhereClause(TypedDict):
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     sequence: Optional[StrComparators] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define Contig type
@@ -153,7 +159,7 @@ async def create_contig(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_contig(
     input: ContigUpdateInput,
-    where: ContigWhereClause,
+    where: ContigWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -188,7 +194,7 @@ async def update_contig(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_contig(
-    where: ContigWhereClause,
+    where: ContigWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

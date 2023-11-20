@@ -112,7 +112,10 @@ input ConsensusGenomeWhereClause {
   referenceGenome: ReferenceGenomeWhereClause
   isReverseComplement: BoolComparators
   metrics: MetricConsensusGenomeWhereClause
-  entityId: UUIDComparators
+}
+
+input ConsensusGenomeWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type Contig implements EntityInterface & Node {
@@ -163,7 +166,10 @@ input ContigWhereClause {
   collectionId: IntComparators
   sequencingRead: SequencingReadWhereClause
   sequence: StrComparators
-  entityId: UUIDComparators
+}
+
+input ContigWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type CoverageViz implements EntityInterface & Node {
@@ -196,7 +202,10 @@ input CoverageVizWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   accessionId: StrComparators
-  entityId: UUIDComparators
+}
+
+input CoverageVizWhereClauseMutations {
+  id: UUIDComparators
 }
 
 """Date with time (isoformat)"""
@@ -345,7 +354,10 @@ input GenomicRangeWhereClause {
   collectionId: IntComparators
   referenceGenome: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
-  entityId: UUIDComparators
+}
+
+input GenomicRangeWhereClauseMutations {
+  id: UUIDComparators
 }
 
 """
@@ -473,7 +485,10 @@ input MetadataFieldProjectWhereClause {
   collectionId: IntComparators
   projectId: IntComparators
   metadataField: MetadataFieldWhereClause
-  entityId: UUIDComparators
+}
+
+input MetadataFieldProjectWhereClauseMutations {
+  id: UUIDComparators
 }
 
 input MetadataFieldUpdateInput {
@@ -499,7 +514,10 @@ input MetadataFieldWhereClause {
   options: StrComparators
   defaultValue: StrComparators
   metadatas: MetadatumWhereClause
-  entityId: UUIDComparators
+}
+
+input MetadataFieldWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type Metadatum implements EntityInterface & Node {
@@ -554,7 +572,10 @@ input MetadatumWhereClause {
   sample: SampleWhereClause
   metadataField: MetadataFieldWhereClause
   value: StrComparators
-  entityId: UUIDComparators
+}
+
+input MetadatumWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type MetricConsensusGenome implements EntityInterface & Node {
@@ -629,7 +650,10 @@ input MetricConsensusGenomeWhereClause {
   nActg: IntComparators
   nMissing: IntComparators
   nAmbiguous: IntComparators
-  entityId: UUIDComparators
+}
+
+input MetricConsensusGenomeWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type MultipartUploadCredentials {
@@ -652,47 +676,47 @@ type Mutation {
   uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
   markUploadComplete(fileId: ID!): File!
   createSample(input: SampleCreateInput!): Sample!
-  updateSample(input: SampleUpdateInput!, where: SampleWhereClause!): [Sample!]!
-  deleteSample(where: SampleWhereClause!): [Sample!]!
+  updateSample(input: SampleUpdateInput!, where: SampleWhereClauseMutations!): [Sample!]!
+  deleteSample(where: SampleWhereClauseMutations!): [Sample!]!
   createSequencingRead(input: SequencingReadCreateInput!): SequencingRead!
-  updateSequencingRead(input: SequencingReadUpdateInput!, where: SequencingReadWhereClause!): [SequencingRead!]!
-  deleteSequencingRead(where: SequencingReadWhereClause!): [SequencingRead!]!
+  updateSequencingRead(input: SequencingReadUpdateInput!, where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
+  deleteSequencingRead(where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
   createGenomicRange(input: GenomicRangeCreateInput!): GenomicRange!
-  updateGenomicRange(input: GenomicRangeUpdateInput!, where: GenomicRangeWhereClause!): [GenomicRange!]!
-  deleteGenomicRange(where: GenomicRangeWhereClause!): [GenomicRange!]!
+  updateGenomicRange(input: GenomicRangeUpdateInput!, where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
+  deleteGenomicRange(where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
   createReferenceGenome(input: ReferenceGenomeCreateInput!): ReferenceGenome!
-  updateReferenceGenome(input: ReferenceGenomeUpdateInput!, where: ReferenceGenomeWhereClause!): [ReferenceGenome!]!
-  deleteReferenceGenome(where: ReferenceGenomeWhereClause!): [ReferenceGenome!]!
+  updateReferenceGenome(input: ReferenceGenomeUpdateInput!, where: ReferenceGenomeWhereClauseMutations!): [ReferenceGenome!]!
+  deleteReferenceGenome(where: ReferenceGenomeWhereClauseMutations!): [ReferenceGenome!]!
   createSequenceAlignmentIndex(input: SequenceAlignmentIndexCreateInput!): SequenceAlignmentIndex!
-  updateSequenceAlignmentIndex(input: SequenceAlignmentIndexUpdateInput!, where: SequenceAlignmentIndexWhereClause!): [SequenceAlignmentIndex!]!
-  deleteSequenceAlignmentIndex(where: SequenceAlignmentIndexWhereClause!): [SequenceAlignmentIndex!]!
+  updateSequenceAlignmentIndex(input: SequenceAlignmentIndexUpdateInput!, where: SequenceAlignmentIndexWhereClauseMutations!): [SequenceAlignmentIndex!]!
+  deleteSequenceAlignmentIndex(where: SequenceAlignmentIndexWhereClauseMutations!): [SequenceAlignmentIndex!]!
   createMetadatum(input: MetadatumCreateInput!): Metadatum!
-  updateMetadatum(input: MetadatumUpdateInput!, where: MetadatumWhereClause!): [Metadatum!]!
-  deleteMetadatum(where: MetadatumWhereClause!): [Metadatum!]!
+  updateMetadatum(input: MetadatumUpdateInput!, where: MetadatumWhereClauseMutations!): [Metadatum!]!
+  deleteMetadatum(where: MetadatumWhereClauseMutations!): [Metadatum!]!
   createMetadataField(input: MetadataFieldCreateInput!): MetadataField!
-  updateMetadataField(input: MetadataFieldUpdateInput!, where: MetadataFieldWhereClause!): [MetadataField!]!
-  deleteMetadataField(where: MetadataFieldWhereClause!): [MetadataField!]!
+  updateMetadataField(input: MetadataFieldUpdateInput!, where: MetadataFieldWhereClauseMutations!): [MetadataField!]!
+  deleteMetadataField(where: MetadataFieldWhereClauseMutations!): [MetadataField!]!
   createMetadataFieldProject(input: MetadataFieldProjectCreateInput!): MetadataFieldProject!
-  updateMetadataFieldProject(input: MetadataFieldProjectUpdateInput!, where: MetadataFieldProjectWhereClause!): [MetadataFieldProject!]!
-  deleteMetadataFieldProject(where: MetadataFieldProjectWhereClause!): [MetadataFieldProject!]!
+  updateMetadataFieldProject(input: MetadataFieldProjectUpdateInput!, where: MetadataFieldProjectWhereClauseMutations!): [MetadataFieldProject!]!
+  deleteMetadataFieldProject(where: MetadataFieldProjectWhereClauseMutations!): [MetadataFieldProject!]!
   createConsensusGenome(input: ConsensusGenomeCreateInput!): ConsensusGenome!
-  updateConsensusGenome(input: ConsensusGenomeUpdateInput!, where: ConsensusGenomeWhereClause!): [ConsensusGenome!]!
-  deleteConsensusGenome(where: ConsensusGenomeWhereClause!): [ConsensusGenome!]!
+  updateConsensusGenome(input: ConsensusGenomeUpdateInput!, where: ConsensusGenomeWhereClauseMutations!): [ConsensusGenome!]!
+  deleteConsensusGenome(where: ConsensusGenomeWhereClauseMutations!): [ConsensusGenome!]!
   createMetricConsensusGenome(input: MetricConsensusGenomeCreateInput!): MetricConsensusGenome!
-  updateMetricConsensusGenome(input: MetricConsensusGenomeUpdateInput!, where: MetricConsensusGenomeWhereClause!): [MetricConsensusGenome!]!
-  deleteMetricConsensusGenome(where: MetricConsensusGenomeWhereClause!): [MetricConsensusGenome!]!
+  updateMetricConsensusGenome(input: MetricConsensusGenomeUpdateInput!, where: MetricConsensusGenomeWhereClauseMutations!): [MetricConsensusGenome!]!
+  deleteMetricConsensusGenome(where: MetricConsensusGenomeWhereClauseMutations!): [MetricConsensusGenome!]!
   createCoverageViz(input: CoverageVizCreateInput!): CoverageViz!
-  updateCoverageViz(input: CoverageVizUpdateInput!, where: CoverageVizWhereClause!): [CoverageViz!]!
-  deleteCoverageViz(where: CoverageVizWhereClause!): [CoverageViz!]!
+  updateCoverageViz(input: CoverageVizUpdateInput!, where: CoverageVizWhereClauseMutations!): [CoverageViz!]!
+  deleteCoverageViz(where: CoverageVizWhereClauseMutations!): [CoverageViz!]!
   createTaxon(input: TaxonCreateInput!): Taxon!
-  updateTaxon(input: TaxonUpdateInput!, where: TaxonWhereClause!): [Taxon!]!
-  deleteTaxon(where: TaxonWhereClause!): [Taxon!]!
+  updateTaxon(input: TaxonUpdateInput!, where: TaxonWhereClauseMutations!): [Taxon!]!
+  deleteTaxon(where: TaxonWhereClauseMutations!): [Taxon!]!
   createUpstreamDatabase(input: UpstreamDatabaseCreateInput!): UpstreamDatabase!
-  updateUpstreamDatabase(input: UpstreamDatabaseUpdateInput!, where: UpstreamDatabaseWhereClause!): [UpstreamDatabase!]!
-  deleteUpstreamDatabase(where: UpstreamDatabaseWhereClause!): [UpstreamDatabase!]!
+  updateUpstreamDatabase(input: UpstreamDatabaseUpdateInput!, where: UpstreamDatabaseWhereClauseMutations!): [UpstreamDatabase!]!
+  deleteUpstreamDatabase(where: UpstreamDatabaseWhereClauseMutations!): [UpstreamDatabase!]!
   createContig(input: ContigCreateInput!): Contig!
-  updateContig(input: ContigUpdateInput!, where: ContigWhereClause!): [Contig!]!
-  deleteContig(where: ContigWhereClause!): [Contig!]!
+  updateContig(input: ContigUpdateInput!, where: ContigWhereClauseMutations!): [Contig!]!
+  deleteContig(where: ContigWhereClauseMutations!): [Contig!]!
 }
 
 """An object with a Globally Unique ID"""
@@ -734,6 +758,10 @@ type PageInfo {
 }
 
 type Query {
+  node(
+    """The ID of the object."""
+    id: GlobalID!
+  ): Node!
   nodes(
     """The IDs of the objects."""
     ids: [GlobalID!]!
@@ -867,7 +895,10 @@ input ReferenceGenomeWhereClause {
   sequenceAlignmentIndices: SequenceAlignmentIndexWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
   genomicRanges: GenomicRangeWhereClause
-  entityId: UUIDComparators
+}
+
+input ReferenceGenomeWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type Sample implements EntityInterface & Node {
@@ -970,7 +1001,10 @@ input SampleWhereClause {
   hostTaxon: TaxonWhereClause
   sequencingReads: SequencingReadWhereClause
   metadatas: MetadatumWhereClause
-  entityId: UUIDComparators
+}
+
+input SampleWhereClauseMutations {
+  id: UUIDComparators
 }
 
 type SequenceAlignmentIndex implements EntityInterface & Node {
@@ -1025,7 +1059,10 @@ input SequenceAlignmentIndexWhereClause {
   collectionId: IntComparators
   referenceGenome: ReferenceGenomeWhereClause
   tool: AlignmentToolEnumComparators
-  entityId: UUIDComparators
+}
+
+input SequenceAlignmentIndexWhereClauseMutations {
+  id: UUIDComparators
 }
 
 enum SequencingProtocol {
@@ -1154,7 +1191,10 @@ input SequencingReadWhereClause {
   taxon: TaxonWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
   contigs: ContigWhereClause
-  entityId: UUIDComparators
+}
+
+input SequencingReadWhereClauseMutations {
+  id: UUIDComparators
 }
 
 enum SequencingTechnology {
@@ -1392,7 +1432,10 @@ input TaxonWhereClause {
   referenceGenomes: ReferenceGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
   samples: SampleWhereClause
-  entityId: UUIDComparators
+}
+
+input TaxonWhereClauseMutations {
+  id: UUIDComparators
 }
 
 scalar UUID
@@ -1450,5 +1493,8 @@ input UpstreamDatabaseWhereClause {
   collectionId: IntComparators
   name: StrComparators
   taxa: TaxonWhereClause
-  entityId: UUIDComparators
+}
+
+input UpstreamDatabaseWhereClauseMutations {
+  id: UUIDComparators
 }

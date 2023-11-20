@@ -1,5 +1,5 @@
 """
-GraphQL tests
+Test basic queries and mutations
 """
 
 import pytest
@@ -84,6 +84,7 @@ async def test_graphql_mutations(
         assert output["data"]["createSample"]["collectionLocation"] == "San Francisco, CA"
 
         new_location = "Chicago, IL"
+        sample_id = output["data"]["createSample"]["id"]
         query = f"""
             mutation modifyOneSample {{
                 updateSample(
@@ -91,7 +92,7 @@ async def test_graphql_mutations(
                         collectionLocation: "{new_location}"
                     }}
                     where: {{
-                        id: {{ _eq: "{output["data"]["createSample"]["id"]}" }}
+                        id: {{ _eq: "{sample_id}" }}
                     }}
                 ) {{
                     id,
@@ -101,3 +102,32 @@ async def test_graphql_mutations(
         """
         output = await gql_client.query(query, member_projects=projects_allowed)
         assert output["data"]["updateSample"][0]["collectionLocation"] == new_location
+
+        # Test deletion
+        query = f"""
+            mutation deleteOneSample {{
+                deleteSample(
+                    where: {{ id: {{ _eq: "{sample_id}" }} }}
+                ) {{
+                    id,
+                    collectionLocation
+                }}
+            }}
+        """
+        output = await gql_client.query(query, member_projects=projects_allowed)
+        assert "errors" not in output
+        assert len(output["data"]["deleteSample"]) == 1
+        assert output["data"]["deleteSample"][0]["id"] == sample_id
+        assert output["data"]["deleteSample"][0]["collectionLocation"] == new_location
+
+        # Try to fetch sample now that it's deleted
+        query = f"""
+            query GetDeletedSample {{
+                samples ( where: {{ id: {{ _eq: "{sample_id}" }} }}) {{
+                    id,
+                    collectionLocation
+                }}
+            }}
+        """
+        output = await gql_client.query(query, member_projects=projects_allowed)
+        assert output["data"]["samples"] == []

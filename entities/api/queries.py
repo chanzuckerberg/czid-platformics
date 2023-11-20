@@ -24,6 +24,7 @@ from api.types.contig import Contig, resolve_contigs
 @strawberry.type
 class Query:
     # Allow queries by node ID
+    node: relay.Node = relay.node()
     nodes: List[relay.Node] = relay.node()
 
     # Query files

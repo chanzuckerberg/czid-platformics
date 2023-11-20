@@ -80,6 +80,13 @@ def load_files_from(attr_name: str) -> Callable:
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class MetricConsensusGenomeWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class MetricConsensusGenomeWhereClause(TypedDict):
@@ -96,7 +103,6 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     n_actg: Optional[IntComparators] | None
     n_missing: Optional[IntComparators] | None
     n_ambiguous: Optional[IntComparators] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define MetricConsensusGenome type
@@ -198,7 +204,7 @@ async def create_metric_consensus_genome(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_metric_consensus_genome(
     input: MetricConsensusGenomeUpdateInput,
-    where: MetricConsensusGenomeWhereClause,
+    where: MetricConsensusGenomeWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -235,7 +241,7 @@ async def update_metric_consensus_genome(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_metric_consensus_genome(
-    where: MetricConsensusGenomeWhereClause,
+    where: MetricConsensusGenomeWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

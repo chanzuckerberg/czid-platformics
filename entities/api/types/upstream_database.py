@@ -62,6 +62,13 @@ async def load_taxon_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class UpstreamDatabaseWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class UpstreamDatabaseWhereClause(TypedDict):
@@ -71,7 +78,6 @@ class UpstreamDatabaseWhereClause(TypedDict):
     collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     taxa: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define UpstreamDatabase type
@@ -150,7 +156,7 @@ async def create_upstream_database(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_upstream_database(
     input: UpstreamDatabaseUpdateInput,
-    where: UpstreamDatabaseWhereClause,
+    where: UpstreamDatabaseWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -185,7 +191,7 @@ async def update_upstream_database(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_upstream_database(
-    where: UpstreamDatabaseWhereClause,
+    where: UpstreamDatabaseWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

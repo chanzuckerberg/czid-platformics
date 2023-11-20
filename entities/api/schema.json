@@ -105,6 +105,33 @@
               "args": [
                 {
                   "defaultValue": null,
+                  "name": "id",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "GlobalID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "name": "node",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INTERFACE",
+                  "name": "Node",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
                   "name": "ids",
                   "type": {
                     "kind": "NON_NULL",
@@ -3178,15 +3205,6 @@
                 "name": "SampleWhereClause",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -3356,15 +3374,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "TaxonWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -3593,15 +3602,6 @@
                 "name": "MetricConsensusGenomeWhereClause",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -3718,15 +3718,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "ContigWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -3856,15 +3847,6 @@
                 "name": "MetadatumWhereClause",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -3936,15 +3918,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -4065,15 +4038,6 @@
                 "name": "MetadatumWhereClause",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -4136,15 +4100,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "MetadataFieldWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -4583,15 +4538,6 @@
                 "name": "StrComparators",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -4654,15 +4600,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "ConsensusGenomeWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -4774,15 +4711,6 @@
                 "name": "GenomicRangeWhereClause",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -4845,15 +4773,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "AlignmentToolEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -5089,15 +5008,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
                 "ofType": null
               }
             }
@@ -8251,15 +8161,6 @@
                 "name": "StrComparators",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -8466,7 +8367,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "SampleWhereClause",
+                      "name": "SampleWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8501,7 +8402,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "SampleWhereClause",
+                      "name": "SampleWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8576,7 +8477,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "SequencingReadWhereClause",
+                      "name": "SequencingReadWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8611,7 +8512,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "SequencingReadWhereClause",
+                      "name": "SequencingReadWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8686,7 +8587,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "GenomicRangeWhereClause",
+                      "name": "GenomicRangeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8721,7 +8622,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "GenomicRangeWhereClause",
+                      "name": "GenomicRangeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8796,7 +8697,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ReferenceGenomeWhereClause",
+                      "name": "ReferenceGenomeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8831,7 +8732,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ReferenceGenomeWhereClause",
+                      "name": "ReferenceGenomeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8906,7 +8807,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "SequenceAlignmentIndexWhereClause",
+                      "name": "SequenceAlignmentIndexWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -8941,7 +8842,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "SequenceAlignmentIndexWhereClause",
+                      "name": "SequenceAlignmentIndexWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9016,7 +8917,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetadatumWhereClause",
+                      "name": "MetadatumWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9051,7 +8952,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetadatumWhereClause",
+                      "name": "MetadatumWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9126,7 +9027,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetadataFieldWhereClause",
+                      "name": "MetadataFieldWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9161,7 +9062,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetadataFieldWhereClause",
+                      "name": "MetadataFieldWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9236,7 +9137,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetadataFieldProjectWhereClause",
+                      "name": "MetadataFieldProjectWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9271,7 +9172,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetadataFieldProjectWhereClause",
+                      "name": "MetadataFieldProjectWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9346,7 +9247,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ConsensusGenomeWhereClause",
+                      "name": "ConsensusGenomeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9381,7 +9282,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ConsensusGenomeWhereClause",
+                      "name": "ConsensusGenomeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9456,7 +9357,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetricConsensusGenomeWhereClause",
+                      "name": "MetricConsensusGenomeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9491,7 +9392,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "MetricConsensusGenomeWhereClause",
+                      "name": "MetricConsensusGenomeWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9566,7 +9467,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "CoverageVizWhereClause",
+                      "name": "CoverageVizWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9601,7 +9502,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "CoverageVizWhereClause",
+                      "name": "CoverageVizWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9676,7 +9577,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "TaxonWhereClause",
+                      "name": "TaxonWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9711,7 +9612,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "TaxonWhereClause",
+                      "name": "TaxonWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9786,7 +9687,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "UpstreamDatabaseWhereClause",
+                      "name": "UpstreamDatabaseWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9821,7 +9722,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "UpstreamDatabaseWhereClause",
+                      "name": "UpstreamDatabaseWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9896,7 +9797,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ContigWhereClause",
+                      "name": "ContigWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -9931,7 +9832,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ContigWhereClause",
+                      "name": "ContigWhereClauseMutations",
                       "ofType": null
                     }
                   }
@@ -10419,6 +10320,25 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "SampleWhereClauseMutations",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
                 "kind": "NON_NULL",
@@ -10639,6 +10559,25 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "SequencingReadWhereClauseMutations",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
                 "kind": "NON_NULL",
@@ -10713,6 +10652,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "GenomicRangeUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "GenomicRangeWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -10883,6 +10841,25 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ReferenceGenomeWhereClauseMutations",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
                 "kind": "NON_NULL",
@@ -10979,6 +10956,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "SequenceAlignmentIndexUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "SequenceAlignmentIndexWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -11087,6 +11083,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "MetadatumUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetadatumWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -11261,6 +11276,25 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetadataFieldWhereClauseMutations",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
                 "kind": "NON_NULL",
@@ -11339,6 +11373,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "MetadataFieldProjectUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetadataFieldProjectWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -11527,6 +11580,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "ConsensusGenomeUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ConsensusGenomeWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -11725,6 +11797,25 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetricConsensusGenomeWhereClauseMutations",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
                 "kind": "NON_NULL",
@@ -11799,6 +11890,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "CoverageVizUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "CoverageVizWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -12211,6 +12321,25 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "TaxonWhereClauseMutations",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
                 "kind": "NON_NULL",
@@ -12267,6 +12396,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "UpstreamDatabaseUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "UpstreamDatabaseWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -12349,6 +12497,25 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "ContigUpdateInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ContigWhereClauseMutations",
           "possibleTypes": null
         },
         {
