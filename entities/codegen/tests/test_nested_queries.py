@@ -9,11 +9,12 @@ from platformics.database.connect import SyncDB
 from codegen.conftest import GQLTestClient, SessionStorage
 from codegen.tests.output.test_infra.factories.sample import SampleFactory
 from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
+from api.types.entities import Entity
 
 
-def get_id(entity):
+def get_id(entity: Entity) -> str:
     entity_type = entity.__class__.__name__
-    node_id = f"{entity_type}:{entity.entity_id}".encode("ascii")
+    node_id = f"{entity_type}:{entity.id}".encode("ascii")
     node_id_b64 = base64.b64encode(node_id).decode("utf-8")
     return node_id_b64
 

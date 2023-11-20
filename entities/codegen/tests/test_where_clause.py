@@ -8,12 +8,11 @@ from codegen.conftest import GQLTestClient, SessionStorage
 from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 from support.enums import SequencingTechnology
 
-
 user_id = 12345
 project_id = 123
 
 
-def generate_sequencing_reads(sync_db):
+def generate_sequencing_reads(sync_db: SyncDB) -> list:
     """
     Generate 5 sequencing reads, each with 1 different associated sample
     """
