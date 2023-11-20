@@ -1,5 +1,5 @@
 """
-Test file mutations
+Test file mutations for upload, linking an existing S3 file, and marking a file as completed
 """
 
 import os

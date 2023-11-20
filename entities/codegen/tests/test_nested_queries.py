@@ -44,7 +44,7 @@ async def test_nested_query(
         }
     """
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    for i in range(0, len(sequencing_reads)):
+    for i in range(len(sequencing_reads)):
         assert results["data"]["sequencingReads"][i]["id"] == str(sequencing_reads[i].id)
         assert results["data"]["sequencingReads"][i]["sample"]["name"] == sequencing_reads[i].sample.name
 
