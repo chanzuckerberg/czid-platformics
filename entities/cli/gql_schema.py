@@ -157,7 +157,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "reference_genome",
         "is_reverse_complement",
         "metrics",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
@@ -169,7 +168,12 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     is_reverse_complement = sgqlc.types.Field(BoolComparators, graphql_name="isReverseComplement")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class ConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class ContigCreateInput(sgqlc.types.Input):
@@ -190,22 +194,19 @@ class ContigUpdateInput(sgqlc.types.Input):
 
 class ContigWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "sequencing_read",
-        "sequence",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_read", "sequence")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     sequencing_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingRead")
     sequence = sgqlc.types.Field("StrComparators", graphql_name="sequence")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class ContigWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class CoverageVizCreateInput(sgqlc.types.Input):
@@ -226,13 +227,18 @@ class CoverageVizUpdateInput(sgqlc.types.Input):
 
 class CoverageVizWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "accession_id", "entity_id")
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "accession_id")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class CoverageVizWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class EntityWhereClause(sgqlc.types.Input):
@@ -315,7 +321,6 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
         "collection_id",
         "reference_genome",
         "consensus_genomes",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
@@ -323,7 +328,12 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class GenomicRangeWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class IntComparators(sgqlc.types.Input):
@@ -378,22 +388,19 @@ class MetadataFieldProjectUpdateInput(sgqlc.types.Input):
 
 class MetadataFieldProjectWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "project_id",
-        "metadata_field",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "project_id", "metadata_field")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     project_id = sgqlc.types.Field(IntComparators, graphql_name="projectId")
     metadata_field = sgqlc.types.Field("MetadataFieldWhereClause", graphql_name="metadataField")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class MetadataFieldProjectWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class MetadataFieldUpdateInput(sgqlc.types.Input):
@@ -431,7 +438,6 @@ class MetadataFieldWhereClause(sgqlc.types.Input):
         "options",
         "default_value",
         "metadatas",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -445,7 +451,12 @@ class MetadataFieldWhereClause(sgqlc.types.Input):
     options = sgqlc.types.Field("StrComparators", graphql_name="options")
     default_value = sgqlc.types.Field("StrComparators", graphql_name="defaultValue")
     metadatas = sgqlc.types.Field("MetadatumWhereClause", graphql_name="metadatas")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class MetadataFieldWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class MetadatumCreateInput(sgqlc.types.Input):
@@ -468,16 +479,7 @@ class MetadatumUpdateInput(sgqlc.types.Input):
 
 class MetadatumWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "sample",
-        "metadata_field",
-        "value",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sample", "metadata_field", "value")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
@@ -485,7 +487,12 @@ class MetadatumWhereClause(sgqlc.types.Input):
     sample = sgqlc.types.Field("SampleWhereClause", graphql_name="sample")
     metadata_field = sgqlc.types.Field(MetadataFieldWhereClause, graphql_name="metadataField")
     value = sgqlc.types.Field("StrComparators", graphql_name="value")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class MetadatumWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
@@ -550,7 +557,6 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
         "n_actg",
         "n_missing",
         "n_ambiguous",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -563,7 +569,12 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
     n_actg = sgqlc.types.Field(IntComparators, graphql_name="nActg")
     n_missing = sgqlc.types.Field(IntComparators, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(IntComparators, graphql_name="nAmbiguous")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class MetricConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class NucleicAcidEnumComparators(sgqlc.types.Input):
@@ -618,7 +629,6 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
         "sequence_alignment_indices",
         "consensus_genomes",
         "genomic_ranges",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -633,7 +643,12 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
     )
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     genomic_ranges = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="genomicRanges")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class ReferenceGenomeWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class SampleCreateInput(sgqlc.types.Input):
@@ -696,7 +711,6 @@ class SampleWhereClause(sgqlc.types.Input):
         "host_taxon",
         "sequencing_reads",
         "metadatas",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -711,7 +725,12 @@ class SampleWhereClause(sgqlc.types.Input):
     host_taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="hostTaxon")
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
     metadatas = sgqlc.types.Field(MetadatumWhereClause, graphql_name="metadatas")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class SampleWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class SequenceAlignmentIndexCreateInput(sgqlc.types.Input):
@@ -734,22 +753,19 @@ class SequenceAlignmentIndexUpdateInput(sgqlc.types.Input):
 
 class SequenceAlignmentIndexWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "reference_genome",
-        "tool",
-        "entity_id",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "reference_genome", "tool")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     reference_genome = sgqlc.types.Field(ReferenceGenomeWhereClause, graphql_name="referenceGenome")
     tool = sgqlc.types.Field(AlignmentToolEnumComparators, graphql_name="tool")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class SequenceAlignmentIndexWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class SequencingProtocolEnumComparators(sgqlc.types.Input):
@@ -833,7 +849,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "taxon",
         "consensus_genomes",
         "contigs",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -847,7 +862,12 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     contigs = sgqlc.types.Field(ContigWhereClause, graphql_name="contigs")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class SequencingReadWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class SequencingTechnologyEnumComparators(sgqlc.types.Input):
@@ -1032,7 +1052,6 @@ class TaxonWhereClause(sgqlc.types.Input):
         "reference_genomes",
         "sequencing_reads",
         "samples",
-        "entity_id",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -1059,7 +1078,12 @@ class TaxonWhereClause(sgqlc.types.Input):
     reference_genomes = sgqlc.types.Field(ReferenceGenomeWhereClause, graphql_name="referenceGenomes")
     sequencing_reads = sgqlc.types.Field(SequencingReadWhereClause, graphql_name="sequencingReads")
     samples = sgqlc.types.Field(SampleWhereClause, graphql_name="samples")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+
+
+class TaxonWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class UUIDComparators(sgqlc.types.Input):
@@ -1091,14 +1115,19 @@ class UpstreamDatabaseUpdateInput(sgqlc.types.Input):
 
 class UpstreamDatabaseWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "name", "taxa", "entity_id")
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "name", "taxa")
     id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     name = sgqlc.types.Field(StrComparators, graphql_name="name")
     taxa = sgqlc.types.Field(TaxonWhereClause, graphql_name="taxa")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+
+
+class UpstreamDatabaseWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
 
 
 ########################################################################
@@ -1389,7 +1418,12 @@ class Mutation(sgqlc.types.Type):
         args=sgqlc.types.ArgDict(
             (
                 ("input", sgqlc.types.Arg(sgqlc.types.non_null(SampleUpdateInput), graphql_name="input", default=None)),
-                ("where", sgqlc.types.Arg(sgqlc.types.non_null(SampleWhereClause), graphql_name="where", default=None)),
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(SampleWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
             )
         ),
     )
@@ -1397,7 +1431,14 @@ class Mutation(sgqlc.types.Type):
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Sample"))),
         graphql_name="deleteSample",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(sgqlc.types.non_null(SampleWhereClause), graphql_name="where", default=None)),)
+            (
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(SampleWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
         ),
     )
     create_sequencing_read = sgqlc.types.Field(
@@ -1428,7 +1469,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(SequencingReadWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(SequencingReadWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1442,7 +1483,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(SequencingReadWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(SequencingReadWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1471,7 +1512,9 @@ class Mutation(sgqlc.types.Type):
                 ),
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(GenomicRangeWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GenomicRangeWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1483,7 +1526,9 @@ class Mutation(sgqlc.types.Type):
             (
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(GenomicRangeWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(GenomicRangeWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1516,7 +1561,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(ReferenceGenomeWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(ReferenceGenomeWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1530,7 +1575,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(ReferenceGenomeWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(ReferenceGenomeWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1564,7 +1609,9 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(SequenceAlignmentIndexWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(SequenceAlignmentIndexWhereClauseMutations),
+                        graphql_name="where",
+                        default=None,
                     ),
                 ),
             )
@@ -1578,7 +1625,9 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(SequenceAlignmentIndexWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(SequenceAlignmentIndexWhereClauseMutations),
+                        graphql_name="where",
+                        default=None,
                     ),
                 ),
             )
@@ -1607,7 +1656,9 @@ class Mutation(sgqlc.types.Type):
                 ),
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(MetadatumWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(MetadatumWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1619,7 +1670,9 @@ class Mutation(sgqlc.types.Type):
             (
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(MetadatumWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(MetadatumWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1647,7 +1700,9 @@ class Mutation(sgqlc.types.Type):
                 ),
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(MetadataFieldWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(MetadataFieldWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1659,7 +1714,9 @@ class Mutation(sgqlc.types.Type):
             (
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(MetadataFieldWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(MetadataFieldWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1692,7 +1749,9 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldProjectWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(MetadataFieldProjectWhereClauseMutations),
+                        graphql_name="where",
+                        default=None,
                     ),
                 ),
             )
@@ -1706,7 +1765,9 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldProjectWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(MetadataFieldProjectWhereClauseMutations),
+                        graphql_name="where",
+                        default=None,
                     ),
                 ),
             )
@@ -1740,7 +1801,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(ConsensusGenomeWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(ConsensusGenomeWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1754,7 +1815,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(ConsensusGenomeWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(ConsensusGenomeWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1788,7 +1849,9 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetricConsensusGenomeWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(MetricConsensusGenomeWhereClauseMutations),
+                        graphql_name="where",
+                        default=None,
                     ),
                 ),
             )
@@ -1802,7 +1865,9 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetricConsensusGenomeWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(MetricConsensusGenomeWhereClauseMutations),
+                        graphql_name="where",
+                        default=None,
                     ),
                 ),
             )
@@ -1831,7 +1896,9 @@ class Mutation(sgqlc.types.Type):
                 ),
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(CoverageVizWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(CoverageVizWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1843,7 +1910,9 @@ class Mutation(sgqlc.types.Type):
             (
                 (
                     "where",
-                    sgqlc.types.Arg(sgqlc.types.non_null(CoverageVizWhereClause), graphql_name="where", default=None),
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(CoverageVizWhereClauseMutations), graphql_name="where", default=None
+                    ),
                 ),
             )
         ),
@@ -1861,7 +1930,12 @@ class Mutation(sgqlc.types.Type):
         args=sgqlc.types.ArgDict(
             (
                 ("input", sgqlc.types.Arg(sgqlc.types.non_null(TaxonUpdateInput), graphql_name="input", default=None)),
-                ("where", sgqlc.types.Arg(sgqlc.types.non_null(TaxonWhereClause), graphql_name="where", default=None)),
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(TaxonWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
             )
         ),
     )
@@ -1869,7 +1943,14 @@ class Mutation(sgqlc.types.Type):
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Taxon"))),
         graphql_name="deleteTaxon",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(sgqlc.types.non_null(TaxonWhereClause), graphql_name="where", default=None)),)
+            (
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(TaxonWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
         ),
     )
     create_upstream_database = sgqlc.types.Field(
@@ -1900,7 +1981,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(UpstreamDatabaseWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(UpstreamDatabaseWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1914,7 +1995,7 @@ class Mutation(sgqlc.types.Type):
                 (
                     "where",
                     sgqlc.types.Arg(
-                        sgqlc.types.non_null(UpstreamDatabaseWhereClause), graphql_name="where", default=None
+                        sgqlc.types.non_null(UpstreamDatabaseWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -1933,7 +2014,12 @@ class Mutation(sgqlc.types.Type):
         args=sgqlc.types.ArgDict(
             (
                 ("input", sgqlc.types.Arg(sgqlc.types.non_null(ContigUpdateInput), graphql_name="input", default=None)),
-                ("where", sgqlc.types.Arg(sgqlc.types.non_null(ContigWhereClause), graphql_name="where", default=None)),
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ContigWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
             )
         ),
     )
@@ -1941,7 +2027,14 @@ class Mutation(sgqlc.types.Type):
         sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Contig"))),
         graphql_name="deleteContig",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(sgqlc.types.non_null(ContigWhereClause), graphql_name="where", default=None)),)
+            (
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(ContigWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
         ),
     )
 

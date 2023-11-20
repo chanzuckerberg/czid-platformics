@@ -65,6 +65,13 @@ def load_files_from(attr_name: str) -> Callable:
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class CoverageVizWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class CoverageVizWhereClause(TypedDict):
@@ -73,7 +80,6 @@ class CoverageVizWhereClause(TypedDict):
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
     accession_id: Optional[StrComparators] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define CoverageViz type
@@ -155,7 +161,7 @@ async def create_coverage_viz(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_coverage_viz(
     input: CoverageVizUpdateInput,
-    where: CoverageVizWhereClause,
+    where: CoverageVizWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -190,7 +196,7 @@ async def update_coverage_viz(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_coverage_viz(
-    where: CoverageVizWhereClause,
+    where: CoverageVizWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

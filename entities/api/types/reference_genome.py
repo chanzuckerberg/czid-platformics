@@ -136,6 +136,13 @@ def load_files_from(attr_name: str) -> Callable:
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class ReferenceGenomeWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class ReferenceGenomeWhereClause(TypedDict):
@@ -154,7 +161,6 @@ class ReferenceGenomeWhereClause(TypedDict):
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
     genomic_ranges: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define ReferenceGenome type
@@ -258,7 +264,7 @@ async def create_reference_genome(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_reference_genome(
     input: ReferenceGenomeUpdateInput,
-    where: ReferenceGenomeWhereClause,
+    where: ReferenceGenomeWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -293,7 +299,7 @@ async def update_reference_genome(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_reference_genome(
-    where: ReferenceGenomeWhereClause,
+    where: ReferenceGenomeWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

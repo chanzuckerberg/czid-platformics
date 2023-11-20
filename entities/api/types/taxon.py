@@ -131,6 +131,13 @@ async def load_sample_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class TaxonWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class TaxonWhereClause(TypedDict):
@@ -167,7 +174,6 @@ class TaxonWhereClause(TypedDict):
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define Taxon type
@@ -305,7 +311,7 @@ async def create_taxon(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_taxon(
     input: TaxonUpdateInput,
-    where: TaxonWhereClause,
+    where: TaxonWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -340,7 +346,7 @@ async def update_taxon(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_taxon(
-    where: TaxonWhereClause,
+    where: TaxonWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

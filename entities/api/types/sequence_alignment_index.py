@@ -82,6 +82,13 @@ def load_files_from(attr_name: str) -> Callable:
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class SequenceAlignmentIndexWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class SequenceAlignmentIndexWhereClause(TypedDict):
@@ -93,7 +100,6 @@ class SequenceAlignmentIndexWhereClause(TypedDict):
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
     tool: Optional[EnumComparators[AlignmentTool]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define SequenceAlignmentIndex type
@@ -180,7 +186,7 @@ async def create_sequence_alignment_index(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_sequence_alignment_index(
     input: SequenceAlignmentIndexUpdateInput,
-    where: SequenceAlignmentIndexWhereClause,
+    where: SequenceAlignmentIndexWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -217,7 +223,7 @@ async def update_sequence_alignment_index(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_sequence_alignment_index(
-    where: SequenceAlignmentIndexWhereClause,
+    where: SequenceAlignmentIndexWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

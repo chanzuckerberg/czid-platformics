@@ -133,6 +133,13 @@ def load_files_from(attr_name: str) -> Callable:
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class SequencingReadWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class SequencingReadWhereClause(TypedDict):
@@ -150,7 +157,6 @@ class SequencingReadWhereClause(TypedDict):
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
     contigs: Optional[Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define SequencingRead type
@@ -259,7 +265,7 @@ async def create_sequencing_read(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_sequencing_read(
     input: SequencingReadUpdateInput,
-    where: SequencingReadWhereClause,
+    where: SequencingReadWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -294,7 +300,7 @@ async def update_sequencing_read(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_sequencing_read(
-    where: SequencingReadWhereClause,
+    where: SequencingReadWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

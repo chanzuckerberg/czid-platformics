@@ -96,6 +96,13 @@ async def load_metadatum_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class SampleWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class SampleWhereClause(TypedDict):
@@ -115,7 +122,6 @@ class SampleWhereClause(TypedDict):
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     metadatas: Optional[Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define Sample type
@@ -217,7 +223,7 @@ async def create_sample(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_sample(
     input: SampleUpdateInput,
-    where: SampleWhereClause,
+    where: SampleWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -252,7 +258,7 @@ async def update_sample(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_sample(
-    where: SampleWhereClause,
+    where: SampleWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

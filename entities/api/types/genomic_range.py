@@ -98,6 +98,13 @@ def load_files_from(attr_name: str) -> Callable:
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class GenomicRangeWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class GenomicRangeWhereClause(TypedDict):
@@ -111,7 +118,6 @@ class GenomicRangeWhereClause(TypedDict):
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define GenomicRange type
@@ -198,7 +204,7 @@ async def create_genomic_range(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_genomic_range(
     input: GenomicRangeUpdateInput,
-    where: GenomicRangeWhereClause,
+    where: GenomicRangeWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -233,7 +239,7 @@ async def update_genomic_range(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_genomic_range(
-    where: GenomicRangeWhereClause,
+    where: GenomicRangeWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
