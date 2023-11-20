@@ -19,7 +19,9 @@ def generate_sequencing_reads(sync_db):
     """
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        sequencing_reads = SequencingReadFactory.create_batch(5, technology=SequencingTechnology.Illumina, owner_user_id=user_id, collection_id=project_id)
+        sequencing_reads = SequencingReadFactory.create_batch(
+            5, technology=SequencingTechnology.Illumina, owner_user_id=user_id, collection_id=project_id
+        )
         return sequencing_reads
 
 
@@ -139,13 +141,13 @@ async def test_where_clause_mutations(sync_db: SyncDB, gql_client: GQLTestClient
     assert len(output["data"]["updateSequencingRead"]) == 3
 
     # Check that the technology was updated only for the specified samples
-    query = f"""
-        query GetSequencingReads {{
-            sequencingReads {{
+    query = """
+        query GetSequencingReads {
+            sequencingReads {
                 id
                 technology
-            }}
-        }}
+            }
+        }
     """
     output = await gql_client.query(query, member_projects=[project_id])
     assert len(output["data"]["sequencingReads"]) == len(sequencing_reads)
