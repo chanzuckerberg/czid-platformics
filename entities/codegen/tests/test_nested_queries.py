@@ -11,12 +11,49 @@ from codegen.tests.output.test_infra.factories.sample import SampleFactory
 from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
+def get_id(entity):
+    entity_type = entity.__class__.__name__
+    node_id = f"{entity_type}:{entity.entity_id}".encode("ascii")
+    node_id_b64 = base64.b64encode(node_id).decode("utf-8")
+    return node_id_b64
+
+
 @pytest.mark.asyncio
 async def test_nested_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
-    # For now, use the hardcoded user_id for tests
+    # Create mock data
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        sequencing_reads = SequencingReadFactory.create_batch(5, owner_user_id=111, collection_id=888)
+
+    # Nested query with 1:1 relationship so don't use relay-style edges/node
+    query = """
+        query MyQuery {
+          sequencingReads {
+            id
+            protocol
+            technology
+            sample {
+              id
+              name
+              collectionLocation
+            }
+          }
+        }
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    for i in range(0, len(sequencing_reads)):
+        assert results["data"]["sequencingReads"][i]["id"] == str(sequencing_reads[i].id)
+        assert results["data"]["sequencingReads"][i]["sample"]["name"] == sequencing_reads[i].sample.name
+
+
+@pytest.mark.asyncio
+async def test_nested_query_relay(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
     user1_id = 111
     user2_id = 222
     project1_id = 888
@@ -109,15 +146,15 @@ async def test_relay_node_queries(
         SessionStorage.set_session(session)
         sample1 = SampleFactory(owner_user_id=111, collection_id=888)
         sample2 = SampleFactory(owner_user_id=111, collection_id=888)
-        node1_id = f"Sample:{sample1.entity_id}".encode("ascii")
-        node2_id = f"Sample:{sample2.entity_id}".encode("ascii")
-        node1_id_base64 = base64.b64encode(node1_id).decode("utf-8")
-        node2_id_base64 = base64.b64encode(node2_id).decode("utf-8")
+        sequencing_read = SequencingReadFactory(sample=sample1, owner_user_id=111, collection_id=888)
+        sample1_id = get_id(sample1)
+        sample2_id = get_id(sample2)
+        sequencing_read_id = get_id(sequencing_read)
 
     # Fetch one node
     query = f"""
         query MyQuery {{
-          node(id: "{node1_id_base64}") {{
+          node(id: "{sample1_id}") {{
             ... on Sample {{
               name
             }}
@@ -130,13 +167,31 @@ async def test_relay_node_queries(
     # Fetch multiple nodes
     query = f"""
         query MyQuery {{
-          nodes(ids: ["{node1_id_base64}", "{node2_id_base64}"]) {{
+          nodes(ids: ["{sample1_id}", "{sample2_id}"]) {{
             ... on Sample {{
               name
             }}
           }}
         }}
     """
-
     results = await gql_client.query(query, user_id=111, member_projects=[888])
+    assert results["data"]["nodes"][0]["name"] == sample1.name
     assert results["data"]["nodes"][1]["name"] == sample2.name
+
+    # Fetch multiple nodes of different types
+    query = f"""
+        query MyQuery {{
+          nodes(ids: ["{sample1_id}", "{sample2_id}", "{sequencing_read_id}"]) {{
+            ... on Sample {{
+              name
+            }}
+            ... on SequencingRead {{
+              technology
+            }}
+          }}
+        }}
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    assert results["data"]["nodes"][0]["name"] == sample1.name
+    assert results["data"]["nodes"][1]["name"] == sample2.name
+    assert results["data"]["nodes"][2]["technology"] == sequencing_read.technology
