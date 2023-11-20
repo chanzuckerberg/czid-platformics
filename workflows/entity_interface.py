@@ -11,6 +11,7 @@ from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 
 
+# TODO: fix this
 ENTITY_SERVICE_URL = os.environ["ENTITY_SERVICE_URL"]
 ENTITY_SERVICE_AUTH_TOKEN = os.environ["ENTITY_SERVICE_AUTH_TOKEN"]
 

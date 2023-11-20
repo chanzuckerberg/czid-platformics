@@ -126,7 +126,7 @@ SequenceAlignmentIndex.__strawberry_definition__.is_type_of = (  # type: ignore
 @strawberry.input()
 class SequenceAlignmentIndexCreateInput:
     collection_id: int
-    index_file_id: strawberry.ID
+    index_file_id: Optional[strawberry.ID] = None
     reference_genome_id: strawberry.ID
     tool: AlignmentTool
 

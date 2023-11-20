@@ -1,5 +1,5 @@
 from typing import List, TypedDict
-from plugin_types import EntityOutputLoader
+from plugins.plugin_types import EntityOutputLoader
 from entity_interface import Sample
 
 

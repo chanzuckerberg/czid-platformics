@@ -2,7 +2,7 @@ import factory.random
 from factoryboy import workflow_factory as wf
 from settings import APISettings
 from platformics.database.connect import init_sync_db
-from manifest import import_manifests
+from api.manifest import import_manifests
 
 
 def use_factoryboy() -> None:

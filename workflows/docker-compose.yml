@@ -83,7 +83,7 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
     image: "platformics-workflows"
-    command: ["python3", "run_loader.py"]
+    command: ["python3", "api/loader/run_loader.py"]
     restart: always
     volumes:
       - .:/workflows

@@ -76,8 +76,8 @@ async def load_sequencing_read_rows(
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["sequencing_read"]
-    return await dataloader.loader_for(relationship, where).load(root.sequencing_read_id)  # type:ignore
+    relationship = mapper.relationships["sequence_read"]
+    return await dataloader.loader_for(relationship, where).load(root.sequence_read_id)  # type:ignore
 
 
 @strawberry.field
@@ -117,7 +117,7 @@ async def load_metric_consensus_genome_rows(
 ) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["metrics_consensus_genomes"]
+    relationship = mapper.relationships["metrics"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -213,7 +213,7 @@ class ConsensusGenomeCreateInput:
     sequence_read_id: strawberry.ID
     genomic_range_id: strawberry.ID
     reference_genome_id: strawberry.ID
-    sequence_id: strawberry.ID
+    sequence_id: Optional[strawberry.ID] = None
     is_reverse_complement: bool
     intermediate_outputs_id: Optional[strawberry.ID] = None
 
