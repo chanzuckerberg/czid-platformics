@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+"""
+Simple CLI for interacting with the GraphQL API
+"""
+
 import json
 import logging
 

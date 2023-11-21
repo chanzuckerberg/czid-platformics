@@ -8,12 +8,14 @@ from codegen.conftest import GQLTestClient, SessionStorage
 from codegen.tests.output.test_infra.factories.sample import SampleFactory
 
 
-# Test that we can only fetch samples from the database that we have access to
 @pytest.mark.asyncio
 async def test_graphql_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
+    """
+    Test that we can only fetch samples from the database that we have access to
+    """
     user_id = 12345
     secondary_user_id = 67890
     project_id = 123
@@ -47,7 +49,6 @@ async def test_graphql_query(
     assert "Phoenix, AZ" not in locations
 
 
-# Validate that can only create/modify samples in collections the user has access to
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "projects_allowed",
@@ -57,6 +58,9 @@ async def test_graphql_mutations(
     projects_allowed: list[int],
     gql_client: GQLTestClient,
 ) -> None:
+    """
+    Validate that can only create/modify samples in collections the user has access to
+    """
     project_id = 123
     query = """
         mutation createOneSample {

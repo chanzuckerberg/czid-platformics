@@ -16,6 +16,9 @@ async def test_upload_process(
     gql_client: GQLTestClient,
     moto_client: S3Client,
 ) -> None:
+    """
+    Generate AWS credentials, upload a file, and mark the upload as complete
+    """
     user_id = 12345
     project_id = 111
     member_projects = [project_id]

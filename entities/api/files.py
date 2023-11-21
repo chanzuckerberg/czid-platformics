@@ -1,3 +1,7 @@
+"""
+GraphQL types, queries, and mutations for files.
+"""
+
 import json
 import typing
 import database.models as db
@@ -16,6 +20,12 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from support.format_handlers import get_validator
+from api.core.helpers import get_db_rows
+from api.types.entities import Entity
+from database.models import FileStatus
+from platformics.settings import APISettings
+from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.api.core.deps import (
     get_cerbos_client,
     get_db_session,
@@ -23,12 +33,6 @@ from platformics.api.core.deps import (
     get_settings,
     get_sts_client,
 )
-from platformics.settings import APISettings
-from platformics.security.authorization import CerbosAction, get_resource_query
-from support.format_handlers import get_validator
-from api.core.helpers import get_db_rows
-from api.types.entities import Entity
-from database.models import FileStatus
 
 
 # ------------------------------------------------------------------------------
@@ -38,6 +42,10 @@ from database.models import FileStatus
 
 @strawberry.type
 class SignedURL:
+    """
+    Signed URLs for downloading a file from S3.
+    """
+
     url: str
     protocol: str
     method: str
@@ -47,6 +55,10 @@ class SignedURL:
 
 @strawberry.type
 class MultipartUploadCredentials:
+    """
+    STS token for uploading a file to S3.
+    """
+
     protocol: str
     namespace: str
     path: str
@@ -60,6 +72,10 @@ class MultipartUploadCredentials:
 # Keep them separate so we can control which fields are required.
 @strawberry.input()
 class FileUpload:
+    """
+    GraphQL input type for uploading a file.
+    """
+
     name: str
     file_format: str
     compression_type: typing.Optional[str] = None
@@ -67,6 +83,10 @@ class FileUpload:
 
 @strawberry.input()
 class FileCreate:
+    """
+    GraphQL input type for creating a File object based on an existing S3 file (no upload).
+    """
+
     name: str
     file_format: str
     compression_type: typing.Optional[str] = None
@@ -82,6 +102,10 @@ class FileCreate:
 
 @strawberry.input
 class EntityWhereClause(TypedDict):
+    """
+    Supported where clause fields for the Entity type.
+    """
+
     id: UUIDComparators | None
     entity_id: typing.Optional[UUIDComparators] | None
     producing_run_id: IntComparators | None
@@ -95,6 +119,9 @@ async def load_entities(
     info: Info,
     where: EntityWhereClause | None = None,
 ) -> typing.Optional[typing.Annotated["Entity", strawberry.lazy("api.types.entities")]]:
+    """
+    Dataloader to fetch related entities, given file IDs.
+    """
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.File)
     relationship = mapper.relationships["entity"]
@@ -108,6 +135,10 @@ async def load_entities(
 
 @strawberry.type
 class File:
+    """
+    GraphQL File type and fields.
+    """
+
     id: strawberry.ID
     entity_id: strawberry.ID
     entity_field_name: str
@@ -126,6 +157,9 @@ class File:
         expiration: int = 3600,
         s3_client: S3Client = Depends(get_s3_client),
     ) -> typing.Optional[SignedURL]:
+        """
+        Generate a signed URL for downloading a file from S3.
+        """
         if not self.path:  # type: ignore
             return None
         key = self.path  # type: ignore
@@ -138,12 +172,20 @@ class File:
 
 @strawberry.type
 class MultipartUploadResponse:
+    """
+    Return type for the uploadFile mutation.
+    """
+
     credentials: MultipartUploadCredentials
     file: File
 
 
 @strawberry.input
 class FileWhereClause(TypedDict):
+    """
+    Supported where clause fields for the File type.
+    """
+
     id: typing.Optional[UUIDComparators]
     status: typing.Optional[EnumComparators[FileStatus]]
     protocol: typing.Optional[StrComparators]
@@ -160,6 +202,9 @@ async def resolve_files(
     principal: Principal = Depends(require_auth_principal),
     where: typing.Optional[FileWhereClause] = None,
 ) -> typing.Sequence[File]:
+    """
+    Handles files {} GraphQL queries.
+    """
     rows = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
     return rows  # type: ignore
 
@@ -174,6 +219,9 @@ async def validate_file(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     s3_client: S3Client = Depends(get_s3_client),
 ) -> None:
+    """
+    Utility function to validate a file against its file format.
+    """
     validator = get_validator(file.file_format)
     try:
         file_size = validator.validate(s3_client, file.namespace, file.path)
@@ -190,6 +238,9 @@ def generate_multipart_upload_token(
     expiration: int = 3600,
     sts_client: STSClient = Depends(get_sts_client),
 ) -> MultipartUploadCredentials:
+    """
+    Utility function to generate an STS token for multipart upload.
+    """
     policy = {
         "Version": "2012-10-17",
         "Statement": [
@@ -236,6 +287,10 @@ async def mark_upload_complete(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     s3_client: S3Client = Depends(get_s3_client),
 ) -> db.File:
+    """
+    Once a file is uploaded, the front-end should make a markUploadComplete mutation
+    to mark the file as ready for pipeline analysis.
+    """
     query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
     query = query.filter(db.File.id == file_id)
     file = (await session.execute(query)).scalars().one()
@@ -260,6 +315,9 @@ async def create_file(
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
 ) -> db.File:
+    """
+    Create a file object based on an existing S3 file (no upload).
+    """
     new_file = await create_or_upload_file(
         entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, sts_client, settings
     )
@@ -280,6 +338,9 @@ async def upload_file(
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
 ) -> MultipartUploadResponse:
+    """
+    Create a file object and generate an STS token for multipart upload.
+    """
     response = await create_or_upload_file(
         entity_id,
         entity_field_name,
@@ -308,6 +369,9 @@ async def create_or_upload_file(
     sts_client: STSClient = Depends(get_sts_client),
     settings: APISettings = Depends(get_settings),
 ) -> db.File | MultipartUploadResponse:
+    """
+    Utility function for creating a File object, whether for upload or for linking existing files.
+    """
     # Basic validation
     if "/" in file.name:
         raise Exception("File name should not contain /")

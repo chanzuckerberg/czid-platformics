@@ -1,3 +1,7 @@
+"""
+Basic tests to check we can connect to the database and run queries
+"""
+
 import factory.random
 from database.models import Sample, SequencingRead
 from test_infra.factories.main import SessionStorage
@@ -6,8 +10,10 @@ from test_infra.factories.sequencing_read import SequencingReadFactory
 from platformics.database.connect import SyncDB
 
 
-# Tests
 def test_samples(sync_db: SyncDB) -> None:
+    """
+    Test that we can create samples and query them
+    """
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         factory.random.reseed_random(123)
@@ -17,8 +23,10 @@ def test_samples(sync_db: SyncDB) -> None:
         assert session.query(Sample).filter_by(collection_location="Mountain View, CA").count() == 5
 
 
-# Test linking SequencingReads to Samples
 def test_reads(sync_db: SyncDB) -> None:
+    """
+    Test that we can create samples and sequencing reads, and query them
+    """
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         factory.random.reseed_random(123)

@@ -1,14 +1,21 @@
+"""
+Populate the database with mock data for local development
+"""
+
+import factory.random
 from platformics.database.connect import init_sync_db
+from platformics.settings import CLISettings
 from test_infra.factories.main import SessionStorage, FileFactory
 from test_infra.factories.sample import SampleFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
 from test_infra.factories.consensus_genome import ConsensusGenomeFactory
 from test_infra.factories.metric_consensus_genome import MetricConsensusGenomeFactory
-import factory.random
-from platformics.settings import CLISettings
 
 
 def use_factoryboy() -> None:
+    """
+    Use factoryboy to create mock data
+    """
     settings = CLISettings.model_validate({})
     app_db = init_sync_db(settings.SYNC_DB_URI)
     session = app_db.session()

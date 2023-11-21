@@ -8,12 +8,14 @@ from codegen.conftest import SessionStorage, FileFactory, GQLTestClient
 from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
-# Test that we can only fetch files that we have access to
 @pytest.mark.asyncio
 async def test_file_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
+    """
+    Test that we can only fetch files that we have access to
+    """
     user1_id = 12345
     user2_id = 67890
     user3_id = 87654
@@ -52,12 +54,14 @@ async def test_file_query(
         assert file["entity"]["ownerUserId"] in (user1_id, user2_id)
 
 
-# Test that we can fetch related file info.
 @pytest.mark.asyncio
 async def test_nested_files(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
+    """
+    Test that we can fetch related file info.
+    """
     user1_id = 12345
     user2_id = 67890
     user3_id = 87654

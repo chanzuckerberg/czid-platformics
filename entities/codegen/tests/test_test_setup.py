@@ -9,7 +9,9 @@ from codegen.conftest import GQLTestClient
 
 @pytest.mark.asyncio
 async def test_graphql_query(gql_client: GQLTestClient, api_test_schema: FastAPI) -> None:
-    # Make sure we're using the right schema and http client
+    """
+    Make sure we're using the right schema and http client
+    """
     assert api_test_schema.title == "Codegen Tests"
     assert gql_client.http_client.base_url.host == "test-codegen"
 

@@ -1,3 +1,7 @@
+"""
+Script to generate public/private keypair for testing
+"""
+
 from jwcrypto import jwk
 from jwcrypto.common import json_decode
 
