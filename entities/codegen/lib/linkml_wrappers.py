@@ -127,6 +127,7 @@ class EntityWrapper:
 
     # Blow up if a property doesn't exist
     def __getattr__(self, attr: str) -> str:
+        breakpoint()
         raise NotImplementedError(f"please define entity property {attr}")
 
     @cached_property

@@ -10,20 +10,11 @@ Make changes to the template codegen/templates/database/models/__init__.py.j2 in
 from sqlalchemy.orm import configure_mappers
 
 from platformics.database.models.base import Base, meta, Entity  # noqa: F401
-from database.models.sample import Sample  # noqa: F401
-from database.models.sequencing_read import SequencingRead  # noqa: F401
-from database.models.genomic_range import GenomicRange  # noqa: F401
-from database.models.reference_genome import ReferenceGenome  # noqa: F401
-from database.models.sequence_alignment_index import SequenceAlignmentIndex  # noqa: F401
-from database.models.metadatum import Metadatum  # noqa: F401
-from database.models.metadata_field import MetadataField  # noqa: F401
-from database.models.metadata_field_project import MetadataFieldProject  # noqa: F401
-from database.models.consensus_genome import ConsensusGenome  # noqa: F401
-from database.models.metric_consensus_genome import MetricConsensusGenome  # noqa: F401
-from database.models.coverage_viz import CoverageViz  # noqa: F401
-from database.models.taxon import Taxon  # noqa: F401
-from database.models.upstream_database import UpstreamDatabase  # noqa: F401
-from database.models.contig import Contig  # noqa: F401
+from database.models.run import Run  # noqa: F401
+from database.models.workflow import Workflow  # noqa: F401
+from database.models.run_step import RunStep  # noqa: F401
+from database.models.run_entity_input import RunEntityInput  # noqa: F401
+from database.models.workflow_version import WorkflowVersion  # noqa: F401
 from database.models.file import File, FileStatus  # noqa: F401
 
 configure_mappers()

@@ -9,20 +9,11 @@ import strawberry
 from strawberry import relay
 from typing import Sequence, List
 from api.files import File, resolve_files
-from api.types.sample import Sample, resolve_samples
-from api.types.sequencing_read import SequencingRead, resolve_sequencing_reads
-from api.types.genomic_range import GenomicRange, resolve_genomic_ranges
-from api.types.reference_genome import ReferenceGenome, resolve_reference_genomes
-from api.types.sequence_alignment_index import SequenceAlignmentIndex, resolve_sequence_alignment_indices
-from api.types.metadatum import Metadatum, resolve_metadatas
-from api.types.metadata_field import MetadataField, resolve_metadata_fields
-from api.types.metadata_field_project import MetadataFieldProject, resolve_metadata_field_projects
-from api.types.consensus_genome import ConsensusGenome, resolve_consensus_genomes
-from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_metrics_consensus_genomes
-from api.types.coverage_viz import CoverageViz, resolve_coverage_vizes
-from api.types.taxon import Taxon, resolve_taxa
-from api.types.upstream_database import UpstreamDatabase, resolve_upstream_databases
-from api.types.contig import Contig, resolve_contigs
+from api.types.run import Run, resolve_runs
+from api.types.workflow import Workflow, resolve_workflows
+from api.types.run_step import RunStep, resolve_run_steps
+from api.types.run_entity_input import RunEntityInput, resolve_run_entity_inputs
+from api.types.workflow_version import WorkflowVersion, resolve_workflow_versions
 
 
 @strawberry.type
@@ -35,17 +26,8 @@ class Query:
     files: Sequence[File] = resolve_files
 
     # Query entities
-    samples: Sequence[Sample] = resolve_samples
-    sequencing_reads: Sequence[SequencingRead] = resolve_sequencing_reads
-    genomic_ranges: Sequence[GenomicRange] = resolve_genomic_ranges
-    reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
-    sequence_alignment_indices: Sequence[SequenceAlignmentIndex] = resolve_sequence_alignment_indices
-    metadatas: Sequence[Metadatum] = resolve_metadatas
-    metadata_fields: Sequence[MetadataField] = resolve_metadata_fields
-    metadata_field_projects: Sequence[MetadataFieldProject] = resolve_metadata_field_projects
-    consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
-    metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
-    coverage_vizes: Sequence[CoverageViz] = resolve_coverage_vizes
-    taxa: Sequence[Taxon] = resolve_taxa
-    upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
-    contigs: Sequence[Contig] = resolve_contigs
+    runs: Sequence[Run] = resolve_runs
+    workflows: Sequence[Workflow] = resolve_workflows
+    run_steps: Sequence[RunStep] = resolve_run_steps
+    run_entity_inputs: Sequence[RunEntityInput] = resolve_run_entity_inputs
+    workflow_versions: Sequence[WorkflowVersion] = resolve_workflow_versions

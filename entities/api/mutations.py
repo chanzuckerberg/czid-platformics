@@ -8,55 +8,21 @@ Make changes to the template codegen/templates/api/mutations.py.j2 instead.
 import strawberry
 from typing import Sequence
 from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadResponse
-from api.types.sample import Sample, create_sample, update_sample, delete_sample
-from api.types.sequencing_read import (
-    SequencingRead,
-    create_sequencing_read,
-    update_sequencing_read,
-    delete_sequencing_read,
+from api.types.run import Run, create_run, update_run, delete_run
+from api.types.workflow import Workflow, create_workflow, update_workflow, delete_workflow
+from api.types.run_step import RunStep, create_run_step, update_run_step, delete_run_step
+from api.types.run_entity_input import (
+    RunEntityInput,
+    create_run_entity_input,
+    update_run_entity_input,
+    delete_run_entity_input,
 )
-from api.types.genomic_range import GenomicRange, create_genomic_range, update_genomic_range, delete_genomic_range
-from api.types.reference_genome import (
-    ReferenceGenome,
-    create_reference_genome,
-    update_reference_genome,
-    delete_reference_genome,
+from api.types.workflow_version import (
+    WorkflowVersion,
+    create_workflow_version,
+    update_workflow_version,
+    delete_workflow_version,
 )
-from api.types.sequence_alignment_index import (
-    SequenceAlignmentIndex,
-    create_sequence_alignment_index,
-    update_sequence_alignment_index,
-    delete_sequence_alignment_index,
-)
-from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
-from api.types.metadata_field import MetadataField, create_metadata_field, update_metadata_field, delete_metadata_field
-from api.types.metadata_field_project import (
-    MetadataFieldProject,
-    create_metadata_field_project,
-    update_metadata_field_project,
-    delete_metadata_field_project,
-)
-from api.types.consensus_genome import (
-    ConsensusGenome,
-    create_consensus_genome,
-    update_consensus_genome,
-    delete_consensus_genome,
-)
-from api.types.metric_consensus_genome import (
-    MetricConsensusGenome,
-    create_metric_consensus_genome,
-    update_metric_consensus_genome,
-    delete_metric_consensus_genome,
-)
-from api.types.coverage_viz import CoverageViz, create_coverage_viz, update_coverage_viz, delete_coverage_viz
-from api.types.taxon import Taxon, create_taxon, update_taxon, delete_taxon
-from api.types.upstream_database import (
-    UpstreamDatabase,
-    create_upstream_database,
-    update_upstream_database,
-    delete_upstream_database,
-)
-from api.types.contig import Contig, create_contig, update_contig, delete_contig
 
 
 @strawberry.type
@@ -66,72 +32,27 @@ class Mutation:
     upload_file: MultipartUploadResponse = upload_file
     mark_upload_complete: File = mark_upload_complete
 
-    # Sample mutations
-    create_sample: Sample = create_sample
-    update_sample: Sequence[Sample] = update_sample
-    delete_sample: Sequence[Sample] = delete_sample
+    # Run mutations
+    create_run: Run = create_run
+    update_run: Sequence[Run] = update_run
+    delete_run: Sequence[Run] = delete_run
 
-    # SequencingRead mutations
-    create_sequencing_read: SequencingRead = create_sequencing_read
-    update_sequencing_read: Sequence[SequencingRead] = update_sequencing_read
-    delete_sequencing_read: Sequence[SequencingRead] = delete_sequencing_read
+    # Workflow mutations
+    create_workflow: Workflow = create_workflow
+    update_workflow: Sequence[Workflow] = update_workflow
+    delete_workflow: Sequence[Workflow] = delete_workflow
 
-    # GenomicRange mutations
-    create_genomic_range: GenomicRange = create_genomic_range
-    update_genomic_range: Sequence[GenomicRange] = update_genomic_range
-    delete_genomic_range: Sequence[GenomicRange] = delete_genomic_range
+    # RunStep mutations
+    create_run_step: RunStep = create_run_step
+    update_run_step: Sequence[RunStep] = update_run_step
+    delete_run_step: Sequence[RunStep] = delete_run_step
 
-    # ReferenceGenome mutations
-    create_reference_genome: ReferenceGenome = create_reference_genome
-    update_reference_genome: Sequence[ReferenceGenome] = update_reference_genome
-    delete_reference_genome: Sequence[ReferenceGenome] = delete_reference_genome
+    # RunEntityInput mutations
+    create_run_entity_input: RunEntityInput = create_run_entity_input
+    update_run_entity_input: Sequence[RunEntityInput] = update_run_entity_input
+    delete_run_entity_input: Sequence[RunEntityInput] = delete_run_entity_input
 
-    # SequenceAlignmentIndex mutations
-    create_sequence_alignment_index: SequenceAlignmentIndex = create_sequence_alignment_index
-    update_sequence_alignment_index: Sequence[SequenceAlignmentIndex] = update_sequence_alignment_index
-    delete_sequence_alignment_index: Sequence[SequenceAlignmentIndex] = delete_sequence_alignment_index
-
-    # Metadatum mutations
-    create_metadatum: Metadatum = create_metadatum
-    update_metadatum: Sequence[Metadatum] = update_metadatum
-    delete_metadatum: Sequence[Metadatum] = delete_metadatum
-
-    # MetadataField mutations
-    create_metadata_field: MetadataField = create_metadata_field
-    update_metadata_field: Sequence[MetadataField] = update_metadata_field
-    delete_metadata_field: Sequence[MetadataField] = delete_metadata_field
-
-    # MetadataFieldProject mutations
-    create_metadata_field_project: MetadataFieldProject = create_metadata_field_project
-    update_metadata_field_project: Sequence[MetadataFieldProject] = update_metadata_field_project
-    delete_metadata_field_project: Sequence[MetadataFieldProject] = delete_metadata_field_project
-
-    # ConsensusGenome mutations
-    create_consensus_genome: ConsensusGenome = create_consensus_genome
-    update_consensus_genome: Sequence[ConsensusGenome] = update_consensus_genome
-    delete_consensus_genome: Sequence[ConsensusGenome] = delete_consensus_genome
-
-    # MetricConsensusGenome mutations
-    create_metric_consensus_genome: MetricConsensusGenome = create_metric_consensus_genome
-    update_metric_consensus_genome: Sequence[MetricConsensusGenome] = update_metric_consensus_genome
-    delete_metric_consensus_genome: Sequence[MetricConsensusGenome] = delete_metric_consensus_genome
-
-    # CoverageViz mutations
-    create_coverage_viz: CoverageViz = create_coverage_viz
-    update_coverage_viz: Sequence[CoverageViz] = update_coverage_viz
-    delete_coverage_viz: Sequence[CoverageViz] = delete_coverage_viz
-
-    # Taxon mutations
-    create_taxon: Taxon = create_taxon
-    update_taxon: Sequence[Taxon] = update_taxon
-    delete_taxon: Sequence[Taxon] = delete_taxon
-
-    # UpstreamDatabase mutations
-    create_upstream_database: UpstreamDatabase = create_upstream_database
-    update_upstream_database: Sequence[UpstreamDatabase] = update_upstream_database
-    delete_upstream_database: Sequence[UpstreamDatabase] = delete_upstream_database
-
-    # Contig mutations
-    create_contig: Contig = create_contig
-    update_contig: Sequence[Contig] = update_contig
-    delete_contig: Sequence[Contig] = delete_contig
+    # WorkflowVersion mutations
+    create_workflow_version: WorkflowVersion = create_workflow_version
+    update_workflow_version: Sequence[WorkflowVersion] = update_workflow_version
+    delete_workflow_version: Sequence[WorkflowVersion] = delete_workflow_version

@@ -10,45 +10,15 @@ import enum
 
 
 @strawberry.enum
-class FileStatus(enum.Enum):
-    SUCCESS = "SUCCESS"
+class RunStatus(enum.Enum):
+    SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     PENDING = "PENDING"
+    STARTED = "STARTED"
+    RUNNING = "RUNNING"
 
 
 @strawberry.enum
-class FileAcessProtocol(enum.Enum):
-    s3 = "s3"
-
-
-@strawberry.enum
-class NucleicAcid(enum.Enum):
-    RNA = "RNA"
-    DNA = "DNA"
-
-
-@strawberry.enum
-class SequencingProtocol(enum.Enum):
-    MNGS = "MNGS"
-    TARGETED = "TARGETED"
-    MSSPE = "MSSPE"
-
-
-@strawberry.enum
-class SequencingTechnology(enum.Enum):
-    Illumina = "Illumina"
-    Nanopore = "Nanopore"
-
-
-@strawberry.enum
-class AlignmentTool(enum.Enum):
-    bowtie2 = "bowtie2"
-    minimap2 = "minimap2"
-    ncbi = "ncbi"
-
-
-@strawberry.enum
-class TaxonLevel(enum.Enum):
-    species = "species"
-    genus = "genus"
-    family = "family"
+class RunStepStatus(enum.Enum):
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
