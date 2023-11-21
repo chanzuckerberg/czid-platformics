@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://api.cerbos.dev/latest/cerbos/policy/v1/Policy.schema.json
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  importDerivedRoles:
+    - common_roles
+  resource: "run_step"
+  rules:
+    - actions: ['view', 'create', 'update']
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - project_member
+
+    - actions: ['download', 'delete']
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - owner
+  schemas:
+    principalSchema:
+      ref: cerbos:///principal.json
