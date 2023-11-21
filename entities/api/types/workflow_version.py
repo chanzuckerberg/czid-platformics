@@ -77,6 +77,13 @@ async def load_run_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class WorkflowVersionWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class WorkflowVersionWhereClause(TypedDict):
@@ -89,7 +96,6 @@ class WorkflowVersionWhereClause(TypedDict):
     manifest: Optional[StrComparators] | None
     workflow: Optional[Annotated["WorkflowWhereClause", strawberry.lazy("api.types.workflow")]] | None
     runs: Optional[Annotated["RunWhereClause", strawberry.lazy("api.types.run")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define WorkflowVersion type
@@ -177,7 +183,7 @@ async def create_workflow_version(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_workflow_version(
     input: WorkflowVersionUpdateInput,
-    where: WorkflowVersionWhereClause,
+    where: WorkflowVersionWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -212,7 +218,7 @@ async def update_workflow_version(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_workflow_version(
-    where: WorkflowVersionWhereClause,
+    where: WorkflowVersionWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

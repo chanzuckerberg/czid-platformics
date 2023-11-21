@@ -87,17 +87,17 @@ classes:
       inputs_json: 
         range: string
       status: 
-        range: string #TODO: fix tihs
-      #workflow_version_id:
-      #  range: WorkflowVersion.id
+        range: RunStatus 
       workflow_version:
         range: WorkflowVersion
         inverse: WorkflowVersion.runs
       run_steps:
         range: RunStep
+        multivalued: true
         inverse: RunStep.run
       run_entity_inputs:
         range: RunEntityInput
+        multivalued: true
         inverse: RunEntityInput.run
     annotations:
       plural: Runs
@@ -131,15 +131,13 @@ classes:
       id: 
         identifier: true
         range: uuid
-      #run_id:
-      #  range: Run.id # do we need this?
       run:
         range: Run
         inverse: Run.run_steps
       started_at:
-        range: string # fix type
+        range: date 
       ended_at:
-        range: string
+        range: date
       status: 
         range: RunStatus
     annotations:
@@ -157,8 +155,6 @@ classes:
         range: int
       field_name: 
         range: string
-      #run_id:
-      #  range: Run.id
       run: 
         range: Run
         inverse: Run.run_entity_inputs

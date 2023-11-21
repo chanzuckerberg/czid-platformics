@@ -16,6 +16,7 @@ from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    EnumComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -24,8 +25,10 @@ from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+from support.enums import RunStatus
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -61,33 +64,44 @@ async def load_workflow_version_rows(
     return await dataloader.loader_for(relationship, where).load(root.workflow_version_id)  # type:ignore
 
 
-@strawberry.field
+@relay.connection(
+    relay.ListConnection[Annotated["RunStep", strawberry.lazy("api.types.run_step")]]  # type:ignore
+)
 async def load_run_step_rows(
     root: "Run",
     info: Info,
     where: Annotated["RunStepWhereClause", strawberry.lazy("api.types.run_step")] | None = None,
-) -> Optional[Annotated["RunStep", strawberry.lazy("api.types.run_step")]]:
+) -> Sequence[Annotated["RunStep", strawberry.lazy("api.types.run_step")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Run)
-    relationship = mapper.relationships["run_step"]
-    return await dataloader.loader_for(relationship, where).load(root.run_step_id)  # type:ignore
+    relationship = mapper.relationships["run_steps"]
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
-@strawberry.field
+@relay.connection(
+    relay.ListConnection[Annotated["RunEntityInput", strawberry.lazy("api.types.run_entity_input")]]  # type:ignore
+)
 async def load_run_entity_input_rows(
     root: "Run",
     info: Info,
     where: Annotated["RunEntityInputWhereClause", strawberry.lazy("api.types.run_entity_input")] | None = None,
-) -> Optional[Annotated["RunEntityInput", strawberry.lazy("api.types.run_entity_input")]]:
+) -> Sequence[Annotated["RunEntityInput", strawberry.lazy("api.types.run_entity_input")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Run)
-    relationship = mapper.relationships["run_entity_input"]
-    return await dataloader.loader_for(relationship, where).load(root.run_entity_input_id)  # type:ignore
+    relationship = mapper.relationships["run_entity_inputs"]
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
+
+
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class RunWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
 
 
 # Supported WHERE clause attributes
@@ -106,7 +120,7 @@ class RunWhereClause(TypedDict):
     execution_id: Optional[StrComparators] | None
     outputs_json: Optional[StrComparators] | None
     inputs_json: Optional[StrComparators] | None
-    status: Optional[StrComparators] | None
+    status: Optional[EnumComparators[RunStatus]] | None
     workflow_version: Optional[
         Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]
     ] | None
@@ -114,7 +128,6 @@ class RunWhereClause(TypedDict):
     run_entity_inputs: Optional[
         Annotated["RunEntityInputWhereClause", strawberry.lazy("api.types.run_entity_input")]
     ] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define Run type
@@ -131,12 +144,12 @@ class Run(EntityInterface):
     execution_id: Optional[str] = None
     outputs_json: Optional[str] = None
     inputs_json: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[RunStatus] = None
     workflow_version: Optional[
         Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]
     ] = load_workflow_version_rows  # type:ignore
-    run_steps: Optional[Annotated["RunStep", strawberry.lazy("api.types.run_step")]] = load_run_step_rows  # type:ignore
-    run_entity_inputs: Optional[
+    run_steps: Sequence[Annotated["RunStep", strawberry.lazy("api.types.run_step")]] = load_run_step_rows  # type:ignore
+    run_entity_inputs: Sequence[
         Annotated["RunEntityInput", strawberry.lazy("api.types.run_entity_input")]
     ] = load_run_entity_input_rows  # type:ignore
 
@@ -161,10 +174,8 @@ class RunCreateInput:
     execution_id: Optional[str] = None
     outputs_json: Optional[str] = None
     inputs_json: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[RunStatus] = None
     workflow_version_id: Optional[strawberry.ID] = None
-    run_steps_id: Optional[strawberry.ID] = None
-    run_entity_inputs_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
@@ -177,10 +188,8 @@ class RunUpdateInput:
     execution_id: Optional[str] = None
     outputs_json: Optional[str] = None
     inputs_json: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[RunStatus] = None
     workflow_version_id: Optional[strawberry.ID] = None
-    run_steps_id: Optional[strawberry.ID] = None
-    run_entity_inputs_id: Optional[strawberry.ID] = None
 
 
 # ------------------------------------------------------------------------------
@@ -224,7 +233,7 @@ async def create_run(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_run(
     input: RunUpdateInput,
-    where: RunWhereClause,
+    where: RunWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -259,7 +268,7 @@ async def update_run(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_run(
-    where: RunWhereClause,
+    where: RunWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

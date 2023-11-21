@@ -59,6 +59,13 @@ async def load_run_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class RunEntityInputWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class RunEntityInputWhereClause(TypedDict):
@@ -69,7 +76,6 @@ class RunEntityInputWhereClause(TypedDict):
     new_entity_id: Optional[IntComparators] | None
     field_name: Optional[StrComparators] | None
     run: Optional[Annotated["RunWhereClause", strawberry.lazy("api.types.run")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define RunEntityInput type
@@ -153,7 +159,7 @@ async def create_run_entity_input(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_run_entity_input(
     input: RunEntityInputUpdateInput,
-    where: RunEntityInputWhereClause,
+    where: RunEntityInputWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -188,7 +194,7 @@ async def update_run_entity_input(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_run_entity_input(
-    where: RunEntityInputWhereClause,
+    where: RunEntityInputWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

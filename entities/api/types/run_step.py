@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
+import datetime
 from api.core.helpers import get_db_rows
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
@@ -61,6 +62,13 @@ async def load_run_rows(
 # ------------------------------------------------------------------------------
 
 
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class RunStepWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
+
+
 # Supported WHERE clause attributes
 @strawberry.input
 class RunStepWhereClause(TypedDict):
@@ -69,10 +77,11 @@ class RunStepWhereClause(TypedDict):
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
     run: Optional[Annotated["RunWhereClause", strawberry.lazy("api.types.run")]] | None
+    # TODO: Add proper datetime comparator
     started_at: Optional[StrComparators] | None
+    # TODO: Add proper datetime comparator
     ended_at: Optional[StrComparators] | None
     status: Optional[EnumComparators[RunStatus]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define RunStep type
@@ -83,8 +92,8 @@ class RunStep(EntityInterface):
     owner_user_id: int
     collection_id: int
     run: Optional[Annotated["Run", strawberry.lazy("api.types.run")]] = load_run_rows  # type:ignore
-    started_at: Optional[str] = None
-    ended_at: Optional[str] = None
+    started_at: Optional[datetime.datetime] = None
+    ended_at: Optional[datetime.datetime] = None
     status: Optional[RunStatus] = None
 
 
@@ -104,8 +113,8 @@ RunStep.__strawberry_definition__.is_type_of = (  # type: ignore
 class RunStepCreateInput:
     collection_id: int
     run_id: Optional[strawberry.ID] = None
-    started_at: Optional[str] = None
-    ended_at: Optional[str] = None
+    started_at: Optional[datetime.datetime] = None
+    ended_at: Optional[datetime.datetime] = None
     status: Optional[RunStatus] = None
 
 
@@ -113,8 +122,8 @@ class RunStepCreateInput:
 class RunStepUpdateInput:
     collection_id: Optional[int] = None
     run_id: Optional[strawberry.ID] = None
-    started_at: Optional[str] = None
-    ended_at: Optional[str] = None
+    started_at: Optional[datetime.datetime] = None
+    ended_at: Optional[datetime.datetime] = None
     status: Optional[RunStatus] = None
 
 
@@ -159,7 +168,7 @@ async def create_run_step(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_run_step(
     input: RunStepUpdateInput,
-    where: RunStepWhereClause,
+    where: RunStepWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -194,7 +203,7 @@ async def update_run_step(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_run_step(
-    where: RunStepWhereClause,
+    where: RunStepWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),

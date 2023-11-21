@@ -53,13 +53,20 @@ async def load_workflow_version_rows(
 ) -> Sequence[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Workflow)
-    relationship = mapper.relationships["workflow_versions"]
+    relationship = mapper.relationships["versions"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 # ------------------------------------------------------------------------------
 # Define Strawberry GQL types
 # ------------------------------------------------------------------------------
+
+
+# Only let users specify IDs in WHERE clause when mutating data (for safety).
+# We can extend that list as we gather more use cases from the FE team.
+@strawberry.input
+class WorkflowWhereClauseMutations(TypedDict):
+    id: UUIDComparators | None
 
 
 # Supported WHERE clause attributes
@@ -73,7 +80,6 @@ class WorkflowWhereClause(TypedDict):
     default_version: Optional[StrComparators] | None
     minimum_supported_version: Optional[StrComparators] | None
     versions: Optional[Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]] | None
-    entity_id: Optional[UUIDComparators] | None
 
 
 # Define Workflow type
@@ -160,7 +166,7 @@ async def create_workflow(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_workflow(
     input: WorkflowUpdateInput,
-    where: WorkflowWhereClause,
+    where: WorkflowWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -195,7 +201,7 @@ async def update_workflow(
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def delete_workflow(
-    where: WorkflowWhereClause,
+    where: WorkflowWhereClauseMutations,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
