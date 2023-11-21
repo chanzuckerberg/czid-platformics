@@ -1,3 +1,7 @@
+"""
+Helper functions for working with the database.
+"""
+
 import typing
 from typing import Any, Optional
 
@@ -26,6 +30,9 @@ def convert_where_clauses_to_sql(
     whereClause: dict[str, Any],
     depth: int,
 ) -> Select:
+    """
+    Convert a query with a where clause to a SQLAlchemy query.
+    """
     if not whereClause:
         return query
     for k, v in whereClause.items():
@@ -62,6 +69,10 @@ def get_db_query(
     where: dict[str, Any],
     depth: Optional[int] = None,
 ) -> Select:
+    """
+    Given a model class and a where clause, return a SQLAlchemy query that is limited
+    based on the where clause, and which entities the user has access to.
+    """
     if not depth:
         depth = 0
     depth += 1
@@ -84,6 +95,9 @@ async def get_db_rows(
     order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
     action: CerbosAction = CerbosAction.VIEW,
 ) -> typing.Sequence[E]:
+    """
+    Retrieve rows from the database, filtered by the where clause and the user's permissions.
+    """
     query = get_db_query(model_cls, action, cerbos_client, principal, where)
     if order_by:
         query = query.order_by(*order_by)  # type: ignore

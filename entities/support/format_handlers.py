@@ -1,3 +1,7 @@
+"""
+Logic to validate that a file of a certain format is valid
+"""
+
 from abc import abstractmethod
 from mypy_boto3_s3.client import S3Client
 from Bio import SeqIO
@@ -6,6 +10,10 @@ from typing import Protocol
 
 
 class FileFormatHandler(Protocol):
+    """
+    Interface for a file format handler
+    """
+
     @classmethod
     @abstractmethod
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> int:
@@ -18,6 +26,10 @@ class FileFormatHandler(Protocol):
 
 
 class FastqHandler(FileFormatHandler):
+    """
+    Parse the first 1MB and parse reads with BioPython to ensure the file is valid
+    """
+
     @classmethod
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> int:
         # Overly simplistic validator for fastq filees checks whether the first 1mb of a file are a valid fastq
@@ -34,6 +46,9 @@ class FastqHandler(FileFormatHandler):
 
 
 def get_validator(format: str) -> type[FileFormatHandler]:
+    """
+    Returns the validator for a given file format
+    """
     if format == "fastq":
         return FastqHandler
     else:

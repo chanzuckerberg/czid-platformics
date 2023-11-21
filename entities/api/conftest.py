@@ -1,9 +1,12 @@
+"""
+Fixtures for API tests
+"""
+
 import json
 import typing
-from typing import Optional
-
 import boto3
 import pytest_asyncio
+from typing import Optional
 from cerbos.sdk.model import Principal
 from platformics.database.connect import AsyncDB
 from fastapi import FastAPI
@@ -12,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from moto import mock_s3
 from mypy_boto3_s3.client import S3Client
-
+from api.main import get_app
 from platformics.api.core.deps import (
     get_auth_principal,
     get_db_session,
@@ -20,14 +23,12 @@ from platformics.api.core.deps import (
     require_auth_principal,
     get_s3_client,
 )
-from api.main import get_app
 
 
 class GQLTestClient:
     def __init__(self, http_client: AsyncClient):
         self.http_client = http_client
 
-    # Utility function for making GQL HTTP queries
     async def query(
         self,
         query: str,
@@ -35,6 +36,9 @@ class GQLTestClient:
         member_projects: Optional[list[int]] = None,
         admin_projects: Optional[list[int]] = None,
     ) -> dict[str, typing.Any]:
+        """
+        Utility function for making GQL HTTP queries with authorization info.
+        """
         if not user_id:
             user_id = 111
         if not admin_projects:
@@ -54,6 +58,9 @@ class GQLTestClient:
 
 @pytest_asyncio.fixture()
 async def moto_client() -> typing.AsyncGenerator[S3Client, None]:
+    """
+    Create S3 Moto client.
+    """
     mocks3 = mock_s3()
     mocks3.start()
     res = boto3.resource("s3")
@@ -69,11 +76,17 @@ async def patched_s3_client() -> typing.AsyncGenerator[S3Client, None]:
 
 @pytest_asyncio.fixture()
 async def gql_client(http_client: AsyncClient) -> GQLTestClient:
+    """
+    Create a GQL client.
+    """
     client = GQLTestClient(http_client)
     return client
 
 
 async def patched_authprincipal(request: Request) -> Principal:
+    """
+    Create a Principal object from request headers.
+    """
     user_id = request.headers.get("user_id")
     if not user_id:
         raise Exception("user_id not found in request headers")
@@ -90,6 +103,10 @@ async def patched_authprincipal(request: Request) -> Principal:
 
 
 def overwrite_api(api: FastAPI, async_db: AsyncDB) -> None:
+    """
+    Utility function for overwriting API dependencies with test versions.
+    """
+
     async def patched_session() -> typing.AsyncGenerator[AsyncSession, None]:
         session = async_db.session()
         try:
@@ -106,6 +123,9 @@ def overwrite_api(api: FastAPI, async_db: AsyncDB) -> None:
 
 @pytest_asyncio.fixture()
 async def api(async_db: AsyncDB) -> FastAPI:
+    """
+    Create an API instance using the real schema.
+    """
     api = get_app(use_test_schema=False)
     overwrite_api(api, async_db)
     return api
@@ -113,4 +133,7 @@ async def api(async_db: AsyncDB) -> FastAPI:
 
 @pytest_asyncio.fixture()
 async def http_client(api: FastAPI) -> AsyncClient:
+    """
+    Create an HTTP client.
+    """
     return AsyncClient(app=api, base_url="http://test")

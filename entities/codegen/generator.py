@@ -1,6 +1,10 @@
+"""
+Code generation script to generate SQLAlchemy models, GraphQL types,
+Cerbos policies, and Factoryboy factories from a LinkML schema.
+"""
+
 import logging
 import os
-
 import click
 from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
@@ -10,14 +14,12 @@ DIR_CODEGEN = ["support", "api/types", "database/models", "cerbos/policies", "te
 
 
 @click.group()
-@click.option(
-    "--debug",
-    is_flag=True,
-    default=False,
-    help="Enable debug output",
-)
+@click.option("--debug", is_flag=True, default=False, help="Enable debug output")
 @click.pass_context
 def cli(ctx: click.Context, debug: bool) -> None:
+    """
+    Set logger settings
+    """
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     if debug:
@@ -31,6 +33,9 @@ def api() -> None:
 
 
 def generate_enums(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
+    """
+    Code generation for GraphQL enums
+    """
     filename = "support/enums.py"
     template = environment.get_template(f"{filename}.j2")
     logging.debug("generating enums")
@@ -46,6 +51,9 @@ def generate_enums(output_prefix: str, environment: Environment, view: ViewWrapp
 def generate_entity_subclass_files(
     output_prefix: str, template_filename: str, environment: Environment, view: ViewWrapper
 ) -> None:
+    """
+    Code generation for SQLAlchemy models, GraphQL types, Cerbos policies, and Factoryboy factories
+    """
     template = environment.get_template(f"{template_filename}.j2")
 
     for entity in view.entities:
@@ -60,6 +68,9 @@ def generate_entity_subclass_files(
 
 
 def generate_entity_import_files(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
+    """
+    Code generation for database model imports, and GraphQL queries/mutations
+    """
     import_templates = ["database/models/__init__.py", "api/queries.py", "api/mutations.py"]
     classes = view.entities
     for filename in import_templates:
@@ -73,55 +84,34 @@ def generate_entity_import_files(output_prefix: str, environment: Environment, v
             print(f"... wrote {filename}")
 
 
-def generate_factories(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
-    filename = "test_infra/factories/class_name.py"
-    generate_entity_subclass_files(output_prefix, filename, environment, view)
-
-
-def generate_cerbos_policies(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
-    filename = "cerbos/policies/class_name.yaml"
-    generate_entity_subclass_files(output_prefix, filename, environment, view)
-
-
-def generate_db_models(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
-    filename = "database/models/class_name.py"
-    generate_entity_subclass_files(output_prefix, filename, environment, view)
-
-
-def generate_gql_types(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
-    filename = "api/types/class_name.py"
-    generate_entity_subclass_files(output_prefix, filename, environment, view)
-
-
 @api.command("generate")
-@click.option(
-    "--schemafile",
-    type=str,
-    required=True,
-)
-@click.option(
-    "--output-prefix",
-    type=str,
-    required=True,
-)
+@click.option("--schemafile", type=str, required=True)
+@click.option("--output-prefix", type=str, required=True)
 @click.pass_context
 def api_generate(ctx: click.Context, schemafile: str, output_prefix: str) -> None:
+    """
+    Launch code generation
+    """
     environment = Environment(loader=FileSystemLoader("codegen/templates/"))
-
     view = SchemaView(schemafile)
     view.imports_closure()
     wrapped_view = ViewWrapper(view)
 
+    logging.debug("Generating code")
+
+    # Create needed folders if they don't exist already
     for dir in DIR_CODEGEN:
         os.makedirs(f"{output_prefix}/{dir}", exist_ok=True)
 
-    logging.debug("generating api code")
+    # Generate enums and import files
     generate_enums(output_prefix, environment, wrapped_view)
-    generate_db_models(output_prefix, environment, wrapped_view)
-    generate_cerbos_policies(output_prefix, environment, wrapped_view)
     generate_entity_import_files(output_prefix, environment, wrapped_view)
-    generate_gql_types(output_prefix, environment, wrapped_view)
-    generate_factories(output_prefix, environment, wrapped_view)
+
+    # Generate database models, GraphQL types, Cerbos policies, and Factoryboy factories
+    generate_entity_subclass_files(output_prefix, "database/models/class_name.py", environment, wrapped_view)
+    generate_entity_subclass_files(output_prefix, "api/types/class_name.py", environment, wrapped_view)
+    generate_entity_subclass_files(output_prefix, "cerbos/policies/class_name.yaml", environment, wrapped_view)
+    generate_entity_subclass_files(output_prefix, "test_infra/factories/class_name.py", environment, wrapped_view)
 
 
 if __name__ == "__main__":

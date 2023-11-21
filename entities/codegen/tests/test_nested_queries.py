@@ -24,7 +24,9 @@ async def test_nested_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
-    # Create mock data
+    """
+    Fetch sequencing reads and their associated sample (1:1)
+    """
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         sequencing_reads = SequencingReadFactory.create_batch(5, owner_user_id=111, collection_id=888)
@@ -55,6 +57,9 @@ async def test_nested_query_relay(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
+    """
+    Fetch samples and their associated sequencing reads (1:M)
+    """
     user1_id = 111
     user2_id = 222
     project1_id = 888
@@ -142,7 +147,9 @@ async def test_relay_node_queries(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
-    # Create mock data
+    """
+    Use Relay-style node queries
+    """
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         sample1 = SampleFactory(owner_user_id=111, collection_id=888)

@@ -1,13 +1,16 @@
+"""
+Defines test fixtures used by entities tests
+"""
+
 import os
 import typing
-
 import pytest
 import pytest_asyncio
-from platformics.database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
-from platformics.database.models.base import Base
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
 from pytest_postgresql.executor_noop import NoopExecutor
+from platformics.database.connect import AsyncDB, SyncDB, init_async_db, init_sync_db
+from platformics.database.models.base import Base
 
 
 test_db: NoopExecutor = factories.postgresql_noproc(
@@ -23,12 +26,18 @@ def get_db_uri(
     db_port: typing.Optional[int],
     db_name: typing.Optional[str],
 ) -> str:
+    """
+    Utility function to generate database URI
+    """
     db_uri = f"{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
     return db_uri
 
 
 @pytest.fixture()
 def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
+    """
+    Fixture to create a synchronous database connection
+    """
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user
@@ -52,6 +61,9 @@ def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
 
 @pytest_asyncio.fixture()
 async def async_db(sync_db: SyncDB, test_db: NoopExecutor) -> typing.AsyncGenerator[AsyncDB, None]:
+    """
+    Fixture to create an asynchronous database connection
+    """
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user

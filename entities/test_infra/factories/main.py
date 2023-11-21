@@ -1,3 +1,7 @@
+"""
+File factory
+"""
+
 import factory
 import faker
 import sqlalchemy as sa
@@ -19,10 +23,12 @@ def generate_relative_file_path(obj) -> str:  # type: ignore
     return fake.file_path(depth=3, extension=obj.file_format).lstrip("/")
 
 
-# TODO, this is a lame singleton to prevent this library from
-# requiring an active SA session at import-time. We should try
-# to refactor it out when we know more about factoryboy
 class SessionStorage:
+    """
+    TODO: this is a lame singleton to prevent this library from requiring an active SA session at import-time. We
+    should try to refactor it out when we know more about factoryboy
+    """
+
     session = None
 
     @classmethod
@@ -35,9 +41,13 @@ class SessionStorage:
 
 
 class CommonFactory(factory.alchemy.SQLAlchemyModelFactory):
+    """
+    Base class for all factories
+    """
+
     owner_user_id = fuzzy.FuzzyInteger(1, 1000)
     collection_id = fuzzy.FuzzyInteger(1, 1000)
-    entity_id = uuid6.uuid7()
+    entity_id = uuid6.uuid7()  # needed so we can set `sqlalchemy_get_or_create` = entity_id in other factories
 
     class Meta:
         sqlalchemy_session_factory = SessionStorage.get_session
@@ -46,6 +56,10 @@ class CommonFactory(factory.alchemy.SQLAlchemyModelFactory):
 
 
 class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
+    """
+    Factory for generating files
+    """
+
     class Meta:
         sqlalchemy_session_factory = SessionStorage.get_session
         sqlalchemy_session_persistence = "commit"
@@ -65,6 +79,10 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     @classmethod
     def update_file_ids(cls) -> None:
+        """
+        Function used by tests after creating entities to link files to entities
+        e.g. for SequencingRead, sets SequencingRead.r1_file_id = File.id
+        """
         session = SessionStorage.get_session()
         if not session:
             raise Exception("No session found")

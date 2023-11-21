@@ -1,8 +1,10 @@
-"""Helpers for writing J2 templates based on linkml schema objects
+"""
+Helpers for writing Jinja2 templates based on LinkML schema objects.
 
 The wrapper classes in this module are entirely centered around providing convenience
 functions to keep complicated LinkML-specific logic out of our Jinja2 templates.
 """
+
 from functools import cached_property
 
 import strcase
@@ -11,12 +13,18 @@ from linkml_runtime.utils.schemaview import SchemaView
 
 
 class FieldWrapper:
+    """
+    Convenience functions for LinkML slots
+    """
+
     def __init__(self, view: SchemaView, wrapped_field: SlotDefinition):
         self.view = view
         self.wrapped_field = wrapped_field
 
-    # Blow up if a property doesn't exist
     def __getattr__(self, attr: str) -> str:
+        """
+        Error if a property doesn't exist
+        """
         raise NotImplementedError(f"please define field property {attr}")
 
     @cached_property
@@ -87,6 +95,10 @@ class FieldWrapper:
 
 
 class EnumWrapper:
+    """
+    Convenience functions for LinkML enums
+    """
+
     def __init__(self, view: SchemaView, wrapped_class: EnumDefinition):
         self.view = view
         self.wrapped_class = wrapped_class
@@ -105,6 +117,10 @@ class EnumWrapper:
 
 
 class EntityWrapper:
+    """
+    Convenience functions for LinkML entities
+    """
+
     def __init__(self, view: SchemaView, wrapped_class: ClassDefinition):
         self.view = view
         self.wrapped_class = wrapped_class
@@ -178,6 +194,10 @@ class EntityWrapper:
 
 
 class ViewWrapper:
+    """
+    Convenience functions for LinkML schema views
+    """
+
     def __init__(self, view: SchemaView):
         self.view = view
 

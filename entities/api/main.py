@@ -1,3 +1,7 @@
+"""
+Launch the GraphQL server.
+"""
+
 import strawberry
 import typing
 import uvicorn
@@ -27,21 +31,29 @@ def get_context(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(get_auth_principal),
 ) -> dict[str, typing.Any]:
+    """
+    Defines sqlalchemy_loader, used by dataloaders
+    """
     return {
         "sqlalchemy_loader": EntityLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
     }
 
 
-# Arg/Field names that start with _ are not camel-cased
 class CustomNameConverter(NameConverter):
+    """
+    Arg/Field names that start with _ are not camel-cased
+    """
+
     def get_graphql_name(self, obj: HasGraphQLName) -> str:
         if obj.python_name.startswith("_"):
             return obj.python_name
         return super().get_graphql_name(obj)
 
 
-# Make sure tests can get their own instances of the app.
 def get_app(use_test_schema: bool = False) -> FastAPI:
+    """
+    Make sure tests can get their own instances of the app.
+    """
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
 
     graphql_schema = schema_test if use_test_schema else schema

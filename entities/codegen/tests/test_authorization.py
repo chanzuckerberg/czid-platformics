@@ -20,7 +20,9 @@ async def test_collection_authorization(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
-    # For now, use the hardcoded user_id for tests
+    """
+    Make sure users can only see samples in collections they have access to.
+    """
     owner_user_id = 333
     user_id = 12345
 

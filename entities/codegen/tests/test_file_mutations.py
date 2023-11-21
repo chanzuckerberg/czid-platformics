@@ -13,13 +13,15 @@ from codegen.tests.output.test_infra.factories.sequencing_read import Sequencing
 from codegen.tests.output.database.models import SequencingRead
 
 
-# Test that we can mark a file upload as complete
 @pytest.mark.asyncio
 async def test_file_validation(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
     moto_client: S3Client,
 ) -> None:
+    """
+    Test that we can mark a file upload as complete
+    """
     user1_id = 12345
     project1_id = 123
 
@@ -60,13 +62,15 @@ async def test_file_validation(
         assert file.size == file_size
 
 
-# Test that invalid fastq's don't work
 @pytest.mark.asyncio
 async def test_invalid_fastq(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
     moto_client: S3Client,
 ) -> None:
+    """
+    Test that invalid fastq's don't work
+    """
     user1_id = 12345
     project1_id = 123
 
@@ -97,7 +101,6 @@ async def test_invalid_fastq(
     assert fileinfo["status"] == "FAILED"
 
 
-# Test generating STS tokens for file uploads
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "member_projects,project_id,entity_field",
@@ -114,6 +117,9 @@ async def test_upload_file(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
 ) -> None:
+    """
+    Test generating STS tokens for file uploads
+    """
     user_id = 12345
 
     # Create mock data
@@ -160,14 +166,15 @@ async def test_upload_file(
     assert output["data"]["uploadFile"]["credentials"]["secretAccessKey"].endswith("EXAMPLEKEY")
 
 
-# Test adding an existing file to the entities service
 @pytest.mark.asyncio
 async def test_create_file(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
     moto_client: S3Client,
 ) -> None:
-    # Create mock data
+    """
+    Test adding an existing file to the entities service
+    """
     with sync_db.session() as session:
         # Create sequencing read and file
         SessionStorage.set_session(session)
