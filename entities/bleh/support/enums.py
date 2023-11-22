@@ -53,17 +53,3 @@ class SequencingProtocol(enum.Enum):
 class SequencingTechnology(enum.Enum):
     Illumina = "Illumina"
     Nanopore = "Nanopore"
-
-
-@strawberry.enum
-class AlignmentTool(enum.Enum):
-    bowtie2 = "bowtie2"
-    minimap2 = "minimap2"
-    ncbi = "ncbi"
-
-
-@strawberry.enum
-class TaxonLevel(enum.Enum):
-    species = "species"
-    genus = "genus"
-    family = "family"

@@ -41,6 +41,44 @@ enums:
         description: The run step has completed successfully
       FAILED:
         description: The run step has failed
+  FileStatus:
+    permissible_values:
+      SUCCESS:
+        description: This file has been uploaded and validated successfully
+      FAILED:
+        description: This file failed to upload or failed validation
+      PENDING:
+        description: This file is a placeholder and awaiting a successful upload
+  FileAcessProtocol:
+    permissible_values:
+      s3:
+        description: This file is accessible via the (AWS) S3 protocol
+  NucleicAcid:
+    permissible_values:
+      RNA:
+      DNA:
+  SequencingProtocol:
+    permissible_values:
+      MNGS:
+        description: Metagenomics Sequencing
+      TARGETED:
+        description: Targeted Squencing (amplified via primers)
+      MSSPE:
+        description: MSSPE Sequencing
+  SequencingTechnology:
+    permissible_values:
+      Illumina:
+      Nanopore:
+  AlignmentTool:
+    permissible_values:
+      bowtie2:
+      minimap2:
+      ncbi:
+  TaxonLevel:
+    permissible_values:
+      species:
+      genus:
+      family:
 
 classes:
   Entity:
