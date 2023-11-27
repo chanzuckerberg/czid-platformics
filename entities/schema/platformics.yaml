@@ -181,8 +181,9 @@ classes:
       taxon:
         range: Taxon
         inverse: Taxon.sequencing_reads
-      primer_file:
-        range: File
+      primer_bed:
+        range: PrimerBed
+        inverse: PrimerBed.sequencing_reads
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
@@ -193,6 +194,20 @@ classes:
         multivalued: true
     annotations:
       plural: SequencingReads
+
+  PrimerBed:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      file:
+        range: File
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.primer_bed
+        multivalued: true
+    annotations:
+      plural: PrimerBeds
 
   GenomicRange:
     is_a: Entity

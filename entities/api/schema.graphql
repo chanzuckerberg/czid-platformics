@@ -211,6 +211,18 @@ input CoverageVizWhereClauseMutations {
 """Date with time (isoformat)"""
 scalar DateTime
 
+input DatetimeComparators {
+  _eq: DateTime
+  _neq: DateTime
+  _in: [DateTime!]
+  _nin: [DateTime!]
+  _gt: DateTime
+  _gte: DateTime
+  _lt: DateTime
+  _lte: DateTime
+  _is_null: DateTime
+}
+
 type Entity {
   id: ID!
   type: String!
@@ -681,6 +693,9 @@ type Mutation {
   createSequencingRead(input: SequencingReadCreateInput!): SequencingRead!
   updateSequencingRead(input: SequencingReadUpdateInput!, where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
   deleteSequencingRead(where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
+  createPrimerBed(input: PrimerBedCreateInput!): PrimerBed!
+  updatePrimerBed(input: PrimerBedUpdateInput!, where: PrimerBedWhereClauseMutations!): [PrimerBed!]!
+  deletePrimerBed(where: PrimerBedWhereClauseMutations!): [PrimerBed!]!
   createGenomicRange(input: GenomicRangeCreateInput!): GenomicRange!
   updateGenomicRange(input: GenomicRangeUpdateInput!, where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
   deleteGenomicRange(where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
@@ -757,6 +772,54 @@ type PageInfo {
   endCursor: String
 }
 
+type PrimerBed implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  fileId: ID
+  file(where: FileWhereClause = null): File
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
+}
+
+input PrimerBedCreateInput {
+  collectionId: Int!
+  fileId: ID = null
+}
+
+input PrimerBedUpdateInput {
+  collectionId: Int = null
+  fileId: ID = null
+}
+
+input PrimerBedWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  sequencingReads: SequencingReadWhereClause
+}
+
+input PrimerBedWhereClauseMutations {
+  id: UUIDComparators
+}
+
 type Query {
   node(
     """The ID of the object."""
@@ -769,6 +832,7 @@ type Query {
   files(where: FileWhereClause = null): [File!]!
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
+  primerBeds(where: PrimerBedWhereClause = null): [PrimerBed!]!
   genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
   referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
   sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
@@ -995,7 +1059,7 @@ input SampleWhereClause {
   name: StrComparators
   sampleType: StrComparators
   waterControl: BoolComparators
-  collectionDate: StrComparators
+  collectionDate: DatetimeComparators
   collectionLocation: StrComparators
   description: StrComparators
   hostTaxon: TaxonWhereClause
@@ -1100,8 +1164,7 @@ type SequencingRead implements EntityInterface & Node {
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxon(where: TaxonWhereClause = null): Taxon
-  primerFileId: ID
-  primerFile(where: FileWhereClause = null): File
+  primerBed(where: PrimerBedWhereClause = null): PrimerBed
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -1153,7 +1216,7 @@ input SequencingReadCreateInput {
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxonId: ID = null
-  primerFileId: ID = null
+  primerBedId: ID = null
 }
 
 """An edge in a connection."""
@@ -1175,7 +1238,7 @@ input SequencingReadUpdateInput {
   nucleicAcid: NucleicAcid = null
   hasErcc: Boolean = null
   taxonId: ID = null
-  primerFileId: ID = null
+  primerBedId: ID = null
 }
 
 input SequencingReadWhereClause {
@@ -1189,6 +1252,7 @@ input SequencingReadWhereClause {
   nucleicAcid: NucleicAcidEnumComparators
   hasErcc: BoolComparators
   taxon: TaxonWhereClause
+  primerBed: PrimerBedWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
   contigs: ContigWhereClause
 }

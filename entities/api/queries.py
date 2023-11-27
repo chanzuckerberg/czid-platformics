@@ -11,6 +11,7 @@ from typing import Sequence, List
 from api.files import File, resolve_files
 from api.types.sample import Sample, resolve_samples
 from api.types.sequencing_read import SequencingRead, resolve_sequencing_reads
+from api.types.primer_bed import PrimerBed, resolve_primer_beds
 from api.types.genomic_range import GenomicRange, resolve_genomic_ranges
 from api.types.reference_genome import ReferenceGenome, resolve_reference_genomes
 from api.types.sequence_alignment_index import SequenceAlignmentIndex, resolve_sequence_alignment_indices
@@ -37,6 +38,7 @@ class Query:
     # Query entities
     samples: Sequence[Sample] = resolve_samples
     sequencing_reads: Sequence[SequencingRead] = resolve_sequencing_reads
+    primer_beds: Sequence[PrimerBed] = resolve_primer_beds
     genomic_ranges: Sequence[GenomicRange] = resolve_genomic_ranges
     reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
     sequence_alignment_indices: Sequence[SequenceAlignmentIndex] = resolve_sequence_alignment_indices

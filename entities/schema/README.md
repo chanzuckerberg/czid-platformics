@@ -41,6 +41,13 @@ SequencingRead {
     int owner_user_id  
     int collection_id  
 }
+PrimerBed {
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+}
 GenomicRange {
     uuid entity_id  
     uuid id  
@@ -180,9 +187,11 @@ SequencingRead ||--|o Sample : "sample"
 SequencingRead ||--|o File : "r1_file"
 SequencingRead ||--|o File : "r2_file"
 SequencingRead ||--|o Taxon : "taxon"
-SequencingRead ||--|o File : "primer_file"
+SequencingRead ||--|o PrimerBed : "primer_bed"
 SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
 SequencingRead ||--}o Contig : "contigs"
+PrimerBed ||--|o File : "file"
+PrimerBed ||--}o SequencingRead : "sequencing_reads"
 GenomicRange ||--|| ReferenceGenome : "reference_genome"
 GenomicRange ||--|o File : "file"
 GenomicRange ||--}o ConsensusGenome : "consensus_genomes"
