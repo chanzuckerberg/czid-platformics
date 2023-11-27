@@ -51,10 +51,25 @@ local-start: .env.localdev ## Start a local dev environment that's been stopped.
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
 
-
 .PHONY: local-db-tests
 local-db-tests: ## Run workflow db tests
 	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest test/"
+
+DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
+DIR_LINT_GRAPHQL = cli/gql_schema.py
+.PHONY: codegen
+codegen:  ## Update the GQL types used by the CLI
+	#$(docker_compose) exec $(FOLDER) python3 platformics/codegen/generator.py api generate --schemafile schema/workflows.yaml --output-prefix .
+	#$(docker_compose_run) $(FOLDER) black $(DIR_LINT_CODEGEN)
+	#$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_CODEGEN)
+
+	$(docker_compose_run) $(FOLDER) strawberry export-schema api.main:schema > api/schema.graphql
+	$(docker_compose) exec $(FOLDER) python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8042/graphql api/schema.json
+	$(docker_compose) exec $(FOLDER) sgqlc-codegen schema api/schema.json cli/gql_schema.py
+	$(docker_compose_run) $(FOLDER) black $(DIR_LINT_GRAPHQL)
+	$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_GRAPHQL)
+
+	$(docker_compose) exec $(FOLDER) gen-erdiagram schema/workflows.yaml > schema/README.md
 
 ### SWIPE Plugin Tests
 

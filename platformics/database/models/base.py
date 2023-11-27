@@ -6,10 +6,7 @@ import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from database.models.file import File
-else:
-    File = "File"
+File = "File"
 
 meta = MetaData(
     naming_convention={

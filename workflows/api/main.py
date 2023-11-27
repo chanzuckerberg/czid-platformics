@@ -15,6 +15,12 @@ from platformics.database.connect import AsyncDB
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
+from strawberry.schema.config import StrawberryConfig
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
+
+from api.queries import Query as xQuery
+from api.mutations import Mutation as xMutation
+
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
 from plugins.plugin_types import EventBus
@@ -141,7 +147,6 @@ class Mutation:
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run(
         self,
-        project_id: int,
         workflow_version_id: int,
         workflow_inputs: typing.List[WorkflowInput],
         workflow_runner: str,
@@ -163,18 +168,34 @@ class Mutation:
             workflow_path=manifest.package_uri,
             inputs=inputs,
         )
+
+        return execution_id  # type: ignore
+    
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def create_run(self,
+        project_id: int,
+        workflow_version_id: int,
+        workflow_inputs: typing.List[WorkflowInput],
+        workflow_runner: str,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        event_bus: EventBus = Depends(get_event_bus),
+    ) -> Run:
+        inputs = {input.name: input.value for input in workflow_inputs}
         workflow_run = db.Run(
             user_id=111,
             project_id=project_id,
-            execution_id=execution_id,
+            execution_id="execution id",
             inputs_json=json.dumps(inputs),
             status="STARTED",
-            workflow_version_id=1,
+            workflow_version_id=workflow_version_id,
         )
         session.add(workflow_run)
         await session.commit()
 
+        self.add_run(workflow_version_id, workflow_inputs, workflow_runner)
+
         return workflow_run  # type: ignore
+
 
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def add_run_step(
@@ -186,6 +207,7 @@ class Mutation:
         end_time: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
     ) -> RunStep:
+
         db_run_step = db.RunStep(
             run_id=run_id, step_name=step_name, status=status, start_time=start_time, end_time=end_time
         )
@@ -220,6 +242,19 @@ def get_context(
 
 
 root_router = APIRouter()
+
+class CustomNameConverter(NameConverter):
+    """
+    Arg/Field names that start with _ are not camel-cased
+    """
+
+    def get_graphql_name(self, obj: HasGraphQLName) -> str:
+        if obj.python_name.startswith("_"):
+            return obj.python_name
+        return super().get_graphql_name(obj)
+
+strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
+schema = strawberry.Schema(query=xQuery, mutation=xMutation, config=strawberry_config)
 
 
 @root_router.get("/")
