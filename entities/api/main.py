@@ -5,8 +5,8 @@ Launch the GraphQL server.
 import strawberry
 import typing
 import uvicorn
-from codegen.tests.output.api.queries import Query as QueryCodeGen
-from codegen.tests.output.api.mutations import Mutation as MutationCodeGen
+from platformics.codegen.tests.output.api.queries import Query as QueryCodeGen
+from platformics.codegen.tests.output.api.mutations import Mutation as MutationCodeGen
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI

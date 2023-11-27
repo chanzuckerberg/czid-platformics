@@ -6,8 +6,8 @@ import os
 import pytest
 from mypy_boto3_s3.client import S3Client
 from platformics.database.connect import SyncDB
-from codegen.conftest import SessionStorage, GQLTestClient
-from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
+from platformics.codegen.conftest import SessionStorage, GQLTestClient
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 @pytest.mark.asyncio

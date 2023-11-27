@@ -8,9 +8,9 @@ import sqlalchemy as sa
 from mypy_boto3_s3.client import S3Client
 from platformics.database.connect import SyncDB
 from database.models import File, FileStatus
-from codegen.conftest import SessionStorage, FileFactory, GQLTestClient
-from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
-from codegen.tests.output.database.models import SequencingRead
+from platformics.codegen.conftest import SessionStorage, FileFactory, GQLTestClient
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
+from platformics.codegen.tests.output.database.models import SequencingRead
 
 
 @pytest.mark.asyncio

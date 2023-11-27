@@ -4,8 +4,8 @@ Test file queries
 
 import pytest
 from platformics.database.connect import SyncDB
-from codegen.conftest import SessionStorage, FileFactory, GQLTestClient
-from codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
+from platformics.codegen.conftest import SessionStorage, FileFactory, GQLTestClient
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 @pytest.mark.asyncio

@@ -23,7 +23,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -310,4 +309,4 @@ static
 .env.localdev
 
 # Codegen on mock schema
-entities/codegen/tests/output/
+platformics/codegen/tests/output/
