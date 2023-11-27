@@ -145,14 +145,29 @@ classes:
       has_ercc:
         range: boolean
         required: true
-      primer_file:
-        range: File
+      primer_bed:
+        range: PrimerBed
+        inverse: PrimerBed.sequencing_reads
       contigs:
         range: Contig
         inverse: Contig.sequencing_read
         multivalued: true
     annotations:
       plural: SequencingReads
+
+  PrimerBed:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      file:
+        range: File
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.primer_bed
+        multivalued: true
+    annotations:
+      plural: PrimerBeds
 
   Contig:
     is_a: Entity
