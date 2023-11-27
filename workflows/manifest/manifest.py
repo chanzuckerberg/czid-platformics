@@ -37,8 +37,9 @@ class EntityInput(ManifestModel):
 class RawInput(ManifestModel):
     name: str
     description: str
-    default: typing.Optional[typing.Any]
+    default: typing.Optional[str | int | float | bool]
     required: bool = False
+    workflow_input: typing.Optional[str]
     opions: list[str] = []
     kind: typing.Literal["string", "int", "float", "boolean", "enum"]
 
@@ -71,7 +72,6 @@ class InputReference(ManifestModel):
         if not (self.entity_input or self.raw_input):
             raise ValueError("Must specify at least one of entity_input or raw_input")
         return self
-
 
 class InputLoaderOutputLink(BaseModel):
     loader_output: str
@@ -121,7 +121,6 @@ class Manifest(ManifestModel):
     workflow_version: PydanticVersion
     type: typing.Literal["WDL"]
     description: str
-    package_uri: str
     entity_inputs: dict[str, EntityInput]
     raw_inputs: dict[str, RawInput]
     input_loaders: list[InputLoader]

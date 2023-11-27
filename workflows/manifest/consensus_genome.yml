@@ -5,10 +5,18 @@ entity_inputs:
     name: Sample
     description: Your sample
     entity_type: sample
+  sequencing_read:
+    name: Sequencing Read
+    description: Your sequencing read
+    entity_type: sequencing_read
   reference_genome:
     name: Reference Genome
     description: Your reference genome
     entity_type: reference_genome
+  taxon:
+    name: Taxon
+    description: Your taxon
+    entity_type: taxon
 raw_inputs:
   clearlabs:
     name: Used clear labs
@@ -18,6 +26,7 @@ raw_inputs:
   medaka_model:
     name: Medaka Model
     description: Your medaka model
+    workflow_input: medaka_model
     kind: enum
     default: r941_min_high_g360
     options:
@@ -53,67 +62,59 @@ raw_inputs:
       - viral_cg_upload
       - mngs_report
 input_loaders:
-  - loader_name: sample_loader
+  - loader_name: sample
     inputs:
       - entity_input: sample
-        loader_input: sample
     outputs:
+      - loader_output: name
+        workflow_input: sample
+  - loader_name: sequencing_read
+    inputs:
+      - entity_input: sequencing_read
+    outputs:
+      - loader_output: primer_bed
       - loader_output: r1_file
         workflow_input: fastqs_0 
       - loader_output: r2_file
         workflow_input: fastqs_1
-      - loader_output: name
-        workflow_input: sample
-  - loader_name: primer_loader
-    inputs:
-      - entity_input: sample
-        loader_input: sample
-    outputs:
-      - loader_output: primer_set
-        workflow_input: primer_set
-      - loader_output: primer_schemes
-        workflow_input: primer_schemes
-      - loader_output: primer_bed
-        workflow_input: primer_bed
-  - loader_name: reference_genome_loader
+  - loader_name: reference_genome
     inputs:
       - entity_input: reference_genome
-        loader_input: reference_genome
     outputs:
       - loader_output: ref_fasta
-        workflow_input: ref_fasta
       - loader_output: ref_accession_id
-        workflow_input: ref_accession_id
-  - loader_name: docker_image_loader
+  - loader_name: docker_image
     outputs:
-      - loader_output: docker_image_id
-        workflow_input: docker_image_id
-  - loader_name: passthrough_loader
-    inputs:
-      - raw_input: medaka_model
-        loader_input: value
-    outputs:
-      - loader_output: value
-        loader_input: medaka_model
-  - loader_name: consensus_genomes_default_inputs_loader
+      - workflow_input: docker_image_id
+  - loader_name: consensus_genomes_defaults
     inputs:
       - entity_input: sample
-        loader_input: sample
       - raw_input: creation_source
-        loader_input: creation_source
+      - raw_input: clearlabs
     outputs:
-      - loader_output: ref_host
-        workflow_input: ref_host
-      - loader_output: kraken2_db_tar_gz
-        workflow_input: kraken2_db_tar_gz
-      - loader_output: ercc_fasta
-        workflow_input: ercc_fasta
-      - loader_output: filter_reads
-        workflow_input: filter_reads
-      - loader_output: apply_length_filter
-        workflow_input: apply_length_filter
-      - loader_output: output_refseq
-        workflow_input: output_refseq
-      - loader_output: output_bed
-        workflow_input: output_bed
+      - workflow_input: primer_set
+      - workflow_input: primer_schemes
+      - workflow_input: ref_host
+      - workflow_input: kraken2_db_tar_gz
+      - workflow_input: ercc_fasta
+      - workflow_input: filter_reads
+      - workflow_input: apply_length_filter
+      - workflow_input: output_refseq
+      - workflow_input: output_bed
+output_loaders:
+  - loader_name: consensus_genome
+    inputs:
+      - entity_input: sample
+      - entity_input: taxon
+      - entity_input: sequencing_read
+      - workflow_output: "consensus_genome.make_consensus_out_consensus_fa"
+        loader_input: sequence
+      - workflow_output: "consensus_genome.compute_stats_out_sam_depths"
+        loader_input: metrics_sam_depths
+      - workflow_output: "consensus_genome.quast_out_quast_tsv"
+        loader_input: metrics_quast
+      - workflow_output: "consensus_genome.compute_stats_out_output_stats"
+        loader_input: metrics_stats
+      - workflow_output: "consensus_genome.zip_outputs_out_output_zip"
+        loader_input: intermediate_outputs
 

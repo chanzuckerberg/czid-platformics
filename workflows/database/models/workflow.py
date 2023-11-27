@@ -1,6 +1,7 @@
 import enum
 
 import strawberry
+from manifest.manifest import Manifest
 from platformics.database.models.base import Base
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, relationship
@@ -24,7 +25,16 @@ class WorkflowVersion(Base):
     workflow_id = Column(Integer, ForeignKey("workflow.id"), nullable=False)
     workflow: Mapped[Workflow] = relationship(Workflow, back_populates="versions", foreign_keys=[workflow_id])
     runs = relationship("Run", back_populates="workflow_version", foreign_keys="Run.workflow_version_id")
+    workflow_definition_uri = Column(String, nullable=False)
     manifest = Column(String, nullable=False)
+
+    _parsed_manifest = None  # Placeholder for memoized data
+
+    @property
+    def parsed_manifest(self):
+        if self._parsed_manifest is None:
+            self._parsed_manifest = Manifest.model_validate_json(str(self.manifest))
+        return self._parsed_manifest
 
 
 @strawberry.enum
