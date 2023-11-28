@@ -46,8 +46,12 @@ async def test_file_query(
       }
     """
     output = await gql_client.query(query, member_projects=[project1_id])
-    # Each SequencingRead has 3 files (r1_file, r2_file, primer_file), so we expect 8 * 3 = 24 files.
-    assert len(output["data"]["files"]) == 24
+    # Each SequencingRead results in 5 files:
+      # r1_file, r2_file
+      # primer_file -> GenomicRange file
+      # GenomicRange produces ReferenceGenome -> file and file_index
+    # so we expect 8 * 5 = 40 files.
+    assert len(output["data"]["files"]) == 40
     for file in output["data"]["files"]:
         assert file["path"] is not None
         assert file["entity"]["collectionId"] == project1_id
