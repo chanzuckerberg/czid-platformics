@@ -8,7 +8,7 @@ import os
 import click
 from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
-from codegen.lib.linkml_wrappers import ViewWrapper
+from platformics.codegen.lib.linkml_wrappers import ViewWrapper
 
 DIR_CODEGEN = ["support", "api/types", "database/models", "cerbos/policies", "test_infra/factories"]
 
@@ -92,7 +92,7 @@ def api_generate(ctx: click.Context, schemafile: str, output_prefix: str) -> Non
     """
     Launch code generation
     """
-    environment = Environment(loader=FileSystemLoader("codegen/templates/"))
+    environment = Environment(loader=FileSystemLoader("platformics/codegen/templates/"))
     view = SchemaView(schemafile)
     view.imports_closure()
     wrapped_view = ViewWrapper(view)
