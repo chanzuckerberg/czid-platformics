@@ -309,4 +309,6 @@ static
 .env.localdev
 
 # Codegen on mock schema
+workflows/codegen/tests/output/
+entities/codegen/tests/output/
 platformics/codegen/tests/output/
