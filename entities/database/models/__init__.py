@@ -12,7 +12,6 @@ from sqlalchemy.orm import configure_mappers
 from platformics.database.models.base import Base, meta, Entity  # noqa: F401
 from database.models.sample import Sample  # noqa: F401
 from database.models.sequencing_read import SequencingRead  # noqa: F401
-from database.models.primer_bed import PrimerBed  # noqa: F401
 from database.models.genomic_range import GenomicRange  # noqa: F401
 from database.models.reference_genome import ReferenceGenome  # noqa: F401
 from database.models.sequence_alignment_index import SequenceAlignmentIndex  # noqa: F401

@@ -327,6 +327,21 @@ type GenomicRange implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ConsensusGenomeConnection!
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
 }
 
 """A connection to a list of items."""
@@ -366,6 +381,7 @@ input GenomicRangeWhereClause {
   collectionId: IntComparators
   referenceGenome: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
+  sequencingReads: SequencingReadWhereClause
 }
 
 input GenomicRangeWhereClauseMutations {
@@ -693,9 +709,6 @@ type Mutation {
   createSequencingRead(input: SequencingReadCreateInput!): SequencingRead!
   updateSequencingRead(input: SequencingReadUpdateInput!, where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
   deleteSequencingRead(where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
-  createPrimerBed(input: PrimerBedCreateInput!): PrimerBed!
-  updatePrimerBed(input: PrimerBedUpdateInput!, where: PrimerBedWhereClauseMutations!): [PrimerBed!]!
-  deletePrimerBed(where: PrimerBedWhereClauseMutations!): [PrimerBed!]!
   createGenomicRange(input: GenomicRangeCreateInput!): GenomicRange!
   updateGenomicRange(input: GenomicRangeUpdateInput!, where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
   deleteGenomicRange(where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
@@ -772,54 +785,6 @@ type PageInfo {
   endCursor: String
 }
 
-type PrimerBed implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  fileId: ID
-  file(where: FileWhereClause = null): File
-  sequencingReads(
-    where: SequencingReadWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): SequencingReadConnection!
-}
-
-input PrimerBedCreateInput {
-  collectionId: Int!
-  fileId: ID = null
-}
-
-input PrimerBedUpdateInput {
-  collectionId: Int = null
-  fileId: ID = null
-}
-
-input PrimerBedWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  sequencingReads: SequencingReadWhereClause
-}
-
-input PrimerBedWhereClauseMutations {
-  id: UUIDComparators
-}
-
 type Query {
   node(
     """The ID of the object."""
@@ -832,7 +797,6 @@ type Query {
   files(where: FileWhereClause = null): [File!]!
   samples(where: SampleWhereClause = null): [Sample!]!
   sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  primerBeds(where: PrimerBedWhereClause = null): [PrimerBed!]!
   genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
   referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
   sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
@@ -1164,7 +1128,7 @@ type SequencingRead implements EntityInterface & Node {
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxon(where: TaxonWhereClause = null): Taxon
-  primerBed(where: PrimerBedWhereClause = null): PrimerBed
+  primerFile(where: GenomicRangeWhereClause = null): GenomicRange
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -1216,7 +1180,7 @@ input SequencingReadCreateInput {
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxonId: ID = null
-  primerBedId: ID = null
+  primerFileId: ID = null
 }
 
 """An edge in a connection."""
@@ -1238,7 +1202,7 @@ input SequencingReadUpdateInput {
   nucleicAcid: NucleicAcid = null
   hasErcc: Boolean = null
   taxonId: ID = null
-  primerBedId: ID = null
+  primerFileId: ID = null
 }
 
 input SequencingReadWhereClause {
@@ -1252,7 +1216,7 @@ input SequencingReadWhereClause {
   nucleicAcid: NucleicAcidEnumComparators
   hasErcc: BoolComparators
   taxon: TaxonWhereClause
-  primerBed: PrimerBedWhereClause
+  primerFile: GenomicRangeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
   contigs: ContigWhereClause
 }

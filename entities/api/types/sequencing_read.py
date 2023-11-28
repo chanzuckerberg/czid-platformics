@@ -40,7 +40,7 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     from api.types.sample import SampleWhereClause, Sample
     from api.types.taxon import TaxonWhereClause, Taxon
-    from api.types.primer_bed import PrimerBedWhereClause, PrimerBed
+    from api.types.genomic_range import GenomicRangeWhereClause, GenomicRange
     from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
     from api.types.contig import ContigWhereClause, Contig
 
@@ -50,8 +50,8 @@ else:
     Sample = "Sample"
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
-    PrimerBedWhereClause = "PrimerBedWhereClause"
-    PrimerBed = "PrimerBed"
+    GenomicRangeWhereClause = "GenomicRangeWhereClause"
+    GenomicRange = "GenomicRange"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
     ContigWhereClause = "ContigWhereClause"
@@ -92,15 +92,15 @@ async def load_taxon_rows(
 
 
 @strawberry.field
-async def load_primer_bed_rows(
+async def load_genomic_range_rows(
     root: "SequencingRead",
     info: Info,
-    where: Annotated["PrimerBedWhereClause", strawberry.lazy("api.types.primer_bed")] | None = None,
-) -> Optional[Annotated["PrimerBed", strawberry.lazy("api.types.primer_bed")]]:
+    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
+) -> Optional[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["primer_bed"]
-    return await dataloader.loader_for(relationship, where).load(root.primer_bed_id)  # type:ignore
+    relationship = mapper.relationships["primer_file"]
+    return await dataloader.loader_for(relationship, where).load(root.primer_file_id)  # type:ignore
 
 
 @relay.connection(
@@ -190,7 +190,7 @@ class SequencingReadWhereClause(TypedDict):
     nucleic_acid: Optional[EnumComparators[NucleicAcid]] | None
     has_ercc: Optional[BoolComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
-    primer_bed: Optional[Annotated["PrimerBedWhereClause", strawberry.lazy("api.types.primer_bed")]] | None
+    primer_file: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
@@ -218,9 +218,9 @@ class SequencingRead(EntityInterface):
     nucleic_acid: NucleicAcid
     has_ercc: bool
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    primer_bed: Optional[
-        Annotated["PrimerBed", strawberry.lazy("api.types.primer_bed")]
-    ] = load_primer_bed_rows  # type:ignore
+    primer_file: Optional[
+        Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
+    ] = load_genomic_range_rows  # type:ignore
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -253,7 +253,7 @@ class SequencingReadCreateInput:
     nucleic_acid: NucleicAcid
     has_ercc: bool
     taxon_id: Optional[strawberry.ID] = None
-    primer_bed_id: Optional[strawberry.ID] = None
+    primer_file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
@@ -267,7 +267,7 @@ class SequencingReadUpdateInput:
     nucleic_acid: Optional[NucleicAcid] = None
     has_ercc: Optional[bool] = None
     taxon_id: Optional[strawberry.ID] = None
-    primer_bed_id: Optional[strawberry.ID] = None
+    primer_file_id: Optional[strawberry.ID] = None
 
 
 """

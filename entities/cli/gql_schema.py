@@ -335,6 +335,7 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
         "collection_id",
         "reference_genome",
         "consensus_genomes",
+        "sequencing_reads",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
@@ -342,6 +343,7 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
+    sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
 
 
 class GenomicRangeWhereClauseMutations(sgqlc.types.Input):
@@ -605,36 +607,6 @@ class NucleicAcidEnumComparators(sgqlc.types.Input):
     _is_null = sgqlc.types.Field(NucleicAcid, graphql_name="_is_null")
 
 
-class PrimerBedCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "file_id")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    file_id = sgqlc.types.Field(ID, graphql_name="fileId")
-
-
-class PrimerBedUpdateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "file_id")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    file_id = sgqlc.types.Field(ID, graphql_name="fileId")
-
-
-class PrimerBedWhereClause(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_reads")
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
-    sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
-
-
-class PrimerBedWhereClauseMutations(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-
-
 class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("collection_id", "file_id", "file_index_id", "name", "description", "taxon_id", "accession_id")
@@ -838,7 +810,7 @@ class SequencingReadCreateInput(sgqlc.types.Input):
         "nucleic_acid",
         "has_ercc",
         "taxon_id",
-        "primer_bed_id",
+        "primer_file_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
@@ -849,7 +821,7 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name="nucleicAcid")
     has_ercc = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="hasErcc")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
-    primer_bed_id = sgqlc.types.Field(ID, graphql_name="primerBedId")
+    primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
 
 
 class SequencingReadUpdateInput(sgqlc.types.Input):
@@ -864,7 +836,7 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
         "nucleic_acid",
         "has_ercc",
         "taxon_id",
-        "primer_bed_id",
+        "primer_file_id",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
@@ -875,7 +847,7 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
     nucleic_acid = sgqlc.types.Field(NucleicAcid, graphql_name="nucleicAcid")
     has_ercc = sgqlc.types.Field(Boolean, graphql_name="hasErcc")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
-    primer_bed_id = sgqlc.types.Field(ID, graphql_name="primerBedId")
+    primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
 
 
 class SequencingReadWhereClause(sgqlc.types.Input):
@@ -891,7 +863,7 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "nucleic_acid",
         "has_ercc",
         "taxon",
-        "primer_bed",
+        "primer_file",
         "consensus_genomes",
         "contigs",
     )
@@ -905,7 +877,7 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     nucleic_acid = sgqlc.types.Field(NucleicAcidEnumComparators, graphql_name="nucleicAcid")
     has_ercc = sgqlc.types.Field(BoolComparators, graphql_name="hasErcc")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
-    primer_bed = sgqlc.types.Field(PrimerBedWhereClause, graphql_name="primerBed")
+    primer_file = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="primerFile")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     contigs = sgqlc.types.Field(ContigWhereClause, graphql_name="contigs")
 
@@ -1378,9 +1350,6 @@ class Mutation(sgqlc.types.Type):
         "create_sequencing_read",
         "update_sequencing_read",
         "delete_sequencing_read",
-        "create_primer_bed",
-        "update_primer_bed",
-        "delete_primer_bed",
         "create_genomic_range",
         "update_genomic_range",
         "delete_genomic_range",
@@ -1533,50 +1502,6 @@ class Mutation(sgqlc.types.Type):
                     "where",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(SequencingReadWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    create_primer_bed = sgqlc.types.Field(
-        sgqlc.types.non_null("PrimerBed"),
-        graphql_name="createPrimerBed",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(PrimerBedCreateInput), graphql_name="input", default=None),
-                ),
-            )
-        ),
-    )
-    update_primer_bed = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PrimerBed"))),
-        graphql_name="updatePrimerBed",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(PrimerBedUpdateInput), graphql_name="input", default=None),
-                ),
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(PrimerBedWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    delete_primer_bed = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PrimerBed"))),
-        graphql_name="deletePrimerBed",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(PrimerBedWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -2149,7 +2074,6 @@ class Query(sgqlc.types.Type):
         "files",
         "samples",
         "sequencing_reads",
-        "primer_beds",
         "genomic_ranges",
         "reference_genomes",
         "sequence_alignment_indices",
@@ -2201,13 +2125,6 @@ class Query(sgqlc.types.Type):
         graphql_name="sequencingReads",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    primer_beds = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PrimerBed"))),
-        graphql_name="primerBeds",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(PrimerBedWhereClause, graphql_name="where", default=None)),)
         ),
     )
     genomic_ranges = sgqlc.types.Field(
@@ -2511,6 +2428,7 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         "file_id",
         "file",
         "consensus_genomes",
+        "sequencing_reads",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2535,6 +2453,19 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict(
             (
                 ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
+    )
+    sequencing_reads = sgqlc.types.Field(
+        sgqlc.types.non_null(SequencingReadConnection),
+        graphql_name="sequencingReads",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
                 ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
                 ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
                 ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
@@ -2676,42 +2607,6 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         File,
         graphql_name="coverageVizSummaryFile",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
-    )
-
-
-class PrimerBed(sgqlc.types.Type, EntityInterface, Node):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "file_id",
-        "file",
-        "sequencing_reads",
-    )
-    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    file_id = sgqlc.types.Field(ID, graphql_name="fileId")
-    file = sgqlc.types.Field(
-        File,
-        graphql_name="file",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
-    )
-    sequencing_reads = sgqlc.types.Field(
-        sgqlc.types.non_null(SequencingReadConnection),
-        graphql_name="sequencingReads",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
     )
 
 
@@ -2908,7 +2803,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "nucleic_acid",
         "has_ercc",
         "taxon",
-        "primer_bed",
+        "primer_file",
         "consensus_genomes",
         "contigs",
     )
@@ -2942,11 +2837,11 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="taxon",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),)),
     )
-    primer_bed = sgqlc.types.Field(
-        PrimerBed,
-        graphql_name="primerBed",
+    primer_file = sgqlc.types.Field(
+        GenomicRange,
+        graphql_name="primerFile",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(PrimerBedWhereClause, graphql_name="where", default=None)),)
+            (("where", sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name="where", default=None)),)
         ),
     )
     consensus_genomes = sgqlc.types.Field(

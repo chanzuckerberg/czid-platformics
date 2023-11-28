@@ -15,7 +15,6 @@ from api.types.sequencing_read import (
     update_sequencing_read,
     delete_sequencing_read,
 )
-from api.types.primer_bed import PrimerBed, create_primer_bed, update_primer_bed, delete_primer_bed
 from api.types.genomic_range import GenomicRange, create_genomic_range, update_genomic_range, delete_genomic_range
 from api.types.reference_genome import (
     ReferenceGenome,
@@ -76,11 +75,6 @@ class Mutation:
     create_sequencing_read: SequencingRead = create_sequencing_read
     update_sequencing_read: Sequence[SequencingRead] = update_sequencing_read
     delete_sequencing_read: Sequence[SequencingRead] = delete_sequencing_read
-
-    # PrimerBed mutations
-    create_primer_bed: PrimerBed = create_primer_bed
-    update_primer_bed: Sequence[PrimerBed] = update_primer_bed
-    delete_primer_bed: Sequence[PrimerBed] = delete_primer_bed
 
     # GenomicRange mutations
     create_genomic_range: GenomicRange = create_genomic_range
