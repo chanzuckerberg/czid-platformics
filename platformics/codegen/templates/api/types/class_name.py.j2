@@ -14,7 +14,9 @@ import database.models as db
 import strawberry
 import datetime
 from api.core.helpers import get_db_rows
+{%- if render_files %}
 from api.files import File, FileWhereClause
+{%- endif %}
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource

@@ -15,6 +15,11 @@ from platformics.database.connect import AsyncDB
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
+from strawberry.schema.config import StrawberryConfig
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
+
+from api.queries import Query as xQuery
+from api.mutations import Mutation as xMutation
 
 from api.core.gql_loaders import WorkflowLoader, get_base_loader
 from plugins.plugin_types import EventBus
@@ -226,6 +231,18 @@ root_router = APIRouter()
 async def root() -> dict:
     return {"message": "Hello World"}
 
+class CustomNameConverter(NameConverter):
+    """
+    Arg/Field names that start with _ are not camel-cased
+    """
+
+    def get_graphql_name(self, obj: HasGraphQLName) -> str:
+        if obj.python_name.startswith("_"):
+            return obj.python_name
+        return super().get_graphql_name(obj)
+
+strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
+
 
 # Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
@@ -240,13 +257,7 @@ def get_app() -> FastAPI:
     additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
     # strawberry graphql schema
     # start server with strawberry server app
-    schema = strawberry.Schema(
-        query=Query,
-        mutation=Mutation,
-        #    extensions=extensions,
-        types=additional_types,
-    )
-
+    schema = strawberry.Schema(query=xQuery, mutation=xMutation, config=strawberry_config)
     _app = FastAPI()
     # Add a global settings object to the app that we can use as a dependency
     _app.state.entities_settings = settings

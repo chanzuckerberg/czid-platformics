@@ -13,7 +13,13 @@ from platformics.database.models.base import Base, meta, Entity  # noqa: F401
 {%- for class in classes %}
 from database.models.{{ class.snake_name }} import {{ class.name }}  # noqa: F401
 {%- endfor %}
+
+{%- if render_files %}
 from database.models.file import File, FileStatus  # noqa: F401
+{%- else %} 
+class File:
+    pass
+{%- endif %}
 
 configure_mappers()
 

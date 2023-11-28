@@ -7,17 +7,22 @@ Make changes to the template codegen/templates/api/mutations.py.j2 instead.
 
 import strawberry
 from typing import Sequence
+{%- if render_files %}
 from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadResponse
+{%- endif %}
+
 {%- for class in classes %}
 from api.types.{{ class.snake_name }} import {{ class.name }}, create_{{ class.snake_name }}, update_{{ class.snake_name }}, delete_{{ class.snake_name }}
 {%- endfor %}
 
 @strawberry.type
 class Mutation:
+    {%- if render_files %}
     # File mutations
     create_file: File = create_file
     upload_file: MultipartUploadResponse = upload_file
     mark_upload_complete: File = mark_upload_complete
+    {%- endif %}
 {%- for class in classes %}
 
     # {{ class.name }} mutations

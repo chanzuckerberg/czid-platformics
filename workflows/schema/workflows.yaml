@@ -1,0 +1,196 @@
+id: https://fill-in
+title: CZID Workflows Schema
+name: workflows
+default_range: string
+
+
+types:
+  string:
+    uri: xsd:string
+    base: str
+    description: A character string
+
+  integer:
+    uri: xsd:integer
+    base: int
+    description: An integer
+
+  uuid:
+    uri: xsd:string
+    typeof: str
+    base: str
+    description: A UUID
+
+enums:
+  RunStatus:
+    permissible_values:
+      SUCCEEDED:
+        description: The run has completed successfully
+      FAILED:
+        description: The run has failed
+      PENDING:
+        description: The run is is waiting to start
+      STARTED:
+        description: The run has started but is not yet marked as running
+      RUNNING:
+        description: The run is running 
+
+  RunStepStatus:
+    permissible_values:
+      SUCCEEDED:
+        description: The run step has completed successfully
+      FAILED:
+        description: The run step has failed
+  
+classes:
+  Entity:
+    attributes:
+      id:
+        identifier: true
+        range: uuid
+      producing_run_id:
+        range: int
+        minimum_value: 0
+      owner_user_id:
+        range: int
+        minimum_value: 0
+      collection_id:
+        range: int
+        minimum_value: 0
+    # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
+    # we're using an annotation here to tack on the extra functionality that we need. We do this because
+    # English pluralization is hard, and we don't want to have to write a custom pluralization function.
+    # This basically means we now have our own "dialect" of LinkML to worry about. We may want to see if
+    # pluralization can be added to the core spec in the future.
+    annotations:
+      plural: Entities
+  Run:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      id: 
+        identifier: true
+        range: uuid
+      user_id: 
+        range: int
+      project_id:
+        range: int
+      started_at:
+        range: date
+      ended_at:
+        range: date
+      execution_id:
+        range: string
+      outputs_json:
+        range: string
+      inputs_json: 
+        range: string
+      status: 
+        range: RunStatus 
+      workflow_version:
+        range: WorkflowVersion
+        inverse: WorkflowVersion.runs
+      run_steps:
+        range: RunStep
+        multivalued: true
+        inverse: RunStep.run
+      run_entity_inputs:
+        range: RunEntityInput
+        multivalued: true
+        inverse: RunEntityInput.run
+    annotations:
+      plural: Runs
+
+  Workflow:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      id: 
+        identifier: true
+        range: uuid
+      name: 
+        range: string
+      default_version:
+        range: string
+      minimum_supported_version:
+        range: string
+      versions: 
+        range: WorkflowVersion
+        multivalued: true
+        inverse: WorkflowVersion.workflow
+    annotations:
+      plural: Workflows
+
+  RunStep:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      id: 
+        identifier: true
+        range: uuid
+      run:
+        range: Run
+        inverse: Run.run_steps
+      started_at:
+        range: date 
+      ended_at:
+        range: date
+      status: 
+        range: RunStatus
+    annotations:
+      plural: RunSteps
+
+  RunEntityInput:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      id: 
+        identifier: true
+        range: uuid
+      new_entity_id:
+        range: int
+      field_name: 
+        range: string
+      run: 
+        range: Run
+        inverse: Run.run_entity_inputs
+    annotations:
+      plural: RunEntityInputs
+
+  WorkflowVersion:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      id: 
+        identifier: true
+        range: uuid
+      graph_json:
+        range: string # fix this type
+      workflow_id:
+        range: int
+      manifest:
+        range: string
+      workflow:
+        range: Workflow
+        inverse: Workflow.versions
+      runs:
+        range: Run
+        multivalued: true
+        inverse: Run.workflow_version
+    annotations:
+      plural: WorkflowVersions
+      
+  EntityMixin:
+    mixin: true
+    attributes:
+      entity_id:
+        required: true
+        readonly: true
+        range: uuid
+        identifier: true
+        inverse: entity.id
