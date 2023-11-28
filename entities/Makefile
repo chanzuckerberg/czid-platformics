@@ -53,7 +53,7 @@ local-tests: ## Run entities tests
 	$(docker_compose_run) entities bash -c "poetry run pytest -s"
 	$(MAKE) cerbos-tests
 
-DIR_LINT_CODEGEN_TEST = codegen/tests/output/
+DIR_LINT_CODEGEN_TEST = platformics/codegen/tests/output/
 .PHONY: codegen-test-schema
 codegen-test-schema:  ## Run codegen on the test schema
 	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --output-prefix $(DIR_LINT_CODEGEN_TEST)
