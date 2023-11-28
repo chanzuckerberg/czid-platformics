@@ -20,6 +20,7 @@ from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    DatetimeComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -131,8 +132,7 @@ class SampleWhereClause(TypedDict):
     name: Optional[StrComparators] | None
     sample_type: Optional[StrComparators] | None
     water_control: Optional[BoolComparators] | None
-    # TODO: Add proper datetime comparator
-    collection_date: Optional[StrComparators] | None
+    collection_date: Optional[DatetimeComparators] | None
     collection_location: Optional[StrComparators] | None
     description: Optional[StrComparators] | None
     host_taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None

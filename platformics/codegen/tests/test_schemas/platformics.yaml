@@ -146,13 +146,28 @@ classes:
         range: boolean
         required: true
       primer_file:
-        range: File
+        range: GenomicRange
+        inverse: GenomicRange.sequencing_reads
       contigs:
         range: Contig
         inverse: Contig.sequencing_read
         multivalued: true
     annotations:
       plural: SequencingReads
+
+  GenomicRange:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      file:
+        range: File
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.primer_file
+        multivalued: true
+    annotations:
+      plural: GenomicRanges
 
   Contig:
     is_a: Entity

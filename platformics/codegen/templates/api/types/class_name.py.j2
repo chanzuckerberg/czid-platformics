@@ -20,7 +20,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
+from platformics.api.core.gql_to_sql import EnumComparators, DatetimeComparators, IntComparators, StrComparators, UUIDComparators, BoolComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
@@ -160,8 +160,7 @@ class {{ cls.name }}WhereClause(TypedDict):
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: Optional[BoolComparators] | None
         {%- elif attr.type == "date" %}
-    # TODO: Add proper datetime comparator
-    {{ attr.name }}: Optional[StrComparators] | None
+    {{ attr.name }}: Optional[DatetimeComparators] | None
         {%- elif attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
         {%- endif %}

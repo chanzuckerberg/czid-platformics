@@ -2,6 +2,7 @@ import types
 import typing
 import uuid
 from typing import Any, Awaitable, Callable, Generic, Optional, TypeVar, cast
+import datetime
 
 import strawberry
 from platformics.thirdparty.strawberry_sqlalchemy_mapper import SSAPlugin, StrawberrySQLAlchemyMapper
@@ -64,6 +65,18 @@ class BoolComparators(TypedDict):
     _lt: Optional[int]
     _lte: Optional[int]
     _is_null: Optional[int]
+
+@strawberry.input
+class DatetimeComparators(TypedDict):
+    _eq: Optional[datetime.datetime]
+    _neq: Optional[datetime.datetime]
+    _in: Optional[list[datetime.datetime]]
+    _nin: Optional[list[datetime.datetime]]
+    _gt: Optional[datetime.datetime]
+    _gte: Optional[datetime.datetime]
+    _lt: Optional[datetime.datetime]
+    _lte: Optional[datetime.datetime]
+    _is_null: Optional[datetime.datetime]
 
 
 @strawberry.input
