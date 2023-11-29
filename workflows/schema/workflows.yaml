@@ -69,11 +69,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      id: 
-        identifier: true
-        range: uuid
-      user_id: 
-        range: int
       project_id:
         range: int
       started_at:
@@ -107,9 +102,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      id: 
-        identifier: true
-        range: uuid
       name: 
         range: string
       default_version:
@@ -128,9 +120,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      id: 
-        identifier: true
-        range: uuid
       run:
         range: Run
         inverse: Run.run_steps
@@ -148,9 +137,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      id: 
-        identifier: true
-        range: uuid
       new_entity_id:
         range: int
       field_name: 
@@ -166,9 +152,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      id: 
-        identifier: true
-        range: uuid
       graph_json:
         range: string # fix this type
       workflow_id:
@@ -184,7 +167,7 @@ classes:
         inverse: Run.workflow_version
     annotations:
       plural: WorkflowVersions
-      
+
   EntityMixin:
     mixin: true
     attributes:
