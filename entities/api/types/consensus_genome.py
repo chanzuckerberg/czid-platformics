@@ -38,7 +38,6 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     from api.types.taxon import TaxonWhereClause, Taxon
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
-    from api.types.genomic_range import GenomicRangeWhereClause, GenomicRange
     from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.metric_consensus_genome import MetricConsensusGenomeWhereClause, MetricConsensusGenome
 
@@ -48,8 +47,6 @@ else:
     Taxon = "Taxon"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
-    GenomicRangeWhereClause = "GenomicRangeWhereClause"
-    GenomicRange = "GenomicRange"
     ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
     ReferenceGenome = "ReferenceGenome"
     MetricConsensusGenomeWhereClause = "MetricConsensusGenomeWhereClause"
@@ -87,18 +84,6 @@ async def load_sequencing_read_rows(
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["sequence_read"]
     return await dataloader.loader_for(relationship, where).load(root.sequence_read_id)  # type:ignore
-
-
-@strawberry.field
-async def load_genomic_range_rows(
-    root: "ConsensusGenome",
-    info: Info,
-    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
-) -> Optional[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["genomic_range"]
-    return await dataloader.loader_for(relationship, where).load(root.genomic_range_id)  # type:ignore
 
 
 @strawberry.field
@@ -185,7 +170,6 @@ class ConsensusGenomeWhereClause(TypedDict):
     collection_id: IntComparators | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     sequence_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
-    genomic_range: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
     reference_genome: Optional[
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
@@ -210,9 +194,6 @@ class ConsensusGenome(EntityInterface):
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
-    genomic_range: Optional[
-        Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows  # type:ignore
     reference_genome: Optional[
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
     ] = load_reference_genome_rows  # type:ignore
@@ -246,7 +227,6 @@ class ConsensusGenomeCreateInput:
     collection_id: int
     taxon_id: strawberry.ID
     sequence_read_id: strawberry.ID
-    genomic_range_id: strawberry.ID
     reference_genome_id: strawberry.ID
     sequence_id: Optional[strawberry.ID] = None
     is_reverse_complement: bool
@@ -258,7 +238,6 @@ class ConsensusGenomeUpdateInput:
     collection_id: Optional[int] = None
     taxon_id: Optional[strawberry.ID] = None
     sequence_read_id: Optional[strawberry.ID] = None
-    genomic_range_id: Optional[strawberry.ID] = None
     reference_genome_id: Optional[strawberry.ID] = None
     sequence_id: Optional[strawberry.ID] = None
     is_reverse_complement: Optional[bool] = None
