@@ -242,6 +242,7 @@ class CustomNameConverter(NameConverter):
         return super().get_graphql_name(obj)
 
 strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
+schema = strawberry.Schema(query=xQuery, mutation=xMutation, config=strawberry_config)
 
 
 # Make sure tests can get their own instances of the app.
@@ -257,7 +258,6 @@ def get_app() -> FastAPI:
     additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
     # strawberry graphql schema
     # start server with strawberry server app
-    schema = strawberry.Schema(query=xQuery, mutation=xMutation, config=strawberry_config)
     _app = FastAPI()
     # Add a global settings object to the app that we can use as a dependency
     _app.state.entities_settings = settings
