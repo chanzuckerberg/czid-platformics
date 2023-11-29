@@ -231,6 +231,7 @@ root_router = APIRouter()
 async def root() -> dict:
     return {"message": "Hello World"}
 
+
 class CustomNameConverter(NameConverter):
     """
     Arg/Field names that start with _ are not camel-cased
@@ -240,6 +241,7 @@ class CustomNameConverter(NameConverter):
         if obj.python_name.startswith("_"):
             return obj.python_name
         return super().get_graphql_name(obj)
+
 
 strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
 schema = strawberry.Schema(query=xQuery, mutation=xMutation, config=strawberry_config)
@@ -255,7 +257,7 @@ def get_app() -> FastAPI:
     # are automatically mapped at this stage
     strawberry_sqlalchemy_mapper.finalize()
     # only needed if you have polymorphic types
-    additional_types = list(strawberry_sqlalchemy_mapper.mapped_types.values())
+    list(strawberry_sqlalchemy_mapper.mapped_types.values())
     # strawberry graphql schema
     # start server with strawberry server app
     _app = FastAPI()
