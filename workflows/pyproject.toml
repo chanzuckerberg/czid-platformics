@@ -55,8 +55,8 @@ line-length = 120
 explicit_package_bases = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
-implicit_reexport = false
-exclude = ['gql_schema\.py$', '^platformics/thirdparty']
+implicit_reexport = true
+exclude = ['gql_schema\.py$', '^platformics/thirdparty', '^platformics/codegen']
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
