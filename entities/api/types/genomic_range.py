@@ -37,6 +37,7 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
+    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
 
     pass
 else:
@@ -44,6 +45,8 @@ else:
     ReferenceGenome = "ReferenceGenome"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
+    SequencingReadWhereClause = "SequencingReadWhereClause"
+    SequencingRead = "SequencingRead"
     pass
 
 
@@ -78,6 +81,20 @@ async def load_consensus_genome_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.GenomicRange)
     relationship = mapper.relationships["consensus_genomes"]
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@relay.connection(
+    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
+)
+async def load_sequencing_read_rows(
+    root: "GenomicRange",
+    info: Info,
+    where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
+) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.GenomicRange)
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
@@ -140,6 +157,9 @@ class GenomicRangeWhereClause(TypedDict):
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
+    sequencing_reads: Optional[
+        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
+    ] | None
 
 
 """
@@ -161,6 +181,9 @@ class GenomicRange(EntityInterface):
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
+    sequencing_reads: Sequence[
+        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
+    ] = load_sequencing_read_rows  # type:ignore
 
 
 """

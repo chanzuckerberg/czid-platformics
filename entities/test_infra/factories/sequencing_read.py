@@ -12,6 +12,7 @@ from database.models import SequencingRead
 from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.sample import SampleFactory
 from test_infra.factories.taxon import TaxonFactory
+from test_infra.factories.genomic_range import GenomicRangeFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -56,9 +57,8 @@ class SequencingReadFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    primer_file = factory.RelatedFactory(
-        FileFactory,
-        factory_related_name="entity",
-        entity_field_name="primer_file",
-        file_format="fastq",
+    primer_file = factory.SubFactory(
+        GenomicRangeFactory,
+        owner_user_id=factory.SelfAttribute("..owner_user_id"),
+        collection_id=factory.SelfAttribute("..collection_id"),
     )

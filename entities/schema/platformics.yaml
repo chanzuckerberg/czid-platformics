@@ -182,7 +182,8 @@ classes:
         range: Taxon
         inverse: Taxon.sequencing_reads
       primer_file:
-        range: File
+        range: GenomicRange
+        inverse: GenomicRange.sequencing_reads
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
@@ -208,6 +209,10 @@ classes:
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.genomic_range
+        multivalued: true
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.primer_file
         multivalued: true
     annotations:
       plural: GenomicRanges

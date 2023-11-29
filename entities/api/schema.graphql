@@ -211,6 +211,18 @@ input CoverageVizWhereClauseMutations {
 """Date with time (isoformat)"""
 scalar DateTime
 
+input DatetimeComparators {
+  _eq: DateTime
+  _neq: DateTime
+  _in: [DateTime!]
+  _nin: [DateTime!]
+  _gt: DateTime
+  _gte: DateTime
+  _lt: DateTime
+  _lte: DateTime
+  _is_null: DateTime
+}
+
 type Entity {
   id: ID!
   type: String!
@@ -315,6 +327,21 @@ type GenomicRange implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ConsensusGenomeConnection!
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
 }
 
 """A connection to a list of items."""
@@ -354,6 +381,7 @@ input GenomicRangeWhereClause {
   collectionId: IntComparators
   referenceGenome: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
+  sequencingReads: SequencingReadWhereClause
 }
 
 input GenomicRangeWhereClauseMutations {
@@ -995,7 +1023,7 @@ input SampleWhereClause {
   name: StrComparators
   sampleType: StrComparators
   waterControl: BoolComparators
-  collectionDate: StrComparators
+  collectionDate: DatetimeComparators
   collectionLocation: StrComparators
   description: StrComparators
   hostTaxon: TaxonWhereClause
@@ -1100,8 +1128,7 @@ type SequencingRead implements EntityInterface & Node {
   nucleicAcid: NucleicAcid!
   hasErcc: Boolean!
   taxon(where: TaxonWhereClause = null): Taxon
-  primerFileId: ID
-  primerFile(where: FileWhereClause = null): File
+  primerFile(where: GenomicRangeWhereClause = null): GenomicRange
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -1189,6 +1216,7 @@ input SequencingReadWhereClause {
   nucleicAcid: NucleicAcidEnumComparators
   hasErcc: BoolComparators
   taxon: TaxonWhereClause
+  primerFile: GenomicRangeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
   contigs: ContigWhereClause
 }

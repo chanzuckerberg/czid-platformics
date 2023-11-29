@@ -18,12 +18,14 @@ if TYPE_CHECKING:
     from database.models.file import File
     from database.models.sample import Sample
     from database.models.taxon import Taxon
+    from database.models.genomic_range import GenomicRange
     from database.models.consensus_genome import ConsensusGenome
     from database.models.contig import Contig
 else:
     File = "File"
     Sample = "Sample"
     Taxon = "Taxon"
+    GenomicRange = "GenomicRange"
     ConsensusGenome = "ConsensusGenome"
     Contig = "Contig"
 
@@ -45,8 +47,10 @@ class SequencingRead(Entity):
     has_ercc: Mapped[bool] = mapped_column(Boolean, nullable=False)
     taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     taxon: Mapped[Taxon] = relationship(Taxon, back_populates="sequencing_reads", foreign_keys=taxon_id)
-    primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    primer_file: Mapped[File] = relationship(File, foreign_keys=primer_file_id)
+    primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("genomic_range.entity_id"), nullable=True)
+    primer_file: Mapped[GenomicRange] = relationship(
+        GenomicRange, back_populates="sequencing_reads", foreign_keys=primer_file_id
+    )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome", back_populates="sequence_read", uselist=True, foreign_keys="ConsensusGenome.sequence_read_id"
     )
