@@ -36,12 +36,16 @@ def use_factoryboy() -> None:
     # Create some ConsensusGenomes
     cg_1 = ConsensusGenomeFactory(owner_user_id=111, collection_id=444)
     cg_2 = ConsensusGenomeFactory(owner_user_id=222, collection_id=555)
+    cg_3 = ConsensusGenomeFactory(owner_user_id=111, collection_id=444)
 
     MetricConsensusGenomeFactory(
         consensus_genome=cg_1, owner_user_id=cg_1.owner_user_id, collection_id=cg_1.collection_id
     )
     MetricConsensusGenomeFactory(
         consensus_genome=cg_2, owner_user_id=cg_2.owner_user_id, collection_id=cg_2.collection_id
+    )
+    MetricConsensusGenomeFactory(
+        consensus_genome=cg_3, owner_user_id=cg_3.owner_user_id, collection_id=cg_3.collection_id
     )
 
     FileFactory.update_file_ids()

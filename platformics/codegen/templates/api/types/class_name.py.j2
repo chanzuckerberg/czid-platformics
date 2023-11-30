@@ -195,6 +195,8 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: {{ getType(attr.type, attr.required) }}
         {%- elif attr.type == "int" %}
     {{ attr.name }}: {{ getType("int", attr.required) }}
+        {%- elif attr.type == "float" %}
+    {{ attr.name }}: {{ getType("float", attr.required) }}
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: {{ getType("bool", attr.required) }}
         {%- elif attr.type == "date" %}

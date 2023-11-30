@@ -9,6 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import typing
 from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+import statistics
 
 import database.models as db
 import strawberry
@@ -150,6 +151,34 @@ class MetricConsensusGenome(EntityInterface):
     coverage_viz_summary_file_id: Optional[strawberry.ID]
     coverage_viz_summary_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_summary_file")  # type: ignore
 
+"""
+Define types for metric aggregations.
+"""
+
+@strawberry.type
+class MetricNumericalColumns:
+    total_reads: Optional[float] = None
+    mapped_reads: Optional[float] = None
+    ref_snps: Optional[float] = None
+    n_actg: Optional[float] = None
+    n_missing: Optional[float] = None
+    n_ambiguous: Optional[float] = None
+
+@strawberry.type
+class MetricAggregateFunctions:
+    # count of rows
+    count: Optional[int] = None
+    # dictionaries mapping column names to values
+    sum: Optional[MetricNumericalColumns] = None
+    avg: Optional[MetricNumericalColumns] = None
+    min: Optional[MetricNumericalColumns] = None
+    max: Optional[MetricNumericalColumns] = None
+    stddev: Optional[MetricNumericalColumns] = None
+    variance: Optional[MetricNumericalColumns] = None
+
+@strawberry.type
+class MetricConsensusGenomeAggregate:
+    aggregate: MetricAggregateFunctions
 
 """
 We need to add this to each Queryable type so that strawberry will accept either our
@@ -210,6 +239,31 @@ async def resolve_metrics_consensus_genomes(
     Resolve MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
     return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_metrics_consensus_genomes_aggregate(
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: Optional[MetricConsensusGenomeWhereClause] = None,
+) -> typing.Sequence[MetricConsensusGenomeAggregate]:
+    """
+    Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
+    """
+    metrics = await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+    aggregate=MetricAggregateFunctions(count=len(metrics), sum=MetricNumericalColumns(), avg=MetricNumericalColumns(), min=MetricNumericalColumns(), max=MetricNumericalColumns(), stddev=MetricNumericalColumns(), variance=MetricNumericalColumns())
+    for numerical_column in MetricNumericalColumns.__annotations__:
+        column_values = [getattr(sample, numerical_column) for sample in metrics]
+        aggregate.sum.__setattr__(numerical_column, sum(column_values))
+        aggregate.avg.__setattr__(numerical_column, statistics.mean(column_values))
+        aggregate.min.__setattr__(numerical_column, min(column_values))
+        aggregate.max.__setattr__(numerical_column, max(column_values))
+        if len(column_values) > 1:
+            # stdv and variance require at least 2 data points
+            aggregate.stddev.__setattr__(numerical_column, statistics.stdev(column_values))
+            aggregate.variance.__setattr__(numerical_column, statistics.variance(column_values))
+
+    return [MetricConsensusGenomeAggregate(aggregate=aggregate)]
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
