@@ -121,14 +121,6 @@ MetricConsensusGenome {
     int owner_user_id  
     int collection_id  
 }
-CoverageViz {
-    string accession_id  
-    uuid entity_id  
-    uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
-}
 Taxon {
     string wikipedia_id  
     string description  
@@ -185,7 +177,6 @@ SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
 SequencingRead ||--}o Contig : "contigs"
 GenomicRange ||--|| ReferenceGenome : "reference_genome"
 GenomicRange ||--|o File : "file"
-GenomicRange ||--}o ConsensusGenome : "consensus_genomes"
 GenomicRange ||--}o SequencingRead : "sequencing_reads"
 ReferenceGenome ||--|o File : "file"
 ReferenceGenome ||--|o File : "file_index"
@@ -202,14 +193,12 @@ MetadataField ||--}o Metadatum : "metadatas"
 MetadataFieldProject ||--|| MetadataField : "metadata_field"
 ConsensusGenome ||--|| Taxon : "taxon"
 ConsensusGenome ||--|| SequencingRead : "sequence_read"
-ConsensusGenome ||--|| GenomicRange : "genomic_range"
 ConsensusGenome ||--|| ReferenceGenome : "reference_genome"
 ConsensusGenome ||--|o File : "sequence"
 ConsensusGenome ||--|o File : "intermediate_outputs"
 ConsensusGenome ||--}o MetricConsensusGenome : "metrics"
 MetricConsensusGenome ||--|| ConsensusGenome : "consensus_genome"
 MetricConsensusGenome ||--|o File : "coverage_viz_summary_file"
-CoverageViz ||--|o File : "coverage_viz_file"
 Taxon ||--|| UpstreamDatabase : "upstream_database"
 Taxon ||--}o ConsensusGenome : "consensus_genomes"
 Taxon ||--}o ReferenceGenome : "reference_genomes"

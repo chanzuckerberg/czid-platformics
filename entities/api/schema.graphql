@@ -37,7 +37,6 @@ type ConsensusGenome implements EntityInterface & Node {
   collectionId: Int!
   taxon(where: TaxonWhereClause = null): Taxon
   sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
-  genomicRange(where: GenomicRangeWhereClause = null): GenomicRange
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
@@ -74,7 +73,6 @@ input ConsensusGenomeCreateInput {
   collectionId: Int!
   taxonId: ID!
   sequenceReadId: ID!
-  genomicRangeId: ID!
   referenceGenomeId: ID!
   sequenceId: ID = null
   isReverseComplement: Boolean!
@@ -94,7 +92,6 @@ input ConsensusGenomeUpdateInput {
   collectionId: Int = null
   taxonId: ID = null
   sequenceReadId: ID = null
-  genomicRangeId: ID = null
   referenceGenomeId: ID = null
   sequenceId: ID = null
   isReverseComplement: Boolean = null
@@ -108,7 +105,6 @@ input ConsensusGenomeWhereClause {
   collectionId: IntComparators
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
-  genomicRange: GenomicRangeWhereClause
   referenceGenome: ReferenceGenomeWhereClause
   isReverseComplement: BoolComparators
   metrics: MetricConsensusGenomeWhereClause
@@ -169,42 +165,6 @@ input ContigWhereClause {
 }
 
 input ContigWhereClauseMutations {
-  id: UUIDComparators
-}
-
-type CoverageViz implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  accessionId: String!
-  coverageVizFileId: ID
-  coverageVizFile(where: FileWhereClause = null): File
-}
-
-input CoverageVizCreateInput {
-  collectionId: Int!
-  accessionId: String!
-  coverageVizFileId: ID = null
-}
-
-input CoverageVizUpdateInput {
-  collectionId: Int = null
-  accessionId: String = null
-  coverageVizFileId: ID = null
-}
-
-input CoverageVizWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  accessionId: StrComparators
-}
-
-input CoverageVizWhereClauseMutations {
   id: UUIDComparators
 }
 
@@ -312,21 +272,6 @@ type GenomicRange implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   fileId: ID
   file(where: FileWhereClause = null): File
-  consensusGenomes(
-    where: ConsensusGenomeWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): ConsensusGenomeConnection!
   sequencingReads(
     where: SequencingReadWhereClause = null
 
@@ -380,7 +325,6 @@ input GenomicRangeWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   referenceGenome: ReferenceGenomeWhereClause
-  consensusGenomes: ConsensusGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
 }
 
@@ -733,9 +677,6 @@ type Mutation {
   createMetricConsensusGenome(input: MetricConsensusGenomeCreateInput!): MetricConsensusGenome!
   updateMetricConsensusGenome(input: MetricConsensusGenomeUpdateInput!, where: MetricConsensusGenomeWhereClauseMutations!): [MetricConsensusGenome!]!
   deleteMetricConsensusGenome(where: MetricConsensusGenomeWhereClauseMutations!): [MetricConsensusGenome!]!
-  createCoverageViz(input: CoverageVizCreateInput!): CoverageViz!
-  updateCoverageViz(input: CoverageVizUpdateInput!, where: CoverageVizWhereClauseMutations!): [CoverageViz!]!
-  deleteCoverageViz(where: CoverageVizWhereClauseMutations!): [CoverageViz!]!
   createTaxon(input: TaxonCreateInput!): Taxon!
   updateTaxon(input: TaxonUpdateInput!, where: TaxonWhereClauseMutations!): [Taxon!]!
   deleteTaxon(where: TaxonWhereClauseMutations!): [Taxon!]!
@@ -805,7 +746,6 @@ type Query {
   metadataFieldProjects(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
   consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
   metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
-  coverageVizes(where: CoverageVizWhereClause = null): [CoverageViz!]!
   taxa(where: TaxonWhereClause = null): [Taxon!]!
   upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
   contigs(where: ContigWhereClause = null): [Contig!]!

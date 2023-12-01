@@ -20,7 +20,6 @@ from database.models.metadata_field import MetadataField  # noqa: F401
 from database.models.metadata_field_project import MetadataFieldProject  # noqa: F401
 from database.models.consensus_genome import ConsensusGenome  # noqa: F401
 from database.models.metric_consensus_genome import MetricConsensusGenome  # noqa: F401
-from database.models.coverage_viz import CoverageViz  # noqa: F401
 from database.models.taxon import Taxon  # noqa: F401
 from database.models.upstream_database import UpstreamDatabase  # noqa: F401
 from database.models.contig import Contig  # noqa: F401
