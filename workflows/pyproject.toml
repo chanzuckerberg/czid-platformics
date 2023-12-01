@@ -39,6 +39,9 @@ black = "^23.9.1"
 mypy = "^1.5.1"
 sqlalchemy_utils = "^0.41.1"
 redis = "^5.0.1"
+linkml = "^1.5.7"
+strcase = "^1.0.0"
+linkml-runtime = "^1.6.0"
 
 
 [build-system]
