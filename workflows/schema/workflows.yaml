@@ -152,8 +152,6 @@ classes:
     attributes:
       graph_json:
         range: string # fix this type
-      workflow_id:
-        range: int
       manifest:
         range: string
       workflow:
