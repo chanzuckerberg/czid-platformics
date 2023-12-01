@@ -69,8 +69,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      project_id:
-        range: int
       started_at:
         range: date
       ended_at:
