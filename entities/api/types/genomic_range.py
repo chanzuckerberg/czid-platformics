@@ -36,15 +36,12 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
-    from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
 
     pass
 else:
     ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
     ReferenceGenome = "ReferenceGenome"
-    ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
-    ConsensusGenome = "ConsensusGenome"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     pass
@@ -68,20 +65,6 @@ async def load_reference_genome_rows(
     mapper = inspect(db.GenomicRange)
     relationship = mapper.relationships["reference_genome"]
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
-
-
-@relay.connection(
-    relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
-)
-async def load_consensus_genome_rows(
-    root: "GenomicRange",
-    info: Info,
-    where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.GenomicRange)
-    relationship = mapper.relationships["consensus_genomes"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 @relay.connection(
@@ -154,9 +137,6 @@ class GenomicRangeWhereClause(TypedDict):
     reference_genome: Optional[
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
-    consensus_genomes: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
@@ -178,9 +158,6 @@ class GenomicRange(EntityInterface):
     ] = load_reference_genome_rows  # type:ignore
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    consensus_genomes: Sequence[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
     sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore

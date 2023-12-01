@@ -17,14 +17,12 @@ if TYPE_CHECKING:
     from database.models.file import File
     from database.models.taxon import Taxon
     from database.models.sequencing_read import SequencingRead
-    from database.models.genomic_range import GenomicRange
     from database.models.reference_genome import ReferenceGenome
     from database.models.metric_consensus_genome import MetricConsensusGenome
 else:
     File = "File"
     Taxon = "Taxon"
     SequencingRead = "SequencingRead"
-    GenomicRange = "GenomicRange"
     ReferenceGenome = "ReferenceGenome"
     MetricConsensusGenome = "MetricConsensusGenome"
 
@@ -37,10 +35,6 @@ class ConsensusGenome(Entity):
     sequence_read_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sequencing_read.entity_id"), nullable=False)
     sequence_read: Mapped[SequencingRead] = relationship(
         SequencingRead, back_populates="consensus_genomes", foreign_keys=sequence_read_id
-    )
-    genomic_range_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("genomic_range.entity_id"), nullable=False)
-    genomic_range: Mapped[GenomicRange] = relationship(
-        GenomicRange, back_populates="consensus_genomes", foreign_keys=genomic_range_id
     )
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
         UUID, ForeignKey("reference_genome.entity_id"), nullable=False

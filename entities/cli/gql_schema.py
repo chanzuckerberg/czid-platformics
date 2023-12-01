@@ -106,7 +106,6 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
         "collection_id",
         "taxon_id",
         "sequence_read_id",
-        "genomic_range_id",
         "reference_genome_id",
         "sequence_id",
         "is_reverse_complement",
@@ -115,7 +114,6 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="taxonId")
     sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
-    genomic_range_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="genomicRangeId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     is_reverse_complement = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isReverseComplement")
@@ -128,7 +126,6 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
         "collection_id",
         "taxon_id",
         "sequence_read_id",
-        "genomic_range_id",
         "reference_genome_id",
         "sequence_id",
         "is_reverse_complement",
@@ -137,7 +134,6 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
-    genomic_range_id = sgqlc.types.Field(ID, graphql_name="genomicRangeId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     is_reverse_complement = sgqlc.types.Field(Boolean, graphql_name="isReverseComplement")
@@ -153,7 +149,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "collection_id",
         "taxon",
         "sequence_read",
-        "genomic_range",
         "reference_genome",
         "is_reverse_complement",
         "metrics",
@@ -164,7 +159,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
-    genomic_range = sgqlc.types.Field("GenomicRangeWhereClause", graphql_name="genomicRange")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     is_reverse_complement = sgqlc.types.Field(BoolComparators, graphql_name="isReverseComplement")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
@@ -204,38 +198,6 @@ class ContigWhereClause(sgqlc.types.Input):
 
 
 class ContigWhereClauseMutations(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-
-
-class CoverageVizCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "accession_id", "coverage_viz_file_id")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
-    coverage_viz_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizFileId")
-
-
-class CoverageVizUpdateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "accession_id", "coverage_viz_file_id")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
-    coverage_viz_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizFileId")
-
-
-class CoverageVizWhereClause(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "accession_id")
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
-    accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
-
-
-class CoverageVizWhereClauseMutations(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("id",)
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -334,7 +296,6 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
         "owner_user_id",
         "collection_id",
         "reference_genome",
-        "consensus_genomes",
         "sequencing_reads",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -342,7 +303,6 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
-    consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
 
 
@@ -1374,9 +1334,6 @@ class Mutation(sgqlc.types.Type):
         "create_metric_consensus_genome",
         "update_metric_consensus_genome",
         "delete_metric_consensus_genome",
-        "create_coverage_viz",
-        "update_coverage_viz",
-        "delete_coverage_viz",
         "create_taxon",
         "update_taxon",
         "delete_taxon",
@@ -1891,50 +1848,6 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    create_coverage_viz = sgqlc.types.Field(
-        sgqlc.types.non_null("CoverageViz"),
-        graphql_name="createCoverageViz",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(CoverageVizCreateInput), graphql_name="input", default=None),
-                ),
-            )
-        ),
-    )
-    update_coverage_viz = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("CoverageViz"))),
-        graphql_name="updateCoverageViz",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(CoverageVizUpdateInput), graphql_name="input", default=None),
-                ),
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(CoverageVizWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    delete_coverage_viz = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("CoverageViz"))),
-        graphql_name="deleteCoverageViz",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(CoverageVizWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
     create_taxon = sgqlc.types.Field(
         sgqlc.types.non_null("Taxon"),
         graphql_name="createTaxon",
@@ -2082,7 +1995,6 @@ class Query(sgqlc.types.Type):
         "metadata_field_projects",
         "consensus_genomes",
         "metrics_consensus_genomes",
-        "coverage_vizes",
         "taxa",
         "upstream_databases",
         "contigs",
@@ -2181,13 +2093,6 @@ class Query(sgqlc.types.Type):
         graphql_name="metricsConsensusGenomes",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    coverage_vizes = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("CoverageViz"))),
-        graphql_name="coverageVizes",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(CoverageVizWhereClause, graphql_name="where", default=None)),)
         ),
     )
     taxa = sgqlc.types.Field(
@@ -2309,7 +2214,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "taxon",
         "sequence_read",
-        "genomic_range",
         "reference_genome",
         "sequence_id",
         "sequence",
@@ -2332,13 +2236,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="sequenceRead",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    genomic_range = sgqlc.types.Field(
-        "GenomicRange",
-        graphql_name="genomicRange",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name="where", default=None)),)
         ),
     )
     reference_genome = sgqlc.types.Field(
@@ -2393,30 +2290,6 @@ class Contig(sgqlc.types.Type, EntityInterface, Node):
     sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
 
 
-class CoverageViz(sgqlc.types.Type, EntityInterface, Node):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "accession_id",
-        "coverage_viz_file_id",
-        "coverage_viz_file",
-    )
-    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
-    coverage_viz_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizFileId")
-    coverage_viz_file = sgqlc.types.Field(
-        File,
-        graphql_name="coverageVizFile",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
-    )
-
-
 class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
     __field_names__ = (
@@ -2427,7 +2300,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         "reference_genome",
         "file_id",
         "file",
-        "consensus_genomes",
         "sequencing_reads",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
@@ -2446,19 +2318,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         File,
         graphql_name="file",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
-    )
-    consensus_genomes = sgqlc.types.Field(
-        sgqlc.types.non_null(ConsensusGenomeConnection),
-        graphql_name="consensusGenomes",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
     )
     sequencing_reads = sgqlc.types.Field(
         sgqlc.types.non_null(SequencingReadConnection),

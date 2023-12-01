@@ -59,7 +59,7 @@ enums:
       species:
       genus:
       family:
- 
+
 classes:
   Entity:
     attributes:
@@ -82,7 +82,7 @@ classes:
     # pluralization can be added to the core spec in the future.
     annotations:
       plural: Entities
- 
+
   File:
     attributes:
       id:
@@ -110,11 +110,18 @@ classes:
         range: string
         required: true
       compression_type:
-       range: string
+        range: string
       size:
         range: int
         minimum_value: 0
 
+  # ============================================================================
+  # Entities
+  # ============================================================================
+
+  # ----------------------------------------------------------------------------
+  # Lab sample, associated with one or more SequencingRead entities.
+  # ----------------------------------------------------------------------------
   Sample:
     is_a: Entity
     mixins:
@@ -154,6 +161,9 @@ classes:
     annotations:
       plural: Samples
 
+  # ----------------------------------------------------------------------------
+  # Collection of sequencing reads, stored in FASTQ files.
+  # ----------------------------------------------------------------------------
   SequencingRead:
     is_a: Entity
     mixins:
@@ -178,9 +188,11 @@ classes:
       has_ercc:
         range: boolean
         required: true
+      # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline (optional)
       taxon:
         range: Taxon
         inverse: Taxon.sequencing_reads
+      # Can specify a primer BED file, used to trim primers, e.g. for "Viral Consensus Genome" pipeline (optional)
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
@@ -195,6 +207,9 @@ classes:
     annotations:
       plural: SequencingReads
 
+  # ----------------------------------------------------------------------------
+  # Collection of genomic ranges, stored in BED/GTF files.
+  # ----------------------------------------------------------------------------
   GenomicRange:
     is_a: Entity
     mixins:
@@ -206,10 +221,6 @@ classes:
         required: true
       file:
         range: File
-      consensus_genomes:
-        range: ConsensusGenome
-        inverse: ConsensusGenome.genomic_range
-        multivalued: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.primer_file
@@ -217,6 +228,9 @@ classes:
     annotations:
       plural: GenomicRanges
 
+  # ----------------------------------------------------------------------------
+  # Reference genomes / host genomes
+  # ----------------------------------------------------------------------------
   ReferenceGenome:
     is_a: Entity
     mixins:
@@ -226,9 +240,11 @@ classes:
         range: File
       file_index:
         range: File
+      # e.g. GRCh38.p14
       name:
         range: string
         required: true
+      # e.g. Human (GRCh38)
       description:
         range: string
         required: true
@@ -236,9 +252,7 @@ classes:
         range: Taxon
         required: true
         inverse: Taxon.reference_genomes
-      # TODO: Uncomment this when we have support for backgrounds
-      # background:
-      #   range: Background
+      # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
       sequence_alignment_indices:
@@ -253,9 +267,17 @@ classes:
         range: GenomicRange
         inverse: GenomicRange.reference_genome
         multivalued: true
+      # TODO: Uncomment this when we have support for backgrounds
+      # Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
+      # background:
+      #   range: Background
     annotations:
       plural: ReferenceGenomes
-  
+
+  # ----------------------------------------------------------------------------
+  # Index used by sequence aligners (bowtie, minimap, etc) to represent the
+  # reference genome more efficiently for querying.
+  # ----------------------------------------------------------------------------
   SequenceAlignmentIndex:
     is_a: Entity
     mixins:
@@ -273,6 +295,9 @@ classes:
     annotations:
       plural: SequenceAlignmentIndices
 
+  # ----------------------------------------------------------------------------
+  # Metadata
+  # ----------------------------------------------------------------------------
   Metadatum:
     is_a: Entity
     mixins:
@@ -341,6 +366,9 @@ classes:
     annotations:
       plural: MetadataFieldProjects
 
+  # ----------------------------------------------------------------------------
+  # Result of generating a consensus genome
+  # ----------------------------------------------------------------------------
   ConsensusGenome:
     is_a: Entity
     mixins:
@@ -354,19 +382,17 @@ classes:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
-      genomic_range:
-        range: GenomicRange
-        required: true
-        inverse: GenomicRange.consensus_genomes
       reference_genome:
         range: ReferenceGenome
         required: true
         inverse: ReferenceGenome.consensus_genomes
+      # Consensus Genome sequence
       sequence:
         range: File
       is_reverse_complement:
         range: boolean
         required: true
+      # Zip file containing intermediate outputs
       intermediate_outputs:
         range: File
       metrics:
@@ -412,19 +438,9 @@ classes:
     annotations:
       plural: MetricsConsensusGenomes
 
-  CoverageViz:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      accession_id:
-        range: string
-        required: true
-      coverage_viz_file:
-        range: File
-    annotations:
-      plural: CoverageVizes
-
+  # ----------------------------------------------------------------------------
+  # Taxon lineage information
+  # ----------------------------------------------------------------------------
   Taxon:
     is_a: Entity
     mixins:
@@ -513,6 +529,9 @@ classes:
     annotations:
       plural: UpstreamDatabases
 
+  # ----------------------------------------------------------------------------
+  # Contigs generated from SequencingReads
+  # ----------------------------------------------------------------------------
   Contig:
     is_a: Entity
     mixins:
@@ -525,6 +544,10 @@ classes:
         required: true
     annotations:
       plural: Contigs
+
+  # ============================================================================
+  # Mixins
+  # ============================================================================
 
   EntityMixin:
     mixin: true

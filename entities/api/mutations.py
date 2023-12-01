@@ -48,7 +48,6 @@ from api.types.metric_consensus_genome import (
     update_metric_consensus_genome,
     delete_metric_consensus_genome,
 )
-from api.types.coverage_viz import CoverageViz, create_coverage_viz, update_coverage_viz, delete_coverage_viz
 from api.types.taxon import Taxon, create_taxon, update_taxon, delete_taxon
 from api.types.upstream_database import (
     UpstreamDatabase,
@@ -115,11 +114,6 @@ class Mutation:
     create_metric_consensus_genome: MetricConsensusGenome = create_metric_consensus_genome
     update_metric_consensus_genome: Sequence[MetricConsensusGenome] = update_metric_consensus_genome
     delete_metric_consensus_genome: Sequence[MetricConsensusGenome] = delete_metric_consensus_genome
-
-    # CoverageViz mutations
-    create_coverage_viz: CoverageViz = create_coverage_viz
-    update_coverage_viz: Sequence[CoverageViz] = update_coverage_viz
-    delete_coverage_viz: Sequence[CoverageViz] = delete_coverage_viz
 
     # Taxon mutations
     create_taxon: Taxon = create_taxon
