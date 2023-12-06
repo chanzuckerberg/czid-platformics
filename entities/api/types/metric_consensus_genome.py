@@ -250,10 +250,11 @@ async def resolve_metrics_consensus_genomes_aggregate(
     """
     Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
+    # translate into sql, modify get_db_rows to accept "aggreate" functions like it currently accepts a "where" clause
     metrics = await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
     aggregate=MetricAggregateFunctions(count=len(metrics), sum=MetricNumericalColumns(), avg=MetricNumericalColumns(), min=MetricNumericalColumns(), max=MetricNumericalColumns(), stddev=MetricNumericalColumns(), variance=MetricNumericalColumns())
     for numerical_column in MetricNumericalColumns.__annotations__:
-        column_values = [getattr(sample, numerical_column) for sample in metrics]
+        column_values = [getattr(metric, numerical_column) for metric in metrics]
         aggregate.sum.__setattr__(numerical_column, sum(column_values))
         aggregate.avg.__setattr__(numerical_column, statistics.mean(column_values))
         aggregate.min.__setattr__(numerical_column, min(column_values))
