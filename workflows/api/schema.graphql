@@ -1,0 +1,500 @@
+"""Date with time (isoformat)"""
+scalar DateTime
+
+input DatetimeComparators {
+  _eq: DateTime
+  _neq: DateTime
+  _in: [DateTime!]
+  _nin: [DateTime!]
+  _gt: DateTime
+  _gte: DateTime
+  _lt: DateTime
+  _lte: DateTime
+  _is_null: DateTime
+}
+
+interface EntityInterface implements Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+}
+
+"""
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+"""
+scalar GlobalID @specifiedBy(url: "https://relay.dev/graphql/objectidentification.htm")
+
+input IntComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
+}
+
+type Mutation {
+  createRun(input: RunCreateInput!): Run!
+  updateRun(input: RunUpdateInput!, where: RunWhereClauseMutations!): [Run!]!
+  deleteRun(where: RunWhereClauseMutations!): [Run!]!
+  createWorkflow(input: WorkflowCreateInput!): Workflow!
+  updateWorkflow(input: WorkflowUpdateInput!, where: WorkflowWhereClauseMutations!): [Workflow!]!
+  deleteWorkflow(where: WorkflowWhereClauseMutations!): [Workflow!]!
+  createRunStep(input: RunStepCreateInput!): RunStep!
+  updateRunStep(input: RunStepUpdateInput!, where: RunStepWhereClauseMutations!): [RunStep!]!
+  deleteRunStep(where: RunStepWhereClauseMutations!): [RunStep!]!
+  createRunEntityInput(input: RunEntityInputCreateInput!): RunEntityInput!
+  updateRunEntityInput(input: RunEntityInputUpdateInput!, where: RunEntityInputWhereClauseMutations!): [RunEntityInput!]!
+  deleteRunEntityInput(where: RunEntityInputWhereClauseMutations!): [RunEntityInput!]!
+  createWorkflowVersion(input: WorkflowVersionCreateInput!): WorkflowVersion!
+  updateWorkflowVersion(input: WorkflowVersionUpdateInput!, where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
+  deleteWorkflowVersion(where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
+}
+
+"""An object with a Globally Unique ID"""
+interface Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+}
+
+"""Information to aid in pagination."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  node(
+    """The ID of the object."""
+    id: GlobalID!
+  ): Node!
+  nodes(
+    """The IDs of the objects."""
+    ids: [GlobalID!]!
+  ): [Node!]!
+  runs(where: RunWhereClause = null): [Run!]!
+  workflows(where: WorkflowWhereClause = null): [Workflow!]!
+  runSteps(where: RunStepWhereClause = null): [RunStep!]!
+  runEntityInputs(where: RunEntityInputWhereClause = null): [RunEntityInput!]!
+  workflowVersions(where: WorkflowVersionWhereClause = null): [WorkflowVersion!]!
+}
+
+type Run implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  startedAt: DateTime
+  endedAt: DateTime
+  executionId: String
+  outputsJson: String
+  inputsJson: String
+  status: RunStatus
+  workflowVersion(where: WorkflowVersionWhereClause = null): WorkflowVersion
+  runSteps(
+    where: RunStepWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): RunStepConnection!
+  runEntityInputs(
+    where: RunEntityInputWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): RunEntityInputConnection!
+}
+
+"""A connection to a list of items."""
+type RunConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [RunEdge!]!
+}
+
+input RunCreateInput {
+  collectionId: Int!
+  startedAt: DateTime = null
+  endedAt: DateTime = null
+  executionId: String = null
+  outputsJson: String = null
+  inputsJson: String = null
+  status: RunStatus = null
+  workflowVersionId: ID = null
+}
+
+"""An edge in a connection."""
+type RunEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Run!
+}
+
+type RunEntityInput implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  newEntityId: Int
+  fieldName: String
+  run(where: RunWhereClause = null): Run
+}
+
+"""A connection to a list of items."""
+type RunEntityInputConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [RunEntityInputEdge!]!
+}
+
+input RunEntityInputCreateInput {
+  collectionId: Int!
+  newEntityId: Int = null
+  fieldName: String = null
+  runId: ID = null
+}
+
+"""An edge in a connection."""
+type RunEntityInputEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RunEntityInput!
+}
+
+input RunEntityInputUpdateInput {
+  collectionId: Int = null
+  newEntityId: Int = null
+  fieldName: String = null
+  runId: ID = null
+}
+
+input RunEntityInputWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  newEntityId: IntComparators
+  fieldName: StrComparators
+  run: RunWhereClause
+}
+
+input RunEntityInputWhereClauseMutations {
+  id: UUIDComparators
+}
+
+enum RunStatus {
+  SUCCEEDED
+  FAILED
+  PENDING
+  STARTED
+  RUNNING
+}
+
+input RunStatusEnumComparators {
+  _eq: RunStatus
+  _neq: RunStatus
+  _in: [RunStatus!]
+  _nin: [RunStatus!]
+  _gt: RunStatus
+  _gte: RunStatus
+  _lt: RunStatus
+  _lte: RunStatus
+  _is_null: RunStatus
+}
+
+type RunStep implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  run(where: RunWhereClause = null): Run
+  startedAt: DateTime
+  endedAt: DateTime
+  status: RunStatus
+}
+
+"""A connection to a list of items."""
+type RunStepConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [RunStepEdge!]!
+}
+
+input RunStepCreateInput {
+  collectionId: Int!
+  runId: ID = null
+  startedAt: DateTime = null
+  endedAt: DateTime = null
+  status: RunStatus = null
+}
+
+"""An edge in a connection."""
+type RunStepEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: RunStep!
+}
+
+input RunStepUpdateInput {
+  collectionId: Int = null
+  runId: ID = null
+  startedAt: DateTime = null
+  endedAt: DateTime = null
+  status: RunStatus = null
+}
+
+input RunStepWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  run: RunWhereClause
+  startedAt: DatetimeComparators
+  endedAt: DatetimeComparators
+  status: RunStatusEnumComparators
+}
+
+input RunStepWhereClauseMutations {
+  id: UUIDComparators
+}
+
+input RunUpdateInput {
+  collectionId: Int = null
+  startedAt: DateTime = null
+  endedAt: DateTime = null
+  executionId: String = null
+  outputsJson: String = null
+  inputsJson: String = null
+  status: RunStatus = null
+  workflowVersionId: ID = null
+}
+
+input RunWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  startedAt: DatetimeComparators
+  endedAt: DatetimeComparators
+  executionId: StrComparators
+  outputsJson: StrComparators
+  inputsJson: StrComparators
+  status: RunStatusEnumComparators
+  workflowVersion: WorkflowVersionWhereClause
+  runSteps: RunStepWhereClause
+  runEntityInputs: RunEntityInputWhereClause
+}
+
+input RunWhereClauseMutations {
+  id: UUIDComparators
+}
+
+input StrComparators {
+  _eq: String
+  _neq: String
+  _in: [String!]
+  _nin: [String!]
+  _is_null: Int
+  _gt: String
+  _gte: String
+  _lt: String
+  _lte: String
+  _like: String
+  _nlike: String
+  _ilike: String
+  _nilike: String
+  _regex: String
+  _nregex: String
+  _iregex: String
+  _niregex: String
+}
+
+scalar UUID
+
+input UUIDComparators {
+  _eq: UUID
+  _neq: UUID
+  _in: [UUID!]
+  _nin: [UUID!]
+  _gt: UUID
+  _gte: UUID
+  _lt: UUID
+  _lte: UUID
+}
+
+type Workflow implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  name: String
+  defaultVersion: String
+  minimumSupportedVersion: String
+  versions(
+    where: WorkflowVersionWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): WorkflowVersionConnection!
+}
+
+input WorkflowCreateInput {
+  collectionId: Int!
+  name: String = null
+  defaultVersion: String = null
+  minimumSupportedVersion: String = null
+}
+
+input WorkflowUpdateInput {
+  collectionId: Int = null
+  name: String = null
+  defaultVersion: String = null
+  minimumSupportedVersion: String = null
+}
+
+type WorkflowVersion implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  graphJson: String
+  manifest: String
+  workflow(where: WorkflowWhereClause = null): Workflow
+  runs(
+    where: RunWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): RunConnection!
+}
+
+"""A connection to a list of items."""
+type WorkflowVersionConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [WorkflowVersionEdge!]!
+}
+
+input WorkflowVersionCreateInput {
+  collectionId: Int!
+  graphJson: String = null
+  manifest: String = null
+  workflowId: ID = null
+}
+
+"""An edge in a connection."""
+type WorkflowVersionEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: WorkflowVersion!
+}
+
+input WorkflowVersionUpdateInput {
+  collectionId: Int = null
+  graphJson: String = null
+  manifest: String = null
+  workflowId: ID = null
+}
+
+input WorkflowVersionWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  graphJson: StrComparators
+  manifest: StrComparators
+  workflow: WorkflowWhereClause
+  runs: RunWhereClause
+}
+
+input WorkflowVersionWhereClauseMutations {
+  id: UUIDComparators
+}
+
+input WorkflowWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: StrComparators
+  defaultVersion: StrComparators
+  minimumSupportedVersion: StrComparators
+  versions: WorkflowVersionWhereClause
+}
+
+input WorkflowWhereClauseMutations {
+  id: UUIDComparators
+}

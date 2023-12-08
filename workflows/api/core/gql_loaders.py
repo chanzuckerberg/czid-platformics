@@ -30,8 +30,8 @@ def get_authz_map(
     model_cls: type[db.Base],
 ) -> tuple[dict, list]:
     authz_map = {
-        "request.resource.attr.user_id": db.Run.user_id,
-        "request.resource.attr.project_id": db.Run.project_id,
+        "request.resource.attr.user_id": db.Run.owner_user_id,
+        "request.resource.attr.project_id": db.Run.collection_id,
     }
 
     if model_cls == db.Run:
