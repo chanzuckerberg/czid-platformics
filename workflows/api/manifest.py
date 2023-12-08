@@ -2,7 +2,7 @@ import json
 import semver
 import typing
 from pathlib import Path
-from database.models.workflow import Workflow, WorkflowVersion
+from database.models import Workflow, WorkflowVersion
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
@@ -119,6 +119,8 @@ def import_manifests(session: Session) -> None:
 
         if workflow is None:
             workflow = Workflow(
+                owner_user_id="1",  # TODO: WHO SHOULD OWN THESE?
+                collection_id="1",  #
                 name=manifest.name,
                 default_version=str(manifest.version),
                 minimum_supported_version=str(manifest.version),
@@ -126,6 +128,8 @@ def import_manifests(session: Session) -> None:
             session.add(workflow)
             session.commit()
 
-        workflow_version = WorkflowVersion(graph_json="{}", workflow=workflow, manifest=manifest_str)  # TODO: fill in
+        workflow_version = WorkflowVersion(
+            owner_user_id="1", collection_id="1", graph_json="{}", workflow=workflow, manifest=manifest_str
+        )  # TODO: fill in
         session.add(workflow_version)
         session.commit()

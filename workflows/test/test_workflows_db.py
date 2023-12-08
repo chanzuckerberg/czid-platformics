@@ -1,13 +1,17 @@
 import os
 import pytest
 import typing
-from factoryboy import workflow_factory as wf
 from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
 from pytest_postgresql.executor_noop import NoopExecutor
 from platformics.database.connect import SyncDB, init_sync_db
 from platformics.database.models.base import Base
+from test_infra.factories.main import SessionStorage
+
+from test_infra.factories.run import RunFactory
+from test_infra.factories.workflow import WorkflowFactory
 import database.models as db
+from support.enums import RunStatus
 
 
 test_db = factories.postgresql_noproc(
@@ -47,16 +51,16 @@ def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
 
 def test_workflow_creation(sync_db: SyncDB) -> None:
     with sync_db.session() as session:
-        wf.SessionStorage.set_session(session)
-        wf.WorkflowFactory.create_batch(2, name="test-workflow-name")
-        wf.WorkflowFactory.create_batch(2, name="test-workflow-name2")
+        SessionStorage.set_session(session)
+        WorkflowFactory.create_batch(2, name="test-workflow-name")
+        WorkflowFactory.create_batch(2, name="test-workflow-name2")
         assert session.query(db.Workflow).filter_by(name="test-workflow-name").count() == 2
 
 
 def test_run_creation(sync_db: SyncDB) -> None:
     with sync_db.session() as session:
-        wf.SessionStorage.set_session(session)
-        wf.RunFactory.create_batch(2, status=db.RunStatus["FAILED"])
-        wf.RunFactory.create_batch(3, status=db.RunStatus["SUCCEEDED"])
+        SessionStorage.set_session(session)
+        RunFactory.create_batch(2, status=RunStatus["FAILED"])
+        RunFactory.create_batch(3, status=RunStatus["SUCCEEDED"])
 
-        assert session.query(db.Run).filter_by(status=db.RunStatus["SUCCEEDED"]).count() == 3
+        assert session.query(db.Run).filter_by(status=RunStatus["SUCCEEDED"]).count() == 3

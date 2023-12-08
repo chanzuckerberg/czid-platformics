@@ -42,6 +42,7 @@ redis = "^5.0.1"
 linkml = "^1.5.7"
 strcase = "^1.0.0"
 linkml-runtime = "^1.6.0"
+faker-enum = "^0.0.2"
 
 
 [build-system]
