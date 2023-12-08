@@ -119,8 +119,8 @@ def import_manifests(session: Session) -> None:
 
         if workflow is None:
             workflow = Workflow(
-                owner_user_id="1", # TODO: WHO SHOULD OWN THESE?
-                collection_id="1", # 
+                owner_user_id="1",  # TODO: WHO SHOULD OWN THESE?
+                collection_id="1",  #
                 name=manifest.name,
                 default_version=str(manifest.version),
                 minimum_supported_version=str(manifest.version),
