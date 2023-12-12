@@ -220,6 +220,11 @@ Mutation types
 class MetricConsensusGenomeCreateInput:
     collection_id: int
     consensus_genome_id: strawberry.ID
+    coverage_depth: Optional[float] = None
+    reference_genome_length: Optional[float] = None
+    percent_genome_called: Optional[float] = None
+    percent_identity: Optional[float] = None
+    gc_percent: Optional[float] = None
     total_reads: Optional[int] = None
     mapped_reads: Optional[int] = None
     ref_snps: Optional[int] = None
@@ -233,6 +238,11 @@ class MetricConsensusGenomeCreateInput:
 class MetricConsensusGenomeUpdateInput:
     collection_id: Optional[int] = None
     consensus_genome_id: Optional[strawberry.ID] = None
+    coverage_depth: Optional[float] = None
+    reference_genome_length: Optional[float] = None
+    percent_genome_called: Optional[float] = None
+    percent_identity: Optional[float] = None
+    gc_percent: Optional[float] = None
     total_reads: Optional[int] = None
     mapped_reads: Optional[int] = None
     ref_snps: Optional[int] = None

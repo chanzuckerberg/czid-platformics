@@ -593,6 +593,11 @@ type MetricConsensusGenomeConnection {
 input MetricConsensusGenomeCreateInput {
   collectionId: Int!
   consensusGenomeId: ID!
+  coverageDepth: Float = null
+  referenceGenomeLength: Float = null
+  percentGenomeCalled: Float = null
+  percentIdentity: Float = null
+  gcPercent: Float = null
   totalReads: Int = null
   mappedReads: Int = null
   refSnps: Int = null
@@ -614,6 +619,11 @@ type MetricConsensusGenomeEdge {
 input MetricConsensusGenomeUpdateInput {
   collectionId: Int = null
   consensusGenomeId: ID = null
+  coverageDepth: Float = null
+  referenceGenomeLength: Float = null
+  percentGenomeCalled: Float = null
+  percentIdentity: Float = null
+  gcPercent: Float = null
   totalReads: Int = null
   mappedReads: Int = null
   refSnps: Int = null

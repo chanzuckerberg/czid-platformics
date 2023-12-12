@@ -244,6 +244,8 @@ class {{ cls.name }}{{ action }}Input:
     {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
         {%- elif attr.type == "int" %}
     {{ attr.name }}: {{ getTypeMutation(action, "int", attr.required) }}
+        {%- elif attr.type == "float" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "float", attr.required) }}
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: {{ getTypeMutation(action, "bool", attr.required) }}
         {%- elif attr.type == "date" %}

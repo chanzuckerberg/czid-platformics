@@ -492,6 +492,11 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     __field_names__ = (
         "collection_id",
         "consensus_genome_id",
+        "coverage_depth",
+        "reference_genome_length",
+        "percent_genome_called",
+        "percent_identity",
+        "gc_percent",
         "total_reads",
         "mapped_reads",
         "ref_snps",
@@ -502,6 +507,11 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     consensus_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="consensusGenomeId")
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
+    percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
+    percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
+    gc_percent = sgqlc.types.Field(Float, graphql_name="gcPercent")
     total_reads = sgqlc.types.Field(Int, graphql_name="totalReads")
     mapped_reads = sgqlc.types.Field(Int, graphql_name="mappedReads")
     ref_snps = sgqlc.types.Field(Int, graphql_name="refSnps")
@@ -516,6 +526,11 @@ class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
     __field_names__ = (
         "collection_id",
         "consensus_genome_id",
+        "coverage_depth",
+        "reference_genome_length",
+        "percent_genome_called",
+        "percent_identity",
+        "gc_percent",
         "total_reads",
         "mapped_reads",
         "ref_snps",
@@ -526,6 +541,11 @@ class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     consensus_genome_id = sgqlc.types.Field(ID, graphql_name="consensusGenomeId")
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
+    percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
+    percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
+    gc_percent = sgqlc.types.Field(Float, graphql_name="gcPercent")
     total_reads = sgqlc.types.Field(Int, graphql_name="totalReads")
     mapped_reads = sgqlc.types.Field(Int, graphql_name="mappedReads")
     ref_snps = sgqlc.types.Field(Int, graphql_name="refSnps")
