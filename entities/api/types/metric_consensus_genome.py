@@ -22,6 +22,7 @@ from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     IntComparators,
+    FloatComparators,
     UUIDComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -120,6 +121,11 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     consensus_genome: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
+    coverage_depth: Optional[FloatComparators] | None
+    reference_genome_length: Optional[FloatComparators] | None
+    percent_genome_called: Optional[FloatComparators] | None
+    percent_identity: Optional[FloatComparators] | None
+    gc_percent: Optional[FloatComparators] | None
     total_reads: Optional[IntComparators] | None
     mapped_reads: Optional[IntComparators] | None
     ref_snps: Optional[IntComparators] | None
@@ -142,6 +148,11 @@ class MetricConsensusGenome(EntityInterface):
     consensus_genome: Optional[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
+    coverage_depth: Optional[float] = None
+    reference_genome_length: Optional[float] = None
+    percent_genome_called: Optional[float] = None
+    percent_identity: Optional[float] = None
+    gc_percent: Optional[float] = None
     total_reads: Optional[int] = None
     mapped_reads: Optional[int] = None
     ref_snps: Optional[int] = None
@@ -151,18 +162,26 @@ class MetricConsensusGenome(EntityInterface):
     coverage_viz_summary_file_id: Optional[strawberry.ID]
     coverage_viz_summary_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_summary_file")  # type: ignore
 
+
 """
 Define types for metric aggregations.
 """
 
+
 @strawberry.type
 class MetricNumericalColumns:
+    coverage_depth: Optional[float] = None
+    reference_genome_length: Optional[float] = None
+    percent_genome_called: Optional[float] = None
+    percent_identity: Optional[float] = None
+    gc_percent: Optional[float] = None
     total_reads: Optional[float] = None
     mapped_reads: Optional[float] = None
     ref_snps: Optional[float] = None
     n_actg: Optional[float] = None
     n_missing: Optional[float] = None
     n_ambiguous: Optional[float] = None
+
 
 @strawberry.type
 class MetricAggregateFunctions:
@@ -176,9 +195,11 @@ class MetricAggregateFunctions:
     stddev: Optional[MetricNumericalColumns] = None
     variance: Optional[MetricNumericalColumns] = None
 
+
 @strawberry.type
 class MetricConsensusGenomeAggregate:
     aggregate: MetricAggregateFunctions
+
 
 """
 We need to add this to each Queryable type so that strawberry will accept either our
@@ -240,6 +261,7 @@ async def resolve_metrics_consensus_genomes(
     """
     return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
 
+
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_metrics_consensus_genomes_aggregate(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
@@ -252,7 +274,15 @@ async def resolve_metrics_consensus_genomes_aggregate(
     """
     # translate into sql, modify get_db_rows to accept "aggreate" functions like it currently accepts a "where" clause
     metrics = await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
-    aggregate=MetricAggregateFunctions(count=len(metrics), sum=MetricNumericalColumns(), avg=MetricNumericalColumns(), min=MetricNumericalColumns(), max=MetricNumericalColumns(), stddev=MetricNumericalColumns(), variance=MetricNumericalColumns())
+    aggregate = MetricAggregateFunctions(
+        count=len(metrics),
+        sum=MetricNumericalColumns(),
+        avg=MetricNumericalColumns(),
+        min=MetricNumericalColumns(),
+        max=MetricNumericalColumns(),
+        stddev=MetricNumericalColumns(),
+        variance=MetricNumericalColumns(),
+    )
     for numerical_column in MetricNumericalColumns.__annotations__:
         column_values = [getattr(metric, numerical_column) for metric in metrics]
         aggregate.sum.__setattr__(numerical_column, sum(column_values))

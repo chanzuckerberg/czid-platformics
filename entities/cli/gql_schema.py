@@ -29,6 +29,9 @@ class FileStatus(sgqlc.types.Enum):
     __choices__ = ("FAILED", "PENDING", "SUCCESS")
 
 
+Float = sgqlc.types.Float
+
+
 class GlobalID(sgqlc.types.Scalar):
     __schema__ = gql_schema
 
@@ -269,6 +272,20 @@ class FileWhereClause(sgqlc.types.Input):
     path = sgqlc.types.Field("StrComparators", graphql_name="path")
     compression_type = sgqlc.types.Field("StrComparators", graphql_name="compressionType")
     size = sgqlc.types.Field("IntComparators", graphql_name="size")
+
+
+class FloatComparators(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
+    _eq = sgqlc.types.Field(Float, graphql_name="_eq")
+    _neq = sgqlc.types.Field(Float, graphql_name="_neq")
+    _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(Float)), graphql_name="_in")
+    _nin = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(Float)), graphql_name="_nin")
+    _gt = sgqlc.types.Field(Float, graphql_name="_gt")
+    _gte = sgqlc.types.Field(Float, graphql_name="_gte")
+    _lt = sgqlc.types.Field(Float, graphql_name="_lt")
+    _lte = sgqlc.types.Field(Float, graphql_name="_lte")
+    _is_null = sgqlc.types.Field(Float, graphql_name="_is_null")
 
 
 class GenomicRangeCreateInput(sgqlc.types.Input):
@@ -526,6 +543,11 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
         "owner_user_id",
         "collection_id",
         "consensus_genome",
+        "coverage_depth",
+        "reference_genome_length",
+        "percent_genome_called",
+        "percent_identity",
+        "gc_percent",
         "total_reads",
         "mapped_reads",
         "ref_snps",
@@ -538,6 +560,11 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     consensus_genome = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenome")
+    coverage_depth = sgqlc.types.Field(FloatComparators, graphql_name="coverageDepth")
+    reference_genome_length = sgqlc.types.Field(FloatComparators, graphql_name="referenceGenomeLength")
+    percent_genome_called = sgqlc.types.Field(FloatComparators, graphql_name="percentGenomeCalled")
+    percent_identity = sgqlc.types.Field(FloatComparators, graphql_name="percentIdentity")
+    gc_percent = sgqlc.types.Field(FloatComparators, graphql_name="gcPercent")
     total_reads = sgqlc.types.Field(IntComparators, graphql_name="totalReads")
     mapped_reads = sgqlc.types.Field(IntComparators, graphql_name="mappedReads")
     ref_snps = sgqlc.types.Field(IntComparators, graphql_name="refSnps")
@@ -2554,6 +2581,11 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "owner_user_id",
         "collection_id",
         "consensus_genome",
+        "coverage_depth",
+        "reference_genome_length",
+        "percent_genome_called",
+        "percent_identity",
+        "gc_percent",
         "total_reads",
         "mapped_reads",
         "ref_snps",
@@ -2574,6 +2606,11 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
             (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
         ),
     )
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
+    percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
+    percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
+    gc_percent = sgqlc.types.Field(Float, graphql_name="gcPercent")
     total_reads = sgqlc.types.Field(Int, graphql_name="totalReads")
     mapped_reads = sgqlc.types.Field(Int, graphql_name="mappedReads")
     ref_snps = sgqlc.types.Field(Int, graphql_name="refSnps")

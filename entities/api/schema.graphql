@@ -258,6 +258,18 @@ input FileWhereClause {
   size: IntComparators
 }
 
+input FloatComparators {
+  _eq: Float
+  _neq: Float
+  _in: [Float!]
+  _nin: [Float!]
+  _gt: Float
+  _gte: Float
+  _lt: Float
+  _lte: Float
+  _is_null: Float
+}
+
 type GenomicRange implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
@@ -554,6 +566,11 @@ type MetricConsensusGenome implements EntityInterface & Node {
   ownerUserId: Int!
   collectionId: Int!
   consensusGenome(where: ConsensusGenomeWhereClause = null): ConsensusGenome
+  coverageDepth: Float
+  referenceGenomeLength: Float
+  percentGenomeCalled: Float
+  percentIdentity: Float
+  gcPercent: Float
   totalReads: Int
   mappedReads: Int
   refSnps: Int
@@ -612,6 +629,11 @@ input MetricConsensusGenomeWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   consensusGenome: ConsensusGenomeWhereClause
+  coverageDepth: FloatComparators
+  referenceGenomeLength: FloatComparators
+  percentGenomeCalled: FloatComparators
+  percentIdentity: FloatComparators
+  gcPercent: FloatComparators
   totalReads: IntComparators
   mappedReads: IntComparators
   refSnps: IntComparators

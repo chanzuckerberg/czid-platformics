@@ -91,6 +91,18 @@ class IntComparators(TypedDict):
     _lte: Optional[int]
     _is_null: Optional[int]
 
+@strawberry.input
+class FloatComparators(TypedDict):
+    _eq: Optional[float]
+    _neq: Optional[float]
+    _in: Optional[list[float]]
+    _nin: Optional[list[float]]
+    _gt: Optional[float]
+    _gte: Optional[float]
+    _lt: Optional[float]
+    _lte: Optional[float]
+    _is_null: Optional[float]
+
 
 @strawberry.input
 class UUIDComparators(TypedDict):
