@@ -256,9 +256,11 @@ async def resolve_metrics_consensus_genomes_aggregate(
     for numerical_column in MetricNumericalColumns.__annotations__:
         column_values = [getattr(metric, numerical_column) for metric in metrics]
         aggregate.sum.__setattr__(numerical_column, sum(column_values))
-        aggregate.avg.__setattr__(numerical_column, statistics.mean(column_values))
-        aggregate.min.__setattr__(numerical_column, min(column_values))
-        aggregate.max.__setattr__(numerical_column, max(column_values))
+        if len(column_values) > 0:
+            # min, max, and avg require at least 1 data point
+            aggregate.min.__setattr__(numerical_column, min(column_values))
+            aggregate.max.__setattr__(numerical_column, max(column_values))
+            aggregate.avg.__setattr__(numerical_column, statistics.mean(column_values))
         if len(column_values) > 1:
             # stdv and variance require at least 2 data points
             aggregate.stddev.__setattr__(numerical_column, statistics.stdev(column_values))
