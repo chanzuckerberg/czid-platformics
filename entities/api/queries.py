@@ -29,7 +29,6 @@ class Query:
     # Allow relay-style queries by node ID
     node: relay.Node = relay.node()
     nodes: List[relay.Node] = relay.node()
-
     # Query files
     files: Sequence[File] = resolve_files
 
