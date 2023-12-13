@@ -6,7 +6,7 @@ resourcePolicy:
   version: "default"
   importDerivedRoles:
     - common_roles
-  resource: "run"
+  resource: "{{cls.snake_name}}"
   rules:
     - actions: ['view']
       effect: EFFECT_ALLOW
@@ -20,3 +20,4 @@ resourcePolicy:
   schemas:
     principalSchema:
       ref: cerbos:///principal.json
+

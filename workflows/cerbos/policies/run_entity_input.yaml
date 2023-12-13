@@ -8,7 +8,7 @@ resourcePolicy:
     - common_roles
   resource: "run_entity_input"
   rules:
-    - actions: ['view', 'create', 'update']
+    - actions: ['view']
       effect: EFFECT_ALLOW
       derivedRoles:
         - project_member
