@@ -40,7 +40,6 @@ type ConsensusGenome implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
-  isReverseComplement: Boolean!
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
   metrics(
@@ -75,7 +74,6 @@ input ConsensusGenomeCreateInput {
   sequenceReadId: ID!
   referenceGenomeId: ID!
   sequenceId: ID = null
-  isReverseComplement: Boolean!
   intermediateOutputsId: ID = null
 }
 
@@ -94,7 +92,6 @@ input ConsensusGenomeUpdateInput {
   sequenceReadId: ID = null
   referenceGenomeId: ID = null
   sequenceId: ID = null
-  isReverseComplement: Boolean = null
   intermediateOutputsId: ID = null
 }
 
@@ -106,7 +103,6 @@ input ConsensusGenomeWhereClause {
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
   referenceGenome: ReferenceGenomeWhereClause
-  isReverseComplement: BoolComparators
   metrics: MetricConsensusGenomeWhereClause
 }
 

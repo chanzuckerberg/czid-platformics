@@ -3537,15 +3537,6 @@
             },
             {
               "defaultValue": null,
-              "name": "isReverseComplement",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "BoolComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "metrics",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5310,19 +5301,6 @@
                 "kind": "OBJECT",
                 "name": "File",
                 "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "isReverseComplement",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
               }
             },
             {
@@ -11210,19 +11188,6 @@
               }
             },
             {
-              "defaultValue": null,
-              "name": "isReverseComplement",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "intermediateOutputsId",
               "type": {
@@ -11283,15 +11248,6 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "isReverseComplement",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
                 "ofType": null
               }
             },

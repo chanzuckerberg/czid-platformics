@@ -22,7 +22,6 @@ from platformics.api.core.deps import get_cerbos_client, get_db_session, require
 from platformics.api.core.gql_to_sql import (
     IntComparators,
     UUIDComparators,
-    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
@@ -173,7 +172,6 @@ class ConsensusGenomeWhereClause(TypedDict):
     reference_genome: Optional[
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
-    is_reverse_complement: Optional[BoolComparators] | None
     metrics: Optional[
         Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
@@ -199,7 +197,6 @@ class ConsensusGenome(EntityInterface):
     ] = load_reference_genome_rows  # type:ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
-    is_reverse_complement: bool
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
     metrics: Sequence[
@@ -229,7 +226,6 @@ class ConsensusGenomeCreateInput:
     sequence_read_id: strawberry.ID
     reference_genome_id: strawberry.ID
     sequence_id: Optional[strawberry.ID] = None
-    is_reverse_complement: bool
     intermediate_outputs_id: Optional[strawberry.ID] = None
 
 
@@ -240,7 +236,6 @@ class ConsensusGenomeUpdateInput:
     sequence_read_id: Optional[strawberry.ID] = None
     reference_genome_id: Optional[strawberry.ID] = None
     sequence_id: Optional[strawberry.ID] = None
-    is_reverse_complement: Optional[bool] = None
     intermediate_outputs_id: Optional[strawberry.ID] = None
 
 

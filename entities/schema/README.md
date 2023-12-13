@@ -96,7 +96,6 @@ MetadataFieldProject {
     int collection_id  
 }
 ConsensusGenome {
-    boolean is_reverse_complement  
     uuid entity_id  
     uuid id  
     int producing_run_id  

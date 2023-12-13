@@ -108,7 +108,6 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
         "sequence_read_id",
         "reference_genome_id",
         "sequence_id",
-        "is_reverse_complement",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
@@ -116,7 +115,6 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
-    is_reverse_complement = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
 
@@ -128,7 +126,6 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
         "sequence_read_id",
         "reference_genome_id",
         "sequence_id",
-        "is_reverse_complement",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
@@ -136,7 +133,6 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
-    is_reverse_complement = sgqlc.types.Field(Boolean, graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
 
@@ -150,7 +146,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "taxon",
         "sequence_read",
         "reference_genome",
-        "is_reverse_complement",
         "metrics",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -160,7 +155,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
-    is_reverse_complement = sgqlc.types.Field(BoolComparators, graphql_name="isReverseComplement")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
 
 
@@ -2217,7 +2211,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "reference_genome",
         "sequence_id",
         "sequence",
-        "is_reverse_complement",
         "intermediate_outputs_id",
         "intermediate_outputs",
         "metrics",
@@ -2251,7 +2244,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="sequence",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
-    is_reverse_complement = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
     intermediate_outputs = sgqlc.types.Field(
         File,
