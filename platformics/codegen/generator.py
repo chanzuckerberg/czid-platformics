@@ -90,12 +90,17 @@ def generate_entity_import_files(output_prefix: str, environment: Environment, v
 @click.option("--schemafile", type=str, required=True)
 @click.option("--output-prefix", type=str, required=True)
 @click.option("--render-files/--skip-render-files", type=bool, default=True, show_default=True)
+@click.option("--template-override-paths", type=str, multiple=True)
 @click.pass_context
-def api_generate(ctx: click.Context, schemafile: str, output_prefix: str, render_files: bool) -> None:
+def api_generate(ctx: click.Context, schemafile: str, output_prefix: str, render_files: bool, template_override_paths: tuple[str]) -> None:
     """
     Launch code generation
     """
-    environment = Environment(loader=FileSystemLoader("platformics/codegen/templates/"))
+    template_paths = list(template_override_paths)
+    template_paths.append(
+        "platformics/codegen/templates/" # default template path
+    )
+    environment = Environment(loader=FileSystemLoader(template_paths))
     view = SchemaView(schemafile)
     view.imports_closure()
     wrapped_view = ViewWrapper(view)
@@ -106,7 +111,7 @@ def api_generate(ctx: click.Context, schemafile: str, output_prefix: str, render
     for dir in DIR_CODEGEN:
         os.makedirs(f"{output_prefix}/{dir}", exist_ok=True)
 
-    # Generate enums and import files
+    # Generate enums and import files   
     generate_enums(output_prefix, environment, wrapped_view)
     generate_entity_import_files(output_prefix, environment, wrapped_view, render_files=render_files)
 

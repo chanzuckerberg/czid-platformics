@@ -10,7 +10,7 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 import factory
 from database.models import RunEntityInput
 from test_infra.factories.main import CommonFactory
-from test_infra.factories.run import Run
+from test_infra.factories.run import RunFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -32,7 +32,7 @@ class RunEntityInputFactory(CommonFactory):
     new_entity_id = fuzzy.FuzzyInteger(1, 1000)
     field_name = fuzzy.FuzzyText()
     run = factory.SubFactory(
-        Run,
+        RunFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
