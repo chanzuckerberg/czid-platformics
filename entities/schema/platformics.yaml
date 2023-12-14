@@ -29,10 +29,20 @@ enums:
         description: This file failed to upload or failed validation
       PENDING:
         description: This file is a placeholder and awaiting a successful upload
-  FileAcessProtocol:
+  FileAccessProtocol:
     permissible_values:
       s3:
         description: This file is accessible via the (AWS) S3 protocol
+  FileUploadClient:
+    permissible_values:
+      browser:
+        description: File uploaded from the user's browser
+      cli:
+        description: File uploaded from the CLI
+      s3:
+        description: File uploaded from S3
+      basespace:
+        description: File uploaded from Illumina Basespace Cloud
   NucleicAcid:
     permissible_values:
       RNA:
@@ -118,6 +128,11 @@ classes:
       size:
         range: int
         minimum_value: 0
+      # Information about file upload (optional)
+      upload_client:
+        range: FileUploadClient
+      upload_error:
+        range: string
 
   # ============================================================================
   # Entities

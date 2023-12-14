@@ -16,6 +16,8 @@ File {
     string file_format  
     string compression_type  
     int size  
+    FileUploadClient upload_client  
+    string upload_error  
 }
 Sample {
     string name  

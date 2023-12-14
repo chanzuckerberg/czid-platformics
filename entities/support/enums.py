@@ -17,8 +17,16 @@ class FileStatus(enum.Enum):
 
 
 @strawberry.enum
-class FileAcessProtocol(enum.Enum):
+class FileAccessProtocol(enum.Enum):
     s3 = "s3"
+
+
+@strawberry.enum
+class FileUploadClient(enum.Enum):
+    browser = "browser"
+    cli = "cli"
+    s3 = "s3"
+    basespace = "basespace"
 
 
 @strawberry.enum
