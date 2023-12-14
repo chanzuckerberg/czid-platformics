@@ -8,12 +8,12 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
 import statistics
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows
+from api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
@@ -168,37 +168,68 @@ Define types for metric aggregations.
 """
 
 
-@strawberry.type
-class MetricNumericalColumns:
-    coverage_depth: Optional[float] = None
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[float] = None
-    mapped_reads: Optional[float] = None
-    ref_snps: Optional[float] = None
-    n_actg: Optional[float] = None
-    n_missing: Optional[float] = None
-    n_ambiguous: Optional[float] = None
+@strawberry.input
+# TODO: shouldn't require numerical input to select a metric
+class MetricNumericalColumns(TypedDict):
+    coverage_depth: Optional[float] | None
+    reference_genome_length: Optional[float] | None
+    percent_genome_called: Optional[float] | None
+    percent_identity: Optional[float] | None
+    gc_percent: Optional[float] | None
+    total_reads: Optional[float] | None
+    mapped_reads: Optional[float] | None
+    ref_snps: Optional[float] | None
+    n_actg: Optional[float] | None
+    n_missing: Optional[float] | None
+    n_ambiguous: Optional[float] | None
 
-
-@strawberry.type
-class MetricAggregateFunctions:
+@strawberry.input
+class MetricConsensusGenomeAggregate(TypedDict):
     # count of rows
-    count: Optional[int] = None
+    # hasura also supports counts for columns and you can pass in a "distinct" flag
+    count: Optional[int] | None
     # dictionaries mapping column names to values
-    sum: Optional[MetricNumericalColumns] = None
-    avg: Optional[MetricNumericalColumns] = None
-    min: Optional[MetricNumericalColumns] = None
-    max: Optional[MetricNumericalColumns] = None
-    stddev: Optional[MetricNumericalColumns] = None
-    variance: Optional[MetricNumericalColumns] = None
+    sum: Optional[MetricNumericalColumns] | None
+    avg: Optional[MetricNumericalColumns] | None
+    min: Optional[MetricNumericalColumns] | None
+    max: Optional[MetricNumericalColumns] | None
+    stddev: Optional[MetricNumericalColumns] | None
+    variance: Optional[MetricNumericalColumns] | None
+
+
+# @strawberry.type
+# class MetricNumericalColumnsOutput:
+#     coverage_depth: Optional[float] = None
+#     reference_genome_length: Optional[float] = None
+#     percent_genome_called: Optional[float] = None
+#     percent_identity: Optional[float] = None
+#     gc_percent: Optional[float] = None
+#     total_reads: Optional[float] = None
+#     mapped_reads: Optional[float] = None
+#     ref_snps: Optional[float] = None
+#     n_actg: Optional[float] = None
+#     n_missing: Optional[float] = None
+#     n_ambiguous: Optional[float] = None
+
+
+# @strawberry.type
+# class MetricAggregateFunctionsOutput:
+#     # count of rows
+#     # hasura also supports counts for columns and you can pass in a distinct flag
+#     count: Optional[int] = None
+#     # dictionaries mapping column names to values
+#     sum: Optional[MetricNumericalColumnsOutput] = None
+#     avg: Optional[MetricNumericalColumnsOutput] = None
+#     min: Optional[MetricNumericalColumnsOutput] = None
+#     max: Optional[MetricNumericalColumnsOutput] = None
+#     stddev: Optional[MetricNumericalColumnsOutput] = None
+#     variance: Optional[MetricNumericalColumnsOutput] = None
 
 
 @strawberry.type
-class MetricConsensusGenomeAggregate:
-    aggregate: MetricAggregateFunctions
+class MetricConsensusGenomeAggregateOutput:
+    # aggregate: Optional[MetricAggregateFunctionsOutput] = None
+    aggregate: str  # type: ignore
 
 
 """
@@ -278,35 +309,17 @@ async def resolve_metrics_consensus_genomes_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetricConsensusGenomeWhereClause] = None,
-) -> typing.Sequence[MetricConsensusGenomeAggregate]:
+    aggregate: Optional[MetricConsensusGenomeAggregate] = None,
+) -> typing.Sequence[MetricConsensusGenome]:
     """
     Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    # translate into sql, modify get_db_rows to accept "aggreate" functions like it currently accepts a "where" clause
-    metrics = await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
-    aggregate = MetricAggregateFunctions(
-        count=len(metrics),
-        sum=MetricNumericalColumns(),
-        avg=MetricNumericalColumns(),
-        min=MetricNumericalColumns(),
-        max=MetricNumericalColumns(),
-        stddev=MetricNumericalColumns(),
-        variance=MetricNumericalColumns(),
-    )
-    for numerical_column in MetricNumericalColumns.__annotations__:
-        column_values = [getattr(metric, numerical_column) for metric in metrics]
-        aggregate.sum.__setattr__(numerical_column, sum(column_values))
-        if len(column_values) > 0:
-            # min, max, and avg require at least 1 data point
-            aggregate.min.__setattr__(numerical_column, min(column_values))
-            aggregate.max.__setattr__(numerical_column, max(column_values))
-            aggregate.avg.__setattr__(numerical_column, statistics.mean(column_values))
-        if len(column_values) > 1:
-            # stdv and variance require at least 2 data points
-            aggregate.stddev.__setattr__(numerical_column, statistics.stdev(column_values))
-            aggregate.variance.__setattr__(numerical_column, statistics.variance(column_values))
-
-    return [MetricConsensusGenomeAggregate(aggregate=aggregate)]
+    rows = await get_aggregate_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, aggregate, [])  # type: ignore
+    print(f"rows: {rows}")
+    # TODO: properly structure the output
+    row = rows[0]
+    return [MetricConsensusGenomeAggregateOutput(aggregate=row)]
+    # return [MetricConsensusGenomeAggregateOutput(aggregate="aggregate")]
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
