@@ -40,7 +40,6 @@ type ConsensusGenome implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
-  isReverseComplement: Boolean!
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
   metrics(
@@ -75,7 +74,6 @@ input ConsensusGenomeCreateInput {
   sequenceReadId: ID!
   referenceGenomeId: ID!
   sequenceId: ID = null
-  isReverseComplement: Boolean!
   intermediateOutputsId: ID = null
 }
 
@@ -94,7 +92,6 @@ input ConsensusGenomeUpdateInput {
   sequenceReadId: ID = null
   referenceGenomeId: ID = null
   sequenceId: ID = null
-  isReverseComplement: Boolean = null
   intermediateOutputsId: ID = null
 }
 
@@ -106,7 +103,6 @@ input ConsensusGenomeWhereClause {
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
   referenceGenome: ReferenceGenomeWhereClause
-  isReverseComplement: BoolComparators
   metrics: MetricConsensusGenomeWhereClause
 }
 
@@ -686,6 +682,9 @@ type Mutation {
   createContig(input: ContigCreateInput!): Contig!
   updateContig(input: ContigUpdateInput!, where: ContigWhereClauseMutations!): [Contig!]!
   deleteContig(where: ContigWhereClauseMutations!): [Contig!]!
+  createPhylogeneticTree(input: PhylogeneticTreeCreateInput!): PhylogeneticTree!
+  updatePhylogeneticTree(input: PhylogeneticTreeUpdateInput!, where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
+  deletePhylogeneticTree(where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
 }
 
 """An object with a Globally Unique ID"""
@@ -726,6 +725,60 @@ type PageInfo {
   endCursor: String
 }
 
+type PhylogeneticTree implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  treeId: ID
+  tree(where: FileWhereClause = null): File
+  format: PhylogeneticTreeFormat!
+}
+
+input PhylogeneticTreeCreateInput {
+  collectionId: Int!
+  treeId: ID = null
+  format: PhylogeneticTreeFormat!
+}
+
+enum PhylogeneticTreeFormat {
+  newick
+  auspice_v1
+  auspice_v2
+}
+
+input PhylogeneticTreeFormatEnumComparators {
+  _eq: PhylogeneticTreeFormat
+  _neq: PhylogeneticTreeFormat
+  _in: [PhylogeneticTreeFormat!]
+  _nin: [PhylogeneticTreeFormat!]
+  _gt: PhylogeneticTreeFormat
+  _gte: PhylogeneticTreeFormat
+  _lt: PhylogeneticTreeFormat
+  _lte: PhylogeneticTreeFormat
+  _is_null: PhylogeneticTreeFormat
+}
+
+input PhylogeneticTreeUpdateInput {
+  collectionId: Int = null
+  treeId: ID = null
+  format: PhylogeneticTreeFormat = null
+}
+
+input PhylogeneticTreeWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  format: PhylogeneticTreeFormatEnumComparators
+}
+
+input PhylogeneticTreeWhereClauseMutations {
+  id: UUIDComparators
+}
+
 type Query {
   node(
     """The ID of the object."""
@@ -749,6 +802,7 @@ type Query {
   taxa(where: TaxonWhereClause = null): [Taxon!]!
   upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
   contigs(where: ContigWhereClause = null): [Contig!]!
+  phylogeneticTrees(where: PhylogeneticTreeWhereClause = null): [PhylogeneticTree!]!
 }
 
 type ReferenceGenome implements EntityInterface & Node {

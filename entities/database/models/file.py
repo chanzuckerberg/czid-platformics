@@ -1,18 +1,10 @@
-import enum
 import uuid
 import uuid6
-import strawberry
 from platformics.database.models.base import Base, Entity
 from sqlalchemy import Column, ForeignKey, Integer, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-
-
-@strawberry.enum
-class FileStatus(enum.Enum):
-    SUCCESS = "SUCCESS"
-    FAILED = "FAILED"
-    PENDING = "PENDING"
+from support.enums import FileStatus, FileAccessProtocol, FileUploadClient
 
 
 class File(Base):
@@ -30,10 +22,12 @@ class File(Base):
     entity_field_name: Mapped[str] = mapped_column(String, nullable=False)
     entity: Mapped[Entity] = relationship(Entity, foreign_keys=entity_id)
 
-    status: Mapped[FileStatus] = mapped_column(Enum(FileStatus), nullable=False)
-    protocol: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[FileStatus] = mapped_column(Enum(FileStatus, native_enum=False), nullable=False)
+    protocol: Mapped[FileAccessProtocol] = mapped_column(Enum(FileAccessProtocol, native_enum=False), nullable=False)
     namespace: Mapped[str] = mapped_column(String, nullable=False)
     path: Mapped[str] = mapped_column(String, nullable=False)
     file_format: Mapped[str] = mapped_column(String, nullable=False)
     compression_type: Mapped[str] = mapped_column(String, nullable=True)
     size: Mapped[int] = mapped_column(Integer, nullable=True)
+    upload_client: Mapped[FileUploadClient] = mapped_column(Enum(FileUploadClient, native_enum=False), nullable=True)
+    upload_error: Mapped[str] = mapped_column(String, nullable=True)

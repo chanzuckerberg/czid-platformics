@@ -16,6 +16,8 @@ File {
     string file_format  
     string compression_type  
     int size  
+    FileUploadClient upload_client  
+    string upload_error  
 }
 Sample {
     string name  
@@ -96,7 +98,6 @@ MetadataFieldProject {
     int collection_id  
 }
 ConsensusGenome {
-    boolean is_reverse_complement  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -160,6 +161,14 @@ Contig {
     int owner_user_id  
     int collection_id  
 }
+PhylogeneticTree {
+    PhylogeneticTreeFormat format  
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+}
 EntityMixin {
     uuid entity_id  
 }
@@ -206,6 +215,7 @@ Taxon ||--}o SequencingRead : "sequencing_reads"
 Taxon ||--}o Sample : "samples"
 UpstreamDatabase ||--}o Taxon : "taxa"
 Contig ||--|o SequencingRead : "sequencing_read"
+PhylogeneticTree ||--|o File : "tree"
 
 ```
 

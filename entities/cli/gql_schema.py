@@ -47,6 +47,11 @@ class NucleicAcid(sgqlc.types.Enum):
     __choices__ = ("DNA", "RNA")
 
 
+class PhylogeneticTreeFormat(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = ("auspice_v1", "auspice_v2", "newick")
+
+
 class SequencingProtocol(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = ("MNGS", "MSSPE", "TARGETED")
@@ -108,7 +113,6 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
         "sequence_read_id",
         "reference_genome_id",
         "sequence_id",
-        "is_reverse_complement",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
@@ -116,7 +120,6 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
-    is_reverse_complement = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
 
@@ -128,7 +131,6 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
         "sequence_read_id",
         "reference_genome_id",
         "sequence_id",
-        "is_reverse_complement",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
@@ -136,7 +138,6 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
-    is_reverse_complement = sgqlc.types.Field(Boolean, graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
 
@@ -150,7 +151,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "taxon",
         "sequence_read",
         "reference_genome",
-        "is_reverse_complement",
         "metrics",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -160,7 +160,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
-    is_reverse_complement = sgqlc.types.Field(BoolComparators, graphql_name="isReverseComplement")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
 
 
@@ -565,6 +564,52 @@ class NucleicAcidEnumComparators(sgqlc.types.Input):
     _lt = sgqlc.types.Field(NucleicAcid, graphql_name="_lt")
     _lte = sgqlc.types.Field(NucleicAcid, graphql_name="_lte")
     _is_null = sgqlc.types.Field(NucleicAcid, graphql_name="_is_null")
+
+
+class PhylogeneticTreeCreateInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("collection_id", "tree_id", "format")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    tree_id = sgqlc.types.Field(ID, graphql_name="treeId")
+    format = sgqlc.types.Field(sgqlc.types.non_null(PhylogeneticTreeFormat), graphql_name="format")
+
+
+class PhylogeneticTreeFormatEnumComparators(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
+    _eq = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_eq")
+    _neq = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_neq")
+    _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(PhylogeneticTreeFormat)), graphql_name="_in")
+    _nin = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(PhylogeneticTreeFormat)), graphql_name="_nin")
+    _gt = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_gt")
+    _gte = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_gte")
+    _lt = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_lt")
+    _lte = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_lte")
+    _is_null = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="_is_null")
+
+
+class PhylogeneticTreeUpdateInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("collection_id", "tree_id", "format")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    tree_id = sgqlc.types.Field(ID, graphql_name="treeId")
+    format = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name="format")
+
+
+class PhylogeneticTreeWhereClause(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "format")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    format = sgqlc.types.Field(PhylogeneticTreeFormatEnumComparators, graphql_name="format")
+
+
+class PhylogeneticTreeWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
 class ReferenceGenomeCreateInput(sgqlc.types.Input):
@@ -1343,6 +1388,9 @@ class Mutation(sgqlc.types.Type):
         "create_contig",
         "update_contig",
         "delete_contig",
+        "create_phylogenetic_tree",
+        "update_phylogenetic_tree",
+        "delete_phylogenetic_tree",
     )
     create_file = sgqlc.types.Field(
         sgqlc.types.non_null(File),
@@ -1968,6 +2016,54 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
+    create_phylogenetic_tree = sgqlc.types.Field(
+        sgqlc.types.non_null("PhylogeneticTree"),
+        graphql_name="createPhylogeneticTree",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(PhylogeneticTreeCreateInput), graphql_name="input", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    update_phylogenetic_tree = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PhylogeneticTree"))),
+        graphql_name="updatePhylogeneticTree",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(PhylogeneticTreeUpdateInput), graphql_name="input", default=None
+                    ),
+                ),
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(PhylogeneticTreeWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_phylogenetic_tree = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PhylogeneticTree"))),
+        graphql_name="deletePhylogeneticTree",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(PhylogeneticTreeWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
+        ),
+    )
 
 
 class PageInfo(sgqlc.types.Type):
@@ -1998,6 +2094,7 @@ class Query(sgqlc.types.Type):
         "taxa",
         "upstream_databases",
         "contigs",
+        "phylogenetic_trees",
     )
     node = sgqlc.types.Field(
         sgqlc.types.non_null(Node),
@@ -2112,6 +2209,13 @@ class Query(sgqlc.types.Type):
         graphql_name="contigs",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
     )
+    phylogenetic_trees = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PhylogeneticTree"))),
+        graphql_name="phylogeneticTrees",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(PhylogeneticTreeWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
 
 
 class ReferenceGenomeConnection(sgqlc.types.relay.Connection):
@@ -2217,7 +2321,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "reference_genome",
         "sequence_id",
         "sequence",
-        "is_reverse_complement",
         "intermediate_outputs_id",
         "intermediate_outputs",
         "metrics",
@@ -2251,7 +2354,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="sequence",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
-    is_reverse_complement = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isReverseComplement")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
     intermediate_outputs = sgqlc.types.Field(
         File,
@@ -2467,6 +2569,22 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="coverageVizSummaryFile",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
+
+
+class PhylogeneticTree(sgqlc.types.Type, EntityInterface, Node):
+    __schema__ = gql_schema
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "tree_id", "tree", "format")
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    tree_id = sgqlc.types.Field(ID, graphql_name="treeId")
+    tree = sgqlc.types.Field(
+        File,
+        graphql_name="tree",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
+    )
+    format = sgqlc.types.Field(sgqlc.types.non_null(PhylogeneticTreeFormat), graphql_name="format")
 
 
 class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):

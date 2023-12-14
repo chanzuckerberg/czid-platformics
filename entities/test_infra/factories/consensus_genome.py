@@ -52,7 +52,6 @@ class ConsensusGenomeFactory(CommonFactory):
         entity_field_name="sequence",
         file_format="fastq",
     )
-    is_reverse_complement = factory.Faker("boolean")
     intermediate_outputs = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",

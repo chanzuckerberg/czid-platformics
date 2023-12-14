@@ -22,6 +22,7 @@ from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_met
 from api.types.taxon import Taxon, resolve_taxa
 from api.types.upstream_database import UpstreamDatabase, resolve_upstream_databases
 from api.types.contig import Contig, resolve_contigs
+from api.types.phylogenetic_tree import PhylogeneticTree, resolve_phylogenetic_trees
 
 
 @strawberry.type
@@ -29,7 +30,6 @@ class Query:
     # Allow relay-style queries by node ID
     node: relay.Node = relay.node()
     nodes: List[relay.Node] = relay.node()
-
     # Query files
     files: Sequence[File] = resolve_files
 
@@ -47,3 +47,4 @@ class Query:
     taxa: Sequence[Taxon] = resolve_taxa
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
     contigs: Sequence[Contig] = resolve_contigs
+    phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees

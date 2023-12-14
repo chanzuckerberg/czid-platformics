@@ -21,9 +21,9 @@ from cerbos.sdk.model import Principal
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from support.format_handlers import get_validator
+from support.enums import FileStatus
 from api.core.helpers import get_db_rows
 from api.types.entities import Entity
-from database.models import FileStatus
 from platformics.settings import APISettings
 from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.api.core.deps import (
@@ -264,7 +264,7 @@ def generate_multipart_upload_token(
     creds = sts_client.get_federation_token(Name=token_name, Policy=json.dumps(policy), DurationSeconds=expiration)
 
     return MultipartUploadCredentials(
-        protocol="S3",
+        protocol="s3",
         namespace=new_file.namespace,
         path=new_file.path,
         access_key_id=creds["Credentials"]["AccessKeyId"],

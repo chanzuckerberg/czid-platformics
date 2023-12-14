@@ -56,6 +56,12 @@ from api.types.upstream_database import (
     delete_upstream_database,
 )
 from api.types.contig import Contig, create_contig, update_contig, delete_contig
+from api.types.phylogenetic_tree import (
+    PhylogeneticTree,
+    create_phylogenetic_tree,
+    update_phylogenetic_tree,
+    delete_phylogenetic_tree,
+)
 
 
 @strawberry.type
@@ -129,3 +135,8 @@ class Mutation:
     create_contig: Contig = create_contig
     update_contig: Sequence[Contig] = update_contig
     delete_contig: Sequence[Contig] = delete_contig
+
+    # PhylogeneticTree mutations
+    create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree
+    update_phylogenetic_tree: Sequence[PhylogeneticTree] = update_phylogenetic_tree
+    delete_phylogenetic_tree: Sequence[PhylogeneticTree] = delete_phylogenetic_tree

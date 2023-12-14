@@ -29,10 +29,20 @@ enums:
         description: This file failed to upload or failed validation
       PENDING:
         description: This file is a placeholder and awaiting a successful upload
-  FileAcessProtocol:
+  FileAccessProtocol:
     permissible_values:
       s3:
         description: This file is accessible via the (AWS) S3 protocol
+  FileUploadClient:
+    permissible_values:
+      browser:
+        description: File uploaded from the user's browser
+      cli:
+        description: File uploaded from the CLI
+      s3:
+        description: File uploaded from S3
+      basespace:
+        description: File uploaded from Illumina Basespace Cloud
   NucleicAcid:
     permissible_values:
       RNA:
@@ -59,6 +69,11 @@ enums:
       species:
       genus:
       family:
+  PhylogeneticTreeFormat:
+    permissible_values:
+      newick:
+      auspice_v1:
+      auspice_v2:
 
 classes:
   Entity:
@@ -88,9 +103,11 @@ classes:
       id:
         identifier: true
         range: uuid
+      # This file's ID is stored in the entity column <entity_field_name>_id
       entity_field_name:
         range: string
         required: true
+      # Which entity this file is connected to
       entity:
         range: Entity
         required: true
@@ -100,9 +117,11 @@ classes:
       protocol:
         range: FileAccessProtocol
         required: true
+      # Bucket name
       namespace:
         range: string
         required: true
+      # Prefix (does not start with /)
       path:
         range: string
         required: true
@@ -114,6 +133,11 @@ classes:
       size:
         range: int
         minimum_value: 0
+      # Information about file upload (optional)
+      upload_client:
+        range: FileUploadClient
+      upload_error:
+        range: string
 
   # ============================================================================
   # Entities
@@ -130,6 +154,7 @@ classes:
       name:
         range: string
         required: true
+      # Metadata provided by user
       sample_type:
         range: string
         required: true
@@ -169,22 +194,28 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # Sample associated with this SequencingRead (a sample can have multiple sets of SequencingReads)
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
+      # Wet lab protocol
       protocol:
         range: SequencingProtocol
         required: true
+      # Files containing sequencing reads (R1 and R2 refer to read pairs 1/2 in Illumina paired-end sequencing)
       r1_file:
         range: File
       r2_file:
         range: File
+      # Which sequencing technology / instrument was used?
       technology:
         range: SequencingTechnology
         required: true
+      # Did we sequence DNA or RNA?
       nucleic_acid:
         range: NucleicAcid
         required: true
+      # Does the sample include ERCCs, synthetic sequences of known quantity used for QC checks
       has_ercc:
         range: boolean
         required: true
@@ -196,10 +227,12 @@ classes:
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+      # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
         multivalued: true
+      # Contigs generated from these Sequencing Reads
       contigs:
         range: Contig
         inverse: Contig.sequencing_read
@@ -215,6 +248,7 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # Genomic coordinates based this reference genome
       reference_genome:
         range: ReferenceGenome
         inverse: ReferenceGenome.genomic_ranges
@@ -236,8 +270,10 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # FASTA reference genome
       file:
         range: File
+      # Indexed FASTA file (.FAI file if any)
       file_index:
         range: File
       # e.g. GRCh38.p14
@@ -389,9 +425,6 @@ classes:
       # Consensus Genome sequence
       sequence:
         range: File
-      is_reverse_complement:
-        range: boolean
-        required: true
       # Zip file containing intermediate outputs
       intermediate_outputs:
         range: File
@@ -544,6 +577,23 @@ classes:
         required: true
     annotations:
       plural: Contigs
+
+  # ----------------------------------------------------------------------------
+  # Phylogenetic tree
+  # ----------------------------------------------------------------------------
+  PhylogeneticTree:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      tree:
+        range: File
+      format:
+        range: PhylogeneticTreeFormat
+        required: true
+    annotations:
+      plural: PhylogeneticTrees
+
 
   # ============================================================================
   # Mixins

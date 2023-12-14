@@ -9,7 +9,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, Boolean
+from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -44,7 +44,6 @@ class ConsensusGenome(Entity):
     )
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped[File] = relationship(File, foreign_keys=sequence_id)
-    is_reverse_complement: Mapped[bool] = mapped_column(Boolean, nullable=False)
     intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     intermediate_outputs: Mapped[File] = relationship(File, foreign_keys=intermediate_outputs_id)
     metrics: Mapped[list[MetricConsensusGenome]] = relationship(
