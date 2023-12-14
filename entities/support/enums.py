@@ -60,3 +60,10 @@ class TaxonLevel(enum.Enum):
     species = "species"
     genus = "genus"
     family = "family"
+
+
+@strawberry.enum
+class PhylogeneticTreeFormat(enum.Enum):
+    newick = "newick"
+    auspice_v1 = "auspice_v1"
+    auspice_v2 = "auspice_v2"

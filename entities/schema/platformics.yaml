@@ -69,6 +69,11 @@ enums:
       species:
       genus:
       family:
+  PhylogeneticTreeFormat:
+    permissible_values:
+      newick:
+      auspice_v1:
+      auspice_v2:
 
 classes:
   Entity:
@@ -572,6 +577,23 @@ classes:
         required: true
     annotations:
       plural: Contigs
+
+  # ----------------------------------------------------------------------------
+  # Phylogenetic tree
+  # ----------------------------------------------------------------------------
+  PhylogeneticTree:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      tree:
+        range: File
+      format:
+        range: PhylogeneticTreeFormat
+        required: true
+    annotations:
+      plural: PhylogeneticTrees
+
 
   # ============================================================================
   # Mixins

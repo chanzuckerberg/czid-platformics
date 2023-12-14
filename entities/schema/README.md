@@ -161,6 +161,14 @@ Contig {
     int owner_user_id  
     int collection_id  
 }
+PhylogeneticTree {
+    PhylogeneticTreeFormat format  
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+}
 EntityMixin {
     uuid entity_id  
 }
@@ -207,6 +215,7 @@ Taxon ||--}o SequencingRead : "sequencing_reads"
 Taxon ||--}o Sample : "samples"
 UpstreamDatabase ||--}o Taxon : "taxa"
 Contig ||--|o SequencingRead : "sequencing_read"
+PhylogeneticTree ||--|o File : "tree"
 
 ```
 
