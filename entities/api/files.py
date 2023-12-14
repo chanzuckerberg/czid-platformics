@@ -6,6 +6,8 @@ import json
 import typing
 import database.models as db
 import strawberry
+import tempfile
+import uuid
 import uuid6
 from fastapi import Depends
 from typing_extensions import TypedDict
@@ -34,6 +36,9 @@ from platformics.api.core.deps import (
     get_sts_client,
 )
 
+FILE_CONCATENATION_MAX = 100
+FILE_CONCATENATION_MAX_SIZE = 1e6
+FILE_CONCATENATION_PREFIX = "clade_exports/fastas/temp-"
 
 # ------------------------------------------------------------------------------
 # Utility types/inputs
@@ -436,3 +441,52 @@ async def create_or_upload_file(
             file=new_file,  # type: ignore
             credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
         )
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def concatenate_files(
+    ids: typing.Sequence[uuid.UUID],
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    s3_client: S3Client = Depends(get_s3_client),
+    settings: APISettings = Depends(get_settings),
+) -> SignedURL:
+    """
+    Concatenate file contents synchronously. Only use for small files e.g. for exporting small CG FASTAs to Nextclade.
+    """
+    # FIXME: Check with Product on a reasonable max
+    if len(ids) > FILE_CONCATENATION_MAX:
+        raise Exception("Cannot concatenate more than 100 files")
+
+    # Get files in question if have access to them
+    where = {"id": {"_in": ids}}
+    files = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
+    for file in files:
+        if file.size > FILE_CONCATENATION_MAX_SIZE:
+            raise Exception("Cannot concatenate files larger than 1MB")
+
+    # Concatenate files (tmp files are automatically deleted when closed)
+    with tempfile.NamedTemporaryFile() as file_concatenated:
+        with open(file_concatenated.name, "w") as fp_concat:
+            for file in files:
+                # Download file locally
+                with tempfile.NamedTemporaryFile() as file_temp:
+                    s3_client.download_file(file.namespace, file.path, file_temp.name)
+                    # Append it
+                    with open(file_temp.name) as fp_temp:
+                        fp_concat.write(fp_temp.read())
+        # Upload to S3
+        path = f"{FILE_CONCATENATION_PREFIX}-{uuid6.uuid7()}"
+        s3_client.upload_file(file_concatenated.name, file.namespace, path)
+
+    # Return signed URL
+    expiration = 36000
+    url = s3_client.generate_presigned_url(
+        ClientMethod="get_object", Params={"Bucket": settings.DEFAULT_UPLOAD_BUCKET, "Key": path}, ExpiresIn=expiration
+    )
+    return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
+
+    # FIXME: tests
+    # FIXME: create File object for this? Connected to what?
+    # FIXME: custom fasta headers
