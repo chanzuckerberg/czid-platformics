@@ -104,6 +104,8 @@ async def get_db_rows(
     result = await session.execute(query)
     return result.scalars().all()
 
+# TODO: how to handle nesting?
+
 def convert_where_and_aggregate_clauses_to_sql(
     principal: Principal,
     cerbos_client: CerbosClient,
@@ -209,5 +211,5 @@ async def get_aggregate_db_rows(
         query = query.order_by(*order_by)  # type: ignore
     print(f"query: {query}")
     result = await session.execute(query)
-    result = result.mappings().all()
+    result = result.mappings().one()
     return result
