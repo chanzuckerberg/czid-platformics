@@ -459,7 +459,7 @@ async def concatenate_files(
     """
     Concatenate file contents synchronously. Only use for small files e.g. for exporting small CG FASTAs to Nextclade.
     """
-    # FIXME: Check with Product on a reasonable max
+    # TODO: Check with Product on a reasonable max
     if len(ids) > FILE_CONCATENATION_MAX:
         raise Exception("Cannot concatenate more than 100 files")
 
@@ -493,6 +493,5 @@ async def concatenate_files(
     )
     return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
 
-    # FIXME: tests
     # FIXME: create File object for this? Connected to what?
     # FIXME: custom fasta headers
