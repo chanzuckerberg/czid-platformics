@@ -45,11 +45,32 @@ class FastqHandler(FileFormatHandler):
         return ""
 
 
+class FastaHandler(FileFormatHandler):
+    """
+    Parse the first 1MB and parse reads with BioPython to ensure the file is valid
+    """
+
+    @classmethod
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> int:
+        data = client.get_object(Bucket=bucket, Key=file_path, Range="bytes=0-1000000")["Body"].read()
+        records = 0
+        for _ in SeqIO.parse(StringIO(data.decode("ascii")), "fasta"):
+            records += 1
+        assert records > 0
+        return client.head_object(Bucket=bucket, Key=file_path)["ContentLength"]
+
+    @classmethod
+    def convert_to(cls, client: S3Client, bucket: str, file_path: str, format: dict) -> str:
+        return ""
+
+
 def get_validator(format: str) -> type[FileFormatHandler]:
     """
     Returns the validator for a given file format
     """
     if format == "fastq":
         return FastqHandler
+    elif format == "fasta":
+        return FastaHandler
     else:
         raise Exception("Unknown file format")

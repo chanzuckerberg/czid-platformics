@@ -76,6 +76,7 @@ class FileFactory(factory.alchemy.SQLAlchemyModelFactory):
     file_format = fuzzy.FuzzyChoice(["fasta", "fastq", "bam"])
     compression_type = fuzzy.FuzzyChoice(["gz", "bz2", "xz"])
     size = fuzzy.FuzzyInteger(1024, 1024 * 1024 * 1024)  # Between 1k and 1G
+    upload_client = fuzzy.FuzzyChoice(["browser", "cli", "s3", "basespace"])
 
     @classmethod
     def update_file_ids(cls) -> None:
