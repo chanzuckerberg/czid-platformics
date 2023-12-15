@@ -38,7 +38,7 @@ from platformics.api.core.deps import (
 
 FILE_CONCATENATION_MAX = 100
 FILE_CONCATENATION_MAX_SIZE = 1e6
-FILE_CONCATENATION_PREFIX = "clade_exports/fastas/temp-"
+FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
 
 # ------------------------------------------------------------------------------
 # Utility types/inputs
@@ -192,10 +192,13 @@ class FileWhereClause(TypedDict):
     """
 
     id: typing.Optional[UUIDComparators]
+    entity_id: typing.Optional[UUIDComparators]
+    entity_field_name: typing.Optional[StrComparators]
     status: typing.Optional[EnumComparators[FileStatus]]
     protocol: typing.Optional[StrComparators]
     namespace: typing.Optional[StrComparators]
     path: typing.Optional[StrComparators]
+    file_format: typing.Optional[StrComparators]
     compression_type: typing.Optional[StrComparators]
     size: typing.Optional[IntComparators]
 
@@ -396,6 +399,7 @@ async def create_or_upload_file(
     # Unlink the File(s) currently connected to this entity (only commit to DB once add the new File below)
     query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
     query = query.filter(db.File.entity_id == entity_id)
+    query = query.filter(db.File.entity_field_name == entity_field_name)
     current_files = (await session.execute(query)).scalars().all()
     for current_file in current_files:
         current_file.entity_id = None
@@ -460,8 +464,10 @@ async def concatenate_files(
         raise Exception("Cannot concatenate more than 100 files")
 
     # Get files in question if have access to them
-    where = {"id": {"_in": ids}}
+    where = {"id": {"_in": ids}, "status": {"_eq": db.FileStatus.SUCCESS}}
     files = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
+    if len(files) < 2:
+        raise Exception("Need at least 2 valid files to concatenate")
     for file in files:
         if file.size > FILE_CONCATENATION_MAX_SIZE:
             raise Exception("Cannot concatenate files larger than 1MB")
@@ -477,7 +483,7 @@ async def concatenate_files(
                     with open(file_temp.name) as fp_temp:
                         fp_concat.write(fp_temp.read())
         # Upload to S3
-        path = f"{FILE_CONCATENATION_PREFIX}-{uuid6.uuid7()}"
+        path = f"{FILE_CONCATENATION_PREFIX}/{uuid6.uuid7()}"
         s3_client.upload_file(file_concatenated.name, file.namespace, path)
 
     # Return signed URL
