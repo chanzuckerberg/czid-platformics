@@ -167,38 +167,8 @@ class MetricConsensusGenome(EntityInterface):
 Define types for metric aggregations.
 """
 
-
-@strawberry.input
-# TODO: shouldn't require numerical input to select a metric
-class MetricNumericalColumns(TypedDict):
-    coverage_depth: Optional[float] | None
-    reference_genome_length: Optional[float] | None
-    percent_genome_called: Optional[float] | None
-    percent_identity: Optional[float] | None
-    gc_percent: Optional[float] | None
-    total_reads: Optional[float] | None
-    mapped_reads: Optional[float] | None
-    ref_snps: Optional[float] | None
-    n_actg: Optional[float] | None
-    n_missing: Optional[float] | None
-    n_ambiguous: Optional[float] | None
-
-@strawberry.input
-class MetricConsensusGenomeAggregate(TypedDict):
-    # count of rows
-    # hasura also supports counts for columns and you can pass in a "distinct" flag
-    count: Optional[int] | None
-    # dictionaries mapping column names to values
-    sum: Optional[MetricNumericalColumns] | None
-    avg: Optional[MetricNumericalColumns] | None
-    min: Optional[MetricNumericalColumns] | None
-    max: Optional[MetricNumericalColumns] | None
-    stddev: Optional[MetricNumericalColumns] | None
-    variance: Optional[MetricNumericalColumns] | None
-
-
 @strawberry.type
-class MetricNumericalColumnsOutput:
+class MetricNumericalColumns:
     coverage_depth: Optional[float] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
@@ -213,23 +183,23 @@ class MetricNumericalColumnsOutput:
 
 
 @strawberry.type
-class MetricAggregateFunctionsOutput:
+class MetricAggregateFunctions:
     # count of rows
     # hasura also supports counts for columns and you can pass in a distinct flag
     count: Optional[int] = None
     # dictionaries mapping column names to values
-    sum: Optional[MetricNumericalColumnsOutput] = None
-    avg: Optional[MetricNumericalColumnsOutput] = None
-    min: Optional[MetricNumericalColumnsOutput] = None
-    max: Optional[MetricNumericalColumnsOutput] = None
-    stddev: Optional[MetricNumericalColumnsOutput] = None
-    variance: Optional[MetricNumericalColumnsOutput] = None
+    sum: Optional[MetricNumericalColumns] = None
+    avg: Optional[MetricNumericalColumns] = None
+    # TODO: should support min/max for strings
+    min: Optional[MetricNumericalColumns] = None 
+    max: Optional[MetricNumericalColumns] = None
+    stddev: Optional[MetricNumericalColumns] = None
+    variance: Optional[MetricNumericalColumns] = None
 
 
 @strawberry.type
-class MetricConsensusGenomeAggregateOutput:
-    aggregate: Optional[MetricAggregateFunctionsOutput] = None
-    # aggregate: str  # type: ignore
+class MetricConsensusGenomeAggregate:
+    aggregate: Optional[MetricAggregateFunctions] = None
 
 
 """
@@ -305,30 +275,30 @@ async def resolve_metrics_consensus_genomes(
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_metrics_consensus_genomes_aggregate(
+    info: Info,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetricConsensusGenomeWhereClause] = None,
-    aggregate: Optional[MetricConsensusGenomeAggregate] = None,
 ) -> typing.Sequence[MetricConsensusGenome]:
     """
     Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    rows = await get_aggregate_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, aggregate, [])  # type: ignore
-    print(f"rows: {rows}")
+    # TODO: why is selections returned as a list?
+    selections = info.selected_fields[0].selections[0].selections
+    rows = await get_aggregate_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, selections, [])  # type: ignore
     # structure the output
-    # TODO: output selection is redundant
-    aggregate_output = MetricAggregateFunctionsOutput()
+    # TODO: make the following common code somewhere
+    aggregate_output = MetricAggregateFunctions()
     for aggregate_name, value in rows.items():
         if aggregate_name == "count":
             aggregate_output.count = value
         else:
             aggregator_fn, col_name = aggregate_name.split("_", 1)
             if not getattr(aggregate_output, aggregator_fn):
-                setattr(aggregate_output, aggregator_fn, MetricNumericalColumnsOutput())
+                setattr(aggregate_output, aggregator_fn, MetricNumericalColumns())
             setattr(getattr(aggregate_output, aggregator_fn), col_name, value)
-    return [MetricConsensusGenomeAggregateOutput(aggregate=aggregate_output)]
-    # return [MetricConsensusGenomeAggregateOutput(aggregate=rows)]
+    return [MetricConsensusGenomeAggregate(aggregate=aggregate_output)]
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

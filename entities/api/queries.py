@@ -18,7 +18,7 @@ from api.types.metadatum import Metadatum, resolve_metadatas
 from api.types.metadata_field import MetadataField, resolve_metadata_fields
 from api.types.metadata_field_project import MetadataFieldProject, resolve_metadata_field_projects
 from api.types.consensus_genome import ConsensusGenome, resolve_consensus_genomes
-from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_metrics_consensus_genomes, MetricConsensusGenomeAggregate, MetricConsensusGenomeAggregateOutput, resolve_metrics_consensus_genomes_aggregate
+from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_metrics_consensus_genomes, MetricConsensusGenomeAggregate, resolve_metrics_consensus_genomes_aggregate
 from api.types.taxon import Taxon, resolve_taxa
 from api.types.upstream_database import UpstreamDatabase, resolve_upstream_databases
 from api.types.contig import Contig, resolve_contigs
@@ -44,7 +44,7 @@ class Query:
     metadata_field_projects: Sequence[MetadataFieldProject] = resolve_metadata_field_projects
     consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
     metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
-    metrics_consensus_genomes_aggregate: Sequence[MetricConsensusGenomeAggregateOutput] = resolve_metrics_consensus_genomes_aggregate
+    metrics_consensus_genomes_aggregate: Sequence[MetricConsensusGenomeAggregate] = resolve_metrics_consensus_genomes_aggregate
     taxa: Sequence[Taxon] = resolve_taxa
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
     contigs: Sequence[Contig] = resolve_contigs

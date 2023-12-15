@@ -30,6 +30,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+from api.types.metric_consensus_genome import MetricAggregateFunctions, MetricNumericalColumns, MetricConsensusGenomeAggregate
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -113,6 +114,31 @@ async def load_metric_consensus_genome_rows(
     relationship = mapper.relationships["metrics"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
+@strawberry.field
+async def load_metric_consensus_genome_aggregate_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
+    | None = None,
+) -> Optional[Annotated["MetricConsensusGenomeAggregate", strawberry.lazy("api.types.metric_consensus_genome")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["metrics"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+
+    # TODO: should be in common code
+    aggregate_output = MetricAggregateFunctions()
+    for aggregate_name, value in rows[0].items():
+        if aggregate_name == "count":
+            aggregate_output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            if aggregator_fn in ["min", "max", "avg", "sum", "stddev", "variance"]:
+                if not getattr(aggregate_output, aggregator_fn):
+                    setattr(aggregate_output, aggregator_fn, MetricNumericalColumns())
+                setattr(getattr(aggregate_output, aggregator_fn), col_name, value)
+    return MetricConsensusGenomeAggregate(aggregate=aggregate_output)
 
 """
 ------------------------------------------------------------------------------
@@ -202,6 +228,9 @@ class ConsensusGenome(EntityInterface):
     metrics: Sequence[
         Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
     ] = load_metric_consensus_genome_rows  # type:ignore
+    metrics_aggregate: Optional[
+        Annotated["MetricConsensusGenomeAggregate", strawberry.lazy("api.types.metric_consensus_genome")]
+    ] = load_metric_consensus_genome_aggregate_rows  # type:ignore
 
 
 """
