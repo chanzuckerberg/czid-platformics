@@ -1,3 +1,6 @@
+"""
+GraphQL web app runner
+"""
 import typing
 import json
 
@@ -219,6 +222,9 @@ def get_context(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(get_auth_principal),
 ) -> dict[str, typing.Any]:
+    """
+    TODO: Ryan to figure out what exactly this does???
+    """
     return {
         "sqlalchemy_loader": WorkflowLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
     }
@@ -247,8 +253,11 @@ strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=Custom
 schema = strawberry.Schema(query=xQuery, mutation=xMutation, config=strawberry_config)
 
 
-# Make sure tests can get their own instances of the app.
 def get_app() -> FastAPI:
+    """
+    Helper function that returns the app
+    Ensures tests can get their own instances of the app
+    """
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
     event_bus = load_event_bus(settings)
 

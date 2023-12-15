@@ -1,3 +1,7 @@
+"""
+Functions that load installed plugins
+"""
+
 from importlib.metadata import entry_points
 from typing import Dict
 from settings import APISettings
@@ -5,6 +9,7 @@ from plugins.plugin_types import EventBus, WorkflowRunner
 
 
 def load_workflow_runners() -> Dict[str, WorkflowRunner]:
+    """Load workflow runners installed at czid.plugin.workflow_runner"""
     workflow_runners_by_name: Dict[str, WorkflowRunner] = {}
     for plugin in entry_points(group="czid.plugin.workflow_runner"):
         workflow_runner = plugin.load()()
@@ -14,6 +19,7 @@ def load_workflow_runners() -> Dict[str, WorkflowRunner]:
 
 
 def load_event_bus(settings: APISettings) -> EventBus:
+    """Load event bus plugins installed at czid.plugin.event_bus and set by PLATFORMICS_EVENT_BUS_PLUGIN"""
     for plugin in entry_points(group="czid.plugin.event_bus"):
         if plugin.name != settings.PLATFORMICS_EVENT_BUS_PLUGIN:
             continue

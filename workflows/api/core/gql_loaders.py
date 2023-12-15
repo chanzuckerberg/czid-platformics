@@ -1,3 +1,7 @@
+"""
+TODO: Ryan, figure out what this module does
+"""
+
 import typing
 import uuid
 from collections import defaultdict

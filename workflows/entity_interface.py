@@ -1,3 +1,7 @@
+"""
+An interface for workflows to get entity types. Should be codegenned in the future. 
+"""
+
 from abc import ABC
 import asyncio
 from dataclasses import dataclass, field, fields
@@ -17,6 +21,7 @@ ENTITY_SERVICE_AUTH_TOKEN = os.environ["ENTITY_SERVICE_AUTH_TOKEN"]
 
 
 def _snake_to_camel(s: str) -> str:
+    """converts snake case to camel case""" 
     title = "".join(word.title() for word in s.split("_"))
     return title[0].lower() + title[1:]
 
@@ -32,6 +37,7 @@ _type_name_to_graphql_type = {
 
 @dataclass
 class Entity(ABC):
+    """Class to create an entity mutation""" 
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
     version: Optional[Version] = field(default_factory=lambda: Version(0), init=False)
 
@@ -45,6 +51,7 @@ class Entity(ABC):
             yield entity_field
 
     def gql_create_mutation(self) -> str:
+        """Create an entity with a GQL mutation"""
         field_name_types = []
         for entity_field in self._fields():
             if entity_field.type.__name__ == "EntityReference":
@@ -68,6 +75,7 @@ class Entity(ABC):
         """
 
     def gql_variables(self) -> dict:
+        """Return dict of variables"""
         variables = {}
         for entity_field in self._fields():
             if entity_field.type.__name__ == "EntityReference":
@@ -78,12 +86,14 @@ class Entity(ABC):
         return variables
 
     def get_dependent_entities(self) -> typing.Iterator:
+        """Yield dependent entity"""
         for entity_field in fields(self):
             if entity_field.type.__name__ == "EntityReference":
                 entity_ref: EntityReference = getattr(self, entity_field.name)
                 yield entity_ref
 
     async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client) -> None:
+        """Create entity if it does not exist""" 
         if self.entity_id:
             return
 
@@ -102,6 +112,7 @@ class Entity(ABC):
 
 @dataclass
 class Sample(Entity):
+    """Class to create a Sample Entity"""
     name: str
     location: str
 
@@ -111,10 +122,12 @@ T = typing.TypeVar("T", bound=Entity)
 
 @dataclass
 class EntityReference(Generic[T]):
+    """Class to create a reference to an entity"""
     entity_id: Optional[UUID] = field(default_factory=lambda: None)
     entity: Optional[T] = field(default_factory=lambda: None)
 
     async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client) -> None:
+        """create Entity if it doesn't exist"""
         if self.entity_id:
             return
         if self.entity is None:
@@ -123,14 +136,17 @@ class EntityReference(Generic[T]):
         self.entity_id = self.entity.entity_id
 
     def exists(self) -> bool:
+        """check if entity reference exists"""
         return self.entity_id is not None
 
     async def load(self) -> None:
+        """TODO"""
         pass
 
 
 @dataclass
 class SequencingRead(Entity):
+    """Class to create a sequencing read""" 
     nucleotide: str
     sequence: str
     protocol: str
@@ -139,11 +155,13 @@ class SequencingRead(Entity):
 
 @dataclass
 class Contig(Entity):
+    """Class to create a contig"""
     sequence: str
     sequencing_read: Optional[EntityReference[SequencingRead]] = field(metadata={"id_name": "sequencingReadId"})
 
 
 async def create_entities(user_id: int, collection_id: int, entities: list[Entity]) -> None:
+    """Helper function to create entities"""
     headers = {"Authorization": f"Bearer {ENTITY_SERVICE_AUTH_TOKEN}"}
     transport = AIOHTTPTransport(url=ENTITY_SERVICE_URL, headers=headers)
     client = Client(transport=transport, fetch_schema_from_transport=True)

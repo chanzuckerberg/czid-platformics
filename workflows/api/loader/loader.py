@@ -1,3 +1,7 @@
+"""
+Loader functions
+"""
+
 import asyncio
 import sys
 from typing import Dict, List, Literal, Tuple, Type, TypeVar
@@ -15,6 +19,7 @@ T = TypeVar("T", bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
 
 
 def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> Dict[str, List[Tuple[Version, T]]]:
+    """Loads in loader plugins"""
     loaders: Dict[str, List[Tuple[Version, T]]] = {}
     for plugin in entry_points(group=f"czid.plugin.entity_{input_or_output}_loader"):
         assert plugin.dist, "Plugin distribution not found"
@@ -32,6 +37,9 @@ input_loaders = load_loader_plugins("input", EntityInputLoader)
 
 
 def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[type[EntityInputLoader]]:
+    """
+    Given a manifest, resolve input loaders
+    """
     resolved_loaders = []
     for loader_config in workflow_manifest.input_loaders:
         name = loader_config.name
@@ -50,6 +58,9 @@ output_loaders = load_loader_plugins("output", EntityOutputLoader)
 
 # TODO: DRY with above but make the types work poperly
 def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[type[EntityOutputLoader]]:
+    """
+    Given a manifest, resolve output loaders
+    """
     resolved_loaders = []
     for loader_config in workflow_manifest.output_loaders:
         name = loader_config.name
@@ -64,6 +75,9 @@ def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[type[Enti
 
 
 class LoaderDriver:
+    """ 
+    Class to watch for events and run loaders
+    """
     session: AsyncSession
     bus: EventBus
 
@@ -74,6 +88,9 @@ class LoaderDriver:
     async def process_workflow_completed(
         self, user_id: int, collection_id: int, workflow_manifest: Manifest, outputs: Dict[str, str]
     ) -> None:
+        """
+        After workflow completes run output loaders
+        """
         loaders = resolve_entity_output_loaders(workflow_manifest)
         loader_futures = []
         for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
@@ -97,6 +114,7 @@ class LoaderDriver:
             await create_entities(user_id, collection_id, entities)
 
     async def main(self) -> None:
+        """ Waits for events and if a workflow completes, runs the loaders """
         while True:
             for event in await self.bus.poll():
                 print("event", event, file=sys.stderr)
