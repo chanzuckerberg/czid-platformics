@@ -1,5 +1,5 @@
 """
-Test concatenating small files
+Test concatenating small files, both plain text and gzipped
 """
 import pytest
 import requests
@@ -8,9 +8,14 @@ from platformics.database.connect import SyncDB
 from platformics.codegen.conftest import SessionStorage, GQLTestClient
 from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
-
+@pytest.mark.parametrize(
+    "file_name_1,file_name_2",
+    [("test1.fasta", "test2.fasta"), ("test1.fasta.gz", "test2.fasta.gz")]
+)
 @pytest.mark.asyncio
 async def test_concatenation(
+    file_name_1: str,
+    file_name_2: str,
     sync_db: SyncDB,
     gql_client: GQLTestClient,
     moto_client: S3Client,
@@ -21,8 +26,6 @@ async def test_concatenation(
     user_id = 12345
     project_id = 111
     member_projects = [project_id]
-    file_name_1 = "test1.fasta"
-    file_name_2 = "test2.fasta"
     fasta_file_1 = f"test_infra/fixtures/{file_name_1}"
     fasta_file_2 = f"test_infra/fixtures/{file_name_2}"
 
@@ -85,12 +88,12 @@ async def test_concatenation(
       }}
     """
     output = await gql_client.query(query, member_projects=member_projects)
-    contents_observed = requests.get(output["data"]["concatenateFiles"]["url"]).text
+    contents_observed = requests.get(output["data"]["concatenateFiles"]["url"]).content
 
     # Validate concatenated files
-    contents_expected = ""
-    with open(fasta_file_1) as f:
+    contents_expected = b""
+    with open(fasta_file_1, "rb") as f:
       contents_expected += f.read()
-    with open(fasta_file_2) as f:
+    with open(fasta_file_2, "rb") as f:
       contents_expected += f.read()
     assert contents_expected == contents_observed

@@ -230,9 +230,10 @@ async def validate_file(
     """
     Utility function to validate a file against its file format.
     """
-    validator = get_validator(file.file_format)
+    validator = get_validator(file.file_format, file.compression_type)
     try:
-        file_size = validator.validate(s3_client, file.namespace, file.path)
+        validator.validate(s3_client, file.namespace, file.path)
+        file_size = s3_client.head_object(Bucket=file.namespace, Key=file.path)["ContentLength"]
     except:  # noqa
         file.status = db.FileStatus.FAILED
     else:
@@ -474,13 +475,12 @@ async def concatenate_files(
 
     # Concatenate files (tmp files are automatically deleted when closed)
     with tempfile.NamedTemporaryFile() as file_concatenated:
-        with open(file_concatenated.name, "w") as fp_concat:
+        with open(file_concatenated.name, "ab") as fp_concat:
             for file in files:
-                # Download file locally
+                # Download file locally and append it
                 with tempfile.NamedTemporaryFile() as file_temp:
                     s3_client.download_file(file.namespace, file.path, file_temp.name)
-                    # Append it
-                    with open(file_temp.name) as fp_temp:
+                    with open(file_temp.name, "rb") as fp_temp:
                         fp_concat.write(fp_temp.read())
         # Upload to S3
         path = f"{FILE_CONCATENATION_PREFIX}/{uuid6.uuid7()}"
@@ -493,5 +493,3 @@ async def concatenate_files(
     )
     return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
 
-    # FIXME: create File object for this? Connected to what?
-    # FIXME: custom fasta headers

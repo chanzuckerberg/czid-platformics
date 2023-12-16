@@ -2,10 +2,11 @@
 Logic to validate that a file of a certain format is valid
 """
 
+import gzip
+import tempfile
 from abc import abstractmethod
 from mypy_boto3_s3.client import S3Client
 from Bio import SeqIO
-from io import StringIO
 from typing import Protocol
 
 
@@ -16,55 +17,50 @@ class FileFormatHandler(Protocol):
 
     @classmethod
     @abstractmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> int:
-        raise NotImplementedError
-
-    @classmethod
-    @abstractmethod
-    def convert_to(cls, client: S3Client, bucket: str, file_path: str, format: dict) -> str:
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
         raise NotImplementedError
 
 
 class FastqHandler(FileFormatHandler):
     """
-    Parse the first 1MB and parse reads with BioPython to ensure the file is valid
+    Validate FASTQ files (contain sequencing reads)
     """
 
     @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> int:
-        # Overly simplistic validator for fastq filees checks whether the first 1mb of a file are a valid fastq
-        data = client.get_object(Bucket=bucket, Key=file_path, Range="bytes=0-1000000")["Body"].read()
-        records = 0
-        for _ in SeqIO.parse(StringIO(data.decode("ascii")), "fastq"):
-            records += 1
-        assert records > 0
-        return client.head_object(Bucket=bucket, Key=file_path)["ContentLength"]
-
-    @classmethod
-    def convert_to(cls, client: S3Client, bucket: str, file_path: str, format: dict) -> str:
-        return ""
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
+        fp = get_file_preview(client, bucket, file_path)
+        assert len([read for read in SeqIO.parse(fp.name, "fastq")]) > 0
+        # FIXME: match below
 
 
 class FastaHandler(FileFormatHandler):
     """
-    Parse the first 1MB and parse reads with BioPython to ensure the file is valid
+    Validate FASTA files (contain sequences)
     """
 
     @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> int:
-        data = client.get_object(Bucket=bucket, Key=file_path, Range="bytes=0-1000000")["Body"].read()
-        records = 0
-        for _ in SeqIO.parse(StringIO(data.decode("ascii")), "fasta"):
-            records += 1
-        assert records > 0
-        return client.head_object(Bucket=bucket, Key=file_path)["ContentLength"]
-
-    @classmethod
-    def convert_to(cls, client: S3Client, bucket: str, file_path: str, format: dict) -> str:
-        return ""
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
+        fp = get_file_preview(client, bucket, file_path)
+        assert len([read for read in SeqIO.parse(fp, "fasta")]) > 0
 
 
-def get_validator(format: str) -> type[FileFormatHandler]:
+def get_file_preview(client: S3Client, bucket: str, file_path: str) -> tempfile.NamedTemporaryFile:
+    """
+    Get first 1MB of a file and save it in a temporary file
+    """
+    data = client.get_object(Bucket=bucket, Key=file_path, Range="bytes=0-1000000")["Body"].read()
+    fp = tempfile.NamedTemporaryFile("w+b")
+    fp.write(data)
+    fp.flush()
+
+    try:
+        data.decode("utf-8")
+        return open(fp.name, "r")
+    except UnicodeDecodeError:
+        return gzip.open(fp.name, "rt")
+
+
+def get_validator(format: str, compression_type: str) -> type[FileFormatHandler]:
     """
     Returns the validator for a given file format
     """
@@ -73,4 +69,4 @@ def get_validator(format: str) -> type[FileFormatHandler]:
     elif format == "fasta":
         return FastaHandler
     else:
-        raise Exception("Unknown file format")
+        raise Exception(f"Unknown file format '{format}'")
