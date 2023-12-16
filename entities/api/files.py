@@ -492,4 +492,3 @@ async def concatenate_files(
         ClientMethod="get_object", Params={"Bucket": settings.DEFAULT_UPLOAD_BUCKET, "Key": path}, ExpiresIn=expiration
     )
     return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
-
