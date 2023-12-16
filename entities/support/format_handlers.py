@@ -29,8 +29,7 @@ class FastqHandler(FileFormatHandler):
     @classmethod
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
         fp = get_file_preview(client, bucket, file_path)
-        assert len([read for read in SeqIO.parse(fp.name, "fastq")]) > 0
-        # FIXME: match below
+        assert len([read for read in SeqIO.parse(fp, "fastq")]) > 0
 
 
 class FastaHandler(FileFormatHandler):
