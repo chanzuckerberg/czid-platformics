@@ -1,5 +1,5 @@
 """
-TODO: Ryan, figure out what this module does
+Helper functions to map data from the database to strawberry
 """
 
 import typing
