@@ -11,6 +11,7 @@ WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILU
 
 class WorkflowStatusMessage(BaseModel):
     """Base status message"""
+
     runner_id: str
     status: WorkflowStatus
 
@@ -41,20 +42,22 @@ def parse_workflow_status_message(obj: dict[str, str]) -> WorkflowStatusMessage:
 
 
 class EventBus(ABC):
-    """Abstract class that defines the Event Bus""""
+    """Abstract class that defines the Event Bus"""
+
     @abstractmethod
     async def send(self, message: WorkflowStatusMessage) -> None:
-        """ Send message """
+        """Send message"""
         pass
 
     @abstractmethod
     async def poll(self) -> List[WorkflowStatusMessage]:
-        """ Poll for new messages """
+        """Poll for new messages"""
         pass
 
 
 class WorkflowRunner(ABC):
-    """ Abstract class that defines the WorkflowRunner plugins """
+    """Abstract class that defines the WorkflowRunner plugins"""
+
     @abstractmethod
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""

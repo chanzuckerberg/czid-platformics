@@ -21,7 +21,7 @@ ENTITY_SERVICE_AUTH_TOKEN = os.environ["ENTITY_SERVICE_AUTH_TOKEN"]
 
 
 def _snake_to_camel(s: str) -> str:
-    """converts snake case to camel case""" 
+    """converts snake case to camel case"""
     title = "".join(word.title() for word in s.split("_"))
     return title[0].lower() + title[1:]
 
@@ -37,7 +37,8 @@ _type_name_to_graphql_type = {
 
 @dataclass
 class Entity(ABC):
-    """Class to create an entity mutation""" 
+    """Class to create an entity mutation"""
+
     entity_id: Optional[UUID] = field(default_factory=lambda: None, init=False)
     version: Optional[Version] = field(default_factory=lambda: Version(0), init=False)
 
@@ -93,7 +94,7 @@ class Entity(ABC):
                 yield entity_ref
 
     async def create_if_not_exists(self, user_id: int, collection_id: int, client: Client) -> None:
-        """Create entity if it does not exist""" 
+        """Create entity if it does not exist"""
         if self.entity_id:
             return
 
@@ -113,6 +114,7 @@ class Entity(ABC):
 @dataclass
 class Sample(Entity):
     """Class to create a Sample Entity"""
+
     name: str
     location: str
 
@@ -123,6 +125,7 @@ T = typing.TypeVar("T", bound=Entity)
 @dataclass
 class EntityReference(Generic[T]):
     """Class to create a reference to an entity"""
+
     entity_id: Optional[UUID] = field(default_factory=lambda: None)
     entity: Optional[T] = field(default_factory=lambda: None)
 
@@ -146,7 +149,8 @@ class EntityReference(Generic[T]):
 
 @dataclass
 class SequencingRead(Entity):
-    """Class to create a sequencing read""" 
+    """Class to create a sequencing read"""
+
     nucleotide: str
     sequence: str
     protocol: str
@@ -156,6 +160,7 @@ class SequencingRead(Entity):
 @dataclass
 class Contig(Entity):
     """Class to create a contig"""
+
     sequence: str
     sequencing_read: Optional[EntityReference[SequencingRead]] = field(metadata={"id_name": "sequencingReadId"})
 

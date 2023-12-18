@@ -1,4 +1,3 @@
-
 """
 Create db for `migrate.sh` script
 """

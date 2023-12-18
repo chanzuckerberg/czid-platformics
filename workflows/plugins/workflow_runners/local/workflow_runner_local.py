@@ -32,7 +32,8 @@ def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
 
 
 class LocalWorkflowRunner(WorkflowRunner):
-    """ Class to run a workflow locally """
+    """Class to run a workflow locally"""
+
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
         return ["WDL"]
@@ -42,7 +43,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         return "Runs WDL workflows locally using miniWDL"
 
     def _detect_task_output(self, line: str) -> None:
-        """ Given the output of miniwdl detects if a task is complete its outputs """
+        """Given the output of miniwdl detects if a task is complete its outputs"""
         if "INFO output :: job:" in line:
             task = _search_group(r"job: (.*),", line, 1)
             outputs = json.loads(_search_group(r"values: (\{.*\})", line, 1))
@@ -57,7 +58,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         inputs: dict,
         runner_id: str,
     ) -> None:
-    """ Run miniwdl workflows locally """
+        """Run miniwdl workflows locally"""
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
             try:

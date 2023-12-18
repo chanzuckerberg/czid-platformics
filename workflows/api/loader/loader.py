@@ -75,9 +75,10 @@ def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[type[Enti
 
 
 class LoaderDriver:
-    """ 
+    """
     Class to watch for events and run loaders
     """
+
     session: AsyncSession
     bus: EventBus
 
@@ -114,7 +115,7 @@ class LoaderDriver:
             await create_entities(user_id, collection_id, entities)
 
     async def main(self) -> None:
-        """ Waits for events and if a workflow completes, runs the loaders """
+        """Waits for events and if a workflow completes, runs the loaders"""
         while True:
             for event in await self.bus.poll():
                 print("event", event, file=sys.stderr)
