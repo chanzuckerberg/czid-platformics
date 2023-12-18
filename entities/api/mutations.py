@@ -7,7 +7,15 @@ Make changes to the template codegen/templates/api/mutations.py.j2 instead.
 
 import strawberry
 from typing import Sequence
-from api.files import File, create_file, upload_file, mark_upload_complete, MultipartUploadResponse
+from api.files import (
+    File,
+    create_file,
+    upload_file,
+    mark_upload_complete,
+    concatenate_files,
+    SignedURL,
+    MultipartUploadResponse,
+)
 from api.types.sample import Sample, create_sample, update_sample, delete_sample
 from api.types.sequencing_read import (
     SequencingRead,
@@ -70,6 +78,7 @@ class Mutation:
     create_file: File = create_file
     upload_file: MultipartUploadResponse = upload_file
     mark_upload_complete: File = mark_upload_complete
+    concatenate_files: SignedURL = concatenate_files
 
     # Sample mutations
     create_sample: Sample = create_sample

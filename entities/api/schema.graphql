@@ -643,6 +643,7 @@ type Mutation {
   createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
   uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
   markUploadComplete(fileId: ID!): File!
+  concatenateFiles(ids: [UUID!]!): SignedURL!
   createSample(input: SampleCreateInput!): Sample!
   updateSample(input: SampleUpdateInput!, where: SampleWhereClauseMutations!): [Sample!]!
   deleteSample(where: SampleWhereClauseMutations!): [Sample!]!

@@ -1349,6 +1349,7 @@ class Mutation(sgqlc.types.Type):
         "create_file",
         "upload_file",
         "mark_upload_complete",
+        "concatenate_files",
         "create_sample",
         "update_sample",
         "delete_sample",
@@ -1426,6 +1427,22 @@ class Mutation(sgqlc.types.Type):
         graphql_name="markUploadComplete",
         args=sgqlc.types.ArgDict(
             (("file_id", sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="fileId", default=None)),)
+        ),
+    )
+    concatenate_files = sgqlc.types.Field(
+        sgqlc.types.non_null("SignedURL"),
+        graphql_name="concatenateFiles",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "ids",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(UUID))),
+                        graphql_name="ids",
+                        default=None,
+                    ),
+                ),
+            )
         ),
     )
     create_sample = sgqlc.types.Field(
