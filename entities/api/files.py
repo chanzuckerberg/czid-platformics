@@ -6,6 +6,8 @@ import json
 import typing
 import database.models as db
 import strawberry
+import tempfile
+import uuid
 import uuid6
 from fastapi import Depends
 from typing_extensions import TypedDict
@@ -34,6 +36,9 @@ from platformics.api.core.deps import (
     get_sts_client,
 )
 
+FILE_CONCATENATION_MAX = 100
+FILE_CONCATENATION_MAX_SIZE = 1e6
+FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
 
 # ------------------------------------------------------------------------------
 # Utility types/inputs
@@ -187,10 +192,13 @@ class FileWhereClause(TypedDict):
     """
 
     id: typing.Optional[UUIDComparators]
+    entity_id: typing.Optional[UUIDComparators]
+    entity_field_name: typing.Optional[StrComparators]
     status: typing.Optional[EnumComparators[FileStatus]]
     protocol: typing.Optional[StrComparators]
     namespace: typing.Optional[StrComparators]
     path: typing.Optional[StrComparators]
+    file_format: typing.Optional[StrComparators]
     compression_type: typing.Optional[StrComparators]
     size: typing.Optional[IntComparators]
 
@@ -222,9 +230,10 @@ async def validate_file(
     """
     Utility function to validate a file against its file format.
     """
-    validator = get_validator(file.file_format)
+    validator = get_validator(file.file_format, file.compression_type)
     try:
-        file_size = validator.validate(s3_client, file.namespace, file.path)
+        validator.validate(s3_client, file.namespace, file.path)
+        file_size = s3_client.head_object(Bucket=file.namespace, Key=file.path)["ContentLength"]
     except:  # noqa
         file.status = db.FileStatus.FAILED
     else:
@@ -391,6 +400,7 @@ async def create_or_upload_file(
     # Unlink the File(s) currently connected to this entity (only commit to DB once add the new File below)
     query = get_resource_query(principal, cerbos_client, CerbosAction.UPDATE, db.File)
     query = query.filter(db.File.entity_id == entity_id)
+    query = query.filter(db.File.entity_field_name == entity_field_name)
     current_files = (await session.execute(query)).scalars().all()
     for current_file in current_files:
         current_file.entity_id = None
@@ -436,3 +446,49 @@ async def create_or_upload_file(
             file=new_file,  # type: ignore
             credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
         )
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def concatenate_files(
+    ids: typing.Sequence[uuid.UUID],
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    s3_client: S3Client = Depends(get_s3_client),
+    settings: APISettings = Depends(get_settings),
+) -> SignedURL:
+    """
+    Concatenate file contents synchronously. Only use for small files e.g. for exporting small CG FASTAs to Nextclade.
+    """
+    # TODO: Check with Product on a reasonable max
+    if len(ids) > FILE_CONCATENATION_MAX:
+        raise Exception("Cannot concatenate more than 100 files")
+
+    # Get files in question if have access to them
+    where = {"id": {"_in": ids}, "status": {"_eq": db.FileStatus.SUCCESS}}
+    files = await get_db_rows(db.File, session, cerbos_client, principal, where, [])
+    if len(files) < 2:
+        raise Exception("Need at least 2 valid files to concatenate")
+    for file in files:
+        if file.size > FILE_CONCATENATION_MAX_SIZE:
+            raise Exception("Cannot concatenate files larger than 1MB")
+
+    # Concatenate files (tmp files are automatically deleted when closed)
+    with tempfile.NamedTemporaryFile() as file_concatenated:
+        with open(file_concatenated.name, "ab") as fp_concat:
+            for file in files:
+                # Download file locally and append it
+                with tempfile.NamedTemporaryFile() as file_temp:
+                    s3_client.download_file(file.namespace, file.path, file_temp.name)
+                    with open(file_temp.name, "rb") as fp_temp:
+                        fp_concat.write(fp_temp.read())
+        # Upload to S3
+        path = f"{FILE_CONCATENATION_PREFIX}/{uuid6.uuid7()}"
+        s3_client.upload_file(file_concatenated.name, file.namespace, path)
+
+    # Return signed URL
+    expiration = 36000
+    url = s3_client.generate_presigned_url(
+        ClientMethod="get_object", Params={"Bucket": settings.DEFAULT_UPLOAD_BUCKET, "Key": path}, ExpiresIn=expiration
+    )
+    return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
