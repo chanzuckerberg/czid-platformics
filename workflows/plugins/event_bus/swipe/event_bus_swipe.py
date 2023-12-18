@@ -1,3 +1,7 @@
+"""
+Remote Event Bus plugin
+Retrieves messages from AWS SQS
+""""
 import json
 from typing import List, cast
 import boto3

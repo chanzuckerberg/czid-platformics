@@ -1,3 +1,7 @@
+"""
+Plugin that runs a workflow in SWIPE
+"""
+
 import json
 from typing import Callable, Coroutine, Any, List, Optional
 from uuid import uuid4

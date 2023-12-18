@@ -1,3 +1,8 @@
+"""
+Seed script to setup db for test data
+Imports manifests
+"""
+
 import factory.random
 from settings import APISettings
 from platformics.database.connect import init_sync_db

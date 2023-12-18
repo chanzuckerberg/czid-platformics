@@ -1,3 +1,7 @@
+"""
+TODO: Ryan to figure out where this is used
+"""
+
 from jwcrypto import jwk
 from jwcrypto.common import json_decode
 

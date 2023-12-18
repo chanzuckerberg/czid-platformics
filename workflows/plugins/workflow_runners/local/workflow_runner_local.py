@@ -1,3 +1,7 @@
+"""
+Plugin that runs a workflow locally using miniwdl
+"""
+
 import asyncio
 import json
 import os
@@ -19,6 +23,7 @@ from plugins.plugin_types import (
 
 
 def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
+    """helper to return a match of a pattern"""
     match = re.search(pattern, string)
     assert match
     group = match.group(n)
@@ -27,6 +32,7 @@ def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
 
 
 class LocalWorkflowRunner(WorkflowRunner):
+    """ Class to run a workflow locally """
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
         return ["WDL"]
@@ -36,6 +42,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         return "Runs WDL workflows locally using miniWDL"
 
     def _detect_task_output(self, line: str) -> None:
+        """ Given the output of miniwdl detects if a task is complete its outputs """
         if "INFO output :: job:" in line:
             task = _search_group(r"job: (.*),", line, 1)
             outputs = json.loads(_search_group(r"values: (\{.*\})", line, 1))
@@ -50,8 +57,8 @@ class LocalWorkflowRunner(WorkflowRunner):
         inputs: dict,
         runner_id: str,
     ) -> None:
+    """ Run miniwdl workflows locally """
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
-        # Running docker-in-docker requires the paths to files and outputs to be the same between
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
             try:
                 p = subprocess.Popen(
@@ -84,6 +91,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         inputs: dict,
         runner_id: str,
     ) -> None:
+        """Wrapper around async function to run synchronously"""
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(self._run_workflow_work(event_bus, workflow_path, inputs, runner_id))
@@ -95,6 +103,7 @@ class LocalWorkflowRunner(WorkflowRunner):
         workflow_path: str,
         inputs: dict,
     ) -> str:
+        """Creates runner id and runs workflow asynchronously"""
         runner_id = str(uuid4())
         # run workflow in a thread
         thread = threading.Thread(

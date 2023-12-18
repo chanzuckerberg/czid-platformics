@@ -1,3 +1,8 @@
+""" 
+Classes to ensure parity between workflows and entities. 
+Used for codegen and python types only
+"""
+
 class File:
     """A class to mock the file class in entities"""
 

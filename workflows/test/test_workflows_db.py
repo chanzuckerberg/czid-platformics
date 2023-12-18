@@ -1,3 +1,7 @@
+"""
+Tests for the workflow db
+"""
+
 import os
 import pytest
 import typing
@@ -22,12 +26,14 @@ test_db = factories.postgresql_noproc(
 def get_db_uri(
     protocol: str, db_user: str, db_pass: typing.Optional[str], db_host: str, db_port: int, db_name: str
 ) -> str:
+    """return database uri"""
     db_uri = f"{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
     return db_uri
 
 
 @pytest.fixture()
 def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
+    """Create synchronous db for tests"""
     pg_host = test_db.host
     pg_port = test_db.port
     pg_user = test_db.user
@@ -50,6 +56,7 @@ def sync_db(test_db: NoopExecutor) -> typing.Generator[SyncDB, None, None]:
 
 
 def test_workflow_creation(sync_db: SyncDB) -> None:
+    """Test creating workflows"""
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         WorkflowFactory.create_batch(2, name="test-workflow-name")
@@ -58,6 +65,7 @@ def test_workflow_creation(sync_db: SyncDB) -> None:
 
 
 def test_run_creation(sync_db: SyncDB) -> None:
+    """Test creating runs"""
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         RunFactory.create_batch(2, status=RunStatus["FAILED"])

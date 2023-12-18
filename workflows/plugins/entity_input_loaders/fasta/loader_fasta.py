@@ -1,3 +1,6 @@
+"""
+Plugin loader for a fasta file
+"""
 from typing import List, TypedDict
 from plugins.plugin_types import EntityInputLoader
 from entity_interface import SequencingRead

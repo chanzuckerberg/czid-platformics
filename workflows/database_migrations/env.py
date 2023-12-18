@@ -1,3 +1,8 @@
+"""
+Module to run migrations 
+Is this still used?
+"""
+
 from logging.config import fileConfig
 
 from alembic import context

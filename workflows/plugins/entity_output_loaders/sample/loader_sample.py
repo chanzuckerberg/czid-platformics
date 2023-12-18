@@ -1,3 +1,7 @@
+""" 
+Sample loader plugin
+"""
+
 from typing import List, TypedDict
 from plugins.plugin_types import EntityOutputLoader
 from entity_interface import Sample

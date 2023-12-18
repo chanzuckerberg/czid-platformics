@@ -1,3 +1,7 @@
+
+"""
+Create db for `migrate.sh` script
+"""
 from settings import APISettings
 from sqlalchemy_utils import create_database, database_exists
 
