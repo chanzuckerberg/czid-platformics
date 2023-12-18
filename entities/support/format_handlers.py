@@ -4,6 +4,7 @@ Logic to validate that a file of a certain format is valid
 
 import gzip
 import tempfile
+import typing
 from abc import abstractmethod
 from mypy_boto3_s3.client import S3Client
 from Bio import SeqIO
@@ -43,7 +44,7 @@ class FastaHandler(FileFormatHandler):
         assert len([read for read in SeqIO.parse(fp, "fasta")]) > 0
 
 
-def get_file_preview(client: S3Client, bucket: str, file_path: str) -> tempfile.NamedTemporaryFile:
+def get_file_preview(client: S3Client, bucket: str, file_path: str) -> typing.TextIO:
     """
     Get first 1MB of a file and save it in a temporary file
     """
