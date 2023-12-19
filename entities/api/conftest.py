@@ -15,7 +15,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from moto import mock_s3
 from mypy_boto3_s3.client import S3Client
-from api.main import get_app
+from api.main import get_schema
+from platformics.api.setup import get_app
 from platformics.api.core.deps import (
     get_auth_principal,
     get_db_session,
@@ -126,7 +127,7 @@ async def api(async_db: AsyncDB) -> FastAPI:
     """
     Create an API instance using the real schema.
     """
-    api = get_app(use_test_schema=False)
+    api = get_app(get_schema())
     overwrite_api(api, async_db)
     return api
 

@@ -9,7 +9,8 @@
     "customizations": {
         "vscode": {
             "settings": {
-                 "extensions.verifySignature": false
+                 "extensions.verifySignature": false,
+                 "python.pythonPath": "/czid-platformics/entities"
             },
             "extensions": [
                 "ms-python.python",

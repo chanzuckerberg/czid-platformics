@@ -9,7 +9,6 @@
             "type": "python",
             "request": "launch",
             "module": "api.main",
-            "postDebugTask": "startservices",
             "jinja": true,
             "justMyCode": true
         }

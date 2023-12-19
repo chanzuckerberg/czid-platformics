@@ -2,84 +2,31 @@
 Launch the GraphQL server.
 """
 
-import strawberry
-import typing
 import uvicorn
-from platformics.codegen.tests.output.api.queries import Query as QueryCodeGen
-from platformics.codegen.tests.output.api.mutations import Mutation as MutationCodeGen
-from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
-from fastapi import Depends, FastAPI
-from strawberry.schema.name_converter import HasGraphQLName, NameConverter
-from strawberry.schema.config import StrawberryConfig
-from strawberry.fastapi import GraphQLRouter
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
-from platformics.api.core.gql_loaders import EntityLoader
-from platformics.database.connect import AsyncDB
-from platformics.settings import APISettings
-from api.queries import Query
+from platformics.api.setup import get_app, get_strawberry_config
+
+import strawberry
 from api.mutations import Mutation
-
-
-# ------------------------------------------------------------------------------
-# Utilities
-# ------------------------------------------------------------------------------
-
-
-def get_context(
-    engine: AsyncDB = Depends(get_engine),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(get_auth_principal),
-) -> dict[str, typing.Any]:
-    """
-    Defines sqlalchemy_loader, used by dataloaders
-    """
-    return {
-        "sqlalchemy_loader": EntityLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
-    }
-
-
-class CustomNameConverter(NameConverter):
-    """
-    Arg/Field names that start with _ are not camel-cased
-    """
-
-    def get_graphql_name(self, obj: HasGraphQLName) -> str:
-        if obj.python_name.startswith("_"):
-            return obj.python_name
-        return super().get_graphql_name(obj)
-
-
-def get_app(use_test_schema: bool = False) -> FastAPI:
-    """
-    Make sure tests can get their own instances of the app.
-    """
-    settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
-
-    graphql_schema = schema_test if use_test_schema else schema
-    title = "Codegen Tests" if use_test_schema else settings.SERVICE_NAME
-    graphql_app: GraphQLRouter = GraphQLRouter(graphql_schema, context_getter=get_context, graphiql=True)
-    _app = FastAPI(title=title, debug=settings.DEBUG)
-    _app.include_router(graphql_app, prefix="/graphql")
-    # Add a global settings object to the app that we can use as a dependency
-    _app.state.entities_settings = settings
-
-    return _app
-
+from api.queries import Query
 
 # ------------------------------------------------------------------------------
 # Setup
 # ------------------------------------------------------------------------------
 
+
 # Define schema and test schema
-strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
-schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config)
-schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config)
+def get_schema() -> strawberry.Schema:
+    strawberry_config = get_strawberry_config()
+    api_schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config)
+    return api_schema
 
-# Create and run app
-app = get_app()
 
+# Only create the app object if we're *not* just about to run a server.
+# Doing this work on import and then again when invoking the server confuses vscode's debugger.
 if __name__ == "__main__":
     config = uvicorn.Config("api.main:app", host="0.0.0.0", port=8009, log_level="info")
     server = uvicorn.Server(config)
     server.run()
+else:
+    # Create and run app
+    app = get_app(get_schema())
