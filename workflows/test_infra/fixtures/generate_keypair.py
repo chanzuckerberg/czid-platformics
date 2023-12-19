@@ -1,5 +1,6 @@
 """
-TODO: Ryan to figure out where this is used
+A script to generate new public/private keys for tests
+Should move into platformics/ folder
 """
 
 from jwcrypto import jwk

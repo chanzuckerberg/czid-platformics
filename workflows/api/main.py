@@ -223,7 +223,7 @@ def get_context(
     principal: Principal = Depends(get_auth_principal),
 ) -> dict[str, typing.Any]:
     """
-    TODO: Ryan to figure out what exactly this does???
+    Injects the sqlalchemy_loader variable into GQL queries
     """
     return {
         "sqlalchemy_loader": WorkflowLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
