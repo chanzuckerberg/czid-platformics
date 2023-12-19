@@ -8,11 +8,11 @@ from platformics.codegen.conftest import GQLTestClient
 
 
 @pytest.mark.asyncio
-async def test_graphql_query(gql_client: GQLTestClient, api_test_schema: FastAPI) -> None:
+async def test_graphql_query(gql_client: GQLTestClient, api: FastAPI) -> None:
     """
     Make sure we're using the right schema and http client
     """
-    assert api_test_schema.title == "Codegen Tests"
+    assert api.title == "Codegen Tests"
     assert gql_client.http_client.base_url.host == "test-codegen"
 
     # Reference genomes is not an entity in the mock schema but is one in the real schema

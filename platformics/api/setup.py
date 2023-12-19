@@ -2,19 +2,20 @@
 Launch the GraphQL server.
 """
 
-import strawberry
 import typing
+
+import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from strawberry.schema.name_converter import HasGraphQLName, NameConverter
-from strawberry.schema.config import StrawberryConfig
-from strawberry.fastapi import GraphQLRouter
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
+                                       get_engine)
 from platformics.api.core.gql_loaders import EntityLoader
 from platformics.database.connect import AsyncDB
 from platformics.settings import APISettings
-
+from strawberry.fastapi import GraphQLRouter
+from strawberry.schema.config import StrawberryConfig
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 
 # ------------------------------------------------------------------------------
 # Utilities
@@ -58,7 +59,7 @@ def get_app(schema: strawberry.Schema, title: str | None = None) -> FastAPI:
 
     if not title:
         title = settings.SERVICE_NAME
-    graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
+    graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphql_ide=True)
     _app = FastAPI(title=title, debug=settings.DEBUG)
     _app.include_router(graphql_app, prefix="/graphql")
     # Add a global settings object to the app that we can use as a dependency
