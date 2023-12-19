@@ -9,9 +9,9 @@ import database.models as db
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.security.authorization import CerbosAction, get_resource_query
-from sqlalchemy import ColumnElement, func
+from sqlalchemy import ColumnElement, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
-from platformics.api.core.gql_to_sql import operator_map
+from platformics.api.core.gql_to_sql import operator_map, aggregator_map
 from sqlalchemy import inspect, and_
 from sqlalchemy.orm import aliased
 from platformics.database.models.base import Base
@@ -106,16 +106,6 @@ async def get_db_rows(
     return result.scalars().all()
 
 
-# TODO: move this somewhere else
-aggregate_functions = {
-    "avg": func.avg,
-    "sum": func.sum,
-    "min": func.min,
-    "max": func.max,
-    "stddev": func.stddev,
-    "variance": func.variance,
-}
-
 def get_aggregate_db_query(
     model_cls: type[E],
     action: CerbosAction,
@@ -127,8 +117,9 @@ def get_aggregate_db_query(
     depth: Optional[int] = None,
 ) -> Select:
     """
-    Given a model class and a where clause, return a SQLAlchemy query that is limited
-    based on the where clause, and which entities the user has access to.
+    Given a model class, a where clause, and an aggregate clause,
+    return a SQLAlchemy query that performs the aggregations, with results 
+    limited based on the where clause, and which entities the user has access to.
     """
     if not depth:
         depth = 0
@@ -137,16 +128,25 @@ def get_aggregate_db_query(
     if depth >= 5:
         raise Exception("Max filter depth exceeded")
     query = get_resource_query(principal, cerbos_client, action, model_cls)
-    # deconstruct the aggregate dict and build mappings for the query
+    # Deconstruct the aggregate dict and build mappings for the query
     aggregate_query_fields = []
     if group_by is not None:
         aggregate_query_fields.append(group_by)
     for aggregator in aggregate:
-        # TODO: count should take in columns and distinct
+        agg_fn = aggregator_map[aggregator.name]
         if aggregator.name == "count":
-            aggregate_query_fields.append(func.count(model_cls.id).label("count"))
+            # If provided "distinct" or "columns" arguments, use them to construct the count query
+            # Otherwise, default to counting the primary key
+            col = model_cls.id
+            if aggregator.arguments:
+                if aggregator.arguments['columns']:
+                    col = getattr(model_cls, aggregator.arguments['columns'])
+                if aggregator.arguments['distinct']:
+                    count_fn = agg_fn(distinct(col))
+            else:
+                count_fn = agg_fn(model_cls.id)
+            aggregate_query_fields.append(count_fn.label("count"))
         else:
-            agg_fn = aggregate_functions[aggregator.name]
             for col in aggregator.selections:
                 col_name = strcase.to_snake(col.name)
                 aggregate_query_fields.append(agg_fn(getattr(model_cls, col_name)).label(f"{aggregator.name}_{col_name}"))
@@ -170,7 +170,7 @@ async def get_aggregate_db_rows(
     action: CerbosAction = CerbosAction.VIEW,
 ) -> typing.Sequence[E]:
     """
-    Retrieve rows from the database, filtered by the where clause and the user's permissions.
+    Retrieve aggregate rows from the database, filtered by the where clause and the user's permissions.
     """
     query = get_aggregate_db_query(model_cls, action, cerbos_client, principal, where, aggregate, group_by)
     if order_by:

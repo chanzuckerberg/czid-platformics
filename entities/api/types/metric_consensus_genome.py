@@ -21,6 +21,7 @@ from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    aggregator_map,
     IntComparators,
     FloatComparators,
     UUIDComparators,
@@ -31,6 +32,8 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
+
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -167,6 +170,7 @@ class MetricConsensusGenome(EntityInterface):
 Define types for metric aggregations.
 """
 
+# Columns that support numerical aggregations
 @strawberry.type
 class MetricNumericalColumns:
     coverage_depth: Optional[float] = None
@@ -181,22 +185,52 @@ class MetricNumericalColumns:
     n_missing: Optional[float] = None
     n_ambiguous: Optional[float] = None
 
+# Columns that support min/max aggregations
+@strawberry.type
+class MetricMinMaxColumns:
+    coverage_depth: Optional[float] = None
+    reference_genome_length: Optional[float] = None
+    percent_genome_called: Optional[float] = None
+    percent_identity: Optional[float] = None
+    gc_percent: Optional[float] = None
+    total_reads: Optional[int] = None
+    mapped_reads: Optional[int] = None
+    ref_snps: Optional[int] = None
+    n_actg: Optional[int] = None
+    n_missing: Optional[int] = None
+    n_ambiguous: Optional[int] = None
 
+# Enum of all columns to support count and count(distinct) aggregations
+@strawberry.enum
+class cols(enum.Enum):
+    coverage_depth = "coverage_depth"
+    reference_genome_length = "reference_genome_length"
+    percent_genome_called = "percent_genome_called"
+    percent_identity = "percent_identity"
+    gc_percent = "gc_percent"
+    total_reads = "total_reads"
+    mapped_reads = "mapped_reads"
+    ref_snps = "ref_snps"
+    n_actg = "n_actg"
+    n_missing = "n_missing"
+    n_ambiguous = "n_ambiguous"
+
+# All supported aggregation functions
 @strawberry.type
 class MetricAggregateFunctions:
-    # count of rows
-    # hasura also supports counts for columns and you can pass in a distinct flag
-    count: Optional[int] = None
-    # dictionaries mapping column names to values
+    # This is a hack to accept "distinct" and "columns" as arguments to "count"
+    @strawberry.field
+    def count(self, distinct: Optional[bool] = False, columns: Optional[cols] = None) -> Optional[int]:
+        # Count gets set with the proper value in the resolver, so we just return it here
+        return self.count
     sum: Optional[MetricNumericalColumns] = None
     avg: Optional[MetricNumericalColumns] = None
-    # TODO: should support min/max for strings
-    min: Optional[MetricNumericalColumns] = None 
-    max: Optional[MetricNumericalColumns] = None
+    min: Optional[MetricMinMaxColumns] = None 
+    max: Optional[MetricMinMaxColumns] = None
     stddev: Optional[MetricNumericalColumns] = None
     variance: Optional[MetricNumericalColumns] = None
 
-
+# Wrapper around MetricAggregateFunctions
 @strawberry.type
 class MetricConsensusGenomeAggregate:
     aggregate: Optional[MetricAggregateFunctions] = None
@@ -272,6 +306,21 @@ async def resolve_metrics_consensus_genomes(
     """
     return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
 
+# Given a row from the DB containing the results of an aggregate query,
+# format the results using the proper GraphQL types.
+def format_aggregate_output(query_results: dict[str, Any]) -> MetricAggregateFunctions:
+    output = MetricAggregateFunctions()
+    for aggregate_name, value in query_results.items():
+        if aggregate_name == "count":
+            output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            # Filter out the group_by key from the results if one was provided.
+            if aggregator_fn in aggregator_map.keys():
+                if not getattr(output, aggregator_fn):
+                    setattr(output, aggregator_fn, MetricNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
+    return output
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_metrics_consensus_genomes_aggregate(
@@ -284,20 +333,12 @@ async def resolve_metrics_consensus_genomes_aggregate(
     """
     Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    # TODO: why is selections returned as a list?
+    # Get the selected aggregate functions and columns to operate on
+    # TODO: not sure why selected_fields is a list
+    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
     rows = await get_aggregate_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, selections, [])  # type: ignore
-    # structure the output
-    # TODO: make the following common code somewhere
-    aggregate_output = MetricAggregateFunctions()
-    for aggregate_name, value in rows.items():
-        if aggregate_name == "count":
-            aggregate_output.count = value
-        else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            if not getattr(aggregate_output, aggregator_fn):
-                setattr(aggregate_output, aggregator_fn, MetricNumericalColumns())
-            setattr(getattr(aggregate_output, aggregator_fn), col_name, value)
+    aggregate_output = format_aggregate_output(rows)
     return [MetricConsensusGenomeAggregate(aggregate=aggregate_output)]
 
 

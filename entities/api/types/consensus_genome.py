@@ -30,7 +30,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
-from api.types.metric_consensus_genome import MetricAggregateFunctions, MetricNumericalColumns, MetricConsensusGenomeAggregate
+from api.types.metric_consensus_genome import MetricConsensusGenomeAggregate, format_aggregate_output
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -126,18 +126,9 @@ async def load_metric_consensus_genome_aggregate_rows(
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["metrics"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-
-    # TODO: should be in common code
-    aggregate_output = MetricAggregateFunctions()
-    for aggregate_name, value in rows[0].items():
-        if aggregate_name == "count":
-            aggregate_output.count = value
-        else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            if aggregator_fn in ["min", "max", "avg", "sum", "stddev", "variance"]:
-                if not getattr(aggregate_output, aggregator_fn):
-                    setattr(aggregate_output, aggregator_fn, MetricNumericalColumns())
-                setattr(getattr(aggregate_output, aggregator_fn), col_name, value)
+    # Aggregate queries always return a single row, so just grab the first one
+    results = rows[0]
+    aggregate_output = format_aggregate_output(results)
     return MetricConsensusGenomeAggregate(aggregate=aggregate_output)
 
 """

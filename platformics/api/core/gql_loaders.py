@@ -104,9 +104,9 @@ class EntityLoader:
             self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn)  # type: ignore
             return self._loaders[(relationship, where_str)]  # type: ignore
         
-    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, aggregate: Any = None) -> DataLoader:
+    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, aggregate: Optional[Any] = None) -> DataLoader:
         """
-        Retrieve or create a DataLoader for the given relationship
+        Retrieve or create a DataLoader that aggregates data for the given relationship
         """
         if not where:
             where = {}
