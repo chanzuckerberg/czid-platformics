@@ -1,3 +1,6 @@
+"""
+Functions to parse and load manifests
+"""
 import json
 import semver
 import typing

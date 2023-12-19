@@ -1,3 +1,8 @@
+"""
+A script to generate new public/private keys for tests
+Should move into platformics/ folder
+"""
+
 from jwcrypto import jwk
 from jwcrypto.common import json_decode
 

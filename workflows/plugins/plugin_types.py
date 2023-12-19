@@ -1,3 +1,7 @@
+"""
+Module to define basic plugin types
+"""
+
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import Dict, List, Literal, Any
@@ -6,6 +10,8 @@ WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILU
 
 
 class WorkflowStatusMessage(BaseModel):
+    """Base status message"""
+
     runner_id: str
     status: WorkflowStatus
 
@@ -36,16 +42,22 @@ def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
 
 
 class EventBus(ABC):
+    """Abstract class that defines the Event Bus"""
+
     @abstractmethod
     async def send(self, message: WorkflowStatusMessage) -> None:
+        """Send message"""
         pass
 
     @abstractmethod
     async def poll(self) -> List[WorkflowStatusMessage]:
+        """Poll for new messages"""
         pass
 
 
 class WorkflowRunner(ABC):
+    """Abstract class that defines the WorkflowRunner plugins"""
+
     @abstractmethod
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
@@ -58,6 +70,7 @@ class WorkflowRunner(ABC):
 
     @abstractmethod
     async def run_workflow(self, event_bus: EventBus, workflow_path: str, inputs: dict) -> str:
+        """Runs a workflow"""
         raise NotImplementedError()
 
 
@@ -77,7 +90,7 @@ class EntityOutputLoader(ABC):
     # TODO: type specificity on workflow_outputs, convert values from str to a representation of workflow outputs
     async def load(self, args: Any) -> List[Any]:
         """Processes workflow output specified by the type constraints
-        in worrkflow_output_types and returns a list of lists of entities.
+        in workflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities must be created
         in, while the inner lists can be created in parallel.
         """

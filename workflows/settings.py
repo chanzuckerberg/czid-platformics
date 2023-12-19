@@ -1,3 +1,7 @@
+"""
+A module that contains settings to load into the web app
+"""
+
 from pydantic import BaseModel
 
 from platformics.settings import Settings as PlatformicsSettings

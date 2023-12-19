@@ -1,3 +1,7 @@
+"""
+Helper functions to map data from the database to strawberry
+"""
+
 import typing
 import uuid
 from collections import defaultdict

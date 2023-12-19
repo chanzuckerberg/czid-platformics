@@ -1,3 +1,7 @@
+"""
+Stub - change later
+"""
+
 from typing import Dict, List, Literal, Optional
 from semver import Version
 from dataclasses import asdict, dataclass, field

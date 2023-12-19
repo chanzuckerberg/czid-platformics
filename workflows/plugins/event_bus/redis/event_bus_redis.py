@@ -1,3 +1,6 @@
+"""
+Redis event bus plugin for local runs
+"""
 import json
 from typing import List
 

@@ -1,3 +1,7 @@
+"""
+Entity type module. 
+Copied and pasted from entities
+"""
 import strawberry
 from strawberry import relay
 from strawberry.types import Info
