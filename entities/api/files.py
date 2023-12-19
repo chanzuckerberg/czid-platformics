@@ -24,7 +24,7 @@ from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from support.format_handlers import get_validator
 from support.enums import FileStatus
-from api.core.helpers import get_db_rows
+from platformics.api.core.helpers import get_db_rows
 from api.types.entities import Entity
 from platformics.settings import APISettings
 from platformics.security.authorization import CerbosAction, get_resource_query

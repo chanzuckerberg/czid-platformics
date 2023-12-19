@@ -8,7 +8,7 @@
             "name": "Python: Entities",
             "type": "python",
             "request": "launch",
-            "module": "api.main",
+            "module": "api.server",
             "jinja": true,
             "justMyCode": true
         }

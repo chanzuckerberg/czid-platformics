@@ -8,7 +8,7 @@ from platformics.database.connect import AsyncDB
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.dataloader import DataLoader
 from platformics.security.authorization import CerbosAction
-from api.core.helpers import get_db_query, get_db_rows
+from platformics.api.core.helpers import get_db_query, get_db_rows
 
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
