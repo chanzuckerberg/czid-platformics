@@ -143,7 +143,7 @@ def get_aggregate_db_query(
             if aggregator.arguments:
                 if "columns" in aggregator.arguments.keys():
                     col = getattr(model_cls, aggregator.arguments["columns"])
-                if "distinct" in aggregator.arguments.keys():
+                if "distinct" in aggregator.arguments.keys() and aggregator.arguments["distinct"]:
                     count_fn = agg_fn(distinct(col))  # type: ignore
             aggregate_query_fields.append(count_fn.label("count"))
         else:
