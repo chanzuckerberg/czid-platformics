@@ -103,3 +103,42 @@ async def test_nested_aggregate_query(
     results = await gql_client.query(query, user_id=111, member_projects=[888])
     assert results["data"]["samples"][0]["sequencingReadsAggregate"]["aggregate"]["count"] == 2
     assert results["data"]["samples"][1]["sequencingReadsAggregate"]["aggregate"]["count"] == 3
+
+@pytest.mark.asyncio
+async def test_count_distinct_query(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Test that we can perform a count distinct query
+    """
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        # Make sure there is at least one sample with water_control=True and one with water_control=False
+        SampleFactory(owner_user_id=111, collection_id=888, water_control=True)
+        SampleFactory(owner_user_id=111, collection_id=888, water_control=False)
+        SampleFactory.create_batch(2, owner_user_id=111, collection_id=888)
+
+    query = """
+        query MyQuery {
+            samplesAggregate {
+                aggregate {
+                    count(columns: water_control)
+                }
+            }
+        }
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    assert results["data"]["samplesAggregate"]["aggregate"]["count"] == 4
+
+    query = """
+        query MyQuery {
+            samplesAggregate {
+                aggregate {
+                    count(columns: water_control, distinct: true)
+                }
+            }
+        }
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    assert results["data"]["samplesAggregate"]["aggregate"]["count"] == 2
