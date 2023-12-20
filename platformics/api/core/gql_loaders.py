@@ -140,7 +140,6 @@ class EntityLoader:
                     if not relationship.local_remote_pairs:
                         raise Exception("invalid relationship")
                     # TODO -- Technically, SA supports multiple field filters in a relationship! We'll need to handle this case
-                    print(f"row: {row}")
                     return [row[remote.key] for _, remote in relationship.local_remote_pairs if remote.key][0]
 
                 grouped_keys: Mapping[Any, list[Any]] = defaultdict(list)
