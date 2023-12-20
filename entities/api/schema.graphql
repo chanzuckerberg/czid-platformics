@@ -57,6 +57,21 @@ type ConsensusGenome implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetricConsensusGenomeConnection!
+  metricsAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate
+}
+
+type ConsensusGenomeAggregate {
+  aggregate: ConsensusGenomeAggregateFunctions
+}
+
+type ConsensusGenomeAggregateFunctions {
+  sum: ConsensusGenomeNumericalColumns
+  avg: ConsensusGenomeNumericalColumns
+  min: ConsensusGenomeMinMaxColumns
+  max: ConsensusGenomeMinMaxColumns
+  stddev: ConsensusGenomeNumericalColumns
+  variance: ConsensusGenomeNumericalColumns
+  count(distinct: Boolean = false, columns: ConsensusGenomeCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -66,6 +81,21 @@ type ConsensusGenomeConnection {
 
   """Contains the nodes in this connection"""
   edges: [ConsensusGenomeEdge!]!
+}
+
+enum ConsensusGenomeCountColumns {
+  taxon
+  sequence_read
+  reference_genome
+  sequence
+  is_reverse_complement
+  intermediate_outputs
+  metrics
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input ConsensusGenomeCreateInput {
@@ -84,6 +114,18 @@ type ConsensusGenomeEdge {
 
   """The item at the end of the edge"""
   node: ConsensusGenome!
+}
+
+type ConsensusGenomeMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+type ConsensusGenomeNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input ConsensusGenomeUpdateInput {
@@ -121,6 +163,20 @@ type Contig implements EntityInterface & Node {
   sequence: String!
 }
 
+type ContigAggregate {
+  aggregate: ContigAggregateFunctions
+}
+
+type ContigAggregateFunctions {
+  sum: ContigNumericalColumns
+  avg: ContigNumericalColumns
+  min: ContigMinMaxColumns
+  max: ContigMinMaxColumns
+  stddev: ContigNumericalColumns
+  variance: ContigNumericalColumns
+  count(distinct: Boolean = false, columns: ContigCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type ContigConnection {
   """Pagination data for this connection"""
@@ -128,6 +184,16 @@ type ContigConnection {
 
   """Contains the nodes in this connection"""
   edges: [ContigEdge!]!
+}
+
+enum ContigCountColumns {
+  sequencing_read
+  sequence
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input ContigCreateInput {
@@ -143,6 +209,19 @@ type ContigEdge {
 
   """The item at the end of the edge"""
   node: Contig!
+}
+
+type ContigMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  sequence: String
+}
+
+type ContigNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input ContigUpdateInput {
@@ -295,6 +374,21 @@ type GenomicRange implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): SequencingReadConnection!
+  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
+}
+
+type GenomicRangeAggregate {
+  aggregate: GenomicRangeAggregateFunctions
+}
+
+type GenomicRangeAggregateFunctions {
+  sum: GenomicRangeNumericalColumns
+  avg: GenomicRangeNumericalColumns
+  min: GenomicRangeMinMaxColumns
+  max: GenomicRangeMinMaxColumns
+  stddev: GenomicRangeNumericalColumns
+  variance: GenomicRangeNumericalColumns
+  count(distinct: Boolean = false, columns: GenomicRangeCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -304,6 +398,17 @@ type GenomicRangeConnection {
 
   """Contains the nodes in this connection"""
   edges: [GenomicRangeEdge!]!
+}
+
+enum GenomicRangeCountColumns {
+  reference_genome
+  file
+  sequencing_reads
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input GenomicRangeCreateInput {
@@ -319,6 +424,18 @@ type GenomicRangeEdge {
 
   """The item at the end of the edge"""
   node: GenomicRange!
+}
+
+type GenomicRangeMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+type GenomicRangeNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input GenomicRangeUpdateInput {
@@ -384,6 +501,7 @@ type MetadataField implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadataFieldProjectConnection!
+  fieldGroupAggregate(where: MetadataFieldProjectWhereClause = null): MetadataFieldProjectAggregate
   fieldName: String!
   description: String!
   fieldType: String!
@@ -405,6 +523,37 @@ type MetadataField implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadatumConnection!
+  metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate
+}
+
+type MetadataFieldAggregate {
+  aggregate: MetadataFieldAggregateFunctions
+}
+
+type MetadataFieldAggregateFunctions {
+  sum: MetadataFieldNumericalColumns
+  avg: MetadataFieldNumericalColumns
+  min: MetadataFieldMinMaxColumns
+  max: MetadataFieldMinMaxColumns
+  stddev: MetadataFieldNumericalColumns
+  variance: MetadataFieldNumericalColumns
+  count(distinct: Boolean = false, columns: MetadataFieldCountColumns = null): Int
+}
+
+enum MetadataFieldCountColumns {
+  field_group
+  field_name
+  description
+  field_type
+  is_required
+  options
+  default_value
+  metadatas
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input MetadataFieldCreateInput {
@@ -415,6 +564,23 @@ input MetadataFieldCreateInput {
   isRequired: Boolean!
   options: String = null
   defaultValue: String = null
+}
+
+type MetadataFieldMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  fieldName: String
+  description: String
+  fieldType: String
+  options: String
+  defaultValue: String
+}
+
+type MetadataFieldNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 type MetadataFieldProject implements EntityInterface & Node {
@@ -428,6 +594,20 @@ type MetadataFieldProject implements EntityInterface & Node {
   metadataField(where: MetadataFieldWhereClause = null): MetadataField
 }
 
+type MetadataFieldProjectAggregate {
+  aggregate: MetadataFieldProjectAggregateFunctions
+}
+
+type MetadataFieldProjectAggregateFunctions {
+  sum: MetadataFieldProjectNumericalColumns
+  avg: MetadataFieldProjectNumericalColumns
+  min: MetadataFieldProjectMinMaxColumns
+  max: MetadataFieldProjectMinMaxColumns
+  stddev: MetadataFieldProjectNumericalColumns
+  variance: MetadataFieldProjectNumericalColumns
+  count(distinct: Boolean = false, columns: MetadataFieldProjectCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type MetadataFieldProjectConnection {
   """Pagination data for this connection"""
@@ -435,6 +615,16 @@ type MetadataFieldProjectConnection {
 
   """Contains the nodes in this connection"""
   edges: [MetadataFieldProjectEdge!]!
+}
+
+enum MetadataFieldProjectCountColumns {
+  project_id
+  metadata_field
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input MetadataFieldProjectCreateInput {
@@ -450,6 +640,20 @@ type MetadataFieldProjectEdge {
 
   """The item at the end of the edge"""
   node: MetadataFieldProject!
+}
+
+type MetadataFieldProjectMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  projectId: Int
+}
+
+type MetadataFieldProjectNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  projectId: Int
 }
 
 input MetadataFieldProjectUpdateInput {
@@ -512,6 +716,20 @@ type Metadatum implements EntityInterface & Node {
   value: String!
 }
 
+type MetadatumAggregate {
+  aggregate: MetadatumAggregateFunctions
+}
+
+type MetadatumAggregateFunctions {
+  sum: MetadatumNumericalColumns
+  avg: MetadatumNumericalColumns
+  min: MetadatumMinMaxColumns
+  max: MetadatumMinMaxColumns
+  stddev: MetadatumNumericalColumns
+  variance: MetadatumNumericalColumns
+  count(distinct: Boolean = false, columns: MetadatumCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type MetadatumConnection {
   """Pagination data for this connection"""
@@ -519,6 +737,17 @@ type MetadatumConnection {
 
   """Contains the nodes in this connection"""
   edges: [MetadatumEdge!]!
+}
+
+enum MetadatumCountColumns {
+  sample
+  metadata_field
+  value
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input MetadatumCreateInput {
@@ -535,6 +764,19 @@ type MetadatumEdge {
 
   """The item at the end of the edge"""
   node: Metadatum!
+}
+
+type MetadatumMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  value: String
+}
+
+type MetadatumNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input MetadatumUpdateInput {
@@ -581,6 +823,20 @@ type MetricConsensusGenome implements EntityInterface & Node {
   coverageVizSummaryFile(where: FileWhereClause = null): File
 }
 
+type MetricConsensusGenomeAggregate {
+  aggregate: MetricConsensusGenomeAggregateFunctions
+}
+
+type MetricConsensusGenomeAggregateFunctions {
+  sum: MetricConsensusGenomeNumericalColumns
+  avg: MetricConsensusGenomeNumericalColumns
+  min: MetricConsensusGenomeMinMaxColumns
+  max: MetricConsensusGenomeMinMaxColumns
+  stddev: MetricConsensusGenomeNumericalColumns
+  variance: MetricConsensusGenomeNumericalColumns
+  count(distinct: Boolean = false, columns: MetricConsensusGenomeCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type MetricConsensusGenomeConnection {
   """Pagination data for this connection"""
@@ -588,6 +844,27 @@ type MetricConsensusGenomeConnection {
 
   """Contains the nodes in this connection"""
   edges: [MetricConsensusGenomeEdge!]!
+}
+
+enum MetricConsensusGenomeCountColumns {
+  consensus_genome
+  coverage_depth
+  reference_genome_length
+  percent_genome_called
+  percent_identity
+  gc_percent
+  total_reads
+  mapped_reads
+  ref_snps
+  n_actg
+  n_missing
+  n_ambiguous
+  coverage_viz_summary_file
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input MetricConsensusGenomeCreateInput {
@@ -614,6 +891,40 @@ type MetricConsensusGenomeEdge {
 
   """The item at the end of the edge"""
   node: MetricConsensusGenome!
+}
+
+type MetricConsensusGenomeMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  coverageDepth: Float
+  referenceGenomeLength: Float
+  percentGenomeCalled: Float
+  percentIdentity: Float
+  gcPercent: Float
+  totalReads: Int
+  mappedReads: Int
+  refSnps: Int
+  nActg: Int
+  nMissing: Int
+  nAmbiguous: Int
+}
+
+type MetricConsensusGenomeNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  coverageDepth: Float
+  referenceGenomeLength: Float
+  percentGenomeCalled: Float
+  percentIdentity: Float
+  gcPercent: Float
+  totalReads: Int
+  mappedReads: Int
+  refSnps: Int
+  nActg: Int
+  nMissing: Int
+  nAmbiguous: Int
 }
 
 input MetricConsensusGenomeUpdateInput {
@@ -836,6 +1147,19 @@ type Query {
   upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
   contigs(where: ContigWhereClause = null): [Contig!]!
   phylogeneticTrees(where: PhylogeneticTreeWhereClause = null): [PhylogeneticTree!]!
+  samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
+  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
+  genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate!
+  referenceGenomesAggregate(where: ReferenceGenomeWhereClause = null): ReferenceGenomeAggregate!
+  sequenceAlignmentIndicesAggregate(where: SequenceAlignmentIndexWhereClause = null): SequenceAlignmentIndexAggregate!
+  metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate!
+  metadataFieldsAggregate(where: MetadataFieldWhereClause = null): MetadataFieldAggregate!
+  metadataFieldProjectsAggregate(where: MetadataFieldProjectWhereClause = null): MetadataFieldProjectAggregate!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate!
+  metricsConsensusGenomesAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate!
+  taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate!
+  upstreamDatabasesAggregate(where: UpstreamDatabaseWhereClause = null): UpstreamDatabaseAggregate!
+  contigsAggregate(where: ContigWhereClause = null): ContigAggregate!
 }
 
 type ReferenceGenome implements EntityInterface & Node {
@@ -868,6 +1192,7 @@ type ReferenceGenome implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): SequenceAlignmentIndexConnection!
+  sequenceAlignmentIndicesAggregate(where: SequenceAlignmentIndexWhereClause = null): SequenceAlignmentIndexAggregate
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -883,6 +1208,7 @@ type ReferenceGenome implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   genomicRanges(
     where: GenomicRangeWhereClause = null
 
@@ -898,6 +1224,21 @@ type ReferenceGenome implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): GenomicRangeConnection!
+  genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate
+}
+
+type ReferenceGenomeAggregate {
+  aggregate: ReferenceGenomeAggregateFunctions
+}
+
+type ReferenceGenomeAggregateFunctions {
+  sum: ReferenceGenomeNumericalColumns
+  avg: ReferenceGenomeNumericalColumns
+  min: ReferenceGenomeMinMaxColumns
+  max: ReferenceGenomeMinMaxColumns
+  stddev: ReferenceGenomeNumericalColumns
+  variance: ReferenceGenomeNumericalColumns
+  count(distinct: Boolean = false, columns: ReferenceGenomeCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -907,6 +1248,23 @@ type ReferenceGenomeConnection {
 
   """Contains the nodes in this connection"""
   edges: [ReferenceGenomeEdge!]!
+}
+
+enum ReferenceGenomeCountColumns {
+  file
+  file_index
+  name
+  description
+  taxon
+  accession_id
+  sequence_alignment_indices
+  consensus_genomes
+  genomic_ranges
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input ReferenceGenomeCreateInput {
@@ -926,6 +1284,21 @@ type ReferenceGenomeEdge {
 
   """The item at the end of the edge"""
   node: ReferenceGenome!
+}
+
+type ReferenceGenomeMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  name: String
+  description: String
+  accessionId: String
+}
+
+type ReferenceGenomeNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input ReferenceGenomeUpdateInput {
@@ -985,6 +1358,7 @@ type Sample implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): SequencingReadConnection!
+  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
   metadatas(
     where: MetadatumWhereClause = null
 
@@ -1000,6 +1374,21 @@ type Sample implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): MetadatumConnection!
+  metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate
+}
+
+type SampleAggregate {
+  aggregate: SampleAggregateFunctions
+}
+
+type SampleAggregateFunctions {
+  sum: SampleNumericalColumns
+  avg: SampleNumericalColumns
+  min: SampleMinMaxColumns
+  max: SampleMinMaxColumns
+  stddev: SampleNumericalColumns
+  variance: SampleNumericalColumns
+  count(distinct: Boolean = false, columns: SampleCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -1009,6 +1398,23 @@ type SampleConnection {
 
   """Contains the nodes in this connection"""
   edges: [SampleEdge!]!
+}
+
+enum SampleCountColumns {
+  name
+  sample_type
+  water_control
+  collection_date
+  collection_location
+  description
+  host_taxon
+  sequencing_reads
+  metadatas
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input SampleCreateInput {
@@ -1029,6 +1435,23 @@ type SampleEdge {
 
   """The item at the end of the edge"""
   node: Sample!
+}
+
+type SampleMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  name: String
+  sampleType: String
+  collectionDate: DateTime
+  collectionLocation: String
+  description: String
+}
+
+type SampleNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input SampleUpdateInput {
@@ -1075,6 +1498,20 @@ type SequenceAlignmentIndex implements EntityInterface & Node {
   tool: AlignmentTool!
 }
 
+type SequenceAlignmentIndexAggregate {
+  aggregate: SequenceAlignmentIndexAggregateFunctions
+}
+
+type SequenceAlignmentIndexAggregateFunctions {
+  sum: SequenceAlignmentIndexNumericalColumns
+  avg: SequenceAlignmentIndexNumericalColumns
+  min: SequenceAlignmentIndexMinMaxColumns
+  max: SequenceAlignmentIndexMinMaxColumns
+  stddev: SequenceAlignmentIndexNumericalColumns
+  variance: SequenceAlignmentIndexNumericalColumns
+  count(distinct: Boolean = false, columns: SequenceAlignmentIndexCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type SequenceAlignmentIndexConnection {
   """Pagination data for this connection"""
@@ -1082,6 +1519,17 @@ type SequenceAlignmentIndexConnection {
 
   """Contains the nodes in this connection"""
   edges: [SequenceAlignmentIndexEdge!]!
+}
+
+enum SequenceAlignmentIndexCountColumns {
+  index_file
+  reference_genome
+  tool
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input SequenceAlignmentIndexCreateInput {
@@ -1098,6 +1546,18 @@ type SequenceAlignmentIndexEdge {
 
   """The item at the end of the edge"""
   node: SequenceAlignmentIndex!
+}
+
+type SequenceAlignmentIndexMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+type SequenceAlignmentIndexNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input SequenceAlignmentIndexUpdateInput {
@@ -1171,6 +1631,7 @@ type SequencingRead implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   contigs(
     where: ContigWhereClause = null
 
@@ -1186,6 +1647,21 @@ type SequencingRead implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ContigConnection!
+  contigsAggregate(where: ContigWhereClause = null): ContigAggregate
+}
+
+type SequencingReadAggregate {
+  aggregate: SequencingReadAggregateFunctions
+}
+
+type SequencingReadAggregateFunctions {
+  sum: SequencingReadNumericalColumns
+  avg: SequencingReadNumericalColumns
+  min: SequencingReadMinMaxColumns
+  max: SequencingReadMinMaxColumns
+  stddev: SequencingReadNumericalColumns
+  variance: SequencingReadNumericalColumns
+  count(distinct: Boolean = false, columns: SequencingReadCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -1195,6 +1671,25 @@ type SequencingReadConnection {
 
   """Contains the nodes in this connection"""
   edges: [SequencingReadEdge!]!
+}
+
+enum SequencingReadCountColumns {
+  sample
+  protocol
+  r1_file
+  r2_file
+  technology
+  nucleic_acid
+  has_ercc
+  taxon
+  primer_file
+  consensus_genomes
+  contigs
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input SequencingReadCreateInput {
@@ -1217,6 +1712,18 @@ type SequencingReadEdge {
 
   """The item at the end of the edge"""
   node: SequencingRead!
+}
+
+type SequencingReadMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+type SequencingReadNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input SequencingReadUpdateInput {
@@ -1336,6 +1843,7 @@ type Taxon implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   referenceGenomes(
     where: ReferenceGenomeWhereClause = null
 
@@ -1351,6 +1859,7 @@ type Taxon implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): ReferenceGenomeConnection!
+  referenceGenomesAggregate(where: ReferenceGenomeWhereClause = null): ReferenceGenomeAggregate
   sequencingReads(
     where: SequencingReadWhereClause = null
 
@@ -1366,6 +1875,7 @@ type Taxon implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): SequencingReadConnection!
+  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
   samples(
     where: SampleWhereClause = null
 
@@ -1381,6 +1891,21 @@ type Taxon implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): SampleConnection!
+  samplesAggregate(where: SampleWhereClause = null): SampleAggregate
+}
+
+type TaxonAggregate {
+  aggregate: TaxonAggregateFunctions
+}
+
+type TaxonAggregateFunctions {
+  sum: TaxonNumericalColumns
+  avg: TaxonNumericalColumns
+  min: TaxonMinMaxColumns
+  max: TaxonMinMaxColumns
+  stddev: TaxonNumericalColumns
+  variance: TaxonNumericalColumns
+  count(distinct: Boolean = false, columns: TaxonCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -1390,6 +1915,35 @@ type TaxonConnection {
 
   """Contains the nodes in this connection"""
   edges: [TaxonEdge!]!
+}
+
+enum TaxonCountColumns {
+  wikipedia_id
+  description
+  common_name
+  name
+  is_phage
+  upstream_database
+  upstream_database_identifier
+  level
+  tax_id
+  tax_id_parent
+  tax_id_species
+  tax_id_genus
+  tax_id_family
+  tax_id_order
+  tax_id_class
+  tax_id_phylum
+  tax_id_kingdom
+  consensus_genomes
+  reference_genomes
+  sequencing_reads
+  samples
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input TaxonCreateInput {
@@ -1438,6 +1992,41 @@ input TaxonLevelEnumComparators {
   _lt: TaxonLevel
   _lte: TaxonLevel
   _is_null: TaxonLevel
+}
+
+type TaxonMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  wikipediaId: String
+  description: String
+  commonName: String
+  name: String
+  upstreamDatabaseIdentifier: String
+  taxId: Int
+  taxIdParent: Int
+  taxIdSpecies: Int
+  taxIdGenus: Int
+  taxIdFamily: Int
+  taxIdOrder: Int
+  taxIdClass: Int
+  taxIdPhylum: Int
+  taxIdKingdom: Int
+}
+
+type TaxonNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  taxId: Int
+  taxIdParent: Int
+  taxIdSpecies: Int
+  taxIdGenus: Int
+  taxIdFamily: Int
+  taxIdOrder: Int
+  taxIdClass: Int
+  taxIdPhylum: Int
+  taxIdKingdom: Int
 }
 
 input TaxonUpdateInput {
@@ -1529,11 +2118,49 @@ type UpstreamDatabase implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): TaxonConnection!
+  taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate
+}
+
+type UpstreamDatabaseAggregate {
+  aggregate: UpstreamDatabaseAggregateFunctions
+}
+
+type UpstreamDatabaseAggregateFunctions {
+  sum: UpstreamDatabaseNumericalColumns
+  avg: UpstreamDatabaseNumericalColumns
+  min: UpstreamDatabaseMinMaxColumns
+  max: UpstreamDatabaseMinMaxColumns
+  stddev: UpstreamDatabaseNumericalColumns
+  variance: UpstreamDatabaseNumericalColumns
+  count(distinct: Boolean = false, columns: UpstreamDatabaseCountColumns = null): Int
+}
+
+enum UpstreamDatabaseCountColumns {
+  name
+  taxa
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input UpstreamDatabaseCreateInput {
   collectionId: Int!
   name: String!
+}
+
+type UpstreamDatabaseMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  name: String
+}
+
+type UpstreamDatabaseNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input UpstreamDatabaseUpdateInput {

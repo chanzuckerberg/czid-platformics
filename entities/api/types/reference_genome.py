@@ -8,18 +8,25 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows
+from api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
+from api.types.sequence_alignment_index import (
+    SequenceAlignmentIndexAggregate,
+    format_sequence_alignment_index_aggregate_output,
+)
+from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
+from api.types.genomic_range import GenomicRangeAggregate, format_genomic_range_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    aggregator_map,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -31,6 +38,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -91,6 +99,24 @@ async def load_sequence_alignment_index_rows(
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
+@strawberry.field
+async def load_sequence_alignment_index_aggregate_rows(
+    root: "ReferenceGenome",
+    info: Info,
+    where: Annotated["SequenceAlignmentIndexWhereClause", strawberry.lazy("api.types.sequence_alignment_index")]
+    | None = None,
+) -> Optional[Annotated["SequenceAlignmentIndexAggregate", strawberry.lazy("api.types.sequence_alignment_index")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ReferenceGenome)
+    relationship = mapper.relationships["sequence_alignment_indices"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_sequence_alignment_index_aggregate_output(result)
+    return SequenceAlignmentIndexAggregate(aggregate=aggregate_output)
+
+
 @relay.connection(
     relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
 )
@@ -105,6 +131,23 @@ async def load_consensus_genome_rows(
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
+@strawberry.field
+async def load_consensus_genome_aggregate_rows(
+    root: "ReferenceGenome",
+    info: Info,
+    where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
+) -> Optional[Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ReferenceGenome)
+    relationship = mapper.relationships["consensus_genomes"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_consensus_genome_aggregate_output(result)
+    return ConsensusGenomeAggregate(aggregate=aggregate_output)
+
+
 @relay.connection(
     relay.ListConnection[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]  # type:ignore
 )
@@ -117,6 +160,23 @@ async def load_genomic_range_rows(
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["genomic_ranges"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_genomic_range_aggregate_rows(
+    root: "ReferenceGenome",
+    info: Info,
+    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
+) -> Optional[Annotated["GenomicRangeAggregate", strawberry.lazy("api.types.genomic_range")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ReferenceGenome)
+    relationship = mapper.relationships["genomic_ranges"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_genomic_range_aggregate_output(result)
+    return GenomicRangeAggregate(aggregate=aggregate_output)
 
 
 """
@@ -207,12 +267,21 @@ class ReferenceGenome(EntityInterface):
     sequence_alignment_indices: Sequence[
         Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]
     ] = load_sequence_alignment_index_rows  # type:ignore
+    sequence_alignment_indices_aggregate: Optional[
+        Annotated["SequenceAlignmentIndexAggregate", strawberry.lazy("api.types.sequence_alignment_index")]
+    ] = load_sequence_alignment_index_aggregate_rows  # type:ignore
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
+    consensus_genomes_aggregate: Optional[
+        Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
+    ] = load_consensus_genome_aggregate_rows  # type:ignore
     genomic_ranges: Sequence[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
     ] = load_genomic_range_rows  # type:ignore
+    genomic_ranges_aggregate: Optional[
+        Annotated["GenomicRangeAggregate", strawberry.lazy("api.types.genomic_range")]
+    ] = load_genomic_range_aggregate_rows  # type:ignore
 
 
 """
@@ -222,6 +291,95 @@ Strawberry type *or* a SQLAlchemy model instance as a valid response class from 
 ReferenceGenome.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.ReferenceGenome or type(obj) == ReferenceGenome
 )
+
+"""
+------------------------------------------------------------------------------
+Aggregation types
+------------------------------------------------------------------------------
+"""
+
+"""
+Define columns that support numerical aggregations
+"""
+
+
+@strawberry.type
+class ReferenceGenomeNumericalColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define columns that support min/max aggregations
+"""
+
+
+@strawberry.type
+class ReferenceGenomeMinMaxColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    accession_id: Optional[str] = None
+
+
+"""
+Define enum of all columns to support count and count(distinct) aggregations
+"""
+
+
+@strawberry.enum
+class ReferenceGenomeCountColumns(enum.Enum):
+    file = "file"
+    file_index = "file_index"
+    name = "name"
+    description = "description"
+    taxon = "taxon"
+    accession_id = "accession_id"
+    sequence_alignment_indices = "sequence_alignment_indices"
+    consensus_genomes = "consensus_genomes"
+    genomic_ranges = "genomic_ranges"
+    entity_id = "entity_id"
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+
+
+"""
+All supported aggregation functions
+"""
+
+
+@strawberry.type
+class ReferenceGenomeAggregateFunctions:
+    # This is a hack to accept "distinct" and "columns" as arguments to "count"
+    @strawberry.field
+    def count(
+        self, distinct: Optional[bool] = False, columns: Optional[ReferenceGenomeCountColumns] = None
+    ) -> Optional[int]:
+        # Count gets set with the proper value in the resolver, so we just return it here
+        return self.count
+
+    sum: Optional[ReferenceGenomeNumericalColumns] = None
+    avg: Optional[ReferenceGenomeNumericalColumns] = None
+    min: Optional[ReferenceGenomeMinMaxColumns] = None
+    max: Optional[ReferenceGenomeMinMaxColumns] = None
+    stddev: Optional[ReferenceGenomeNumericalColumns] = None
+    variance: Optional[ReferenceGenomeNumericalColumns] = None
+
+
+"""
+Wrapper around ReferenceGenomeAggregateFunctions
+"""
+
+
+@strawberry.type
+class ReferenceGenomeAggregate:
+    aggregate: Optional[ReferenceGenomeAggregateFunctions] = None
+
 
 """
 ------------------------------------------------------------------------------
@@ -270,6 +428,48 @@ async def resolve_reference_genomes(
     Resolve ReferenceGenome objects. Used for queries (see api/queries.py).
     """
     return await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+def format_reference_genome_aggregate_output(query_results: dict[str, Any]) -> ReferenceGenomeAggregateFunctions:
+    """
+    Given a row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = ReferenceGenomeAggregateFunctions()
+    for aggregate_name, value in query_results.items():
+        if aggregate_name == "count":
+            output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            # Filter out the group_by key from the results if one was provided.
+            if aggregator_fn in aggregator_map.keys():
+                if not getattr(output, aggregator_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregator_fn, ReferenceGenomeMinMaxColumns())
+                    else:
+                        setattr(output, aggregator_fn, ReferenceGenomeNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
+    return output
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_reference_genomes_aggregate(
+    info: Info,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: Optional[ReferenceGenomeWhereClause] = None,
+) -> typing.Sequence[ReferenceGenome]:
+    """
+    Aggregate values for ReferenceGenome objects. Used for queries (see api/queries.py).
+    """
+    # Get the selected aggregate functions and columns to operate on
+    # TODO: not sure why selected_fields is a list
+    # The first list of selections will always be ["aggregate"], so just grab the first item
+    selections = info.selected_fields[0].selections[0].selections
+    rows = await get_aggregate_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_output = format_reference_genome_aggregate_output(rows)
+    return ReferenceGenomeAggregate(aggregate=aggregate_output)
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

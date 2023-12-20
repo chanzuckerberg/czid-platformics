@@ -138,13 +138,12 @@ def get_aggregate_db_query(
             # If provided "distinct" or "columns" arguments, use them to construct the count query
             # Otherwise, default to counting the primary key
             col = model_cls.id
+            count_fn = agg_fn(model_cls.id)
             if aggregator.arguments:
                 if aggregator.arguments['columns']:
                     col = getattr(model_cls, aggregator.arguments['columns'])
                 if aggregator.arguments['distinct']:
                     count_fn = agg_fn(distinct(col))
-            else:
-                count_fn = agg_fn(model_cls.id)
             aggregate_query_fields.append(count_fn.label("count"))
         else:
             for col in aggregator.selections:
