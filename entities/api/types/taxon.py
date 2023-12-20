@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from api.types.reference_genome import ReferenceGenomeAggregate, format_reference_genome_aggregate_output

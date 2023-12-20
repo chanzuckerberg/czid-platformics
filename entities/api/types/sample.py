@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 import database.models as db
 import strawberry
 import datetime
-from api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
 from api.types.metadatum import MetadatumAggregate, format_metadatum_aggregate_output
