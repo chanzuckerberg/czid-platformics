@@ -100,8 +100,8 @@ class EntityLoader:
                 else:
                     return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
-            self._loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn)  # type: ignore
-            return self._loaders[(relationship, where_str)]  # type: ignore
+            self._loaders[(relationship, where_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
+            return self._loaders[(relationship, where_hash)]  # type: ignore
         
     def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, aggregate: Optional[Any] = None) -> DataLoader:
         """
@@ -109,9 +109,9 @@ class EntityLoader:
         """
         if not where:
             where = {}
-        where_str = get_where_hash(where)
+        where_hash = get_where_hash(where)
         try:
-            return self._aggregate_loaders[(relationship, where_str)]  # type: ignore
+            return self._aggregate_loaders[(relationship, where_hash)]  # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
@@ -149,5 +149,5 @@ class EntityLoader:
                 else:
                     return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
-            self._aggregate_loaders[(relationship, where_str)] = DataLoader(load_fn=load_fn)  # type: ignore
-            return self._aggregate_loaders[(relationship, where_str)]  # type: ignore
+            self._aggregate_loaders[(relationship, where_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
+            return self._aggregate_loaders[(relationship, where_hash)]  # type: ignore
