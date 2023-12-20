@@ -389,7 +389,7 @@ async def resolve_samples_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[SampleWhereClause] = None,
-) -> typing.Sequence[Sample]:
+) -> SampleAggregate:
     """
     Aggregate values for Sample objects. Used for queries (see api/queries.py).
     """

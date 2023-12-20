@@ -307,7 +307,7 @@ async def resolve_sequence_alignment_indices_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[SequenceAlignmentIndexWhereClause] = None,
-) -> typing.Sequence[SequenceAlignmentIndex]:
+) -> SequenceAlignmentIndexAggregate:
     """
     Aggregate values for SequenceAlignmentIndex objects. Used for queries (see api/queries.py).
     """

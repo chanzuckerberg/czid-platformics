@@ -410,7 +410,7 @@ async def resolve_{{ cls.plural_snake_name }}_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[{{ cls.name }}WhereClause] = None,
-) -> typing.Sequence[{{ cls.name }}]:
+) -> {{ cls.name }}Aggregate:
     """
     Aggregate values for {{ cls.name }} objects. Used for queries (see api/queries.py).
     """

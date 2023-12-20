@@ -278,7 +278,7 @@ async def resolve_phylogenetic_trees_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[PhylogeneticTreeWhereClause] = None,
-) -> typing.Sequence[PhylogeneticTree]:
+) -> PhylogeneticTreeAggregate:
     """
     Aggregate values for PhylogeneticTree objects. Used for queries (see api/queries.py).
     """

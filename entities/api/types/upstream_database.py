@@ -292,7 +292,7 @@ async def resolve_upstream_databases_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[UpstreamDatabaseWhereClause] = None,
-) -> typing.Sequence[UpstreamDatabase]:
+) -> UpstreamDatabaseAggregate:
     """
     Aggregate values for UpstreamDatabase objects. Used for queries (see api/queries.py).
     """

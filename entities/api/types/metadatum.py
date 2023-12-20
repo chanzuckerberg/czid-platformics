@@ -290,7 +290,7 @@ async def resolve_metadatas_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetadatumWhereClause] = None,
-) -> typing.Sequence[Metadatum]:
+) -> MetadatumAggregate:
     """
     Aggregate values for Metadatum objects. Used for queries (see api/queries.py).
     """

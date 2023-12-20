@@ -451,7 +451,7 @@ async def resolve_sequencing_reads_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[SequencingReadWhereClause] = None,
-) -> typing.Sequence[SequencingRead]:
+) -> SequencingReadAggregate:
     """
     Aggregate values for SequencingRead objects. Used for queries (see api/queries.py).
     """

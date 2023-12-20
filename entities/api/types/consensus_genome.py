@@ -398,7 +398,7 @@ async def resolve_consensus_genomes_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ConsensusGenomeWhereClause] = None,
-) -> typing.Sequence[ConsensusGenome]:
+) -> ConsensusGenomeAggregate:
     """
     Aggregate values for ConsensusGenome objects. Used for queries (see api/queries.py).
     """

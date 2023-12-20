@@ -376,7 +376,7 @@ async def resolve_metadata_fields_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetadataFieldWhereClause] = None,
-) -> typing.Sequence[MetadataField]:
+) -> MetadataFieldAggregate:
     """
     Aggregate values for MetadataField objects. Used for queries (see api/queries.py).
     """

@@ -459,7 +459,7 @@ async def resolve_reference_genomes_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ReferenceGenomeWhereClause] = None,
-) -> typing.Sequence[ReferenceGenome]:
+) -> ReferenceGenomeAggregate:
     """
     Aggregate values for ReferenceGenome objects. Used for queries (see api/queries.py).
     """

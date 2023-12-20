@@ -274,7 +274,7 @@ async def resolve_metadata_field_projects_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetadataFieldProjectWhereClause] = None,
-) -> typing.Sequence[MetadataFieldProject]:
+) -> MetadataFieldProjectAggregate:
     """
     Aggregate values for MetadataFieldProject objects. Used for queries (see api/queries.py).
     """

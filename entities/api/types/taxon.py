@@ -549,7 +549,7 @@ async def resolve_taxa_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[TaxonWhereClause] = None,
-) -> typing.Sequence[Taxon]:
+) -> TaxonAggregate:
     """
     Aggregate values for Taxon objects. Used for queries (see api/queries.py).
     """

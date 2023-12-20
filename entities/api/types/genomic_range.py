@@ -344,7 +344,7 @@ async def resolve_genomic_ranges_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[GenomicRangeWhereClause] = None,
-) -> typing.Sequence[GenomicRange]:
+) -> GenomicRangeAggregate:
     """
     Aggregate values for GenomicRange objects. Used for queries (see api/queries.py).
     """

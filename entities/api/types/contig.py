@@ -272,7 +272,7 @@ async def resolve_contigs_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ContigWhereClause] = None,
-) -> typing.Sequence[Contig]:
+) -> ContigAggregate:
     """
     Aggregate values for Contig objects. Used for queries (see api/queries.py).
     """

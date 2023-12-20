@@ -378,7 +378,7 @@ async def resolve_metrics_consensus_genomes_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetricConsensusGenomeWhereClause] = None,
-) -> typing.Sequence[MetricConsensusGenome]:
+) -> MetricConsensusGenomeAggregate:
     """
     Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
