@@ -29,7 +29,6 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
         "entity_id",
         "id",
         "intermediate_outputs",
-        "is_reverse_complement",
         "metrics",
         "owner_user_id",
         "producing_run_id",
@@ -166,9 +165,16 @@ class NucleicAcid(sgqlc.types.Enum):
     __choices__ = ("DNA", "RNA")
 
 
+class PhylogeneticTreeCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = ("collection_id", "entity_id", "format", "id", "owner_user_id", "producing_run_id", "tree")
+
+
 class PhylogeneticTreeFormat(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = ("auspice_v1", "auspice_v2", "newick")
+
+
 class ReferenceGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
@@ -491,12 +497,26 @@ class FileUpload(sgqlc.types.Input):
 
 class FileWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "status", "protocol", "namespace", "path", "compression_type", "size")
+    __field_names__ = (
+        "id",
+        "entity_id",
+        "entity_field_name",
+        "status",
+        "protocol",
+        "namespace",
+        "path",
+        "file_format",
+        "compression_type",
+        "size",
+    )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    entity_field_name = sgqlc.types.Field("StrComparators", graphql_name="entityFieldName")
     status = sgqlc.types.Field(FileStatusEnumComparators, graphql_name="status")
     protocol = sgqlc.types.Field("StrComparators", graphql_name="protocol")
     namespace = sgqlc.types.Field("StrComparators", graphql_name="namespace")
     path = sgqlc.types.Field("StrComparators", graphql_name="path")
+    file_format = sgqlc.types.Field("StrComparators", graphql_name="fileFormat")
     compression_type = sgqlc.types.Field("StrComparators", graphql_name="compressionType")
     size = sgqlc.types.Field("IntComparators", graphql_name="size")
 
@@ -2737,6 +2757,49 @@ class PageInfo(sgqlc.types.Type):
     end_cursor = sgqlc.types.Field(String, graphql_name="endCursor")
 
 
+class PhylogeneticTreeAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("PhylogeneticTreeAggregateFunctions", graphql_name="aggregate")
+
+
+class PhylogeneticTreeAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("PhylogeneticTreeNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("PhylogeneticTreeNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("PhylogeneticTreeMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("PhylogeneticTreeMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("PhylogeneticTreeNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("PhylogeneticTreeNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(PhylogeneticTreeCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
+
+
+class PhylogeneticTreeMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+
+
+class PhylogeneticTreeNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+
+
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
@@ -2770,6 +2833,7 @@ class Query(sgqlc.types.Type):
         "taxa_aggregate",
         "upstream_databases_aggregate",
         "contigs_aggregate",
+        "phylogenetic_trees_aggregate",
     )
     node = sgqlc.types.Field(
         sgqlc.types.non_null(Node),
@@ -2884,6 +2948,13 @@ class Query(sgqlc.types.Type):
         graphql_name="contigs",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
     )
+    phylogenetic_trees = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("PhylogeneticTree"))),
+        graphql_name="phylogeneticTrees",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(PhylogeneticTreeWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
     samples_aggregate = sgqlc.types.Field(
         sgqlc.types.non_null("SampleAggregate"),
         graphql_name="samplesAggregate",
@@ -2968,6 +3039,13 @@ class Query(sgqlc.types.Type):
         sgqlc.types.non_null(ContigAggregate),
         graphql_name="contigsAggregate",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
+    )
+    phylogenetic_trees_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null(PhylogeneticTreeAggregate),
+        graphql_name="phylogeneticTreesAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(PhylogeneticTreeWhereClause, graphql_name="where", default=None)),)
+        ),
     )
 
 

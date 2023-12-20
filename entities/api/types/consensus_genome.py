@@ -280,7 +280,6 @@ class ConsensusGenomeCountColumns(enum.Enum):
     sequence_read = "sequence_read"
     reference_genome = "reference_genome"
     sequence = "sequence"
-    is_reverse_complement = "is_reverse_complement"
     intermediate_outputs = "intermediate_outputs"
     metrics = "metrics"
     entity_id = "entity_id"

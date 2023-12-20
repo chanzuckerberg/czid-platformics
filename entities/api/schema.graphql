@@ -88,7 +88,6 @@ enum ConsensusGenomeCountColumns {
   sequence_read
   reference_genome
   sequence
-  is_reverse_complement
   intermediate_outputs
   metrics
   entity_id
@@ -329,10 +328,13 @@ input FileUpload {
 
 input FileWhereClause {
   id: UUIDComparators
+  entityId: UUIDComparators
+  entityFieldName: StrComparators
   status: FileStatusEnumComparators
   protocol: StrComparators
   namespace: StrComparators
   path: StrComparators
+  fileFormat: StrComparators
   compressionType: StrComparators
   size: IntComparators
 }
@@ -1081,6 +1083,30 @@ type PhylogeneticTree implements EntityInterface & Node {
   format: PhylogeneticTreeFormat!
 }
 
+type PhylogeneticTreeAggregate {
+  aggregate: PhylogeneticTreeAggregateFunctions
+}
+
+type PhylogeneticTreeAggregateFunctions {
+  sum: PhylogeneticTreeNumericalColumns
+  avg: PhylogeneticTreeNumericalColumns
+  min: PhylogeneticTreeMinMaxColumns
+  max: PhylogeneticTreeMinMaxColumns
+  stddev: PhylogeneticTreeNumericalColumns
+  variance: PhylogeneticTreeNumericalColumns
+  count(distinct: Boolean = false, columns: PhylogeneticTreeCountColumns = null): Int
+}
+
+enum PhylogeneticTreeCountColumns {
+  tree
+  format
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
+}
+
 input PhylogeneticTreeCreateInput {
   collectionId: Int!
   treeId: ID = null
@@ -1103,6 +1129,18 @@ input PhylogeneticTreeFormatEnumComparators {
   _lt: PhylogeneticTreeFormat
   _lte: PhylogeneticTreeFormat
   _is_null: PhylogeneticTreeFormat
+}
+
+type PhylogeneticTreeMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+type PhylogeneticTreeNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input PhylogeneticTreeUpdateInput {
@@ -1160,6 +1198,7 @@ type Query {
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate!
   upstreamDatabasesAggregate(where: UpstreamDatabaseWhereClause = null): UpstreamDatabaseAggregate!
   contigsAggregate(where: ContigWhereClause = null): ContigAggregate!
+  phylogeneticTreesAggregate(where: PhylogeneticTreeWhereClause = null): PhylogeneticTreeAggregate!
 }
 
 type ReferenceGenome implements EntityInterface & Node {

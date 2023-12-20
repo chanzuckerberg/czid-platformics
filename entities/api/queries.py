@@ -67,6 +67,12 @@ from api.types.upstream_database import (
     resolve_upstream_databases_aggregate,
 )
 from api.types.contig import Contig, resolve_contigs, ContigAggregate, resolve_contigs_aggregate
+from api.types.phylogenetic_tree import (
+    PhylogeneticTree,
+    resolve_phylogenetic_trees,
+    PhylogeneticTreeAggregate,
+    resolve_phylogenetic_trees_aggregate,
+)
 
 
 @strawberry.type
@@ -91,6 +97,7 @@ class Query:
     taxa: Sequence[Taxon] = resolve_taxa
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
     contigs: Sequence[Contig] = resolve_contigs
+    phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
 
     # Query entity aggregates
     samples_aggregate: SampleAggregate = resolve_samples_aggregate
@@ -106,3 +113,4 @@ class Query:
     taxa_aggregate: TaxonAggregate = resolve_taxa_aggregate
     upstream_databases_aggregate: UpstreamDatabaseAggregate = resolve_upstream_databases_aggregate
     contigs_aggregate: ContigAggregate = resolve_contigs_aggregate
+    phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate
