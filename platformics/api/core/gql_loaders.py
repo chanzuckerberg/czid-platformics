@@ -3,7 +3,6 @@ from collections import defaultdict
 from typing import Any, Mapping, Optional, Sequence, Tuple
 
 import database.models as db
-from api.core.helpers import get_db_query, get_db_rows
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.database.connect import AsyncDB
@@ -110,7 +109,7 @@ class EntityLoader:
         """
         if not where:
             where = {}
-        where_str = make_hashable(where)
+        where_str = get_where_hash(where)
         try:
             return self._aggregate_loaders[(relationship, where_str)]  # type: ignore
         except KeyError:
