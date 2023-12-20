@@ -8,7 +8,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -28,6 +28,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
@@ -254,7 +255,7 @@ class GenomicRangeAggregateFunctions:
         self, distinct: Optional[bool] = False, columns: Optional[GenomicRangeCountColumns] = None
     ) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
-        return self.count
+        return self.count  # type: ignore
 
     sum: Optional[GenomicRangeNumericalColumns] = None
     avg: Optional[GenomicRangeNumericalColumns] = None
@@ -315,7 +316,7 @@ async def resolve_genomic_ranges(
     return await get_db_rows(db.GenomicRange, session, cerbos_client, principal, where, [])  # type: ignore
 
 
-def format_genomic_range_aggregate_output(query_results: dict[str, Any]) -> GenomicRangeAggregateFunctions:
+def format_genomic_range_aggregate_output(query_results: RowMapping) -> GenomicRangeAggregateFunctions:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.

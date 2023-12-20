@@ -8,7 +8,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
@@ -27,6 +27,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.types import Info
 from typing_extensions import TypedDict
@@ -198,7 +199,7 @@ class MetadatumAggregateFunctions:
     @strawberry.field
     def count(self, distinct: Optional[bool] = False, columns: Optional[MetadatumCountColumns] = None) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
-        return self.count
+        return self.count  # type: ignore
 
     sum: Optional[MetadatumNumericalColumns] = None
     avg: Optional[MetadatumNumericalColumns] = None
@@ -261,7 +262,7 @@ async def resolve_metadatas(
     return await get_db_rows(db.Metadatum, session, cerbos_client, principal, where, [])  # type: ignore
 
 
-def format_metadatum_aggregate_output(query_results: dict[str, Any]) -> MetadatumAggregateFunctions:
+def format_metadatum_aggregate_output(query_results: RowMapping) -> MetadatumAggregateFunctions:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.

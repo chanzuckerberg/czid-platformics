@@ -16,6 +16,7 @@ from sqlalchemy import inspect, and_
 from sqlalchemy.orm import aliased
 from platformics.database.models.base import Base
 from sqlalchemy.sql import Select
+from sqlalchemy.engine.row import RowMapping
 import strcase
 
 E = typing.TypeVar("E", db.File, db.Entity)
@@ -138,18 +139,18 @@ def get_aggregate_db_query(
             # If provided "distinct" or "columns" arguments, use them to construct the count query
             # Otherwise, default to counting the primary key
             col = model_cls.id
-            count_fn = agg_fn(model_cls.id)
+            count_fn = agg_fn(model_cls.id)  # type: ignore
             if aggregator.arguments:
                 if aggregator.arguments["columns"]:
                     col = getattr(model_cls, aggregator.arguments["columns"])
                 if aggregator.arguments["distinct"]:
-                    count_fn = agg_fn(distinct(col))
+                    count_fn = agg_fn(distinct(col))  # type: ignore
             aggregate_query_fields.append(count_fn.label("count"))
         else:
             for col in aggregator.selections:
                 col_name = strcase.to_snake(col.name)
                 aggregate_query_fields.append(
-                    agg_fn(getattr(model_cls, col_name)).label(f"{aggregator.name}_{col_name}")
+                    agg_fn(getattr(model_cls, col_name)).label(f"{aggregator.name}_{col_name}")  # type: ignore
                 )
     query = query.with_only_columns(*aggregate_query_fields)
     query = convert_where_clauses_to_sql(
@@ -169,7 +170,7 @@ async def get_aggregate_db_rows(
     order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
     group_by: Optional[ColumnElement[Any]] = None,
     action: CerbosAction = CerbosAction.VIEW,
-) -> typing.Sequence[E]:
+) -> RowMapping:
     """
     Retrieve aggregate rows from the database, filtered by the where clause and the user's permissions.
     """

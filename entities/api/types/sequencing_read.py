@@ -8,7 +8,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -31,6 +31,7 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
@@ -347,7 +348,7 @@ class SequencingReadAggregateFunctions:
         self, distinct: Optional[bool] = False, columns: Optional[SequencingReadCountColumns] = None
     ) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
-        return self.count
+        return self.count  # type: ignore
 
     sum: Optional[SequencingReadNumericalColumns] = None
     avg: Optional[SequencingReadNumericalColumns] = None
@@ -422,7 +423,7 @@ async def resolve_sequencing_reads(
     return await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [])  # type: ignore
 
 
-def format_sequencing_read_aggregate_output(query_results: dict[str, Any]) -> SequencingReadAggregateFunctions:
+def format_sequencing_read_aggregate_output(query_results: RowMapping) -> SequencingReadAggregateFunctions:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
