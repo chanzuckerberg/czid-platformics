@@ -9,20 +9,70 @@ import strawberry
 from strawberry import relay
 from typing import Sequence, List
 from api.files import File, resolve_files
-from api.types.sample import Sample, resolve_samples
-from api.types.sequencing_read import SequencingRead, resolve_sequencing_reads
-from api.types.genomic_range import GenomicRange, resolve_genomic_ranges
-from api.types.reference_genome import ReferenceGenome, resolve_reference_genomes
-from api.types.sequence_alignment_index import SequenceAlignmentIndex, resolve_sequence_alignment_indices
-from api.types.metadatum import Metadatum, resolve_metadatas
-from api.types.metadata_field import MetadataField, resolve_metadata_fields
-from api.types.metadata_field_project import MetadataFieldProject, resolve_metadata_field_projects
-from api.types.consensus_genome import ConsensusGenome, resolve_consensus_genomes
-from api.types.metric_consensus_genome import MetricConsensusGenome, resolve_metrics_consensus_genomes
-from api.types.taxon import Taxon, resolve_taxa
-from api.types.upstream_database import UpstreamDatabase, resolve_upstream_databases
-from api.types.contig import Contig, resolve_contigs
-from api.types.phylogenetic_tree import PhylogeneticTree, resolve_phylogenetic_trees
+from api.types.sample import Sample, resolve_samples, SampleAggregate, resolve_samples_aggregate
+from api.types.sequencing_read import (
+    SequencingRead,
+    resolve_sequencing_reads,
+    SequencingReadAggregate,
+    resolve_sequencing_reads_aggregate,
+)
+from api.types.genomic_range import (
+    GenomicRange,
+    resolve_genomic_ranges,
+    GenomicRangeAggregate,
+    resolve_genomic_ranges_aggregate,
+)
+from api.types.reference_genome import (
+    ReferenceGenome,
+    resolve_reference_genomes,
+    ReferenceGenomeAggregate,
+    resolve_reference_genomes_aggregate,
+)
+from api.types.sequence_alignment_index import (
+    SequenceAlignmentIndex,
+    resolve_sequence_alignment_indices,
+    SequenceAlignmentIndexAggregate,
+    resolve_sequence_alignment_indices_aggregate,
+)
+from api.types.metadatum import Metadatum, resolve_metadatas, MetadatumAggregate, resolve_metadatas_aggregate
+from api.types.metadata_field import (
+    MetadataField,
+    resolve_metadata_fields,
+    MetadataFieldAggregate,
+    resolve_metadata_fields_aggregate,
+)
+from api.types.metadata_field_project import (
+    MetadataFieldProject,
+    resolve_metadata_field_projects,
+    MetadataFieldProjectAggregate,
+    resolve_metadata_field_projects_aggregate,
+)
+from api.types.consensus_genome import (
+    ConsensusGenome,
+    resolve_consensus_genomes,
+    ConsensusGenomeAggregate,
+    resolve_consensus_genomes_aggregate,
+)
+from api.types.metric_consensus_genome import (
+    MetricConsensusGenome,
+    resolve_metrics_consensus_genomes,
+    MetricConsensusGenomeAggregate,
+    resolve_metrics_consensus_genomes_aggregate,
+)
+from api.types.taxon import Taxon, resolve_taxa, TaxonAggregate, resolve_taxa_aggregate
+from api.types.upstream_database import (
+    UpstreamDatabase,
+    resolve_upstream_databases,
+    UpstreamDatabaseAggregate,
+    resolve_upstream_databases_aggregate,
+)
+from api.types.contig import Contig, resolve_contigs, ContigAggregate, resolve_contigs_aggregate
+from api.types.phylogenetic_tree import (
+    PhylogeneticTree,
+    resolve_phylogenetic_trees,
+    PhylogeneticTreeAggregate,
+    resolve_phylogenetic_trees_aggregate,
+)
 
 
 @strawberry.type
@@ -48,3 +98,19 @@ class Query:
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
     contigs: Sequence[Contig] = resolve_contigs
     phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
+
+    # Query entity aggregates
+    samples_aggregate: SampleAggregate = resolve_samples_aggregate
+    sequencing_reads_aggregate: SequencingReadAggregate = resolve_sequencing_reads_aggregate
+    genomic_ranges_aggregate: GenomicRangeAggregate = resolve_genomic_ranges_aggregate
+    reference_genomes_aggregate: ReferenceGenomeAggregate = resolve_reference_genomes_aggregate
+    sequence_alignment_indices_aggregate: SequenceAlignmentIndexAggregate = resolve_sequence_alignment_indices_aggregate
+    metadatas_aggregate: MetadatumAggregate = resolve_metadatas_aggregate
+    metadata_fields_aggregate: MetadataFieldAggregate = resolve_metadata_fields_aggregate
+    metadata_field_projects_aggregate: MetadataFieldProjectAggregate = resolve_metadata_field_projects_aggregate
+    consensus_genomes_aggregate: ConsensusGenomeAggregate = resolve_consensus_genomes_aggregate
+    metrics_consensus_genomes_aggregate: MetricConsensusGenomeAggregate = resolve_metrics_consensus_genomes_aggregate
+    taxa_aggregate: TaxonAggregate = resolve_taxa_aggregate
+    upstream_databases_aggregate: UpstreamDatabaseAggregate = resolve_upstream_databases_aggregate
+    contigs_aggregate: ContigAggregate = resolve_contigs_aggregate
+    phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate

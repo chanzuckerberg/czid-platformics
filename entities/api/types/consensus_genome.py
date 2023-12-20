@@ -12,24 +12,31 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows
+from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
+from api.types.metric_consensus_genome import (
+    MetricConsensusGenomeAggregate,
+    format_metric_consensus_genome_aggregate_output,
+)
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    aggregator_map,
     IntComparators,
     UUIDComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -112,6 +119,24 @@ async def load_metric_consensus_genome_rows(
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["metrics"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_metric_consensus_genome_aggregate_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
+    | None = None,
+) -> Optional[Annotated["MetricConsensusGenomeAggregate", strawberry.lazy("api.types.metric_consensus_genome")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["metrics"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_metric_consensus_genome_aggregate_output(result)
+    return MetricConsensusGenomeAggregate(aggregate=aggregate_output)
 
 
 """
@@ -202,6 +227,9 @@ class ConsensusGenome(EntityInterface):
     metrics: Sequence[
         Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
     ] = load_metric_consensus_genome_rows  # type:ignore
+    metrics_aggregate: Optional[
+        Annotated["MetricConsensusGenomeAggregate", strawberry.lazy("api.types.metric_consensus_genome")]
+    ] = load_metric_consensus_genome_aggregate_rows  # type:ignore
 
 
 """
@@ -211,6 +239,89 @@ Strawberry type *or* a SQLAlchemy model instance as a valid response class from 
 ConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.ConsensusGenome or type(obj) == ConsensusGenome
 )
+
+"""
+------------------------------------------------------------------------------
+Aggregation types
+------------------------------------------------------------------------------
+"""
+
+"""
+Define columns that support numerical aggregations
+"""
+
+
+@strawberry.type
+class ConsensusGenomeNumericalColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define columns that support min/max aggregations
+"""
+
+
+@strawberry.type
+class ConsensusGenomeMinMaxColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define enum of all columns to support count and count(distinct) aggregations
+"""
+
+
+@strawberry.enum
+class ConsensusGenomeCountColumns(enum.Enum):
+    taxon = "taxon"
+    sequence_read = "sequence_read"
+    reference_genome = "reference_genome"
+    sequence = "sequence"
+    intermediate_outputs = "intermediate_outputs"
+    metrics = "metrics"
+    entity_id = "entity_id"
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+
+
+"""
+All supported aggregation functions
+"""
+
+
+@strawberry.type
+class ConsensusGenomeAggregateFunctions:
+    # This is a hack to accept "distinct" and "columns" as arguments to "count"
+    @strawberry.field
+    def count(
+        self, distinct: Optional[bool] = False, columns: Optional[ConsensusGenomeCountColumns] = None
+    ) -> Optional[int]:
+        # Count gets set with the proper value in the resolver, so we just return it here
+        return self.count  # type: ignore
+
+    sum: Optional[ConsensusGenomeNumericalColumns] = None
+    avg: Optional[ConsensusGenomeNumericalColumns] = None
+    min: Optional[ConsensusGenomeMinMaxColumns] = None
+    max: Optional[ConsensusGenomeMinMaxColumns] = None
+    stddev: Optional[ConsensusGenomeNumericalColumns] = None
+    variance: Optional[ConsensusGenomeNumericalColumns] = None
+
+
+"""
+Wrapper around ConsensusGenomeAggregateFunctions
+"""
+
+
+@strawberry.type
+class ConsensusGenomeAggregate:
+    aggregate: Optional[ConsensusGenomeAggregateFunctions] = None
+
 
 """
 ------------------------------------------------------------------------------
@@ -257,6 +368,48 @@ async def resolve_consensus_genomes(
     Resolve ConsensusGenome objects. Used for queries (see api/queries.py).
     """
     return await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+def format_consensus_genome_aggregate_output(query_results: RowMapping) -> ConsensusGenomeAggregateFunctions:
+    """
+    Given a row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = ConsensusGenomeAggregateFunctions()
+    for aggregate_name, value in query_results.items():
+        if aggregate_name == "count":
+            output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            # Filter out the group_by key from the results if one was provided.
+            if aggregator_fn in aggregator_map.keys():
+                if not getattr(output, aggregator_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregator_fn, ConsensusGenomeMinMaxColumns())
+                    else:
+                        setattr(output, aggregator_fn, ConsensusGenomeNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
+    return output
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_consensus_genomes_aggregate(
+    info: Info,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: Optional[ConsensusGenomeWhereClause] = None,
+) -> ConsensusGenomeAggregate:
+    """
+    Aggregate values for ConsensusGenome objects. Used for queries (see api/queries.py).
+    """
+    # Get the selected aggregate functions and columns to operate on
+    # TODO: not sure why selected_fields is a list
+    # The first list of selections will always be ["aggregate"], so just grab the first item
+    selections = info.selected_fields[0].selections[0].selections
+    rows = await get_aggregate_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_output = format_consensus_genome_aggregate_output(rows)
+    return ConsensusGenomeAggregate(aggregate=aggregate_output)
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

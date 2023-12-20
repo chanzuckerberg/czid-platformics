@@ -12,13 +12,15 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows
+from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
+from api.types.taxon import TaxonAggregate, format_taxon_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    aggregator_map,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -26,10 +28,12 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -64,6 +68,23 @@ async def load_taxon_rows(
     mapper = inspect(db.UpstreamDatabase)
     relationship = mapper.relationships["taxa"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_taxon_aggregate_rows(
+    root: "UpstreamDatabase",
+    info: Info,
+    where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+) -> Optional[Annotated["TaxonAggregate", strawberry.lazy("api.types.taxon")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.UpstreamDatabase)
+    relationship = mapper.relationships["taxa"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_taxon_aggregate_output(result)
+    return TaxonAggregate(aggregate=aggregate_output)
 
 
 """
@@ -111,6 +132,9 @@ class UpstreamDatabase(EntityInterface):
     collection_id: int
     name: str
     taxa: Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
+    taxa_aggregate: Optional[
+        Annotated["TaxonAggregate", strawberry.lazy("api.types.taxon")]
+    ] = load_taxon_aggregate_rows  # type:ignore
 
 
 """
@@ -120,6 +144,86 @@ Strawberry type *or* a SQLAlchemy model instance as a valid response class from 
 UpstreamDatabase.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.UpstreamDatabase or type(obj) == UpstreamDatabase
 )
+
+"""
+------------------------------------------------------------------------------
+Aggregation types
+------------------------------------------------------------------------------
+"""
+
+"""
+Define columns that support numerical aggregations
+"""
+
+
+@strawberry.type
+class UpstreamDatabaseNumericalColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define columns that support min/max aggregations
+"""
+
+
+@strawberry.type
+class UpstreamDatabaseMinMaxColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    name: Optional[str] = None
+
+
+"""
+Define enum of all columns to support count and count(distinct) aggregations
+"""
+
+
+@strawberry.enum
+class UpstreamDatabaseCountColumns(enum.Enum):
+    name = "name"
+    taxa = "taxa"
+    entity_id = "entity_id"
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+
+
+"""
+All supported aggregation functions
+"""
+
+
+@strawberry.type
+class UpstreamDatabaseAggregateFunctions:
+    # This is a hack to accept "distinct" and "columns" as arguments to "count"
+    @strawberry.field
+    def count(
+        self, distinct: Optional[bool] = False, columns: Optional[UpstreamDatabaseCountColumns] = None
+    ) -> Optional[int]:
+        # Count gets set with the proper value in the resolver, so we just return it here
+        return self.count  # type: ignore
+
+    sum: Optional[UpstreamDatabaseNumericalColumns] = None
+    avg: Optional[UpstreamDatabaseNumericalColumns] = None
+    min: Optional[UpstreamDatabaseMinMaxColumns] = None
+    max: Optional[UpstreamDatabaseMinMaxColumns] = None
+    stddev: Optional[UpstreamDatabaseNumericalColumns] = None
+    variance: Optional[UpstreamDatabaseNumericalColumns] = None
+
+
+"""
+Wrapper around UpstreamDatabaseAggregateFunctions
+"""
+
+
+@strawberry.type
+class UpstreamDatabaseAggregate:
+    aggregate: Optional[UpstreamDatabaseAggregateFunctions] = None
+
 
 """
 ------------------------------------------------------------------------------
@@ -158,6 +262,48 @@ async def resolve_upstream_databases(
     Resolve UpstreamDatabase objects. Used for queries (see api/queries.py).
     """
     return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+def format_upstream_database_aggregate_output(query_results: RowMapping) -> UpstreamDatabaseAggregateFunctions:
+    """
+    Given a row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = UpstreamDatabaseAggregateFunctions()
+    for aggregate_name, value in query_results.items():
+        if aggregate_name == "count":
+            output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            # Filter out the group_by key from the results if one was provided.
+            if aggregator_fn in aggregator_map.keys():
+                if not getattr(output, aggregator_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregator_fn, UpstreamDatabaseMinMaxColumns())
+                    else:
+                        setattr(output, aggregator_fn, UpstreamDatabaseNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
+    return output
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_upstream_databases_aggregate(
+    info: Info,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: Optional[UpstreamDatabaseWhereClause] = None,
+) -> UpstreamDatabaseAggregate:
+    """
+    Aggregate values for UpstreamDatabase objects. Used for queries (see api/queries.py).
+    """
+    # Get the selected aggregate functions and columns to operate on
+    # TODO: not sure why selected_fields is a list
+    # The first list of selections will always be ["aggregate"], so just grab the first item
+    selections = info.selected_fields[0].selections[0].selections
+    rows = await get_aggregate_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_output = format_upstream_database_aggregate_output(rows)
+    return UpstreamDatabaseAggregate(aggregate=aggregate_output)
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
