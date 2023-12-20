@@ -15,22 +15,17 @@ E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
 
 
-class Hashabledict(dict):
-    def __hash__(self):  # type: ignore
-        return hash(tuple(sorted(self.items())))
-
-
-def make_hashable(somedict: dict) -> Hashabledict:
-    res = {}
-    for k, v in somedict.items():
+def get_where_hash(input_dict: dict) -> int:
+    hash_dict = {}
+    for k, v in input_dict.items():
         if type(v) == dict:
-            v = hash(make_hashable(v))
+            v = get_where_hash(v)
         # NOTE - we're explicitly not supporting dicts inside lists since
         # our current where clause interface doesn't call for it.
         if type(v) == list:
             v = hash(frozenset(v))
-        res[k] = v
-    return Hashabledict(res)
+        hash_dict[k] = v
+    return hash(tuple(sorted(hash_dict.items())))
 
 
 class EntityLoader:
@@ -62,9 +57,9 @@ class EntityLoader:
         """
         if not where:
             where = {}
-        where_str = make_hashable(where)
+        where_hash = get_where_hash(where)
         try:
-            return self._loaders[(relationship, where_str)]  # type: ignore
+            return self._loaders[(relationship, where_hash)]  # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
