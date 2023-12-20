@@ -1,14 +1,15 @@
 import typing
 from collections import defaultdict
-from typing import Any, Mapping, Optional, Tuple, Sequence
+from typing import Any, Mapping, Optional, Sequence, Tuple
+
 import database.models as db
+from api.core.helpers import get_db_query, get_db_rows
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.database.connect import AsyncDB
+from platformics.security.authorization import CerbosAction
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.dataloader import DataLoader
-from platformics.security.authorization import CerbosAction
-from api.core.helpers import get_db_query, get_db_rows
 
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
@@ -16,14 +17,18 @@ T = typing.TypeVar("T")
 
 class Hashabledict(dict):
     def __hash__(self):  # type: ignore
-        return hash(frozenset(self))
+        return hash(tuple(sorted(self.items())))
 
 
-def make_hashable(whereclause: dict) -> Hashabledict:
+def make_hashable(somedict: dict) -> Hashabledict:
     res = {}
-    for k, v in whereclause.items():
+    for k, v in somedict.items():
         if type(v) == dict:
-            v = make_hashable(v)
+            v = hash(make_hashable(v))
+        # NOTE - we're explicitly not supporting dicts inside lists since
+        # our current where clause interface doesn't call for it.
+        if type(v) == list:
+            v = hash(frozenset(v))
         res[k] = v
     return Hashabledict(res)
 
