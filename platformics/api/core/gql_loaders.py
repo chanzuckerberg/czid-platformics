@@ -1,31 +1,31 @@
 import typing
 from collections import defaultdict
-from typing import Any, Mapping, Optional, Tuple, Sequence
+from typing import Any, Mapping, Optional, Sequence, Tuple
+
 import database.models as db
+from api.core.helpers import get_db_query, get_db_rows
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.database.connect import AsyncDB
+from platformics.security.authorization import CerbosAction
 from sqlalchemy.orm import RelationshipProperty
 from strawberry.dataloader import DataLoader
-from platformics.security.authorization import CerbosAction
-from api.core.helpers import get_db_query, get_db_rows
 
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
 
 
-class Hashabledict(dict):
-    def __hash__(self):  # type: ignore
-        return hash(frozenset(self))
-
-
-def make_hashable(whereclause: dict) -> Hashabledict:
-    res = {}
-    for k, v in whereclause.items():
+def get_where_hash(input_dict: dict) -> int:
+    hash_dict = {}
+    for k, v in input_dict.items():
         if type(v) == dict:
-            v = make_hashable(v)
-        res[k] = v
-    return Hashabledict(res)
+            v = get_where_hash(v)
+        # NOTE - we're explicitly not supporting dicts inside lists since
+        # our current where clause interface doesn't call for it.
+        if type(v) == list:
+            v = hash(frozenset(v))
+        hash_dict[k] = v
+    return hash(tuple(sorted(hash_dict.items())))
 
 
 class EntityLoader:
@@ -57,9 +57,9 @@ class EntityLoader:
         """
         if not where:
             where = {}
-        where_str = make_hashable(where)
+        where_hash = get_where_hash(where)
         try:
-            return self._loaders[(relationship, where_str)]  # type: ignore
+            return self._loaders[(relationship, where_hash)]  # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
