@@ -9,7 +9,7 @@ import database.models as db
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from platformics.security.authorization import CerbosAction, get_resource_query
-from sqlalchemy import ColumnElement, func, distinct
+from sqlalchemy import ColumnElement, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.api.core.gql_to_sql import operator_map, aggregator_map
 from sqlalchemy import inspect, and_
@@ -118,7 +118,7 @@ def get_aggregate_db_query(
 ) -> Select:
     """
     Given a model class, a where clause, and an aggregate clause,
-    return a SQLAlchemy query that performs the aggregations, with results 
+    return a SQLAlchemy query that performs the aggregations, with results
     limited based on the where clause, and which entities the user has access to.
     """
     if not depth:
@@ -140,15 +140,17 @@ def get_aggregate_db_query(
             col = model_cls.id
             count_fn = agg_fn(model_cls.id)
             if aggregator.arguments:
-                if aggregator.arguments['columns']:
-                    col = getattr(model_cls, aggregator.arguments['columns'])
-                if aggregator.arguments['distinct']:
+                if aggregator.arguments["columns"]:
+                    col = getattr(model_cls, aggregator.arguments["columns"])
+                if aggregator.arguments["distinct"]:
                     count_fn = agg_fn(distinct(col))
             aggregate_query_fields.append(count_fn.label("count"))
         else:
             for col in aggregator.selections:
                 col_name = strcase.to_snake(col.name)
-                aggregate_query_fields.append(agg_fn(getattr(model_cls, col_name)).label(f"{aggregator.name}_{col_name}"))
+                aggregate_query_fields.append(
+                    agg_fn(getattr(model_cls, col_name)).label(f"{aggregator.name}_{col_name}")
+                )
     query = query.with_only_columns(*aggregate_query_fields)
     query = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, depth  # type: ignore
