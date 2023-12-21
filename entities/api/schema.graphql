@@ -1620,9 +1620,18 @@ input SequenceAlignmentIndexWhereClauseMutations {
 }
 
 enum SequencingProtocol {
-  MNGS
-  TARGETED
-  MSSPE
+  ampliseq
+  artic
+  artic_v3
+  artic_v4
+  artic_v5
+  combined_msspe_artic
+  covidseq
+  midnight
+  msspe
+  snap
+  varskip
+  easyseq
 }
 
 input SequencingProtocolEnumComparators {
