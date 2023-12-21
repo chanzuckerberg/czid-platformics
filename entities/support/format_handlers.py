@@ -23,17 +23,45 @@ class FileFormatHandler(Protocol):
         raise NotImplementedError
 
 
-class BioPythonHandler(FileFormatHandler):
+class FastaHandler(FileFormatHandler):
     """
-    Validate files using BioPython (supports FASTQ, FASTA, and others: https://biopython.org/wiki/SeqIO#file-formats)
+    Validate FASTA files. Note that even truncated FASTA files are supported:
+    ">" is a valid FASTA file, and so is ">abc" (without a sequence).
     """
-
-    format: str
 
     @classmethod
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
-        fp = get_file_preview(client, bucket, file_path)
-        assert len([read for read in SeqIO.parse(fp, BioPythonHandler.format)]) > 0
+        with get_file_preview(client, bucket, file_path) as fp:
+            sequences = 0
+            for _ in SeqIO.parse(fp, "fasta"):
+                sequences += 1
+            assert sequences > 0
+
+
+# FIXME: Add tests for FASTA, FASTQ, JSON, BED
+class FastqHandler(FileFormatHandler):
+    """
+    Validate FASTQ files. Ignores truncated lines by assuming 1 read = 4 lines.
+    """
+
+    @classmethod
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
+        with get_file_preview(client, bucket, file_path) as fp:
+            # Load file in memory and only keep a total number of lines that % 4 == 0
+            # FIXME: cleanup code
+            f = fp.read()
+            f = f.split("\n")
+            f = f[: len(f) - (len(f) % 4)]
+            f = "\n".join(f)
+            fp = tempfile.NamedTemporaryFile("w+b")
+            fp.write(f.encode("utf-8"))
+            fp.flush()
+
+            # Check it with SeqIO:
+            reads = 0
+            for _ in SeqIO.parse(fp, "fastq"):
+                reads += 1
+            assert reads > 0
 
 
 class JSONHandler(FileFormatHandler):
@@ -68,9 +96,11 @@ def get_validator(format: str) -> type[FileFormatHandler]:
     """
     Returns the validator for a given file format
     """
-    if format in ["fastq", "fasta"]:
-        BioPythonHandler.format = format
-        return BioPythonHandler
+    if format == "fasta":
+        return FastaHandler
+    elif format == "fastq":
+        return FastqHandler
+    # FIXME: validate BED files (SeqIO.parse() doesn't support BED files)
     elif format == "bed":
         pass
     elif format == "json":
