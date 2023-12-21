@@ -3,6 +3,7 @@ Logic to validate that a file of a certain format is valid
 """
 
 import gzip
+import json
 import tempfile
 import typing
 from abc import abstractmethod
@@ -24,7 +25,7 @@ class FileFormatHandler(Protocol):
 
 class BioPythonHandler(FileFormatHandler):
     """
-    Validate files using BioPython (supports FASTQ, FASTA, BED)
+    Validate files using BioPython (supports FASTQ, FASTA, and others: https://biopython.org/wiki/SeqIO#file-formats)
     """
 
     format: str
@@ -33,6 +34,18 @@ class BioPythonHandler(FileFormatHandler):
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
         fp = get_file_preview(client, bucket, file_path)
         assert len([read for read in SeqIO.parse(fp, BioPythonHandler.format)]) > 0
+
+
+class JSONHandler(FileFormatHandler):
+    """
+    Validate JSON files
+    """
+
+    @classmethod
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
+        with get_file_preview(client, bucket, file_path) as fp:
+            file_content = fp.read()  # works with plain text and gzip
+        json.loads(file_content)  # throws an exception for invalid JSON
 
 
 def get_file_preview(client: S3Client, bucket: str, file_path: str) -> typing.TextIO:
@@ -55,9 +68,12 @@ def get_validator(format: str) -> type[FileFormatHandler]:
     """
     Returns the validator for a given file format
     """
-    # Make a general biopython validator with file format as argument
-    if format in ["fastq", "fasta", "bed"]:
+    if format in ["fastq", "fasta"]:
         BioPythonHandler.format = format
         return BioPythonHandler
+    elif format == "bed":
+        pass
+    elif format == "json":
+        return JSONHandler
     else:
         raise Exception(f"Unknown file format '{format}'")
