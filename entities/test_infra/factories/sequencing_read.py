@@ -36,7 +36,22 @@ class SequencingReadFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    protocol = fuzzy.FuzzyChoice(["MNGS", "TARGETED", "MSSPE"])
+    protocol = fuzzy.FuzzyChoice(
+        [
+            "ampliseq",
+            "artic",
+            "artic_v3",
+            "artic_v4",
+            "artic_v5",
+            "combined_msspe_artic",
+            "covidseq",
+            "midnight",
+            "msspe",
+            "snap",
+            "varskip",
+            "easyseq",
+        ]
+    )
     r1_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
