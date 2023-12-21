@@ -230,7 +230,7 @@ async def validate_file(
     """
     Utility function to validate a file against its file format.
     """
-    validator = get_validator(file.file_format, file.compression_type)
+    validator = get_validator(file.file_format)
     try:
         validator.validate(s3_client, file.namespace, file.path)
         file_size = s3_client.head_object(Bucket=file.namespace, Key=file.path)["ContentLength"]

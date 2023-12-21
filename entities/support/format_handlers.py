@@ -22,26 +22,17 @@ class FileFormatHandler(Protocol):
         raise NotImplementedError
 
 
-class FastqHandler(FileFormatHandler):
+class BioPythonHandler(FileFormatHandler):
     """
-    Validate FASTQ files (contain sequencing reads)
+    Validate files using BioPython (supports FASTQ, FASTA, BED)
     """
+
+    format: str
 
     @classmethod
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
         fp = get_file_preview(client, bucket, file_path)
-        assert len([read for read in SeqIO.parse(fp, "fastq")]) > 0
-
-
-class FastaHandler(FileFormatHandler):
-    """
-    Validate FASTA files (contain sequences)
-    """
-
-    @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
-        fp = get_file_preview(client, bucket, file_path)
-        assert len([read for read in SeqIO.parse(fp, "fasta")]) > 0
+        assert len([read for read in SeqIO.parse(fp, BioPythonHandler.format)]) > 0
 
 
 def get_file_preview(client: S3Client, bucket: str, file_path: str) -> typing.TextIO:
@@ -60,13 +51,13 @@ def get_file_preview(client: S3Client, bucket: str, file_path: str) -> typing.Te
         return gzip.open(fp.name, "rt")
 
 
-def get_validator(format: str, compression_type: str) -> type[FileFormatHandler]:
+def get_validator(format: str) -> type[FileFormatHandler]:
     """
     Returns the validator for a given file format
     """
-    if format == "fastq":
-        return FastqHandler
-    elif format == "fasta":
-        return FastaHandler
+    # Make a general biopython validator with file format as argument
+    if format in ["fastq", "fasta", "bed"]:
+        BioPythonHandler.format = format
+        return BioPythonHandler
     else:
         raise Exception(f"Unknown file format '{format}'")
