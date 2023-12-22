@@ -17,6 +17,11 @@ resourcePolicy:
       effect: EFFECT_ALLOW
       derivedRoles:
         - owner
+
+    - actions: ['create', 'update', 'view']
+      effect: EFFECT_ALLOW
+      derivedRoles:
+        - admin
   schemas:
     principalSchema:
       ref: cerbos:///principal.json
