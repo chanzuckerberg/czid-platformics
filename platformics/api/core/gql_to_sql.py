@@ -7,7 +7,7 @@ import datetime
 import strawberry
 from platformics.thirdparty.strawberry_sqlalchemy_mapper import SSAPlugin, StrawberrySQLAlchemyMapper
 from platformics.thirdparty.strawberry_sqlalchemy_mapper.mapper import _IS_GENERATED_RESOLVER_KEY
-from sqlalchemy import inspect
+from sqlalchemy import func, inspect
 from sqlalchemy.orm import Mapper, RelationshipProperty
 from sqlalchemy.orm.state import InstanceState
 from strawberry import input
@@ -38,6 +38,16 @@ operator_map = {
     # "_nregex": Optional[str] # TODO
     # "_iregex": Optional[str]# TODO
     # "_niregex": Optional[str]# TODO
+}
+
+aggregator_map = {
+    "count": func.count,
+    "avg": func.avg,
+    "sum": func.sum,
+    "min": func.min,
+    "max": func.max,
+    "stddev": func.stddev,
+    "variance": func.variance,
 }
 
 
@@ -90,6 +100,18 @@ class IntComparators(TypedDict):
     _lt: Optional[int]
     _lte: Optional[int]
     _is_null: Optional[int]
+
+@strawberry.input
+class FloatComparators(TypedDict):
+    _eq: Optional[float]
+    _neq: Optional[float]
+    _in: Optional[list[float]]
+    _nin: Optional[list[float]]
+    _gt: Optional[float]
+    _gte: Optional[float]
+    _lt: Optional[float]
+    _lte: Optional[float]
+    _is_null: Optional[float]
 
 
 @strawberry.input

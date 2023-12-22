@@ -635,6 +635,328 @@
                   }
                 }
               }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SampleWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "samplesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SampleAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SequencingReadWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequencingReadsAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SequencingReadAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "GenomicRangeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "genomicRangesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "GenomicRangeAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReferenceGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "referenceGenomesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ReferenceGenomeAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SequenceAlignmentIndexWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequenceAlignmentIndicesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SequenceAlignmentIndexAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetadatumWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metadatasAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "MetadatumAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetadataFieldWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metadataFieldsAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "MetadataFieldAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetadataFieldProjectWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metadataFieldProjectsAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "MetadataFieldProjectAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "consensusGenomesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ConsensusGenomeAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetricConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metricsConsensusGenomesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "MetricConsensusGenomeAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TaxonWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "taxaAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "TaxonAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "UpstreamDatabaseWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "upstreamDatabasesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UpstreamDatabaseAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ContigWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "contigsAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ContigAggregate",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "PhylogeneticTreeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "phylogeneticTreesAggregate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PhylogeneticTreeAggregate",
+                  "ofType": null
+                }
+              }
             }
           ],
           "inputFields": null,
@@ -1405,6 +1727,24 @@
             },
             {
               "defaultValue": null,
+              "name": "entityId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "entityFieldName",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "status",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -1441,6 +1781,15 @@
             },
             {
               "defaultValue": null,
+              "name": "fileFormat",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "compressionType",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -1461,113 +1810,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "FileWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "_eq",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_neq",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_in",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "FileStatus",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nin",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "FileStatus",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gt",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gte",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lt",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lte",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_is_null",
-              "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "FileStatusEnumComparators",
           "possibleTypes": null
         },
         {
@@ -1747,6 +1989,113 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "StrComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "FileStatus",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "FileStatus",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "ENUM",
+                "name": "FileStatus",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "FileStatusEnumComparators",
           "possibleTypes": null
         },
         {
@@ -1968,6 +2317,25 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
+                    "name": "SequencingReadWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequencingReadsAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
                     "name": "MetadatumWhereClause",
                     "ofType": null
                   }
@@ -2018,6 +2386,25 @@
                   "name": "MetadatumConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetadatumWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metadatasAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumAggregate",
+                "ofType": null
               }
             }
           ],
@@ -2501,6 +2888,25 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
+                    "name": "ConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "consensusGenomesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
                     "name": "ReferenceGenomeWhereClause",
                     "ofType": null
                   }
@@ -2551,6 +2957,25 @@
                   "name": "ReferenceGenomeConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReferenceGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "referenceGenomesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeAggregate",
+                "ofType": null
               }
             },
             {
@@ -2619,6 +3044,25 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
+                    "name": "SequencingReadWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequencingReadsAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
                     "name": "SampleWhereClause",
                     "ofType": null
                   }
@@ -2669,6 +3113,25 @@
                   "name": "SampleConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SampleWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "samplesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleAggregate",
+                "ofType": null
               }
             }
           ],
@@ -2823,6 +3286,25 @@
                   "name": "TaxonConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TaxonWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "taxaAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonAggregate",
+                "ofType": null
               }
             }
           ],
@@ -4317,13 +4799,40 @@
         {
           "enumValues": [
             {
-              "name": "MNGS"
+              "name": "ampliseq"
             },
             {
-              "name": "TARGETED"
+              "name": "artic"
             },
             {
-              "name": "MSSPE"
+              "name": "artic_v3"
+            },
+            {
+              "name": "artic_v4"
+            },
+            {
+              "name": "artic_v5"
+            },
+            {
+              "name": "combined_msspe_artic"
+            },
+            {
+              "name": "covidseq"
+            },
+            {
+              "name": "midnight"
+            },
+            {
+              "name": "msspe"
+            },
+            {
+              "name": "snap"
+            },
+            {
+              "name": "varskip"
+            },
+            {
+              "name": "easyseq"
             }
           ],
           "fields": null,
@@ -5057,6 +5566,51 @@
             },
             {
               "defaultValue": null,
+              "name": "coverageDepth",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FloatComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FloatComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FloatComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "percentIdentity",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FloatComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "gcPercent",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FloatComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "totalReads",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5113,6 +5667,602 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "MetricConsensusGenomeWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Float",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "FloatComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Float",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "TaxonCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdParent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdSpecies",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdGenus",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdFamily",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdOrder",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdClass",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdPhylum",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdKingdom",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "wikipediaId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "commonName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "upstreamDatabaseIdentifier",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdParent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdSpecies",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdGenus",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdFamily",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdOrder",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdClass",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdPhylum",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxIdKingdom",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "wikipedia_id"
+            },
+            {
+              "name": "description"
+            },
+            {
+              "name": "common_name"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "is_phage"
+            },
+            {
+              "name": "upstream_database"
+            },
+            {
+              "name": "upstream_database_identifier"
+            },
+            {
+              "name": "level"
+            },
+            {
+              "name": "tax_id"
+            },
+            {
+              "name": "tax_id_parent"
+            },
+            {
+              "name": "tax_id_species"
+            },
+            {
+              "name": "tax_id_genus"
+            },
+            {
+              "name": "tax_id_family"
+            },
+            {
+              "name": "tax_id_order"
+            },
+            {
+              "name": "tax_id_class"
+            },
+            {
+              "name": "tax_id_phylum"
+            },
+            {
+              "name": "tax_id_kingdom"
+            },
+            {
+              "name": "consensus_genomes"
+            },
+            {
+              "name": "reference_genomes"
+            },
+            {
+              "name": "sequencing_reads"
+            },
+            {
+              "name": "samples"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "TaxonCountColumns",
           "possibleTypes": null
         },
         {
@@ -5430,6 +6580,25 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetricConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metricsAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeAggregate",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -5744,6 +6913,25 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
+                    "name": "ConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "consensusGenomesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
                     "name": "ContigWhereClause",
                     "ofType": null
                   }
@@ -5794,6 +6982,25 @@
                   "name": "ContigConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ContigWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "contigsAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigAggregate",
+                "ofType": null
               }
             }
           ],
@@ -5982,6 +7189,25 @@
                   "name": "SequencingReadConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SequencingReadWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequencingReadsAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadAggregate",
+                "ofType": null
               }
             }
           ],
@@ -6242,6 +7468,25 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
+                    "name": "SequenceAlignmentIndexWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequenceAlignmentIndicesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
                     "name": "ConsensusGenomeWhereClause",
                     "ofType": null
                   }
@@ -6301,6 +7546,25 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
+                    "name": "ConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "consensusGenomesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
                     "name": "GenomicRangeWhereClause",
                     "ofType": null
                   }
@@ -6351,6 +7615,25 @@
                   "name": "GenomicRangeConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "GenomicRangeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "genomicRangesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeAggregate",
+                "ofType": null
               }
             }
           ],
@@ -6598,6 +7881,453 @@
           "fields": [
             {
               "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequenceAlignmentIndexAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequenceAlignmentIndexNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "SequenceAlignmentIndexCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequenceAlignmentIndexAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequenceAlignmentIndexNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequenceAlignmentIndexMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "index_file"
+            },
+            {
+              "name": "reference_genome"
+            },
+            {
+              "name": "tool"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "SequenceAlignmentIndexCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ConsensusGenomeAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ConsensusGenomeCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ConsensusGenomeAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ConsensusGenomeNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ConsensusGenomeMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "taxon"
+            },
+            {
+              "name": "sequence_read"
+            },
+            {
+              "name": "reference_genome"
+            },
+            {
+              "name": "sequence"
+            },
+            {
+              "name": "intermediate_outputs"
+            },
+            {
+              "name": "metrics"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "ConsensusGenomeCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
               "name": "pageInfo",
               "type": {
                 "kind": "NON_NULL",
@@ -6678,6 +8408,225 @@
           "fields": [
             {
               "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "GenomicRangeCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "reference_genome"
+            },
+            {
+              "name": "file"
+            },
+            {
+              "name": "sequencing_reads"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "GenomicRangeCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
               "name": "pageInfo",
               "type": {
                 "kind": "NON_NULL",
@@ -6751,6 +8700,249 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "SequencingReadEdge",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "SequencingReadCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "sample"
+            },
+            {
+              "name": "protocol"
+            },
+            {
+              "name": "r1_file"
+            },
+            {
+              "name": "r2_file"
+            },
+            {
+              "name": "technology"
+            },
+            {
+              "name": "nucleic_acid"
+            },
+            {
+              "name": "has_ercc"
+            },
+            {
+              "name": "taxon"
+            },
+            {
+              "name": "primer_file"
+            },
+            {
+              "name": "consensus_genomes"
+            },
+            {
+              "name": "contigs"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "SequencingReadCountColumns",
           "possibleTypes": null
         },
         {
@@ -6952,6 +9144,231 @@
           "fields": [
             {
               "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ContigAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ContigNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ContigCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ContigAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ContigNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "sequence",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ContigMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "sequencing_read"
+            },
+            {
+              "name": "sequence"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "ContigCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
               "name": "pageInfo",
               "type": {
                 "kind": "NON_NULL",
@@ -7112,6 +9529,51 @@
             },
             {
               "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "totalReads",
               "type": {
                 "kind": "SCALAR",
@@ -7215,6 +9677,453 @@
           "fields": [
             {
               "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MetricConsensusGenomeCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "totalReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "mappedReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "refSnps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nActg",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nMissing",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nAmbiguous",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "totalReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "mappedReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "refSnps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nActg",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nMissing",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nAmbiguous",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "consensus_genome"
+            },
+            {
+              "name": "coverage_depth"
+            },
+            {
+              "name": "reference_genome_length"
+            },
+            {
+              "name": "percent_genome_called"
+            },
+            {
+              "name": "percent_identity"
+            },
+            {
+              "name": "gc_percent"
+            },
+            {
+              "name": "total_reads"
+            },
+            {
+              "name": "mapped_reads"
+            },
+            {
+              "name": "ref_snps"
+            },
+            {
+              "name": "n_actg"
+            },
+            {
+              "name": "n_missing"
+            },
+            {
+              "name": "n_ambiguous"
+            },
+            {
+              "name": "coverage_viz_summary_file"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MetricConsensusGenomeCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
               "name": "pageInfo",
               "type": {
                 "kind": "NON_NULL",
@@ -7295,6 +10204,270 @@
           "fields": [
             {
               "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ReferenceGenomeAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "ReferenceGenomeCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ReferenceGenomeAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ReferenceGenomeNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "accessionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ReferenceGenomeMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "file"
+            },
+            {
+              "name": "file_index"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "description"
+            },
+            {
+              "name": "taxon"
+            },
+            {
+              "name": "accession_id"
+            },
+            {
+              "name": "sequence_alignment_indices"
+            },
+            {
+              "name": "consensus_genomes"
+            },
+            {
+              "name": "genomic_ranges"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "ReferenceGenomeCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
               "name": "pageInfo",
               "type": {
                 "kind": "NON_NULL",
@@ -7368,6 +10541,288 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "SampleEdge",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "SampleCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "sampleType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionLocation",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "sample_type"
+            },
+            {
+              "name": "water_control"
+            },
+            {
+              "name": "collection_date"
+            },
+            {
+              "name": "collection_location"
+            },
+            {
+              "name": "description"
+            },
+            {
+              "name": "host_taxon"
+            },
+            {
+              "name": "sequencing_reads"
+            },
+            {
+              "name": "metadatas"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "SampleCountColumns",
           "possibleTypes": null
         },
         {
@@ -7707,6 +11162,25 @@
               }
             },
             {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetadataFieldProjectWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "fieldGroupAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectAggregate",
+                "ofType": null
+              }
+            },
+            {
               "args": [],
               "name": "fieldName",
               "type": {
@@ -7833,6 +11307,25 @@
                   "name": "MetadatumConnection",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetadatumWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "metadatasAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumAggregate",
+                "ofType": null
               }
             }
           ],
@@ -8045,6 +11538,468 @@
           ],
           "kind": "OBJECT",
           "name": "MetadataFieldProject",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldProjectAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldProjectNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MetadataFieldProjectCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldProjectAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "projectId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldProjectNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "projectId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldProjectMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "project_id"
+            },
+            {
+              "name": "metadata_field"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MetadataFieldProjectCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadatumAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MetadatumCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadatumAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadatumNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "value",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadatumMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "sample"
+            },
+            {
+              "name": "metadata_field"
+            },
+            {
+              "name": "value"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MetadatumCountColumns",
           "possibleTypes": null
         },
         {
@@ -8349,6 +12304,726 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "PhylogeneticTreeFormatEnumComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadataFieldNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MetadataFieldCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "fieldName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "fieldType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "options",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "defaultValue",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadataFieldMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "field_group"
+            },
+            {
+              "name": "field_name"
+            },
+            {
+              "name": "description"
+            },
+            {
+              "name": "field_type"
+            },
+            {
+              "name": "is_required"
+            },
+            {
+              "name": "options"
+            },
+            {
+              "name": "default_value"
+            },
+            {
+              "name": "metadatas"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MetadataFieldCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UpstreamDatabaseAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "UpstreamDatabaseCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UpstreamDatabaseAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UpstreamDatabaseNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UpstreamDatabaseMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "taxa"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "UpstreamDatabaseCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PhylogeneticTreeAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PhylogeneticTreeCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PhylogeneticTreeAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PhylogeneticTreeNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PhylogeneticTreeMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "tree"
+            },
+            {
+              "name": "format"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "PhylogeneticTreeCountColumns",
           "possibleTypes": null
         },
         {
@@ -11807,6 +16482,51 @@
             },
             {
               "defaultValue": "null",
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "totalReads",
               "type": {
                 "kind": "SCALAR",
@@ -11893,6 +16613,51 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
                 "ofType": null
               }
             },

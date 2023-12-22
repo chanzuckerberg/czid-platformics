@@ -12,7 +12,7 @@ from typing import Sequence, List
 from api.files import File, resolve_files
 {%- endif %}
 {%- for class in classes %}
-from api.types.{{ class.snake_name }} import {{ class.name }}, resolve_{{ class.plural_snake_name }}
+from api.types.{{ class.snake_name }} import {{ class.name }}, resolve_{{ class.plural_snake_name }}, {{ class.name }}Aggregate, resolve_{{ class.plural_snake_name }}_aggregate
 {%- endfor %}
 
 
@@ -30,5 +30,10 @@ class Query:
     # Query entities
     {%- for class in classes %}
     {{ class.plural_snake_name }}: Sequence[{{ class.name }}] = resolve_{{ class.plural_snake_name }}
+    {%- endfor %}
+
+    # Query entity aggregates
+    {%- for class in classes %}
+    {{ class.plural_snake_name }}_aggregate: {{ class.name }}Aggregate = resolve_{{ class.plural_snake_name }}_aggregate
     {%- endfor %}
 

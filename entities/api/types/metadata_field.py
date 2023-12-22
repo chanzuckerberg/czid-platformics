@@ -12,13 +12,19 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows
+from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
+from api.types.metadata_field_project import (
+    MetadataFieldProjectAggregate,
+    format_metadata_field_project_aggregate_output,
+)
+from api.types.metadatum import MetadatumAggregate, format_metadatum_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    aggregator_map,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -27,10 +33,12 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -73,6 +81,24 @@ async def load_metadata_field_project_rows(
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
+@strawberry.field
+async def load_metadata_field_project_aggregate_rows(
+    root: "MetadataField",
+    info: Info,
+    where: Annotated["MetadataFieldProjectWhereClause", strawberry.lazy("api.types.metadata_field_project")]
+    | None = None,
+) -> Optional[Annotated["MetadataFieldProjectAggregate", strawberry.lazy("api.types.metadata_field_project")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.MetadataField)
+    relationship = mapper.relationships["field_group"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_metadata_field_project_aggregate_output(result)
+    return MetadataFieldProjectAggregate(aggregate=aggregate_output)
+
+
 @relay.connection(
     relay.ListConnection[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]]  # type:ignore
 )
@@ -85,6 +111,23 @@ async def load_metadatum_rows(
     mapper = inspect(db.MetadataField)
     relationship = mapper.relationships["metadatas"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_metadatum_aggregate_rows(
+    root: "MetadataField",
+    info: Info,
+    where: Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")] | None = None,
+) -> Optional[Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.MetadataField)
+    relationship = mapper.relationships["metadatas"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_metadatum_aggregate_output(result)
+    return MetadatumAggregate(aggregate=aggregate_output)
 
 
 """
@@ -141,6 +184,9 @@ class MetadataField(EntityInterface):
     field_group: Sequence[
         Annotated["MetadataFieldProject", strawberry.lazy("api.types.metadata_field_project")]
     ] = load_metadata_field_project_rows  # type:ignore
+    field_group_aggregate: Optional[
+        Annotated["MetadataFieldProjectAggregate", strawberry.lazy("api.types.metadata_field_project")]
+    ] = load_metadata_field_project_aggregate_rows  # type:ignore
     field_name: str
     description: str
     field_type: str
@@ -150,6 +196,9 @@ class MetadataField(EntityInterface):
     metadatas: Sequence[
         Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_rows  # type:ignore
+    metadatas_aggregate: Optional[
+        Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]
+    ] = load_metadatum_aggregate_rows  # type:ignore
 
 
 """
@@ -159,6 +208,96 @@ Strawberry type *or* a SQLAlchemy model instance as a valid response class from 
 MetadataField.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.MetadataField or type(obj) == MetadataField
 )
+
+"""
+------------------------------------------------------------------------------
+Aggregation types
+------------------------------------------------------------------------------
+"""
+
+"""
+Define columns that support numerical aggregations
+"""
+
+
+@strawberry.type
+class MetadataFieldNumericalColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define columns that support min/max aggregations
+"""
+
+
+@strawberry.type
+class MetadataFieldMinMaxColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    field_name: Optional[str] = None
+    description: Optional[str] = None
+    field_type: Optional[str] = None
+    options: Optional[str] = None
+    default_value: Optional[str] = None
+
+
+"""
+Define enum of all columns to support count and count(distinct) aggregations
+"""
+
+
+@strawberry.enum
+class MetadataFieldCountColumns(enum.Enum):
+    field_group = "field_group"
+    field_name = "field_name"
+    description = "description"
+    field_type = "field_type"
+    is_required = "is_required"
+    options = "options"
+    default_value = "default_value"
+    metadatas = "metadatas"
+    entity_id = "entity_id"
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+
+
+"""
+All supported aggregation functions
+"""
+
+
+@strawberry.type
+class MetadataFieldAggregateFunctions:
+    # This is a hack to accept "distinct" and "columns" as arguments to "count"
+    @strawberry.field
+    def count(
+        self, distinct: Optional[bool] = False, columns: Optional[MetadataFieldCountColumns] = None
+    ) -> Optional[int]:
+        # Count gets set with the proper value in the resolver, so we just return it here
+        return self.count  # type: ignore
+
+    sum: Optional[MetadataFieldNumericalColumns] = None
+    avg: Optional[MetadataFieldNumericalColumns] = None
+    min: Optional[MetadataFieldMinMaxColumns] = None
+    max: Optional[MetadataFieldMinMaxColumns] = None
+    stddev: Optional[MetadataFieldNumericalColumns] = None
+    variance: Optional[MetadataFieldNumericalColumns] = None
+
+
+"""
+Wrapper around MetadataFieldAggregateFunctions
+"""
+
+
+@strawberry.type
+class MetadataFieldAggregate:
+    aggregate: Optional[MetadataFieldAggregateFunctions] = None
+
 
 """
 ------------------------------------------------------------------------------
@@ -207,6 +346,48 @@ async def resolve_metadata_fields(
     Resolve MetadataField objects. Used for queries (see api/queries.py).
     """
     return await get_db_rows(db.MetadataField, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+def format_metadata_field_aggregate_output(query_results: RowMapping) -> MetadataFieldAggregateFunctions:
+    """
+    Given a row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = MetadataFieldAggregateFunctions()
+    for aggregate_name, value in query_results.items():
+        if aggregate_name == "count":
+            output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            # Filter out the group_by key from the results if one was provided.
+            if aggregator_fn in aggregator_map.keys():
+                if not getattr(output, aggregator_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregator_fn, MetadataFieldMinMaxColumns())
+                    else:
+                        setattr(output, aggregator_fn, MetadataFieldNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
+    return output
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_metadata_fields_aggregate(
+    info: Info,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: Optional[MetadataFieldWhereClause] = None,
+) -> MetadataFieldAggregate:
+    """
+    Aggregate values for MetadataField objects. Used for queries (see api/queries.py).
+    """
+    # Get the selected aggregate functions and columns to operate on
+    # TODO: not sure why selected_fields is a list
+    # The first list of selections will always be ["aggregate"], so just grab the first item
+    selections = info.selected_fields[0].selections[0].selections
+    rows = await get_aggregate_db_rows(db.MetadataField, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_output = format_metadata_field_aggregate_output(rows)
+    return MetadataFieldAggregate(aggregate=aggregate_output)
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

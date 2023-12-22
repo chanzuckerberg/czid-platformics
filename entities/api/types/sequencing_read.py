@@ -12,14 +12,17 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
-from api.core.helpers import get_db_rows
+from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
+from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
+from api.types.contig import ContigAggregate, format_contig_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
+    aggregator_map,
     EnumComparators,
     IntComparators,
     UUIDComparators,
@@ -28,10 +31,12 @@ from platformics.api.core.gql_to_sql import (
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
+from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
 
 E = typing.TypeVar("E", db.File, db.Entity)
@@ -117,6 +122,23 @@ async def load_consensus_genome_rows(
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
+@strawberry.field
+async def load_consensus_genome_aggregate_rows(
+    root: "SequencingRead",
+    info: Info,
+    where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
+) -> Optional[Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.SequencingRead)
+    relationship = mapper.relationships["consensus_genomes"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_consensus_genome_aggregate_output(result)
+    return ConsensusGenomeAggregate(aggregate=aggregate_output)
+
+
 @relay.connection(
     relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contig")]]  # type:ignore
 )
@@ -129,6 +151,23 @@ async def load_contig_rows(
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["contigs"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_contig_aggregate_rows(
+    root: "SequencingRead",
+    info: Info,
+    where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")] | None = None,
+) -> Optional[Annotated["ContigAggregate", strawberry.lazy("api.types.contig")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.SequencingRead)
+    relationship = mapper.relationships["contigs"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_contig_aggregate_output(result)
+    return ContigAggregate(aggregate=aggregate_output)
 
 
 """
@@ -224,7 +263,13 @@ class SequencingRead(EntityInterface):
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
+    consensus_genomes_aggregate: Optional[
+        Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
+    ] = load_consensus_genome_aggregate_rows  # type:ignore
     contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
+    contigs_aggregate: Optional[
+        Annotated["ContigAggregate", strawberry.lazy("api.types.contig")]
+    ] = load_contig_aggregate_rows  # type:ignore
 
 
 """
@@ -234,6 +279,94 @@ Strawberry type *or* a SQLAlchemy model instance as a valid response class from 
 SequencingRead.__strawberry_definition__.is_type_of = (  # type: ignore
     lambda obj, info: type(obj) == db.SequencingRead or type(obj) == SequencingRead
 )
+
+"""
+------------------------------------------------------------------------------
+Aggregation types
+------------------------------------------------------------------------------
+"""
+
+"""
+Define columns that support numerical aggregations
+"""
+
+
+@strawberry.type
+class SequencingReadNumericalColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define columns that support min/max aggregations
+"""
+
+
+@strawberry.type
+class SequencingReadMinMaxColumns:
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+
+
+"""
+Define enum of all columns to support count and count(distinct) aggregations
+"""
+
+
+@strawberry.enum
+class SequencingReadCountColumns(enum.Enum):
+    sample = "sample"
+    protocol = "protocol"
+    r1_file = "r1_file"
+    r2_file = "r2_file"
+    technology = "technology"
+    nucleic_acid = "nucleic_acid"
+    has_ercc = "has_ercc"
+    taxon = "taxon"
+    primer_file = "primer_file"
+    consensus_genomes = "consensus_genomes"
+    contigs = "contigs"
+    entity_id = "entity_id"
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+
+
+"""
+All supported aggregation functions
+"""
+
+
+@strawberry.type
+class SequencingReadAggregateFunctions:
+    # This is a hack to accept "distinct" and "columns" as arguments to "count"
+    @strawberry.field
+    def count(
+        self, distinct: Optional[bool] = False, columns: Optional[SequencingReadCountColumns] = None
+    ) -> Optional[int]:
+        # Count gets set with the proper value in the resolver, so we just return it here
+        return self.count  # type: ignore
+
+    sum: Optional[SequencingReadNumericalColumns] = None
+    avg: Optional[SequencingReadNumericalColumns] = None
+    min: Optional[SequencingReadMinMaxColumns] = None
+    max: Optional[SequencingReadMinMaxColumns] = None
+    stddev: Optional[SequencingReadNumericalColumns] = None
+    variance: Optional[SequencingReadNumericalColumns] = None
+
+
+"""
+Wrapper around SequencingReadAggregateFunctions
+"""
+
+
+@strawberry.type
+class SequencingReadAggregate:
+    aggregate: Optional[SequencingReadAggregateFunctions] = None
+
 
 """
 ------------------------------------------------------------------------------
@@ -288,6 +421,48 @@ async def resolve_sequencing_reads(
     Resolve SequencingRead objects. Used for queries (see api/queries.py).
     """
     return await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [])  # type: ignore
+
+
+def format_sequencing_read_aggregate_output(query_results: RowMapping) -> SequencingReadAggregateFunctions:
+    """
+    Given a row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = SequencingReadAggregateFunctions()
+    for aggregate_name, value in query_results.items():
+        if aggregate_name == "count":
+            output.count = value
+        else:
+            aggregator_fn, col_name = aggregate_name.split("_", 1)
+            # Filter out the group_by key from the results if one was provided.
+            if aggregator_fn in aggregator_map.keys():
+                if not getattr(output, aggregator_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregator_fn, SequencingReadMinMaxColumns())
+                    else:
+                        setattr(output, aggregator_fn, SequencingReadNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
+    return output
+
+
+@strawberry.field(extensions=[DependencyExtension()])
+async def resolve_sequencing_reads_aggregate(
+    info: Info,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    where: Optional[SequencingReadWhereClause] = None,
+) -> SequencingReadAggregate:
+    """
+    Aggregate values for SequencingRead objects. Used for queries (see api/queries.py).
+    """
+    # Get the selected aggregate functions and columns to operate on
+    # TODO: not sure why selected_fields is a list
+    # The first list of selections will always be ["aggregate"], so just grab the first item
+    selections = info.selected_fields[0].selections[0].selections
+    rows = await get_aggregate_db_rows(db.SequencingRead, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_output = format_sequencing_read_aggregate_output(rows)
+    return SequencingReadAggregate(aggregate=aggregate_output)
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
