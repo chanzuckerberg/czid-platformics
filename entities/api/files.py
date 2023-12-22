@@ -36,8 +36,8 @@ from platformics.api.core.deps import (
     get_sts_client,
 )
 
-FILE_CONCATENATION_MAX = 100
-FILE_CONCATENATION_MAX_SIZE = 1e6
+FILE_CONCATENATION_MAX = 200
+FILE_CONCATENATION_MAX_SIZE = 50e3  # SARS-CoV-2 genome is ~30kbp
 FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
 
 # ------------------------------------------------------------------------------
@@ -459,8 +459,8 @@ async def concatenate_files(
 ) -> SignedURL:
     """
     Concatenate file contents synchronously. Only use for small files e.g. for exporting small CG FASTAs to Nextclade.
+    We only support doing so on SARS-CoV-2 FASTAs (~30kbp genome) so it's ok to do synchronously.
     """
-    # TODO: Check with Product on a reasonable max
     if len(ids) > FILE_CONCATENATION_MAX:
         raise Exception("Cannot concatenate more than 100 files")
 
