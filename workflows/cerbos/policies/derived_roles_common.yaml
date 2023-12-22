@@ -8,9 +8,7 @@ derivedRoles:
       parentRoles: ["user"]
       condition:
         match:
-          any:
-            of:
-              - expr: request.resource.attr.owner_user_id == request.principal.attr.user_id
+          expr: request.resource.attr.owner_user_id == request.principal.attr.user_id
 
     - name: project_member
       parentRoles: ["user"]
@@ -25,6 +23,4 @@ derivedRoles:
       parentRoles: ["user"]
       condition:
         match:
-          any:
-            of:
-              - expr: request.resource.attr.collection_id in request.principal.attr.admin_projects
+          expr: request.resource.attr.collection_id in request.principal.attr.admin_projects
