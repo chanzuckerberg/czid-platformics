@@ -49,12 +49,30 @@ enums:
       DNA:
   SequencingProtocol:
     permissible_values:
-      MNGS:
-        description: Metagenomics Sequencing
-      TARGETED:
-        description: Targeted Squencing (amplified via primers)
-      MSSPE:
-        description: MSSPE Sequencing
+      ampliseq:
+        description: Targeted sequencing (see https://www.illumina.com/products/by-brand/ampliseq.html)
+      artic:
+        description: SARS-CoV-2 protocol (see https://artic.network/resources/ncov/ncov-amplicon-v3.pdf)
+      artic_v3:
+        description: SARS-CoV-2 protocol version 3 with short amplicons (275 bp) from Biohub
+      artic_v4:
+        description: SARS-CoV-2 protocol version 4 (see https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4/SARS-CoV-2.primer.bed)
+      artic_v5:
+        description: SARS-CoV-2 protocol version 5 (see https://github.com/quick-lab/SARS-CoV-2/tree/main/400/v5.3.2_400)
+      combined_msspe_artic:
+        description: MSSPE + ARTIC concatenated
+      covidseq:
+        description: SARS-CoV-2 protocol (see https://github.com/artic-network/artic-ncov2019/blob/master/primer_schemes/nCoV-2019/V1/nCoV-2019.bed)
+      midnight:
+        description: Midnight primer set used at Biohub for Nanopore samples to produce longer reads and reduce the likelihood of coverage drop-out due to genome mutations in the primer sites
+      msspe:
+        description: Targeted viral RNA sequencing (see https://www.nature.com/articles/s41564-019-0637-9)
+      snap:
+        description: Whole genome viral sequencing (see https://www.bioscience.co.uk/resources/swift-normalase-amplicon-panel-snap-sars-cov-2-protocol.pdf)
+      varskip:
+        description: Multiplex PCR for SARS-CoV-2 sequencing (see https://github.com/nebiolabs/VarSkip)
+      easyseq:
+        description: SARS-CoV-2 sequencing (see https://www.nimagen.com/gfx/Covid19/SARS_CoV_2_kit_V4.txt)
   SequencingTechnology:
     permissible_values:
       Illumina:

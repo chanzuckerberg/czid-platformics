@@ -4799,13 +4799,40 @@
         {
           "enumValues": [
             {
-              "name": "MNGS"
+              "name": "ampliseq"
             },
             {
-              "name": "TARGETED"
+              "name": "artic"
             },
             {
-              "name": "MSSPE"
+              "name": "artic_v3"
+            },
+            {
+              "name": "artic_v4"
+            },
+            {
+              "name": "artic_v5"
+            },
+            {
+              "name": "combined_msspe_artic"
+            },
+            {
+              "name": "covidseq"
+            },
+            {
+              "name": "midnight"
+            },
+            {
+              "name": "msspe"
+            },
+            {
+              "name": "snap"
+            },
+            {
+              "name": "varskip"
+            },
+            {
+              "name": "easyseq"
             }
           ],
           "fields": null,
