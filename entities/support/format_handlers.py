@@ -66,8 +66,14 @@ class BedHandler(FileFormatHandler):
         assert len(records) > 0
 
         # BED files must have at least 3 columns - error out if the file incorrectly uses spaces instead of tabs
+        num_cols = -1
         for record in records:
             assert len(record.split("\t")) >= 3
+            # All rows should have the same number of columns
+            if num_cols == -1:
+                num_cols = len(record.split("\t"))
+            else:
+                assert num_cols == len(record.split("\t"))
 
 
 class JsonHandler(FileFormatHandler):
