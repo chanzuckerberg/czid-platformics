@@ -462,7 +462,7 @@ async def concatenate_files(
     We only support doing so on SARS-CoV-2 FASTAs (~30kbp genome) so it's ok to do synchronously.
     """
     if len(ids) > FILE_CONCATENATION_MAX:
-        raise Exception("Cannot concatenate more than 100 files")
+        raise Exception(f"Cannot concatenate more than {FILE_CONCATENATION_MAX} files")
 
     # Get files in question if have access to them
     where = {"id": {"_in": ids}, "status": {"_eq": db.FileStatus.SUCCESS}}
