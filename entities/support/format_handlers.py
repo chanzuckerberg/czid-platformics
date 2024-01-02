@@ -38,33 +38,52 @@ class FastaHandler(FileFormatHandler):
             assert sequences > 0
 
 
-# FIXME: Add tests for FASTA, FASTQ, JSON, BED
 class FastqHandler(FileFormatHandler):
     """
-    Validate FASTQ files. Ignores truncated lines by assuming 1 read = 4 lines.
+    Validate FASTQ files. Can't use biopython directly because large file would be truncated.
+    This removes truncated FASTQ records by assuming 1 read = 4 lines.
     """
 
     @classmethod
     def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
         with get_file_preview(client, bucket, file_path) as fp:
-            # Load file in memory and only keep a total number of lines that % 4 == 0
-            # FIXME: cleanup code
-            f = fp.read()
-            f = f.split("\n")
-            f = f[: len(f) - (len(f) % 4)]
-            f = "\n".join(f)
-            fp = tempfile.NamedTemporaryFile("w+b")
-            fp.write(f.encode("utf-8"))
+            # Load file and only keep non-truncated FASTQ records (4 lines per record)
+            fastq = fp.read().split("\n")
+        fastq = fastq[: len(fastq) - (len(fastq) % 4)]
+        fastq = "\n".join(fastq)
+
+        # Save it in a temporary file
+        with tempfile.NamedTemporaryFile("w+b") as fp:
+            fp.write(fastq.encode("utf-8"))
             fp.flush()
 
-            # Check it with SeqIO:
+            # Validate it with SeqIO (doesn't support strings, only files)
             reads = 0
             for _ in SeqIO.parse(fp, "fastq"):
                 reads += 1
             assert reads > 0
 
 
-class JSONHandler(FileFormatHandler):
+class BedHandler(FileFormatHandler):
+    """
+    Validate BED files using basic checks.
+    """
+
+    @classmethod
+    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
+        with get_file_preview(client, bucket, file_path) as fp:
+            file_content = fp.read()  # works with plain text and gzip
+
+        # Ignore last line since it could be truncated
+        records = file_content.split("\n")[:-1]
+        assert len(records) > 0
+
+        # BED files must have at least 3 columns - error out if the file incorrectly uses spaces instead of tabs
+        for record in records:
+            assert len(record.split("\t")) >= 3
+
+
+class JsonHandler(FileFormatHandler):
     """
     Validate JSON files
     """
@@ -100,10 +119,9 @@ def get_validator(format: str) -> type[FileFormatHandler]:
         return FastaHandler
     elif format == "fastq":
         return FastqHandler
-    # FIXME: validate BED files (SeqIO.parse() doesn't support BED files)
     elif format == "bed":
-        pass
+        return BedHandler
     elif format == "json":
-        return JSONHandler
+        return JsonHandler
     else:
         raise Exception(f"Unknown file format '{format}'")
