@@ -45,11 +45,10 @@ class FastqHandler(FileFormatHandler):
         # Load file and only keep non-truncated FASTQ records (4 lines per record)
         fastq = contents.split("\n")
         fastq = fastq[: len(fastq) - (len(fastq) % 4)]
-        fastq = "\n".join(fastq)
 
         # Validate it with SeqIO
         reads = 0
-        for _ in SeqIO.parse(io.StringIO(fastq), "fastq"):
+        for _ in SeqIO.parse(io.StringIO("\n".join(fastq)), "fastq"):
             reads += 1
         assert reads > 0
 
