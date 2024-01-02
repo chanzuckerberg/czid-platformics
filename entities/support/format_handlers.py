@@ -2,12 +2,9 @@
 Logic to validate that a file of a certain format is valid
 """
 
-import gzip
+import io
 import json
-import tempfile
-import typing
 from abc import abstractmethod
-from mypy_boto3_s3.client import S3Client
 from Bio import SeqIO
 from typing import Protocol
 
@@ -19,7 +16,7 @@ class FileFormatHandler(Protocol):
 
     @classmethod
     @abstractmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
+    def validate(cls, contents: str) -> None:
         raise NotImplementedError
 
 
@@ -30,12 +27,11 @@ class FastaHandler(FileFormatHandler):
     """
 
     @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
-        with get_file_preview(client, bucket, file_path) as fp:
-            sequences = 0
-            for _ in SeqIO.parse(fp, "fasta"):
-                sequences += 1
-            assert sequences > 0
+    def validate(cls, contents: str) -> None:
+        sequences = 0
+        for _ in SeqIO.parse(io.StringIO(contents), "fasta"):
+            sequences += 1
+        assert sequences > 0
 
 
 class FastqHandler(FileFormatHandler):
@@ -45,23 +41,17 @@ class FastqHandler(FileFormatHandler):
     """
 
     @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
-        with get_file_preview(client, bucket, file_path) as fp:
-            # Load file and only keep non-truncated FASTQ records (4 lines per record)
-            fastq = fp.read().split("\n")
+    def validate(cls, contents: str) -> None:
+        # Load file and only keep non-truncated FASTQ records (4 lines per record)
+        fastq = contents.split("\n")
         fastq = fastq[: len(fastq) - (len(fastq) % 4)]
         fastq = "\n".join(fastq)
 
-        # Save it in a temporary file
-        with tempfile.NamedTemporaryFile("w+b") as fp:
-            fp.write(fastq.encode("utf-8"))
-            fp.flush()
-
-            # Validate it with SeqIO (doesn't support strings, only files)
-            reads = 0
-            for _ in SeqIO.parse(fp, "fastq"):
-                reads += 1
-            assert reads > 0
+        # Validate it with SeqIO
+        reads = 0
+        for _ in SeqIO.parse(io.StringIO(fastq), "fastq"):
+            reads += 1
+        assert reads > 0
 
 
 class BedHandler(FileFormatHandler):
@@ -70,12 +60,9 @@ class BedHandler(FileFormatHandler):
     """
 
     @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
-        with get_file_preview(client, bucket, file_path) as fp:
-            file_content = fp.read()  # works with plain text and gzip
-
+    def validate(cls, contents: str) -> None:
         # Ignore last line since it could be truncated
-        records = file_content.split("\n")[:-1]
+        records = contents.split("\n")[:-1]
         assert len(records) > 0
 
         # BED files must have at least 3 columns - error out if the file incorrectly uses spaces instead of tabs
@@ -89,26 +76,8 @@ class JsonHandler(FileFormatHandler):
     """
 
     @classmethod
-    def validate(cls, client: S3Client, bucket: str, file_path: str) -> None:
-        with get_file_preview(client, bucket, file_path) as fp:
-            file_content = fp.read()  # works with plain text and gzip
-        json.loads(file_content)  # throws an exception for invalid JSON
-
-
-def get_file_preview(client: S3Client, bucket: str, file_path: str) -> typing.TextIO:
-    """
-    Get first 1MB of a file and save it in a temporary file
-    """
-    data = client.get_object(Bucket=bucket, Key=file_path, Range="bytes=0-1000000")["Body"].read()
-    fp = tempfile.NamedTemporaryFile("w+b")
-    fp.write(data)
-    fp.flush()
-
-    try:
-        data.decode("utf-8")
-        return open(fp.name, "r")
-    except UnicodeDecodeError:
-        return gzip.open(fp.name, "rt")
+    def validate(cls, contents: str) -> None:
+        json.loads(contents)  # throws an exception for invalid JSON
 
 
 def get_validator(format: str) -> type[FileFormatHandler]:

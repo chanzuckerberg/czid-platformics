@@ -2,6 +2,7 @@
 GraphQL types, queries, and mutations for files.
 """
 
+import gzip
 import json
 import typing
 import database.models as db
@@ -231,14 +232,25 @@ async def validate_file(
     Utility function to validate a file against its file format.
     """
     validator = get_validator(file.file_format)
+
+    # Get first 1MB of a file (support plain text or gzip)
+    body = s3_client.get_object(Bucket=file.namespace, Key=file.path, Range="bytes=0-1000000")["Body"]
+    if file.path.endswith(".gz"):
+        with gzip.GzipFile(fileobj=body) as fp:
+            contents = fp.read().decode("utf-8")
+    else:
+        contents = body.read().decode("utf-8")
+
+    # Validate data
     try:
-        validator.validate(s3_client, file.namespace, file.path)
+        validator.validate(contents)
         file_size = s3_client.head_object(Bucket=file.namespace, Key=file.path)["ContentLength"]
     except:  # noqa
         file.status = db.FileStatus.FAILED
     else:
         file.status = db.FileStatus.SUCCESS
         file.size = file_size
+
     await session.commit()
 
 
