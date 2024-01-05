@@ -10,7 +10,6 @@ import strawberry
 import tempfile
 import uuid
 import uuid6
-from enum import Enum
 from fastapi import Depends
 from typing_extensions import TypedDict
 from mypy_boto3_s3.client import S3Client
@@ -141,12 +140,6 @@ async def load_entities(
 # ------------------------------------------------------------------------------
 
 
-@strawberry.enum
-class FileContentsFormat(Enum):
-    text = "text"
-    json = "json"
-
-
 @strawberry.type
 class File:
     """
@@ -183,9 +176,8 @@ class File:
     @strawberry.field(extensions=[DependencyExtension()])
     def contents(
         self,
-        format: FileContentsFormat,
         s3_client: S3Client = Depends(get_s3_client),
-    ) -> str:
+    ) -> str | None:
         """
         Utility function to get file contents of small files.
         """
@@ -194,10 +186,7 @@ class File:
         if self.size > FILE_CONTENTS_MAX_SIZE:
             raise Exception(f"Cannot download files larger than {FILE_CONTENTS_MAX_SIZE} bytes")
         contents = s3_client.get_object(Bucket=self.namespace, Key=self.path)["Body"].read().decode("utf-8")
-        if format == FileContentsFormat.text:
-            return contents
-        elif format == FileContentsFormat.json:
-            return json.loads(contents)
+        return contents
 
 
 @strawberry.type
@@ -448,7 +437,7 @@ async def create_or_upload_file(
         file_namespace = settings.DEFAULT_UPLOAD_BUCKET
         file_path = f"uploads/{file_id}/{file.name}"
     else:
-        file_protocol = file.protocol
+        file_protocol = file.protocol  # type: ignore
         file_namespace = file.namespace
         file_path = file.path
 
