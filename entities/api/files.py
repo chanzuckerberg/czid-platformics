@@ -24,7 +24,7 @@ from cerbos.sdk.model import Principal
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from support.format_handlers import get_validator
-from support.enums import FileStatus
+from support.enums import FileStatus, FileAccessProtocol
 from platformics.api.core.helpers import get_db_rows
 from api.types.entities import Entity
 from platformics.settings import APISettings
@@ -40,6 +40,7 @@ from platformics.api.core.deps import (
 FILE_CONCATENATION_MAX = 200
 FILE_CONCATENATION_MAX_SIZE = 50e3  # SARS-CoV-2 genome is ~30kbp
 FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
+FILE_CONTENTS_MAX_SIZE = 1e6  # 1MB
 
 # ------------------------------------------------------------------------------
 # Utility types/inputs
@@ -96,7 +97,7 @@ class FileCreate:
     name: str
     file_format: str
     compression_type: typing.Optional[str] = None
-    protocol: str
+    protocol: FileAccessProtocol
     namespace: str
     path: str
 
@@ -150,7 +151,7 @@ class File:
     entity_field_name: str
     entity: typing.Optional[typing.Annotated["Entity", strawberry.lazy("api.types.entities")]] = load_entities
     status: FileStatus
-    protocol: str
+    protocol: FileAccessProtocol
     namespace: str
     path: str
     file_format: str
@@ -166,14 +167,26 @@ class File:
         """
         Generate a signed URL for downloading a file from S3.
         """
-        if not self.path:  # type: ignore
+        if not self.path:
             return None
-        key = self.path  # type: ignore
-        bucket_name = self.namespace  # type: ignore
-        url = s3_client.generate_presigned_url(
-            ClientMethod="get_object", Params={"Bucket": bucket_name, "Key": key}, ExpiresIn=expiration
-        )
+        params = {"Bucket": self.namespace, "Key": self.path}
+        url = s3_client.generate_presigned_url(ClientMethod="get_object", Params=params, ExpiresIn=expiration)
         return SignedURL(url=url, protocol="https", method="get", expiration=expiration)
+
+    @strawberry.field(extensions=[DependencyExtension()])
+    def contents(
+        self,
+        s3_client: S3Client = Depends(get_s3_client),
+    ) -> str | None:
+        """
+        Utility function to get file contents of small files.
+        """
+        if not self.path or not self.size:
+            return None
+        if self.size > FILE_CONTENTS_MAX_SIZE:
+            raise Exception(f"Cannot download files larger than {FILE_CONTENTS_MAX_SIZE} bytes")
+        contents = s3_client.get_object(Bucket=self.namespace, Key=self.path)["Body"].read().decode("utf-8")
+        return contents
 
 
 @strawberry.type
@@ -424,7 +437,7 @@ async def create_or_upload_file(
         file_namespace = settings.DEFAULT_UPLOAD_BUCKET
         file_path = f"uploads/{file_id}/{file.name}"
     else:
-        file_protocol = file.protocol
+        file_protocol = file.protocol  # type: ignore
         file_namespace = file.namespace
         file_path = file.path
 

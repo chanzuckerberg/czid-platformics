@@ -61,7 +61,7 @@ class SequencingTechnology(enum.Enum):
 class AlignmentTool(enum.Enum):
     bowtie2 = "bowtie2"
     minimap2 = "minimap2"
-    ncbi = "ncbi"
+    czid_index_generation = "czid_index_generation"
 
 
 @strawberry.enum

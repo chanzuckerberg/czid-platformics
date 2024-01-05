@@ -202,7 +202,7 @@ async def test_create_file(
                 file: {{
                     name: "{file_path}",
                     fileFormat: "fastq",
-                    protocol: "s3",
+                    protocol: s3,
                     namespace: "{file_namespace}",
                     path: "{file_path}"
                 }}

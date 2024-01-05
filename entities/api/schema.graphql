@@ -1,7 +1,7 @@
 enum AlignmentTool {
   bowtie2
   minimap2
-  ncbi
+  czid_index_generation
 }
 
 input AlignmentToolEnumComparators {
@@ -1535,6 +1535,7 @@ type SequenceAlignmentIndex implements EntityInterface & Node {
   indexFile(where: FileWhereClause = null): File
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   tool: AlignmentTool!
+  version: String
 }
 
 type SequenceAlignmentIndexAggregate {
@@ -1564,6 +1565,7 @@ enum SequenceAlignmentIndexCountColumns {
   index_file
   reference_genome
   tool
+  version
   entity_id
   id
   producing_run_id
@@ -1574,8 +1576,9 @@ enum SequenceAlignmentIndexCountColumns {
 input SequenceAlignmentIndexCreateInput {
   collectionId: Int!
   indexFileId: ID = null
-  referenceGenomeId: ID!
+  referenceGenomeId: ID = null
   tool: AlignmentTool!
+  version: String = null
 }
 
 """An edge in a connection."""
@@ -1591,6 +1594,7 @@ type SequenceAlignmentIndexMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  version: String
 }
 
 type SequenceAlignmentIndexNumericalColumns {
@@ -1604,6 +1608,7 @@ input SequenceAlignmentIndexUpdateInput {
   indexFileId: ID = null
   referenceGenomeId: ID = null
   tool: AlignmentTool = null
+  version: String = null
 }
 
 input SequenceAlignmentIndexWhereClause {
@@ -1613,6 +1618,7 @@ input SequenceAlignmentIndexWhereClause {
   collectionId: IntComparators
   referenceGenome: ReferenceGenomeWhereClause
   tool: AlignmentToolEnumComparators
+  version: StrComparators
 }
 
 input SequenceAlignmentIndexWhereClauseMutations {

@@ -62,6 +62,7 @@ ReferenceGenome {
 }
 SequenceAlignmentIndex {
     AlignmentTool tool  
+    string version  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -194,7 +195,7 @@ ReferenceGenome ||--}o SequenceAlignmentIndex : "sequence_alignment_indices"
 ReferenceGenome ||--}o ConsensusGenome : "consensus_genomes"
 ReferenceGenome ||--}o GenomicRange : "genomic_ranges"
 SequenceAlignmentIndex ||--|o File : "index_file"
-SequenceAlignmentIndex ||--|| ReferenceGenome : "reference_genome"
+SequenceAlignmentIndex ||--|o ReferenceGenome : "reference_genome"
 Metadatum ||--|| Sample : "sample"
 Metadatum ||--|| MetadataField : "metadata_field"
 MetadataField ||--}| MetadataFieldProject : "field_group"
