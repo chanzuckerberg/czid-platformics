@@ -16,7 +16,7 @@ gql_schema -= sgqlc.types.relay.PageInfo
 ########################################################################
 class AlignmentTool(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("bowtie2", "minimap2", "ncbi")
+    __choices__ = ("bowtie2", "czid_index_generation", "minimap2")
 
 
 Boolean = sgqlc.types.Boolean
@@ -226,6 +226,7 @@ class SequenceAlignmentIndexCountColumns(sgqlc.types.Enum):
         "producing_run_id",
         "reference_genome",
         "tool",
+        "version",
     )
 
 
@@ -1063,31 +1064,42 @@ class SampleWhereClauseMutations(sgqlc.types.Input):
 
 class SequenceAlignmentIndexCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "index_file_id", "reference_genome_id", "tool")
+    __field_names__ = ("collection_id", "index_file_id", "reference_genome_id", "tool", "version")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     index_file_id = sgqlc.types.Field(ID, graphql_name="indexFileId")
-    reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
+    reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     tool = sgqlc.types.Field(sgqlc.types.non_null(AlignmentTool), graphql_name="tool")
+    version = sgqlc.types.Field(String, graphql_name="version")
 
 
 class SequenceAlignmentIndexUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "index_file_id", "reference_genome_id", "tool")
+    __field_names__ = ("collection_id", "index_file_id", "reference_genome_id", "tool", "version")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     index_file_id = sgqlc.types.Field(ID, graphql_name="indexFileId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     tool = sgqlc.types.Field(AlignmentTool, graphql_name="tool")
+    version = sgqlc.types.Field(String, graphql_name="version")
 
 
 class SequenceAlignmentIndexWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "reference_genome", "tool")
+    __field_names__ = (
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "reference_genome",
+        "tool",
+        "version",
+    )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     reference_genome = sgqlc.types.Field(ReferenceGenomeWhereClause, graphql_name="referenceGenome")
     tool = sgqlc.types.Field(AlignmentToolEnumComparators, graphql_name="tool")
+    version = sgqlc.types.Field("StrComparators", graphql_name="version")
 
 
 class SequenceAlignmentIndexWhereClauseMutations(sgqlc.types.Input):
@@ -3243,10 +3255,11 @@ class SequenceAlignmentIndexEdge(sgqlc.types.Type):
 
 class SequenceAlignmentIndexMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "version")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    version = sgqlc.types.Field(String, graphql_name="version")
 
 
 class SequenceAlignmentIndexNumericalColumns(sgqlc.types.Type):
@@ -3998,6 +4011,7 @@ class SequenceAlignmentIndex(sgqlc.types.Type, EntityInterface, Node):
         "index_file",
         "reference_genome",
         "tool",
+        "version",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -4017,6 +4031,7 @@ class SequenceAlignmentIndex(sgqlc.types.Type, EntityInterface, Node):
         ),
     )
     tool = sgqlc.types.Field(sgqlc.types.non_null(AlignmentTool), graphql_name="tool")
+    version = sgqlc.types.Field(String, graphql_name="version")
 
 
 class SequencingRead(sgqlc.types.Type, EntityInterface, Node):

@@ -40,4 +40,5 @@ class SequenceAlignmentIndexFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    tool = fuzzy.FuzzyChoice(["bowtie2", "minimap2", "ncbi"])
+    tool = fuzzy.FuzzyChoice(["bowtie2", "minimap2", "czid_index_generation"])
+    version = fuzzy.FuzzyText()

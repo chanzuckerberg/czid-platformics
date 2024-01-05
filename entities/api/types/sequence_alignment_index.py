@@ -23,6 +23,7 @@ from platformics.api.core.gql_to_sql import (
     aggregator_map,
     EnumComparators,
     IntComparators,
+    StrComparators,
     UUIDComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -125,6 +126,7 @@ class SequenceAlignmentIndexWhereClause(TypedDict):
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
     tool: Optional[EnumComparators[AlignmentTool]] | None
+    version: Optional[StrComparators] | None
 
 
 """
@@ -144,6 +146,7 @@ class SequenceAlignmentIndex(EntityInterface):
         Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
     ] = load_reference_genome_rows  # type:ignore
     tool: AlignmentTool
+    version: Optional[str] = None
 
 
 """
@@ -182,6 +185,7 @@ class SequenceAlignmentIndexMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    version: Optional[str] = None
 
 
 """
@@ -194,6 +198,7 @@ class SequenceAlignmentIndexCountColumns(enum.Enum):
     index_file = "index_file"
     reference_genome = "reference_genome"
     tool = "tool"
+    version = "version"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -245,8 +250,9 @@ Mutation types
 class SequenceAlignmentIndexCreateInput:
     collection_id: int
     index_file_id: Optional[strawberry.ID] = None
-    reference_genome_id: strawberry.ID
+    reference_genome_id: Optional[strawberry.ID] = None
     tool: AlignmentTool
+    version: Optional[str] = None
 
 
 @strawberry.input()
@@ -255,6 +261,7 @@ class SequenceAlignmentIndexUpdateInput:
     index_file_id: Optional[strawberry.ID] = None
     reference_genome_id: Optional[strawberry.ID] = None
     tool: Optional[AlignmentTool] = None
+    version: Optional[str] = None
 
 
 """

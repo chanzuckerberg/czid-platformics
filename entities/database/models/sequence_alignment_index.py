@@ -9,7 +9,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, Enum
+from sqlalchemy import ForeignKey, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import AlignmentTool
@@ -28,10 +28,11 @@ class SequenceAlignmentIndex(Entity):
     index_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     index_file: Mapped[File] = relationship(File, foreign_keys=index_file_id)
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("reference_genome.entity_id"), nullable=False
+        UUID, ForeignKey("reference_genome.entity_id"), nullable=True
     )
     reference_genome: Mapped[ReferenceGenome] = relationship(
         ReferenceGenome, back_populates="sequence_alignment_indices", foreign_keys=reference_genome_id
     )
     tool: Mapped[AlignmentTool] = mapped_column(Enum(AlignmentTool, native_enum=False), nullable=False)
+    version: Mapped[str] = mapped_column(String, nullable=True)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

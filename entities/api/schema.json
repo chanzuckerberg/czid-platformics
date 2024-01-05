@@ -5318,6 +5318,15 @@
                 "name": "AlignmentToolEnumComparators",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "version",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -5441,7 +5450,7 @@
               "name": "minimap2"
             },
             {
-              "name": "ncbi"
+              "name": "czid_index_generation"
             }
           ],
           "fields": null,
@@ -7857,6 +7866,15 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "args": [],
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -8053,6 +8071,15 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -8071,6 +8098,9 @@
             },
             {
               "name": "tool"
+            },
+            {
+              "name": "version"
             },
             {
               "name": "entity_id"
@@ -15774,16 +15804,12 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "null",
               "name": "referenceGenomeId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -15797,6 +15823,15 @@
                   "name": "AlignmentTool",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             }
           ],
@@ -15842,6 +15877,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "AlignmentTool",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             }

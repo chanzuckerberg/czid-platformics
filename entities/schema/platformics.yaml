@@ -81,7 +81,7 @@ enums:
     permissible_values:
       bowtie2:
       minimap2:
-      ncbi:
+      czid_index_generation:
   TaxonLevel:
     permissible_values:
       species:
@@ -341,11 +341,13 @@ classes:
         range: File
       reference_genome:
         range: ReferenceGenome
-        required: true
+        required: false
         inverse: ReferenceGenome.sequence_alignment_indices
       tool:
         range: AlignmentTool
         required: true
+      version:
+        range: string
     annotations:
       plural: SequenceAlignmentIndices
 
