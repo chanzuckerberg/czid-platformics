@@ -284,20 +284,25 @@ type File {
   entityFieldName: String!
   entity(where: EntityWhereClause = null): Entity
   status: FileStatus!
-  protocol: String!
+  protocol: FileAccessProtocol!
   namespace: String!
   path: String!
   fileFormat: String!
   compressionType: Int
   size: Int
   downloadLink(expiration: Int! = 3600): SignedURL
+  contents: String
+}
+
+enum FileAccessProtocol {
+  s3
 }
 
 input FileCreate {
   name: String!
   fileFormat: String!
   compressionType: String = null
-  protocol: String!
+  protocol: FileAccessProtocol!
   namespace: String!
   path: String!
 }
@@ -1873,15 +1878,6 @@ type Taxon implements EntityInterface & Node {
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
-  taxId: Int!
-  taxIdParent: Int!
-  taxIdSpecies: Int!
-  taxIdGenus: Int!
-  taxIdFamily: Int!
-  taxIdOrder: Int!
-  taxIdClass: Int!
-  taxIdPhylum: Int!
-  taxIdKingdom: Int!
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -1980,15 +1976,16 @@ enum TaxonCountColumns {
   upstream_database
   upstream_database_identifier
   level
-  tax_id
-  tax_id_parent
-  tax_id_species
-  tax_id_genus
-  tax_id_family
-  tax_id_order
-  tax_id_class
-  tax_id_phylum
-  tax_id_kingdom
+  tax_parent
+  tax_subspecies
+  tax_species
+  tax_genus
+  tax_family
+  tax_order
+  tax_class
+  tax_phylum
+  tax_kingdom
+  tax_superkingdom
   consensus_genomes
   reference_genomes
   sequencing_reads
@@ -2010,15 +2007,6 @@ input TaxonCreateInput {
   upstreamDatabaseId: ID!
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
-  taxId: Int!
-  taxIdParent: Int!
-  taxIdSpecies: Int!
-  taxIdGenus: Int!
-  taxIdFamily: Int!
-  taxIdOrder: Int!
-  taxIdClass: Int!
-  taxIdPhylum: Int!
-  taxIdKingdom: Int!
 }
 
 """An edge in a connection."""
@@ -2031,9 +2019,15 @@ type TaxonEdge {
 }
 
 enum TaxonLevel {
-  species
-  genus
-  family
+  level_subspecies
+  level_species
+  level_genus
+  level_family
+  level_order
+  level_class
+  level_phylum
+  level_kingdom
+  level_superkingdom
 }
 
 input TaxonLevelEnumComparators {
@@ -2057,30 +2051,12 @@ type TaxonMinMaxColumns {
   commonName: String
   name: String
   upstreamDatabaseIdentifier: String
-  taxId: Int
-  taxIdParent: Int
-  taxIdSpecies: Int
-  taxIdGenus: Int
-  taxIdFamily: Int
-  taxIdOrder: Int
-  taxIdClass: Int
-  taxIdPhylum: Int
-  taxIdKingdom: Int
 }
 
 type TaxonNumericalColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
-  taxId: Int
-  taxIdParent: Int
-  taxIdSpecies: Int
-  taxIdGenus: Int
-  taxIdFamily: Int
-  taxIdOrder: Int
-  taxIdClass: Int
-  taxIdPhylum: Int
-  taxIdKingdom: Int
 }
 
 input TaxonUpdateInput {
@@ -2093,15 +2069,6 @@ input TaxonUpdateInput {
   upstreamDatabaseId: ID = null
   upstreamDatabaseIdentifier: String = null
   level: TaxonLevel = null
-  taxId: Int = null
-  taxIdParent: Int = null
-  taxIdSpecies: Int = null
-  taxIdGenus: Int = null
-  taxIdFamily: Int = null
-  taxIdOrder: Int = null
-  taxIdClass: Int = null
-  taxIdPhylum: Int = null
-  taxIdKingdom: Int = null
 }
 
 input TaxonWhereClause {
@@ -2117,15 +2084,6 @@ input TaxonWhereClause {
   upstreamDatabase: UpstreamDatabaseWhereClause
   upstreamDatabaseIdentifier: StrComparators
   level: TaxonLevelEnumComparators
-  taxId: IntComparators
-  taxIdParent: IntComparators
-  taxIdSpecies: IntComparators
-  taxIdGenus: IntComparators
-  taxIdFamily: IntComparators
-  taxIdOrder: IntComparators
-  taxIdClass: IntComparators
-  taxIdPhylum: IntComparators
-  taxIdKingdom: IntComparators
   consensusGenomes: ConsensusGenomeWhereClause
   referenceGenomes: ReferenceGenomeWhereClause
   sequencingReads: SequencingReadWhereClause

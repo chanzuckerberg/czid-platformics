@@ -1149,8 +1149,8 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
+                  "kind": "ENUM",
+                  "name": "FileAccessProtocol",
                   "ofType": null
                 }
               }
@@ -1232,6 +1232,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "SignedURL",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "contents",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             }
@@ -1630,6 +1639,19 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "FileStatus",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "s3"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "FileAccessProtocol",
           "possibleTypes": null
         },
         {
@@ -2706,123 +2728,6 @@
               }
             },
             {
-              "args": [],
-              "name": "taxId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdParent",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdSpecies",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdGenus",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdFamily",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdOrder",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdClass",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdPhylum",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdKingdom",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "args": [
                 {
                   "defaultValue": "null",
@@ -3573,87 +3478,6 @@
             },
             {
               "defaultValue": null,
-              "name": "taxId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdParent",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdSpecies",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdGenus",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdFamily",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdOrder",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdClass",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdPhylum",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdKingdom",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "consensusGenomes",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -3975,13 +3799,31 @@
         {
           "enumValues": [
             {
-              "name": "species"
+              "name": "level_subspecies"
             },
             {
-              "name": "genus"
+              "name": "level_species"
             },
             {
-              "name": "family"
+              "name": "level_genus"
+            },
+            {
+              "name": "level_family"
+            },
+            {
+              "name": "level_order"
+            },
+            {
+              "name": "level_class"
+            },
+            {
+              "name": "level_phylum"
+            },
+            {
+              "name": "level_kingdom"
+            },
+            {
+              "name": "level_superkingdom"
             }
           ],
           "fields": null,
@@ -5934,87 +5776,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            {
-              "args": [],
-              "name": "taxId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdParent",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdSpecies",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdGenus",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdFamily",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdOrder",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdClass",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdPhylum",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdKingdom",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
             }
           ],
           "inputFields": null,
@@ -6097,87 +5858,6 @@
                 "name": "String",
                 "ofType": null
               }
-            },
-            {
-              "args": [],
-              "name": "taxId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdParent",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdSpecies",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdGenus",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdFamily",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdOrder",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdClass",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdPhylum",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "taxIdKingdom",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
             }
           ],
           "inputFields": null,
@@ -6213,31 +5893,34 @@
               "name": "level"
             },
             {
-              "name": "tax_id"
+              "name": "tax_parent"
             },
             {
-              "name": "tax_id_parent"
+              "name": "tax_subspecies"
             },
             {
-              "name": "tax_id_species"
+              "name": "tax_species"
             },
             {
-              "name": "tax_id_genus"
+              "name": "tax_genus"
             },
             {
-              "name": "tax_id_family"
+              "name": "tax_family"
             },
             {
-              "name": "tax_id_order"
+              "name": "tax_order"
             },
             {
-              "name": "tax_id_class"
+              "name": "tax_class"
             },
             {
-              "name": "tax_id_phylum"
+              "name": "tax_phylum"
             },
             {
-              "name": "tax_id_kingdom"
+              "name": "tax_kingdom"
+            },
+            {
+              "name": "tax_superkingdom"
             },
             {
               "name": "consensus_genomes"
@@ -14833,8 +14516,8 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
+                  "kind": "ENUM",
+                  "name": "FileAccessProtocol",
                   "ofType": null
                 }
               }
@@ -16901,123 +16584,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdParent",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdSpecies",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdGenus",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdFamily",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdOrder",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdClass",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdPhylum",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxIdKingdom",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
             }
           ],
           "interfaces": null,
@@ -17107,87 +16673,6 @@
               "type": {
                 "kind": "ENUM",
                 "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdParent",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdSpecies",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdGenus",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdFamily",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdOrder",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdClass",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdPhylum",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxIdKingdom",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
                 "ofType": null
               }
             }

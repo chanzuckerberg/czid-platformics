@@ -131,15 +131,6 @@ Taxon {
     boolean is_phage  
     string upstream_database_identifier  
     TaxonLevel level  
-    int tax_id  
-    int tax_id_parent  
-    int tax_id_species  
-    int tax_id_genus  
-    int tax_id_family  
-    int tax_id_order  
-    int tax_id_class  
-    int tax_id_phylum  
-    int tax_id_kingdom  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -210,6 +201,16 @@ ConsensusGenome ||--}o MetricConsensusGenome : "metrics"
 MetricConsensusGenome ||--|| ConsensusGenome : "consensus_genome"
 MetricConsensusGenome ||--|o File : "coverage_viz_summary_file"
 Taxon ||--|| UpstreamDatabase : "upstream_database"
+Taxon ||--|o Taxon : "tax_parent"
+Taxon ||--|o Taxon : "tax_subspecies"
+Taxon ||--|o Taxon : "tax_species"
+Taxon ||--|o Taxon : "tax_genus"
+Taxon ||--|o Taxon : "tax_family"
+Taxon ||--|o Taxon : "tax_order"
+Taxon ||--|o Taxon : "tax_class"
+Taxon ||--|o Taxon : "tax_phylum"
+Taxon ||--|o Taxon : "tax_kingdom"
+Taxon ||--|o Taxon : "tax_superkingdom"
 Taxon ||--}o ConsensusGenome : "consensus_genomes"
 Taxon ||--}o ReferenceGenome : "reference_genomes"
 Taxon ||--}o SequencingRead : "sequencing_reads"

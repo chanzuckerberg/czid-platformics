@@ -7,6 +7,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 # ruff: noqa: E501 Line too long
 
+
 import typing
 from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 

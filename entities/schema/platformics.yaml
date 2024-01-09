@@ -84,9 +84,16 @@ enums:
       czid_index_generation:
   TaxonLevel:
     permissible_values:
-      species:
-      genus:
-      family:
+      # Prepending "level_" because "class" is a reserved word, so can't create an Enum with it.
+      level_subspecies:
+      level_species:
+      level_genus:
+      level_family:
+      level_order:
+      level_class:
+      level_phylum:
+      level_kingdom:
+      level_superkingdom:
   PhylogeneticTreeFormat:
     permissible_values:
       newick:
@@ -521,33 +528,26 @@ classes:
       level:
         range: TaxonLevel
         required: true
-      tax_id:
-        range: int
-        required: true
-      tax_id_parent:
-        range: int
-        required: true
-      tax_id_species:
-        range: int
-        required: true
-      tax_id_genus:
-        range: int
-        required: true
-      tax_id_family:
-        range: int
-        required: true
-      tax_id_order:
-        range: int
-        required: true
-      tax_id_class:
-        range: int
-        required: true
-      tax_id_phylum:
-        range: int
-        required: true
-      tax_id_kingdom:
-        range: int
-        required: true
+      tax_parent:
+        range: Taxon
+      tax_subspecies:
+        range: Taxon
+      tax_species:
+        range: Taxon
+      tax_genus:
+        range: Taxon
+      tax_family:
+        range: Taxon
+      tax_order:
+        range: Taxon
+      tax_class:
+        range: Taxon
+      tax_phylum:
+        range: Taxon
+      tax_kingdom:
+        range: Taxon
+      tax_superkingdom:
+        range: Taxon
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.taxon

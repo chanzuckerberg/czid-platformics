@@ -7,6 +7,9 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 # ruff: noqa: E501 Line too long
 
+{% set related_fields = cls.related_fields | unique(attribute='related_class.name') | list %}
+{% set ignored_fields = ["File", "Entity", cls.name] %}
+
 import typing
 from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
 
@@ -18,8 +21,8 @@ from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 {%- endif %}
 from api.types.entities import EntityInterface
-{%- for related_field in cls.related_fields %}
-    {%- if related_field.related_class.name not in ["File", "Entity"] and related_field.multivalued %}
+{%- for related_field in related_fields %}
+    {%- if related_field.related_class.name not in ignored_fields and related_field.multivalued %}
 from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}Aggregate, format_{{related_field.related_class.snake_name}}_aggregate_output)
     {%- endif %}
 {%- endfor %}
@@ -52,15 +55,15 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    {%- for related_field in cls.related_fields %}
-        {%- if related_field.related_class.name not in ["File", "Entity"] %}
+    {%- for related_field in related_fields %}
+        {%- if related_field.related_class.name not in ignored_fields %}
     from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}WhereClause, {{related_field.related_class.name}})
         {%- endif %}
     {%- endfor %}
     pass
 else:
-    {%- for related_field in cls.related_fields %}
-        {%- if related_field.related_class.name not in ["File", "Entity"] %}
+    {%- for related_field in related_fields %}
+        {%- if related_field.related_class.name not in ignored_fields %}
     {{related_field.related_class.name}}WhereClause = "{{related_field.related_class.name}}WhereClause"
     {{related_field.related_class.name}} = "{{related_field.related_class.name}}"
         {%- endif %}
@@ -75,8 +78,8 @@ Dataloaders
 These are batching functions for loading related objects to avoid N+1 queries.
 """
 
-{%- for related_field in cls.related_fields %}
-    {%- if related_field.inverse and related_field.related_class.name not in ["File", "Entity"] %}
+{%- for related_field in related_fields %}
+    {%- if related_field.inverse and related_field.related_class.name not in ignored_fields %}
         {%- if related_field.multivalued %}
 @relay.connection(
         relay.ListConnection[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]  # type:ignore
