@@ -8,6 +8,9 @@ To start both the `entities` and `workflows` services use
 make init
 ```
 
+Note that the Redis port of `czid-web` and `workflows` are the same, so if the initialization fails, you can stop the `czid-web` redis container and try again.
+
+
 ### Running
 After the services are running, the graphql services have endpoints at 
 ```
@@ -18,7 +21,17 @@ http://localhost:8008/graphql ## entities
 http://localhost:8042/graphql ## workflows
 ```
 
-for entities and workflows respectively
+for entities and workflows respectively.
+
+To generate a token for entities GQL queries:
+
+```bash
+cd entities/
+
+# This will copy `{"Authorization": "<token>"}` to your clipboard, which you can paste into the GraphQL UI, under "Headers" at the bottom
+make local-token
+```
+
 
 ### Entities
 
