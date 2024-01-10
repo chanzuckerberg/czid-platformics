@@ -53,13 +53,13 @@ class TaxonFactory(CommonFactory):
             "level_superkingdom",
         ]
     )
-    tax_parent = factory.Faker("Taxon")
-    tax_subspecies = factory.Faker("Taxon")
-    tax_species = factory.Faker("Taxon")
-    tax_genus = factory.Faker("Taxon")
-    tax_family = factory.Faker("Taxon")
-    tax_order = factory.Faker("Taxon")
-    tax_class = factory.Faker("Taxon")
-    tax_phylum = factory.Faker("Taxon")
-    tax_kingdom = factory.Faker("Taxon")
-    tax_superkingdom = factory.Faker("Taxon")
+    tax_parent = None
+    tax_subspecies = None
+    tax_species = None
+    tax_genus = None
+    tax_family = None
+    tax_order = None
+    tax_class = None
+    tax_phylum = None
+    tax_kingdom = None
+    tax_superkingdom = None

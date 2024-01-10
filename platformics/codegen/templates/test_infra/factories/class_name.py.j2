@@ -79,6 +79,11 @@ class {{ cls.name }}Factory(CommonFactory):
     {{ field.name }} = fuzzy.FuzzyInteger(1, 1000)
                 {%- elif field.type == "float" %}
     {{ field.name }} = fuzzy.FuzzyFloat(1, 100)
+                {%- elif field.type == cls.name %}{#
+    FIXME: Self-references don't work, even with the fixes proposed in https://github.com/FactoryBoy/factory_boy/issues/173:
+    # {{ field.name }} = factory.LazyAttribute(lambda x: {{ field.related_class.name }}Factory({{ field.name }}=None))
+    # {{ field.name }} = factory.SubFactory("test_infra.factories.{{ cls.snake_name }}.{{ field.related_class.name }}Factory", #{{ field.name }}=None) #}
+    {{ field.name }} = None
                 {%- else %}
     {{ field.name }} = factory.Faker("{{ field.type }}")
                 {%- endif %}
