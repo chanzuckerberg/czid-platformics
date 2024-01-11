@@ -15,7 +15,7 @@ x-db-variables: &db-variables
   ? PLATFORMICS_DATABASE_NAME=workflows
 
 x-redis-variables: &redis-variables
-  ? PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL=redis://redis.czidnet
+  ? PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL=redis://redis.czidnet:6378
   ? PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME=workflow-events
   
 x-workflow-variables: &workflow-variables
@@ -39,7 +39,8 @@ services:
   redis:
     image: redis:7
     ports:
-      - "6379:6379"
+      - "6378:6378"
+    command: ["redis-server", "--port", "6378"]
   postgres:
     image: postgres:15
     restart: always
