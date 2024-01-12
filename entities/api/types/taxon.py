@@ -7,6 +7,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 # ruff: noqa: E501 Line too long
 
+
 import typing
 from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
@@ -248,15 +249,6 @@ class TaxonWhereClause(TypedDict):
     ] | None
     upstream_database_identifier: Optional[StrComparators] | None
     level: Optional[EnumComparators[TaxonLevel]] | None
-    tax_id: Optional[IntComparators] | None
-    tax_id_parent: Optional[IntComparators] | None
-    tax_id_species: Optional[IntComparators] | None
-    tax_id_genus: Optional[IntComparators] | None
-    tax_id_family: Optional[IntComparators] | None
-    tax_id_order: Optional[IntComparators] | None
-    tax_id_class: Optional[IntComparators] | None
-    tax_id_phylum: Optional[IntComparators] | None
-    tax_id_kingdom: Optional[IntComparators] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
@@ -290,15 +282,6 @@ class Taxon(EntityInterface):
     ] = load_upstream_database_rows  # type:ignore
     upstream_database_identifier: str
     level: TaxonLevel
-    tax_id: int
-    tax_id_parent: int
-    tax_id_species: int
-    tax_id_genus: int
-    tax_id_family: int
-    tax_id_order: int
-    tax_id_class: int
-    tax_id_phylum: int
-    tax_id_kingdom: int
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -347,15 +330,6 @@ class TaxonNumericalColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    tax_id: Optional[int] = None
-    tax_id_parent: Optional[int] = None
-    tax_id_species: Optional[int] = None
-    tax_id_genus: Optional[int] = None
-    tax_id_family: Optional[int] = None
-    tax_id_order: Optional[int] = None
-    tax_id_class: Optional[int] = None
-    tax_id_phylum: Optional[int] = None
-    tax_id_kingdom: Optional[int] = None
 
 
 """
@@ -373,15 +347,6 @@ class TaxonMinMaxColumns:
     common_name: Optional[str] = None
     name: Optional[str] = None
     upstream_database_identifier: Optional[str] = None
-    tax_id: Optional[int] = None
-    tax_id_parent: Optional[int] = None
-    tax_id_species: Optional[int] = None
-    tax_id_genus: Optional[int] = None
-    tax_id_family: Optional[int] = None
-    tax_id_order: Optional[int] = None
-    tax_id_class: Optional[int] = None
-    tax_id_phylum: Optional[int] = None
-    tax_id_kingdom: Optional[int] = None
 
 
 """
@@ -399,15 +364,16 @@ class TaxonCountColumns(enum.Enum):
     upstream_database = "upstream_database"
     upstream_database_identifier = "upstream_database_identifier"
     level = "level"
-    tax_id = "tax_id"
-    tax_id_parent = "tax_id_parent"
-    tax_id_species = "tax_id_species"
-    tax_id_genus = "tax_id_genus"
-    tax_id_family = "tax_id_family"
-    tax_id_order = "tax_id_order"
-    tax_id_class = "tax_id_class"
-    tax_id_phylum = "tax_id_phylum"
-    tax_id_kingdom = "tax_id_kingdom"
+    tax_parent = "tax_parent"
+    tax_subspecies = "tax_subspecies"
+    tax_species = "tax_species"
+    tax_genus = "tax_genus"
+    tax_family = "tax_family"
+    tax_order = "tax_order"
+    tax_class = "tax_class"
+    tax_phylum = "tax_phylum"
+    tax_kingdom = "tax_kingdom"
+    tax_superkingdom = "tax_superkingdom"
     consensus_genomes = "consensus_genomes"
     reference_genomes = "reference_genomes"
     sequencing_reads = "sequencing_reads"
@@ -468,15 +434,6 @@ class TaxonCreateInput:
     upstream_database_id: strawberry.ID
     upstream_database_identifier: str
     level: TaxonLevel
-    tax_id: int
-    tax_id_parent: int
-    tax_id_species: int
-    tax_id_genus: int
-    tax_id_family: int
-    tax_id_order: int
-    tax_id_class: int
-    tax_id_phylum: int
-    tax_id_kingdom: int
 
 
 @strawberry.input()
@@ -490,15 +447,6 @@ class TaxonUpdateInput:
     upstream_database_id: Optional[strawberry.ID] = None
     upstream_database_identifier: Optional[str] = None
     level: Optional[TaxonLevel] = None
-    tax_id: Optional[int] = None
-    tax_id_parent: Optional[int] = None
-    tax_id_species: Optional[int] = None
-    tax_id_genus: Optional[int] = None
-    tax_id_family: Optional[int] = None
-    tax_id_order: Optional[int] = None
-    tax_id_class: Optional[int] = None
-    tax_id_phylum: Optional[int] = None
-    tax_id_kingdom: Optional[int] = None
 
 
 """

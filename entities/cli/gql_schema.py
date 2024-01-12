@@ -55,6 +55,11 @@ class ContigCountColumns(sgqlc.types.Enum):
 DateTime = sgqlc.types.datetime.DateTime
 
 
+class FileAccessProtocol(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = ("s3",)
+
+
 class FileStatus(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = ("FAILED", "PENDING", "SUCCESS")
@@ -295,15 +300,16 @@ class TaxonCountColumns(sgqlc.types.Enum):
         "reference_genomes",
         "samples",
         "sequencing_reads",
-        "tax_id",
-        "tax_id_class",
-        "tax_id_family",
-        "tax_id_genus",
-        "tax_id_kingdom",
-        "tax_id_order",
-        "tax_id_parent",
-        "tax_id_phylum",
-        "tax_id_species",
+        "tax_class",
+        "tax_family",
+        "tax_genus",
+        "tax_kingdom",
+        "tax_order",
+        "tax_parent",
+        "tax_phylum",
+        "tax_species",
+        "tax_subspecies",
+        "tax_superkingdom",
         "upstream_database",
         "upstream_database_identifier",
         "wikipedia_id",
@@ -312,7 +318,17 @@ class TaxonCountColumns(sgqlc.types.Enum):
 
 class TaxonLevel(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("family", "genus", "species")
+    __choices__ = (
+        "level_class",
+        "level_family",
+        "level_genus",
+        "level_kingdom",
+        "level_order",
+        "level_phylum",
+        "level_species",
+        "level_subspecies",
+        "level_superkingdom",
+    )
 
 
 class UUID(sgqlc.types.Scalar):
@@ -482,7 +498,7 @@ class FileCreate(sgqlc.types.Input):
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     file_format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fileFormat")
     compression_type = sgqlc.types.Field(String, graphql_name="compressionType")
-    protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
+    protocol = sgqlc.types.Field(sgqlc.types.non_null(FileAccessProtocol), graphql_name="protocol")
     namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
     path = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="path")
 
@@ -1278,15 +1294,6 @@ class TaxonCreateInput(sgqlc.types.Input):
         "upstream_database_id",
         "upstream_database_identifier",
         "level",
-        "tax_id",
-        "tax_id_parent",
-        "tax_id_species",
-        "tax_id_genus",
-        "tax_id_family",
-        "tax_id_order",
-        "tax_id_class",
-        "tax_id_phylum",
-        "tax_id_kingdom",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     wikipedia_id = sgqlc.types.Field(String, graphql_name="wikipediaId")
@@ -1299,15 +1306,6 @@ class TaxonCreateInput(sgqlc.types.Input):
         sgqlc.types.non_null(String), graphql_name="upstreamDatabaseIdentifier"
     )
     level = sgqlc.types.Field(sgqlc.types.non_null(TaxonLevel), graphql_name="level")
-    tax_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxId")
-    tax_id_parent = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdParent")
-    tax_id_species = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdSpecies")
-    tax_id_genus = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdGenus")
-    tax_id_family = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdFamily")
-    tax_id_order = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdOrder")
-    tax_id_class = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdClass")
-    tax_id_phylum = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdPhylum")
-    tax_id_kingdom = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdKingdom")
 
 
 class TaxonLevelEnumComparators(sgqlc.types.Input):
@@ -1336,15 +1334,6 @@ class TaxonUpdateInput(sgqlc.types.Input):
         "upstream_database_id",
         "upstream_database_identifier",
         "level",
-        "tax_id",
-        "tax_id_parent",
-        "tax_id_species",
-        "tax_id_genus",
-        "tax_id_family",
-        "tax_id_order",
-        "tax_id_class",
-        "tax_id_phylum",
-        "tax_id_kingdom",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     wikipedia_id = sgqlc.types.Field(String, graphql_name="wikipediaId")
@@ -1355,15 +1344,6 @@ class TaxonUpdateInput(sgqlc.types.Input):
     upstream_database_id = sgqlc.types.Field(ID, graphql_name="upstreamDatabaseId")
     upstream_database_identifier = sgqlc.types.Field(String, graphql_name="upstreamDatabaseIdentifier")
     level = sgqlc.types.Field(TaxonLevel, graphql_name="level")
-    tax_id = sgqlc.types.Field(Int, graphql_name="taxId")
-    tax_id_parent = sgqlc.types.Field(Int, graphql_name="taxIdParent")
-    tax_id_species = sgqlc.types.Field(Int, graphql_name="taxIdSpecies")
-    tax_id_genus = sgqlc.types.Field(Int, graphql_name="taxIdGenus")
-    tax_id_family = sgqlc.types.Field(Int, graphql_name="taxIdFamily")
-    tax_id_order = sgqlc.types.Field(Int, graphql_name="taxIdOrder")
-    tax_id_class = sgqlc.types.Field(Int, graphql_name="taxIdClass")
-    tax_id_phylum = sgqlc.types.Field(Int, graphql_name="taxIdPhylum")
-    tax_id_kingdom = sgqlc.types.Field(Int, graphql_name="taxIdKingdom")
 
 
 class TaxonWhereClause(sgqlc.types.Input):
@@ -1381,15 +1361,6 @@ class TaxonWhereClause(sgqlc.types.Input):
         "upstream_database",
         "upstream_database_identifier",
         "level",
-        "tax_id",
-        "tax_id_parent",
-        "tax_id_species",
-        "tax_id_genus",
-        "tax_id_family",
-        "tax_id_order",
-        "tax_id_class",
-        "tax_id_phylum",
-        "tax_id_kingdom",
         "consensus_genomes",
         "reference_genomes",
         "sequencing_reads",
@@ -1407,15 +1378,6 @@ class TaxonWhereClause(sgqlc.types.Input):
     upstream_database = sgqlc.types.Field("UpstreamDatabaseWhereClause", graphql_name="upstreamDatabase")
     upstream_database_identifier = sgqlc.types.Field(StrComparators, graphql_name="upstreamDatabaseIdentifier")
     level = sgqlc.types.Field(TaxonLevelEnumComparators, graphql_name="level")
-    tax_id = sgqlc.types.Field(IntComparators, graphql_name="taxId")
-    tax_id_parent = sgqlc.types.Field(IntComparators, graphql_name="taxIdParent")
-    tax_id_species = sgqlc.types.Field(IntComparators, graphql_name="taxIdSpecies")
-    tax_id_genus = sgqlc.types.Field(IntComparators, graphql_name="taxIdGenus")
-    tax_id_family = sgqlc.types.Field(IntComparators, graphql_name="taxIdFamily")
-    tax_id_order = sgqlc.types.Field(IntComparators, graphql_name="taxIdOrder")
-    tax_id_class = sgqlc.types.Field(IntComparators, graphql_name="taxIdClass")
-    tax_id_phylum = sgqlc.types.Field(IntComparators, graphql_name="taxIdPhylum")
-    tax_id_kingdom = sgqlc.types.Field(IntComparators, graphql_name="taxIdKingdom")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     reference_genomes = sgqlc.types.Field(ReferenceGenomeWhereClause, graphql_name="referenceGenomes")
     sequencing_reads = sgqlc.types.Field(SequencingReadWhereClause, graphql_name="sequencingReads")
@@ -1631,6 +1593,7 @@ class File(sgqlc.types.Type):
         "compression_type",
         "size",
         "download_link",
+        "contents",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
@@ -1641,7 +1604,7 @@ class File(sgqlc.types.Type):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(EntityWhereClause, graphql_name="where", default=None)),)),
     )
     status = sgqlc.types.Field(sgqlc.types.non_null(FileStatus), graphql_name="status")
-    protocol = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="protocol")
+    protocol = sgqlc.types.Field(sgqlc.types.non_null(FileAccessProtocol), graphql_name="protocol")
     namespace = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="namespace")
     path = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="path")
     file_format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fileFormat")
@@ -1654,6 +1617,7 @@ class File(sgqlc.types.Type):
             (("expiration", sgqlc.types.Arg(sgqlc.types.non_null(Int), graphql_name="expiration", default=3600)),)
         ),
     )
+    contents = sgqlc.types.Field(String, graphql_name="contents")
 
 
 class GenomicRangeAggregate(sgqlc.types.Type):
@@ -3393,15 +3357,6 @@ class TaxonMinMaxColumns(sgqlc.types.Type):
         "common_name",
         "name",
         "upstream_database_identifier",
-        "tax_id",
-        "tax_id_parent",
-        "tax_id_species",
-        "tax_id_genus",
-        "tax_id_family",
-        "tax_id_order",
-        "tax_id_class",
-        "tax_id_phylum",
-        "tax_id_kingdom",
     )
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
@@ -3411,45 +3366,14 @@ class TaxonMinMaxColumns(sgqlc.types.Type):
     common_name = sgqlc.types.Field(String, graphql_name="commonName")
     name = sgqlc.types.Field(String, graphql_name="name")
     upstream_database_identifier = sgqlc.types.Field(String, graphql_name="upstreamDatabaseIdentifier")
-    tax_id = sgqlc.types.Field(Int, graphql_name="taxId")
-    tax_id_parent = sgqlc.types.Field(Int, graphql_name="taxIdParent")
-    tax_id_species = sgqlc.types.Field(Int, graphql_name="taxIdSpecies")
-    tax_id_genus = sgqlc.types.Field(Int, graphql_name="taxIdGenus")
-    tax_id_family = sgqlc.types.Field(Int, graphql_name="taxIdFamily")
-    tax_id_order = sgqlc.types.Field(Int, graphql_name="taxIdOrder")
-    tax_id_class = sgqlc.types.Field(Int, graphql_name="taxIdClass")
-    tax_id_phylum = sgqlc.types.Field(Int, graphql_name="taxIdPhylum")
-    tax_id_kingdom = sgqlc.types.Field(Int, graphql_name="taxIdKingdom")
 
 
 class TaxonNumericalColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = (
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "tax_id",
-        "tax_id_parent",
-        "tax_id_species",
-        "tax_id_genus",
-        "tax_id_family",
-        "tax_id_order",
-        "tax_id_class",
-        "tax_id_phylum",
-        "tax_id_kingdom",
-    )
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    tax_id = sgqlc.types.Field(Int, graphql_name="taxId")
-    tax_id_parent = sgqlc.types.Field(Int, graphql_name="taxIdParent")
-    tax_id_species = sgqlc.types.Field(Int, graphql_name="taxIdSpecies")
-    tax_id_genus = sgqlc.types.Field(Int, graphql_name="taxIdGenus")
-    tax_id_family = sgqlc.types.Field(Int, graphql_name="taxIdFamily")
-    tax_id_order = sgqlc.types.Field(Int, graphql_name="taxIdOrder")
-    tax_id_class = sgqlc.types.Field(Int, graphql_name="taxIdClass")
-    tax_id_phylum = sgqlc.types.Field(Int, graphql_name="taxIdPhylum")
-    tax_id_kingdom = sgqlc.types.Field(Int, graphql_name="taxIdKingdom")
 
 
 class UpstreamDatabaseAggregate(sgqlc.types.Type):
@@ -4149,15 +4073,6 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         "upstream_database",
         "upstream_database_identifier",
         "level",
-        "tax_id",
-        "tax_id_parent",
-        "tax_id_species",
-        "tax_id_genus",
-        "tax_id_family",
-        "tax_id_order",
-        "tax_id_class",
-        "tax_id_phylum",
-        "tax_id_kingdom",
         "consensus_genomes",
         "consensus_genomes_aggregate",
         "reference_genomes",
@@ -4187,15 +4102,6 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         sgqlc.types.non_null(String), graphql_name="upstreamDatabaseIdentifier"
     )
     level = sgqlc.types.Field(sgqlc.types.non_null(TaxonLevel), graphql_name="level")
-    tax_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxId")
-    tax_id_parent = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdParent")
-    tax_id_species = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdSpecies")
-    tax_id_genus = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdGenus")
-    tax_id_family = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdFamily")
-    tax_id_order = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdOrder")
-    tax_id_class = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdClass")
-    tax_id_phylum = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdPhylum")
-    tax_id_kingdom = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="taxIdKingdom")
     consensus_genomes = sgqlc.types.Field(
         sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",

@@ -40,13 +40,26 @@ class TaxonFactory(CommonFactory):
         collection_id=factory.SelfAttribute("..collection_id"),
     )
     upstream_database_identifier = fuzzy.FuzzyText()
-    level = fuzzy.FuzzyChoice(["species", "genus", "family"])
-    tax_id = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_parent = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_species = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_genus = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_family = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_order = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_class = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_phylum = fuzzy.FuzzyInteger(1, 1000)
-    tax_id_kingdom = fuzzy.FuzzyInteger(1, 1000)
+    level = fuzzy.FuzzyChoice(
+        [
+            "level_subspecies",
+            "level_species",
+            "level_genus",
+            "level_family",
+            "level_order",
+            "level_class",
+            "level_phylum",
+            "level_kingdom",
+            "level_superkingdom",
+        ]
+    )
+    tax_parent = None
+    tax_subspecies = None
+    tax_species = None
+    tax_genus = None
+    tax_family = None
+    tax_order = None
+    tax_class = None
+    tax_phylum = None
+    tax_kingdom = None
+    tax_superkingdom = None

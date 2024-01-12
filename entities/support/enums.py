@@ -66,9 +66,15 @@ class AlignmentTool(enum.Enum):
 
 @strawberry.enum
 class TaxonLevel(enum.Enum):
-    species = "species"
-    genus = "genus"
-    family = "family"
+    level_subspecies = "level_subspecies"
+    level_species = "level_species"
+    level_genus = "level_genus"
+    level_family = "level_family"
+    level_order = "level_order"
+    level_class = "level_class"
+    level_phylum = "level_phylum"
+    level_kingdom = "level_kingdom"
+    level_superkingdom = "level_superkingdom"
 
 
 @strawberry.enum
