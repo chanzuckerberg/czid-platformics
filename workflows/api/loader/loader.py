@@ -103,10 +103,10 @@ class LoaderDriver:
                     args[loader_input_name] = workflow_manifest.raw_inputs[workflow_input_name]
                 elif workflow_input_name in workflow_manifest.entity_inputs:
                     args[loader_input_name] = workflow_manifest.entity_inputs[workflow_input_name]
-                elif workflow_input_name in outputs:
-                    args[loader_input_name] = outputs[workflow_input_name]
                 else:
                     raise Exception(f"Could not find input '{workflow_input_name}'")
+            for loader_input_name, workflow_output_name in loader_config.workflow_outputs:
+                args[loader_input_name] = outputs[workflow_output_name]
 
             loader_futures.append(loader.load(args=args))  # type: ignore
         entities_lists = await asyncio.gather(*loader_futures)
