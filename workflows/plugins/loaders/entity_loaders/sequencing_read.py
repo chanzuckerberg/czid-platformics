@@ -1,7 +1,8 @@
 from typing import TypedDict
 from database.models import Run
-from plugin_types import EntityInputLoader, Primitive
-from entity_interface import Entity, SequencingRead
+from plugin_types import EntityInputLoader
+from entity_interface import SequencingRead
+
 
 class EntityInputs(TypedDict):
     sequencing_read: SequencingRead
@@ -18,4 +19,3 @@ class SequencingReadInputLoader(EntityInputLoader):
             "r2": r2_file and (await r2_file.load()).path,
             "primer_bed": primer_file and (await primer_file.load()).path,
         }
-

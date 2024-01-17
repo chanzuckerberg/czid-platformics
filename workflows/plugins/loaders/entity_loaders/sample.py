@@ -1,10 +1,11 @@
 from typing import TypedDict
-from database.models import Run
 from plugin_types import EntityInputLoader
 from entity_interface import Sample
 
+
 class EntityInputs(TypedDict):
     sample: Sample
+
 
 class SampleInputLoader(EntityInputLoader):
     async def load(self, workflow_run, entity_inputs: EntityInputs, raw_inputs):
@@ -12,4 +13,3 @@ class SampleInputLoader(EntityInputLoader):
         return {
             "name": sample.name,
         }
-
