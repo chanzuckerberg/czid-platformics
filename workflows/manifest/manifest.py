@@ -11,9 +11,8 @@ from pydantic_core import InitErrorDetails, core_schema
 
 
 class _SpecifierSetPydanticAnnotation:
-    """
+    """ """
 
-    """
     @classmethod
     def __get_pydantic_core_schema__(
         cls,
@@ -42,9 +41,7 @@ class _SpecifierSetPydanticAnnotation:
                     from_string_schema,
                 ]
             ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda instance: str(instance)
-            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(lambda instance: str(instance)),
         )
 
 
@@ -53,6 +50,7 @@ PydanticSpecifierSet = Annotated[SpecifierSet, _SpecifierSetPydanticAnnotation]
 
 PrimitiveTypeName = Literal["str", "int", "float", "bool"]
 Primitive = str | int | float | bool
+
 
 class EntityInput(BaseModel):
     name: str
@@ -72,6 +70,7 @@ class _InputValidationError(ABC):
 
     def message(self):
         raise NotImplementedError
+
 
 _InputValidationErrors = Generator[_InputValidationError, None, None]
 
@@ -94,7 +93,10 @@ class InputTypeInvalid(_InputValidationError):
     provided_type: str
 
     def message(self):
-        return f"Invalid type for {self.raw_or_entity} input: {self.input_name} (expected {self.expected_type}, got {self.provided_type})"
+        return (
+            f"Invalid type for {self.raw_or_entity} input: "
+            + f"{self.input_name} (expected {self.expected_type}, got {self.provided_type})"
+        )
 
 
 @dataclass
@@ -133,11 +135,14 @@ class RawInputArgument(BaseInputArgument):
         if invalid_options := [option for option in self.options if type(option).__name__ != self.type]:
             raise ValidationError.from_exception_data(
                 title=f"Invalid option type for input '{self.name}' ({self.type})",
-                line_errors=[InitErrorDetails(
-                    type="value_error",
-                    ctx={"error": ValueError(f"Invalid option type for {option} ({type(option).__name__})")},
-                    input=option,
-                ) for option in invalid_options],
+                line_errors=[
+                    InitErrorDetails(
+                        type="value_error",
+                        ctx={"error": ValueError(f"Invalid option type for {option} ({type(option).__name__})")},
+                        input=option,
+                    )
+                    for option in invalid_options
+                ],
             )
         return self
 
@@ -199,7 +204,7 @@ class IOLoader(BaseModel):
         if not inputs_dict or not isinstance(inputs_dict, dict):
             return inputs_dict
 
-        return { k: v or k for k, v in inputs_dict.items() }
+        return {k: v or k for k, v in inputs_dict.items()}
 
     def check_references(
         self,
@@ -267,16 +272,22 @@ class Manifest(BaseModel):
         if errors:
             raise ValidationError.from_exception_data(
                 title="Invalid input references",
-                line_errors=[InitErrorDetails(
-                    type="value_error",
-                    ctx={"error": ValueError(error.message())},
-                    input=error.workflow_input_name,
-                ) for error in errors],
+                line_errors=[
+                    InitErrorDetails(
+                        type="value_error",
+                        ctx={"error": ValueError(error.message())},
+                        input=error.workflow_input_name,
+                    )
+                    for error in errors
+                ],
             )
         return self
 
     def validate_inputs(self, entity_inputs: list[EntityInput], raw_inputs: list[RawInput]) -> _InputValidationErrors:
-        for entity_or_raw, inputs, input_arguments in [("entity", entity_inputs, self.entity_inputs), ("raw", raw_inputs, self.raw_inputs)]:
+        for entity_or_raw, inputs, input_arguments in [
+            ("entity", entity_inputs, self.entity_inputs),
+            ("raw", raw_inputs, self.raw_inputs),
+        ]:
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}
             for input in inputs:
                 input_argument = input_arguments.get(input.name)
@@ -294,6 +305,7 @@ class Manifest(BaseModel):
 if __name__ == "__main__":
     import argparse
     from pathlib import Path
+
     parser = argparse.ArgumentParser(description="Validate a manifest file")
     parser.add_argument("manifest", type=Path, help="Path to manifest file")
     args = parser.parse_args()
@@ -302,11 +314,10 @@ if __name__ == "__main__":
             Manifest.from_yaml(f)
     except ValidationError as e:
         for error in e.errors():
-            path = '.'.join(str(e) for e in error["loc"])
-            message = error["msg"] 
+            path = ".".join(str(e) for e in error["loc"])
+            message = error["msg"]
             if path:
                 message = f"{path}: {message}"
             print(f"\033[91m{message}\033[0m")
         exit(1)
     print("\033[92mManifest is valid \u2713\033[0m")
-

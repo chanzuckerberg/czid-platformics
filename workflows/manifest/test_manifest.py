@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from manifest.manifest import Manifest, EntityInput, RawInput
 
+
 def test_valid_parse():
     """
     This is a happy path test that parses and serializes a valid manifest.
@@ -18,11 +19,16 @@ def test_valid_parse():
     Manifest.model_validate_json(json_str)
 
     sample_input_loader = [loader for loader in manifest.input_loaders][0]
-    assert sample_input_loader.inputs["sample"] == "sample", "Null input loader inputs should default to their loader input name"
+    assert (
+        sample_input_loader.inputs["sample"] == "sample"
+    ), "Null input loader inputs should default to their loader input name"
 
     kindness_input_loader = [loader for loader in manifest.input_loaders if loader.name == "kindness"][0]
     assert list(kindness_input_loader.version.filter(["0.0.0", "0.0.1"])) == ["0.0.1"], "Version filter should work"
-    assert kindness_input_loader.inputs["mood"] == "mood", "Null input loader inputs should default to their loader input name"
+    assert (
+        kindness_input_loader.inputs["mood"] == "mood"
+    ), "Null input loader inputs should default to their loader input name"
+
 
 def test_bad_references():
     """
@@ -53,8 +59,8 @@ def test_bad_options():
     messages = [error["msg"] for error in errors]
     assert messages == [
         "Value error, Default value for 'Mood': overjoyed is not in options: ['happy', 'neutral', 'sad']",
-        'Value error, Invalid option type for 1 (int)',
-        'Value error, Invalid option type for False (bool)',
+        "Value error, Invalid option type for 1 (int)",
+        "Value error, Invalid option type for False (bool)",
     ]
 
 
@@ -70,8 +76,8 @@ def test_malformed():
     messages = [error["msg"] for error in errors]
     assert messages == [
         "Value error, Default value for 'Mood': 1 is not of type str",
-        'Input should be a valid dictionary',
-        'Input should be a valid dictionary',
+        "Input should be a valid dictionary",
+        "Input should be a valid dictionary",
     ]
 
 
@@ -85,9 +91,7 @@ def test_duplicate_inputs():
         Manifest.from_yaml(f)
     errors = e.value.errors()
     messages = [error["msg"] for error in errors]
-    assert messages == [
-        "Value error, Raw input names duplicate entity input names: ['sample']"
-    ]
+    assert messages == ["Value error, Raw input names duplicate entity input names: ['sample']"]
 
 
 def test_validate_input():
@@ -97,7 +101,6 @@ def test_validate_input():
     path = os.path.join(os.path.dirname(__file__), "test_manifests/valid.yaml")
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
-
 
     entity_inputs = [
         # Entity input with the wrong type
@@ -115,10 +118,9 @@ def test_validate_input():
 
     errors = [error.message() for error in manifest.validate_inputs(entity_inputs, raw_inputs)]
     assert errors == [
-        'Invalid type for entity input: Sample (expected sample, got sequencing_read)',
-        'Entity input not found: missing',
-        'Missing required Entity input: sequencing_read',
-        'Invalid value for raw input: Mood (input not in options)',
-        'Invalid type for raw input: Ranking (expected int, got float)',
+        "Invalid type for entity input: Sample (expected sample, got sequencing_read)",
+        "Entity input not found: missing",
+        "Missing required Entity input: sequencing_read",
+        "Invalid value for raw input: Mood (input not in options)",
+        "Invalid type for raw input: Ranking (expected int, got float)",
     ]
-
