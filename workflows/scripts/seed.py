@@ -14,17 +14,14 @@ from test_infra.factories.workflow import WorkflowFactory
 from test_infra.factories.workflow_version import WorkflowVersionFactory
 from test_infra.factories.run import RunFactory
 
+
 def import_manifest(session: Session) -> None:
     manifest_file = "/workflows/manifest/test_manifests/valid.yaml"
     with open(manifest_file) as f:
         manifest_str = f.read()
     manifest = Manifest.from_yaml(manifest_str)
 
-    workflow = (
-        session.query(Workflow)
-        .filter(Workflow.name == manifest.workflow_name)
-        .first()
-    )
+    workflow = session.query(Workflow).filter(Workflow.name == manifest.workflow_name).first()
 
     if workflow is None:
         workflow = Workflow(

@@ -120,9 +120,9 @@ class LoaderDriver:
                 print("event", event, file=sys.stderr)
                 if isinstance(event, WorkflowSucceededMessage):
                     _event: WorkflowSucceededMessage = event
-                    run = (await self.session.execute(
-                        select(Run).where(Run.execution_id == _event.runner_id)
-                    )).scalar_one()
+                    run = (
+                        await self.session.execute(select(Run).where(Run.execution_id == _event.runner_id))
+                    ).scalar_one()
                     manifest = Manifest.model_validate(run.workflow_version.manifest)
                     user_id = 111
                     collection_id = 444
