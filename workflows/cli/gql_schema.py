@@ -28,9 +28,58 @@ ID = sgqlc.types.ID
 Int = sgqlc.types.Int
 
 
+class RunCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = (
+        "collection_id",
+        "ended_at",
+        "entity_id",
+        "execution_id",
+        "id",
+        "inputs_json",
+        "outputs_json",
+        "owner_user_id",
+        "producing_run_id",
+        "run_entity_inputs",
+        "run_steps",
+        "started_at",
+        "status",
+        "workflow_version",
+    )
+
+
+class RunEntityInputCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = (
+        "collection_id",
+        "entity_id",
+        "field_name",
+        "id",
+        "new_entity_id",
+        "owner_user_id",
+        "producing_run_id",
+        "run",
+    )
+
+
 class RunStatus(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = ("FAILED", "PENDING", "RUNNING", "STARTED", "SUCCEEDED")
+
+
+class RunStepCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = (
+        "collection_id",
+        "ended_at",
+        "entity_id",
+        "id",
+        "owner_user_id",
+        "producing_run_id",
+        "run",
+        "started_at",
+        "status",
+    )
 
 
 String = sgqlc.types.String
@@ -38,6 +87,38 @@ String = sgqlc.types.String
 
 class UUID(sgqlc.types.Scalar):
     __schema__ = gql_schema
+
+
+class WorkflowCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = (
+        "collection_id",
+        "default_version",
+        "entity_id",
+        "id",
+        "minimum_supported_version",
+        "name",
+        "owner_user_id",
+        "producing_run_id",
+        "versions",
+    )
+
+
+class WorkflowVersionCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = (
+        "collection_id",
+        "entity_id",
+        "graph_json",
+        "id",
+        "manifest",
+        "owner_user_id",
+        "producing_run_id",
+        "runs",
+        "version",
+        "workflow",
+        "workflow_uri",
+    )
 
 
 ########################################################################
@@ -324,18 +405,22 @@ class WorkflowUpdateInput(sgqlc.types.Input):
 
 class WorkflowVersionCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "graph_json", "manifest", "workflow_id")
+    __field_names__ = ("collection_id", "graph_json", "workflow_uri", "version", "manifest", "workflow_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
+    workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
+    version = sgqlc.types.Field(String, graphql_name="version")
     manifest = sgqlc.types.Field(String, graphql_name="manifest")
     workflow_id = sgqlc.types.Field(ID, graphql_name="workflowId")
 
 
 class WorkflowVersionUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "graph_json", "manifest", "workflow_id")
+    __field_names__ = ("collection_id", "graph_json", "workflow_uri", "version", "manifest", "workflow_id")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
+    workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
+    version = sgqlc.types.Field(String, graphql_name="version")
     manifest = sgqlc.types.Field(String, graphql_name="manifest")
     workflow_id = sgqlc.types.Field(ID, graphql_name="workflowId")
 
@@ -348,6 +433,8 @@ class WorkflowVersionWhereClause(sgqlc.types.Input):
         "owner_user_id",
         "collection_id",
         "graph_json",
+        "workflow_uri",
+        "version",
         "manifest",
         "workflow",
         "runs",
@@ -357,6 +444,8 @@ class WorkflowVersionWhereClause(sgqlc.types.Input):
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     graph_json = sgqlc.types.Field(StrComparators, graphql_name="graphJson")
+    workflow_uri = sgqlc.types.Field(StrComparators, graphql_name="workflowUri")
+    version = sgqlc.types.Field(StrComparators, graphql_name="version")
     manifest = sgqlc.types.Field(StrComparators, graphql_name="manifest")
     workflow = sgqlc.types.Field("WorkflowWhereClause", graphql_name="workflow")
     runs = sgqlc.types.Field(RunWhereClause, graphql_name="runs")
@@ -649,7 +738,20 @@ class PageInfo(sgqlc.types.Type):
 
 class Query(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("node", "nodes", "runs", "workflows", "run_steps", "run_entity_inputs", "workflow_versions")
+    __field_names__ = (
+        "node",
+        "nodes",
+        "runs",
+        "workflows",
+        "run_steps",
+        "run_entity_inputs",
+        "workflow_versions",
+        "runs_aggregate",
+        "workflows_aggregate",
+        "run_steps_aggregate",
+        "run_entity_inputs_aggregate",
+        "workflow_versions_aggregate",
+    )
     node = sgqlc.types.Field(
         sgqlc.types.non_null(Node),
         graphql_name="node",
@@ -704,6 +806,64 @@ class Query(sgqlc.types.Type):
             (("where", sgqlc.types.Arg(WorkflowVersionWhereClause, graphql_name="where", default=None)),)
         ),
     )
+    runs_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null("RunAggregate"),
+        graphql_name="runsAggregate",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(RunWhereClause, graphql_name="where", default=None)),)),
+    )
+    workflows_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null("WorkflowAggregate"),
+        graphql_name="workflowsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(WorkflowWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
+    run_steps_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null("RunStepAggregate"),
+        graphql_name="runStepsAggregate",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(RunStepWhereClause, graphql_name="where", default=None)),)),
+    )
+    run_entity_inputs_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null("RunEntityInputAggregate"),
+        graphql_name="runEntityInputsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(RunEntityInputWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
+    workflow_versions_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null("WorkflowVersionAggregate"),
+        graphql_name="workflowVersionsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(WorkflowVersionWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
+
+
+class RunAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("RunAggregateFunctions", graphql_name="aggregate")
+
+
+class RunAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("RunNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("RunNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("RunMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("RunMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("RunNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("RunNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(RunCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
 
 
 class RunConnection(sgqlc.types.relay.Connection):
@@ -722,6 +882,33 @@ class RunEdge(sgqlc.types.Type):
     node = sgqlc.types.Field(sgqlc.types.non_null("Run"), graphql_name="node")
 
 
+class RunEntityInputAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("RunEntityInputAggregateFunctions", graphql_name="aggregate")
+
+
+class RunEntityInputAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("RunEntityInputNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("RunEntityInputNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("RunEntityInputMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("RunEntityInputMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("RunEntityInputNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("RunEntityInputNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(RunEntityInputCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
+
+
 class RunEntityInputConnection(sgqlc.types.relay.Connection):
     __schema__ = gql_schema
     __field_names__ = ("page_info", "edges")
@@ -736,6 +923,82 @@ class RunEntityInputEdge(sgqlc.types.Type):
     __field_names__ = ("cursor", "node")
     cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
     node = sgqlc.types.Field(sgqlc.types.non_null("RunEntityInput"), graphql_name="node")
+
+
+class RunEntityInputMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "new_entity_id", "field_name")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    new_entity_id = sgqlc.types.Field(Int, graphql_name="newEntityId")
+    field_name = sgqlc.types.Field(String, graphql_name="fieldName")
+
+
+class RunEntityInputNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "new_entity_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    new_entity_id = sgqlc.types.Field(Int, graphql_name="newEntityId")
+
+
+class RunMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "started_at",
+        "ended_at",
+        "execution_id",
+        "outputs_json",
+        "inputs_json",
+    )
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
+    ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
+    execution_id = sgqlc.types.Field(String, graphql_name="executionId")
+    outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
+    inputs_json = sgqlc.types.Field(String, graphql_name="inputsJson")
+
+
+class RunNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+
+
+class RunStepAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("RunStepAggregateFunctions", graphql_name="aggregate")
+
+
+class RunStepAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("RunStepNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("RunStepNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("RunStepMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("RunStepMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("RunStepNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("RunStepNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(RunStepCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
 
 
 class RunStepConnection(sgqlc.types.relay.Connection):
@@ -754,6 +1017,104 @@ class RunStepEdge(sgqlc.types.Type):
     node = sgqlc.types.Field(sgqlc.types.non_null("RunStep"), graphql_name="node")
 
 
+class RunStepMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "started_at", "ended_at")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
+    ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
+
+
+class RunStepNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+
+
+class WorkflowAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("WorkflowAggregateFunctions", graphql_name="aggregate")
+
+
+class WorkflowAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("WorkflowMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(WorkflowCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
+
+
+class WorkflowMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "name",
+        "default_version",
+        "minimum_supported_version",
+    )
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    name = sgqlc.types.Field(String, graphql_name="name")
+    default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
+    minimum_supported_version = sgqlc.types.Field(String, graphql_name="minimumSupportedVersion")
+
+
+class WorkflowNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+
+
+class WorkflowVersionAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("WorkflowVersionAggregateFunctions", graphql_name="aggregate")
+
+
+class WorkflowVersionAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("WorkflowVersionMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowVersionMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(WorkflowVersionCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
+
+
 class WorkflowVersionConnection(sgqlc.types.relay.Connection):
     __schema__ = gql_schema
     __field_names__ = ("page_info", "edges")
@@ -768,6 +1129,34 @@ class WorkflowVersionEdge(sgqlc.types.Type):
     __field_names__ = ("cursor", "node")
     cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
     node = sgqlc.types.Field(sgqlc.types.non_null("WorkflowVersion"), graphql_name="node")
+
+
+class WorkflowVersionMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "graph_json",
+        "workflow_uri",
+        "version",
+        "manifest",
+    )
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
+    workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
+    version = sgqlc.types.Field(String, graphql_name="version")
+    manifest = sgqlc.types.Field(String, graphql_name="manifest")
+
+
+class WorkflowVersionNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
 
 
 class Run(sgqlc.types.Type, EntityInterface, Node):
@@ -785,7 +1174,9 @@ class Run(sgqlc.types.Type, EntityInterface, Node):
         "status",
         "workflow_version",
         "run_steps",
+        "run_steps_aggregate",
         "run_entity_inputs",
+        "run_entity_inputs_aggregate",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -817,6 +1208,11 @@ class Run(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
+    run_steps_aggregate = sgqlc.types.Field(
+        RunStepAggregate,
+        graphql_name="runStepsAggregate",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(RunStepWhereClause, graphql_name="where", default=None)),)),
+    )
     run_entity_inputs = sgqlc.types.Field(
         sgqlc.types.non_null(RunEntityInputConnection),
         graphql_name="runEntityInputs",
@@ -828,6 +1224,13 @@ class Run(sgqlc.types.Type, EntityInterface, Node):
                 ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
                 ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
             )
+        ),
+    )
+    run_entity_inputs_aggregate = sgqlc.types.Field(
+        RunEntityInputAggregate,
+        graphql_name="runEntityInputsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(RunEntityInputWhereClause, graphql_name="where", default=None)),)
         ),
     )
 
@@ -885,6 +1288,7 @@ class Workflow(sgqlc.types.Type, EntityInterface, Node):
         "default_version",
         "minimum_supported_version",
         "versions",
+        "versions_aggregate",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -906,6 +1310,13 @@ class Workflow(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
+    versions_aggregate = sgqlc.types.Field(
+        WorkflowVersionAggregate,
+        graphql_name="versionsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(WorkflowVersionWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
 
 
 class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
@@ -916,15 +1327,20 @@ class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
         "owner_user_id",
         "collection_id",
         "graph_json",
+        "workflow_uri",
+        "version",
         "manifest",
         "workflow",
         "runs",
+        "runs_aggregate",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
+    workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
+    version = sgqlc.types.Field(String, graphql_name="version")
     manifest = sgqlc.types.Field(String, graphql_name="manifest")
     workflow = sgqlc.types.Field(
         Workflow,
@@ -945,6 +1361,11 @@ class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
                 ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
             )
         ),
+    )
+    runs_aggregate = sgqlc.types.Field(
+        RunAggregate,
+        graphql_name="runsAggregate",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(RunWhereClause, graphql_name="where", default=None)),)),
     )
 
 

@@ -1,0 +1,27 @@
+workflow_name: Malformed Manifest
+specification_language: WDL
+description: A malformed manifest YAML, intended to test some logic that runs pre-validation
+entity_inputs:
+  sample:
+    name: Sample
+    description: Your sample
+    entity_type: sample
+raw_inputs:
+  mood:
+    name: Mood
+    description: What mood were you in when you ran this workflow?
+    type: str
+    default: 1  # This is bad because this value must be a string
+input_loaders:
+  - name: sample
+    version: ">=0.0.1"
+    inputs: "hello world"  # This is bad because inputs must be a dictionary
+    outputs: 1 # This is bad because outputs must be a dictionary
+output_loaders:
+  - name: sequencing_read
+    version: ">=0.0.1"
+    inputs:
+      sample: ~
+    workflow_outputs:
+      fastq: synthetic_sample.out_fastq
+

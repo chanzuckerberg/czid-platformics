@@ -1,0 +1,34 @@
+workflow_name: Bad Enum Manifest
+specification_language: WDL
+description: A manifest with bad enum raw inputs 
+raw_inputs:
+  mood:
+    name: Mood
+    description: What mood were you in when you ran this workflow?
+    type: str
+    default: overjoyed  # This is bad because overjoyed isn't an option
+    options:
+      - happy
+      - neutral
+      - sad
+  favorite_color:  # This is bad because an enum options must be the correct type
+    name: Favorite Color
+    description: What is your favorite color?
+    type: str
+    options:
+      - green
+      - 1
+      - false
+input_loaders:
+  - name: vibes
+    version: ">=0.0.1"
+    inputs:
+      mood: ~
+      favorite_color: ~
+    outputs:
+      vibe: ~
+output_loaders:
+  - name: vibes
+    version: ">=0.0.1"
+    workflow_outputs:
+        final_vibe: "vibes.final_vibe"

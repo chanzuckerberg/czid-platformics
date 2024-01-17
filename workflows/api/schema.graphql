@@ -88,6 +88,11 @@ type Query {
   runSteps(where: RunStepWhereClause = null): [RunStep!]!
   runEntityInputs(where: RunEntityInputWhereClause = null): [RunEntityInput!]!
   workflowVersions(where: WorkflowVersionWhereClause = null): [WorkflowVersion!]!
+  runsAggregate(where: RunWhereClause = null): RunAggregate!
+  workflowsAggregate(where: WorkflowWhereClause = null): WorkflowAggregate!
+  runStepsAggregate(where: RunStepWhereClause = null): RunStepAggregate!
+  runEntityInputsAggregate(where: RunEntityInputWhereClause = null): RunEntityInputAggregate!
+  workflowVersionsAggregate(where: WorkflowVersionWhereClause = null): WorkflowVersionAggregate!
 }
 
 type Run implements EntityInterface & Node {
@@ -119,6 +124,7 @@ type Run implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): RunStepConnection!
+  runStepsAggregate(where: RunStepWhereClause = null): RunStepAggregate
   runEntityInputs(
     where: RunEntityInputWhereClause = null
 
@@ -134,6 +140,21 @@ type Run implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): RunEntityInputConnection!
+  runEntityInputsAggregate(where: RunEntityInputWhereClause = null): RunEntityInputAggregate
+}
+
+type RunAggregate {
+  aggregate: RunAggregateFunctions
+}
+
+type RunAggregateFunctions {
+  sum: RunNumericalColumns
+  avg: RunNumericalColumns
+  min: RunMinMaxColumns
+  max: RunMinMaxColumns
+  stddev: RunNumericalColumns
+  variance: RunNumericalColumns
+  count(distinct: Boolean = false, columns: RunCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -143,6 +164,23 @@ type RunConnection {
 
   """Contains the nodes in this connection"""
   edges: [RunEdge!]!
+}
+
+enum RunCountColumns {
+  started_at
+  ended_at
+  execution_id
+  outputs_json
+  inputs_json
+  status
+  workflow_version
+  run_steps
+  run_entity_inputs
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input RunCreateInput {
@@ -177,6 +215,20 @@ type RunEntityInput implements EntityInterface & Node {
   run(where: RunWhereClause = null): Run
 }
 
+type RunEntityInputAggregate {
+  aggregate: RunEntityInputAggregateFunctions
+}
+
+type RunEntityInputAggregateFunctions {
+  sum: RunEntityInputNumericalColumns
+  avg: RunEntityInputNumericalColumns
+  min: RunEntityInputMinMaxColumns
+  max: RunEntityInputMinMaxColumns
+  stddev: RunEntityInputNumericalColumns
+  variance: RunEntityInputNumericalColumns
+  count(distinct: Boolean = false, columns: RunEntityInputCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type RunEntityInputConnection {
   """Pagination data for this connection"""
@@ -184,6 +236,17 @@ type RunEntityInputConnection {
 
   """Contains the nodes in this connection"""
   edges: [RunEntityInputEdge!]!
+}
+
+enum RunEntityInputCountColumns {
+  new_entity_id
+  field_name
+  run
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input RunEntityInputCreateInput {
@@ -200,6 +263,21 @@ type RunEntityInputEdge {
 
   """The item at the end of the edge"""
   node: RunEntityInput!
+}
+
+type RunEntityInputMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  newEntityId: Int
+  fieldName: String
+}
+
+type RunEntityInputNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  newEntityId: Int
 }
 
 input RunEntityInputUpdateInput {
@@ -221,6 +299,23 @@ input RunEntityInputWhereClause {
 
 input RunEntityInputWhereClauseMutations {
   id: UUIDComparators
+}
+
+type RunMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  startedAt: DateTime
+  endedAt: DateTime
+  executionId: String
+  outputsJson: String
+  inputsJson: String
+}
+
+type RunNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 enum RunStatus {
@@ -256,6 +351,20 @@ type RunStep implements EntityInterface & Node {
   status: RunStatus
 }
 
+type RunStepAggregate {
+  aggregate: RunStepAggregateFunctions
+}
+
+type RunStepAggregateFunctions {
+  sum: RunStepNumericalColumns
+  avg: RunStepNumericalColumns
+  min: RunStepMinMaxColumns
+  max: RunStepMinMaxColumns
+  stddev: RunStepNumericalColumns
+  variance: RunStepNumericalColumns
+  count(distinct: Boolean = false, columns: RunStepCountColumns = null): Int
+}
+
 """A connection to a list of items."""
 type RunStepConnection {
   """Pagination data for this connection"""
@@ -263,6 +372,18 @@ type RunStepConnection {
 
   """Contains the nodes in this connection"""
   edges: [RunStepEdge!]!
+}
+
+enum RunStepCountColumns {
+  run
+  started_at
+  ended_at
+  status
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input RunStepCreateInput {
@@ -280,6 +401,20 @@ type RunStepEdge {
 
   """The item at the end of the edge"""
   node: RunStep!
+}
+
+type RunStepMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  startedAt: DateTime
+  endedAt: DateTime
+}
+
+type RunStepNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input RunStepUpdateInput {
@@ -394,6 +529,33 @@ type Workflow implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): WorkflowVersionConnection!
+  versionsAggregate(where: WorkflowVersionWhereClause = null): WorkflowVersionAggregate
+}
+
+type WorkflowAggregate {
+  aggregate: WorkflowAggregateFunctions
+}
+
+type WorkflowAggregateFunctions {
+  sum: WorkflowNumericalColumns
+  avg: WorkflowNumericalColumns
+  min: WorkflowMinMaxColumns
+  max: WorkflowMinMaxColumns
+  stddev: WorkflowNumericalColumns
+  variance: WorkflowNumericalColumns
+  count(distinct: Boolean = false, columns: WorkflowCountColumns = null): Int
+}
+
+enum WorkflowCountColumns {
+  name
+  default_version
+  minimum_supported_version
+  versions
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
 }
 
 input WorkflowCreateInput {
@@ -401,6 +563,21 @@ input WorkflowCreateInput {
   name: String = null
   defaultVersion: String = null
   minimumSupportedVersion: String = null
+}
+
+type WorkflowMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  name: String
+  defaultVersion: String
+  minimumSupportedVersion: String
+}
+
+type WorkflowNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input WorkflowUpdateInput {
@@ -418,6 +595,8 @@ type WorkflowVersion implements EntityInterface & Node {
   ownerUserId: Int!
   collectionId: Int!
   graphJson: String
+  workflowUri: String
+  version: String
   manifest: String
   workflow(where: WorkflowWhereClause = null): Workflow
   runs(
@@ -435,6 +614,21 @@ type WorkflowVersion implements EntityInterface & Node {
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
   ): RunConnection!
+  runsAggregate(where: RunWhereClause = null): RunAggregate
+}
+
+type WorkflowVersionAggregate {
+  aggregate: WorkflowVersionAggregateFunctions
+}
+
+type WorkflowVersionAggregateFunctions {
+  sum: WorkflowVersionNumericalColumns
+  avg: WorkflowVersionNumericalColumns
+  min: WorkflowVersionMinMaxColumns
+  max: WorkflowVersionMinMaxColumns
+  stddev: WorkflowVersionNumericalColumns
+  variance: WorkflowVersionNumericalColumns
+  count(distinct: Boolean = false, columns: WorkflowVersionCountColumns = null): Int
 }
 
 """A connection to a list of items."""
@@ -446,9 +640,25 @@ type WorkflowVersionConnection {
   edges: [WorkflowVersionEdge!]!
 }
 
+enum WorkflowVersionCountColumns {
+  graph_json
+  workflow_uri
+  version
+  manifest
+  workflow
+  runs
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
+}
+
 input WorkflowVersionCreateInput {
   collectionId: Int!
   graphJson: String = null
+  workflowUri: String = null
+  version: String = null
   manifest: String = null
   workflowId: ID = null
 }
@@ -462,9 +672,27 @@ type WorkflowVersionEdge {
   node: WorkflowVersion!
 }
 
+type WorkflowVersionMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  graphJson: String
+  workflowUri: String
+  version: String
+  manifest: String
+}
+
+type WorkflowVersionNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
 input WorkflowVersionUpdateInput {
   collectionId: Int = null
   graphJson: String = null
+  workflowUri: String = null
+  version: String = null
   manifest: String = null
   workflowId: ID = null
 }
@@ -475,6 +703,8 @@ input WorkflowVersionWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   graphJson: StrComparators
+  workflowUri: StrComparators
+  version: StrComparators
   manifest: StrComparators
   workflow: WorkflowWhereClause
   runs: RunWhereClause

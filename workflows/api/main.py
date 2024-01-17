@@ -10,7 +10,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from api.config import load_event_bus, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI, Request
-from api.manifest import Manifest
+from manifest import Manifest
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension

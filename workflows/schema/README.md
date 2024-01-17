@@ -50,6 +50,8 @@ RunEntityInput {
 }
 WorkflowVersion {
     string graph_json  
+    string workflow_uri  
+    string version  
     string manifest  
     uuid entity_id  
     uuid id  
