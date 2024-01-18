@@ -17,7 +17,8 @@ def upgrade() -> None:
     op.add_column("metadatum", sa.Column("field_name", sa.String(), nullable=False))
     op.drop_constraint("fk_metadatum_metadata_field_id_metadata_field", "metadatum", type_="foreignkey")
     op.execute(
-        """UPDATE metadatum md SET field_name = mf.field_name FROM metadata_field mf WHERE md.metadata_field_id = mf.entity_id"""
+        """UPDATE metadatum md SET field_name = mf.field_name FROM
+           metadata_field mf WHERE md.metadata_field_id = mf.entity_id"""
     )
     op.drop_column("metadatum", "metadata_field_id")
     op.drop_table("metadata_field_project")
