@@ -37,13 +37,6 @@ from api.types.sequence_alignment_index import (
     delete_sequence_alignment_index,
 )
 from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
-from api.types.metadata_field import MetadataField, create_metadata_field, update_metadata_field, delete_metadata_field
-from api.types.metadata_field_project import (
-    MetadataFieldProject,
-    create_metadata_field_project,
-    update_metadata_field_project,
-    delete_metadata_field_project,
-)
 from api.types.consensus_genome import (
     ConsensusGenome,
     create_consensus_genome,
@@ -109,16 +102,6 @@ class Mutation:
     create_metadatum: Metadatum = create_metadatum
     update_metadatum: Sequence[Metadatum] = update_metadatum
     delete_metadatum: Sequence[Metadatum] = delete_metadatum
-
-    # MetadataField mutations
-    create_metadata_field: MetadataField = create_metadata_field
-    update_metadata_field: Sequence[MetadataField] = update_metadata_field
-    delete_metadata_field: Sequence[MetadataField] = delete_metadata_field
-
-    # MetadataFieldProject mutations
-    create_metadata_field_project: MetadataFieldProject = create_metadata_field_project
-    update_metadata_field_project: Sequence[MetadataFieldProject] = update_metadata_field_project
-    delete_metadata_field_project: Sequence[MetadataFieldProject] = delete_metadata_field_project
 
     # ConsensusGenome mutations
     create_consensus_genome: ConsensusGenome = create_consensus_genome

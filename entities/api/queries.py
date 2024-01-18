@@ -35,18 +35,6 @@ from api.types.sequence_alignment_index import (
     resolve_sequence_alignment_indices_aggregate,
 )
 from api.types.metadatum import Metadatum, resolve_metadatas, MetadatumAggregate, resolve_metadatas_aggregate
-from api.types.metadata_field import (
-    MetadataField,
-    resolve_metadata_fields,
-    MetadataFieldAggregate,
-    resolve_metadata_fields_aggregate,
-)
-from api.types.metadata_field_project import (
-    MetadataFieldProject,
-    resolve_metadata_field_projects,
-    MetadataFieldProjectAggregate,
-    resolve_metadata_field_projects_aggregate,
-)
 from api.types.consensus_genome import (
     ConsensusGenome,
     resolve_consensus_genomes,
@@ -90,8 +78,6 @@ class Query:
     reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
     sequence_alignment_indices: Sequence[SequenceAlignmentIndex] = resolve_sequence_alignment_indices
     metadatas: Sequence[Metadatum] = resolve_metadatas
-    metadata_fields: Sequence[MetadataField] = resolve_metadata_fields
-    metadata_field_projects: Sequence[MetadataFieldProject] = resolve_metadata_field_projects
     consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
     metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
     taxa: Sequence[Taxon] = resolve_taxa
@@ -106,8 +92,6 @@ class Query:
     reference_genomes_aggregate: ReferenceGenomeAggregate = resolve_reference_genomes_aggregate
     sequence_alignment_indices_aggregate: SequenceAlignmentIndexAggregate = resolve_sequence_alignment_indices_aggregate
     metadatas_aggregate: MetadatumAggregate = resolve_metadatas_aggregate
-    metadata_fields_aggregate: MetadataFieldAggregate = resolve_metadata_fields_aggregate
-    metadata_field_projects_aggregate: MetadataFieldProjectAggregate = resolve_metadata_field_projects_aggregate
     consensus_genomes_aggregate: ConsensusGenomeAggregate = resolve_consensus_genomes_aggregate
     metrics_consensus_genomes_aggregate: MetricConsensusGenomeAggregate = resolve_metrics_consensus_genomes_aggregate
     taxa_aggregate: TaxonAggregate = resolve_taxa_aggregate

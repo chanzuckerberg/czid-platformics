@@ -11,7 +11,6 @@ import factory
 from database.models import Metadatum
 from test_infra.factories.main import CommonFactory
 from test_infra.factories.sample import SampleFactory
-from test_infra.factories.metadata_field import MetadataFieldFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -35,9 +34,5 @@ class MetadatumFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    metadata_field = factory.SubFactory(
-        MetadataFieldFactory,
-        owner_user_id=factory.SelfAttribute("..owner_user_id"),
-        collection_id=factory.SelfAttribute("..collection_id"),
-    )
+    field_name = fuzzy.FuzzyText()
     value = fuzzy.FuzzyText()

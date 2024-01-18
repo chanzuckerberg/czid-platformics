@@ -16,8 +16,6 @@ from database.models.genomic_range import GenomicRange  # noqa: F401
 from database.models.reference_genome import ReferenceGenome  # noqa: F401
 from database.models.sequence_alignment_index import SequenceAlignmentIndex  # noqa: F401
 from database.models.metadatum import Metadatum  # noqa: F401
-from database.models.metadata_field import MetadataField  # noqa: F401
-from database.models.metadata_field_project import MetadataFieldProject  # noqa: F401
 from database.models.consensus_genome import ConsensusGenome  # noqa: F401
 from database.models.metric_consensus_genome import MetricConsensusGenome  # noqa: F401
 from database.models.taxon import Taxon  # noqa: F401

@@ -95,45 +95,13 @@ class JSON(sgqlc.types.Scalar):
     __schema__ = gql_schema
 
 
-class MetadataFieldCountColumns(sgqlc.types.Enum):
-    __schema__ = gql_schema
-    __choices__ = (
-        "collection_id",
-        "default_value",
-        "description",
-        "entity_id",
-        "field_group",
-        "field_name",
-        "field_type",
-        "id",
-        "is_required",
-        "metadatas",
-        "options",
-        "owner_user_id",
-        "producing_run_id",
-    )
-
-
-class MetadataFieldProjectCountColumns(sgqlc.types.Enum):
-    __schema__ = gql_schema
-    __choices__ = (
-        "collection_id",
-        "entity_id",
-        "id",
-        "metadata_field",
-        "owner_user_id",
-        "producing_run_id",
-        "project_id",
-    )
-
-
 class MetadatumCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "collection_id",
         "entity_id",
+        "field_name",
         "id",
-        "metadata_field",
         "owner_user_id",
         "producing_run_id",
         "sample",
@@ -619,142 +587,33 @@ class IntComparators(sgqlc.types.Input):
     _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
 
 
-class MetadataFieldCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "collection_id",
-        "field_name",
-        "description",
-        "field_type",
-        "is_required",
-        "options",
-        "default_value",
-    )
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldName")
-    description = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="description")
-    field_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldType")
-    is_required = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isRequired")
-    options = sgqlc.types.Field(String, graphql_name="options")
-    default_value = sgqlc.types.Field(String, graphql_name="defaultValue")
-
-
-class MetadataFieldProjectCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "project_id", "metadata_field_id")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    project_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="projectId")
-    metadata_field_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="metadataFieldId")
-
-
-class MetadataFieldProjectUpdateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "project_id", "metadata_field_id")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    project_id = sgqlc.types.Field(Int, graphql_name="projectId")
-    metadata_field_id = sgqlc.types.Field(ID, graphql_name="metadataFieldId")
-
-
-class MetadataFieldProjectWhereClause(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "project_id", "metadata_field")
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
-    project_id = sgqlc.types.Field(IntComparators, graphql_name="projectId")
-    metadata_field = sgqlc.types.Field("MetadataFieldWhereClause", graphql_name="metadataField")
-
-
-class MetadataFieldProjectWhereClauseMutations(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-
-
-class MetadataFieldUpdateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "collection_id",
-        "field_name",
-        "description",
-        "field_type",
-        "is_required",
-        "options",
-        "default_value",
-    )
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    field_name = sgqlc.types.Field(String, graphql_name="fieldName")
-    description = sgqlc.types.Field(String, graphql_name="description")
-    field_type = sgqlc.types.Field(String, graphql_name="fieldType")
-    is_required = sgqlc.types.Field(Boolean, graphql_name="isRequired")
-    options = sgqlc.types.Field(String, graphql_name="options")
-    default_value = sgqlc.types.Field(String, graphql_name="defaultValue")
-
-
-class MetadataFieldWhereClause(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "field_group",
-        "field_name",
-        "description",
-        "field_type",
-        "is_required",
-        "options",
-        "default_value",
-        "metadatas",
-    )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
-    field_group = sgqlc.types.Field(MetadataFieldProjectWhereClause, graphql_name="fieldGroup")
-    field_name = sgqlc.types.Field("StrComparators", graphql_name="fieldName")
-    description = sgqlc.types.Field("StrComparators", graphql_name="description")
-    field_type = sgqlc.types.Field("StrComparators", graphql_name="fieldType")
-    is_required = sgqlc.types.Field(BoolComparators, graphql_name="isRequired")
-    options = sgqlc.types.Field("StrComparators", graphql_name="options")
-    default_value = sgqlc.types.Field("StrComparators", graphql_name="defaultValue")
-    metadatas = sgqlc.types.Field("MetadatumWhereClause", graphql_name="metadatas")
-
-
-class MetadataFieldWhereClauseMutations(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-
-
 class MetadatumCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "sample_id", "metadata_field_id", "value")
+    __field_names__ = ("collection_id", "sample_id", "field_name", "value")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     sample_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sampleId")
-    metadata_field_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="metadataFieldId")
+    field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldName")
     value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="value")
 
 
 class MetadatumUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "sample_id", "metadata_field_id", "value")
+    __field_names__ = ("collection_id", "sample_id", "field_name", "value")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
-    metadata_field_id = sgqlc.types.Field(ID, graphql_name="metadataFieldId")
+    field_name = sgqlc.types.Field(String, graphql_name="fieldName")
     value = sgqlc.types.Field(String, graphql_name="value")
 
 
 class MetadatumWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sample", "metadata_field", "value")
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sample", "field_name", "value")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     sample = sgqlc.types.Field("SampleWhereClause", graphql_name="sample")
-    metadata_field = sgqlc.types.Field(MetadataFieldWhereClause, graphql_name="metadataField")
+    field_name = sgqlc.types.Field("StrComparators", graphql_name="fieldName")
     value = sgqlc.types.Field("StrComparators", graphql_name="value")
 
 
@@ -1679,125 +1538,6 @@ class GenomicRangeNumericalColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
 
 
-class MetadataFieldAggregate(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("aggregate",)
-    aggregate = sgqlc.types.Field("MetadataFieldAggregateFunctions", graphql_name="aggregate")
-
-
-class MetadataFieldAggregateFunctions(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
-    sum = sgqlc.types.Field("MetadataFieldNumericalColumns", graphql_name="sum")
-    avg = sgqlc.types.Field("MetadataFieldNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("MetadataFieldMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("MetadataFieldMinMaxColumns", graphql_name="max")
-    stddev = sgqlc.types.Field("MetadataFieldNumericalColumns", graphql_name="stddev")
-    variance = sgqlc.types.Field("MetadataFieldNumericalColumns", graphql_name="variance")
-    count = sgqlc.types.Field(
-        Int,
-        graphql_name="count",
-        args=sgqlc.types.ArgDict(
-            (
-                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
-                ("columns", sgqlc.types.Arg(MetadataFieldCountColumns, graphql_name="columns", default=None)),
-            )
-        ),
-    )
-
-
-class MetadataFieldMinMaxColumns(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "field_name",
-        "description",
-        "field_type",
-        "options",
-        "default_value",
-    )
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    field_name = sgqlc.types.Field(String, graphql_name="fieldName")
-    description = sgqlc.types.Field(String, graphql_name="description")
-    field_type = sgqlc.types.Field(String, graphql_name="fieldType")
-    options = sgqlc.types.Field(String, graphql_name="options")
-    default_value = sgqlc.types.Field(String, graphql_name="defaultValue")
-
-
-class MetadataFieldNumericalColumns(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-
-
-class MetadataFieldProjectAggregate(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("aggregate",)
-    aggregate = sgqlc.types.Field("MetadataFieldProjectAggregateFunctions", graphql_name="aggregate")
-
-
-class MetadataFieldProjectAggregateFunctions(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
-    sum = sgqlc.types.Field("MetadataFieldProjectNumericalColumns", graphql_name="sum")
-    avg = sgqlc.types.Field("MetadataFieldProjectNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("MetadataFieldProjectMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("MetadataFieldProjectMinMaxColumns", graphql_name="max")
-    stddev = sgqlc.types.Field("MetadataFieldProjectNumericalColumns", graphql_name="stddev")
-    variance = sgqlc.types.Field("MetadataFieldProjectNumericalColumns", graphql_name="variance")
-    count = sgqlc.types.Field(
-        Int,
-        graphql_name="count",
-        args=sgqlc.types.ArgDict(
-            (
-                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
-                ("columns", sgqlc.types.Arg(MetadataFieldProjectCountColumns, graphql_name="columns", default=None)),
-            )
-        ),
-    )
-
-
-class MetadataFieldProjectConnection(sgqlc.types.relay.Connection):
-    __schema__ = gql_schema
-    __field_names__ = ("page_info", "edges")
-    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
-    edges = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataFieldProjectEdge"))),
-        graphql_name="edges",
-    )
-
-
-class MetadataFieldProjectEdge(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("cursor", "node")
-    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
-    node = sgqlc.types.Field(sgqlc.types.non_null("MetadataFieldProject"), graphql_name="node")
-
-
-class MetadataFieldProjectMinMaxColumns(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "project_id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    project_id = sgqlc.types.Field(Int, graphql_name="projectId")
-
-
-class MetadataFieldProjectNumericalColumns(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "project_id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    project_id = sgqlc.types.Field(Int, graphql_name="projectId")
-
-
 class MetadatumAggregate(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("aggregate",)
@@ -1843,10 +1583,11 @@ class MetadatumEdge(sgqlc.types.Type):
 
 class MetadatumMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "value")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "field_name", "value")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    field_name = sgqlc.types.Field(String, graphql_name="fieldName")
     value = sgqlc.types.Field(String, graphql_name="value")
 
 
@@ -2022,12 +1763,6 @@ class Mutation(sgqlc.types.Type):
         "create_metadatum",
         "update_metadatum",
         "delete_metadatum",
-        "create_metadata_field",
-        "update_metadata_field",
-        "delete_metadata_field",
-        "create_metadata_field_project",
-        "update_metadata_field_project",
-        "delete_metadata_field_project",
         "create_consensus_genome",
         "update_consensus_genome",
         "delete_consensus_genome",
@@ -2371,102 +2106,6 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    create_metadata_field = sgqlc.types.Field(
-        sgqlc.types.non_null("MetadataField"),
-        graphql_name="createMetadataField",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(MetadataFieldCreateInput), graphql_name="input", default=None),
-                ),
-            )
-        ),
-    )
-    update_metadata_field = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataField"))),
-        graphql_name="updateMetadataField",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(MetadataFieldUpdateInput), graphql_name="input", default=None),
-                ),
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    delete_metadata_field = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataField"))),
-        graphql_name="deleteMetadataField",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    create_metadata_field_project = sgqlc.types.Field(
-        sgqlc.types.non_null("MetadataFieldProject"),
-        graphql_name="createMetadataFieldProject",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldProjectCreateInput), graphql_name="input", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    update_metadata_field_project = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataFieldProject"))),
-        graphql_name="updateMetadataFieldProject",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "input",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldProjectUpdateInput), graphql_name="input", default=None
-                    ),
-                ),
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldProjectWhereClauseMutations),
-                        graphql_name="where",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
-    delete_metadata_field_project = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataFieldProject"))),
-        graphql_name="deleteMetadataFieldProject",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(MetadataFieldProjectWhereClauseMutations),
-                        graphql_name="where",
-                        default=None,
-                    ),
-                ),
-            )
-        ),
-    )
     create_consensus_genome = sgqlc.types.Field(
         sgqlc.types.non_null("ConsensusGenome"),
         graphql_name="createConsensusGenome",
@@ -2801,8 +2440,6 @@ class Query(sgqlc.types.Type):
         "reference_genomes",
         "sequence_alignment_indices",
         "metadatas",
-        "metadata_fields",
-        "metadata_field_projects",
         "consensus_genomes",
         "metrics_consensus_genomes",
         "taxa",
@@ -2815,8 +2452,6 @@ class Query(sgqlc.types.Type):
         "reference_genomes_aggregate",
         "sequence_alignment_indices_aggregate",
         "metadatas_aggregate",
-        "metadata_fields_aggregate",
-        "metadata_field_projects_aggregate",
         "consensus_genomes_aggregate",
         "metrics_consensus_genomes_aggregate",
         "taxa_aggregate",
@@ -2890,20 +2525,6 @@ class Query(sgqlc.types.Type):
         graphql_name="metadatas",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    metadata_fields = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataField"))),
-        graphql_name="metadataFields",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    metadata_field_projects = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetadataFieldProject"))),
-        graphql_name="metadataFieldProjects",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldProjectWhereClause, graphql_name="where", default=None)),)
         ),
     )
     consensus_genomes = sgqlc.types.Field(
@@ -2982,20 +2603,6 @@ class Query(sgqlc.types.Type):
         graphql_name="metadatasAggregate",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    metadata_fields_aggregate = sgqlc.types.Field(
-        sgqlc.types.non_null(MetadataFieldAggregate),
-        graphql_name="metadataFieldsAggregate",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    metadata_field_projects_aggregate = sgqlc.types.Field(
-        sgqlc.types.non_null(MetadataFieldProjectAggregate),
-        graphql_name="metadataFieldProjectsAggregate",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldProjectWhereClause, graphql_name="where", default=None)),)
         ),
     )
     consensus_genomes_aggregate = sgqlc.types.Field(
@@ -3563,96 +3170,9 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
     )
 
 
-class MetadataField(sgqlc.types.Type, EntityInterface, Node):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "field_group",
-        "field_group_aggregate",
-        "field_name",
-        "description",
-        "field_type",
-        "is_required",
-        "options",
-        "default_value",
-        "metadatas",
-        "metadatas_aggregate",
-    )
-    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    field_group = sgqlc.types.Field(
-        sgqlc.types.non_null(MetadataFieldProjectConnection),
-        graphql_name="fieldGroup",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(MetadataFieldProjectWhereClause, graphql_name="where", default=None)),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
-    )
-    field_group_aggregate = sgqlc.types.Field(
-        MetadataFieldProjectAggregate,
-        graphql_name="fieldGroupAggregate",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldProjectWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-    field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldName")
-    description = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="description")
-    field_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldType")
-    is_required = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isRequired")
-    options = sgqlc.types.Field(String, graphql_name="options")
-    default_value = sgqlc.types.Field(String, graphql_name="defaultValue")
-    metadatas = sgqlc.types.Field(
-        sgqlc.types.non_null(MetadatumConnection),
-        graphql_name="metadatas",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
-    )
-    metadatas_aggregate = sgqlc.types.Field(
-        MetadatumAggregate,
-        graphql_name="metadatasAggregate",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadatumWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-
-
-class MetadataFieldProject(sgqlc.types.Type, EntityInterface, Node):
-    __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "project_id", "metadata_field")
-    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    project_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="projectId")
-    metadata_field = sgqlc.types.Field(
-        MetadataField,
-        graphql_name="metadataField",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
-
-
 class Metadatum(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sample", "metadata_field", "value")
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sample", "field_name", "value")
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
@@ -3662,13 +3182,7 @@ class Metadatum(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="sample",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(SampleWhereClause, graphql_name="where", default=None)),)),
     )
-    metadata_field = sgqlc.types.Field(
-        MetadataField,
-        graphql_name="metadataField",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(MetadataFieldWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
+    field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldName")
     value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="value")
 
 

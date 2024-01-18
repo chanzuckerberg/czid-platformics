@@ -17,11 +17,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from database.models.file import File
     from database.models.sample import Sample
-    from database.models.metadata_field import MetadataField
 else:
     File = "File"
     Sample = "Sample"
-    MetadataField = "MetadataField"
 
 
 class Metadatum(Entity):
@@ -29,9 +27,6 @@ class Metadatum(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     sample_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sample.entity_id"), nullable=False)
     sample: Mapped["Sample"] = relationship("Sample", back_populates="metadatas", foreign_keys=sample_id)
-    metadata_field_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("metadata_field.entity_id"), nullable=False)
-    metadata_field: Mapped["MetadataField"] = relationship(
-        "MetadataField", back_populates="metadatas", foreign_keys=metadata_field_id
-    )
+    field_name: Mapped[str] = mapped_column(String, nullable=False)
     value: Mapped[str] = mapped_column(String, nullable=False)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
