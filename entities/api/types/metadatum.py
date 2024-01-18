@@ -39,14 +39,11 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.sample import SampleWhereClause, Sample
-    from api.types.metadata_field import MetadataFieldWhereClause, MetadataField
 
     pass
 else:
     SampleWhereClause = "SampleWhereClause"
     Sample = "Sample"
-    MetadataFieldWhereClause = "MetadataFieldWhereClause"
-    MetadataField = "MetadataField"
     pass
 
 
@@ -68,18 +65,6 @@ async def load_sample_rows(
     mapper = inspect(db.Metadatum)
     relationship = mapper.relationships["sample"]
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
-
-
-@strawberry.field
-async def load_metadata_field_rows(
-    root: "Metadatum",
-    info: Info,
-    where: Annotated["MetadataFieldWhereClause", strawberry.lazy("api.types.metadata_field")] | None = None,
-) -> Optional[Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Metadatum)
-    relationship = mapper.relationships["metadata_field"]
-    return await dataloader.loader_for(relationship, where).load(root.metadata_field_id)  # type:ignore
 
 
 """
@@ -111,7 +96,7 @@ class MetadatumWhereClause(TypedDict):
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
     sample: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
-    metadata_field: Optional[Annotated["MetadataFieldWhereClause", strawberry.lazy("api.types.metadata_field")]] | None
+    field_name: Optional[StrComparators] | None
     value: Optional[StrComparators] | None
 
 
@@ -127,9 +112,7 @@ class Metadatum(EntityInterface):
     owner_user_id: int
     collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
-    metadata_field: Optional[
-        Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
-    ] = load_metadata_field_rows  # type:ignore
+    field_name: str
     value: str
 
 
@@ -169,6 +152,7 @@ class MetadatumMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    field_name: Optional[str] = None
     value: Optional[str] = None
 
 
@@ -180,7 +164,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class MetadatumCountColumns(enum.Enum):
     sample = "sample"
-    metadata_field = "metadata_field"
+    field_name = "field_name"
     value = "value"
     entity_id = "entity_id"
     id = "id"
@@ -231,7 +215,7 @@ Mutation types
 class MetadatumCreateInput:
     collection_id: int
     sample_id: strawberry.ID
-    metadata_field_id: strawberry.ID
+    field_name: str
     value: str
 
 
@@ -239,7 +223,7 @@ class MetadatumCreateInput:
 class MetadatumUpdateInput:
     collection_id: Optional[int] = None
     sample_id: Optional[strawberry.ID] = None
-    metadata_field_id: Optional[strawberry.ID] = None
+    field_name: Optional[str] = None
     value: Optional[str] = None
 
 

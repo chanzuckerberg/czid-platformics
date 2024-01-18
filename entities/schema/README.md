@@ -70,28 +70,8 @@ SequenceAlignmentIndex {
     int collection_id  
 }
 Metadatum {
-    string value  
-    uuid entity_id  
-    uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
-}
-MetadataField {
     string field_name  
-    string description  
-    string field_type  
-    boolean is_required  
-    string options  
-    string default_value  
-    uuid entity_id  
-    uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
-}
-MetadataFieldProject {
-    int project_id  
+    string value  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -188,10 +168,6 @@ ReferenceGenome ||--}o GenomicRange : "genomic_ranges"
 SequenceAlignmentIndex ||--|o File : "index_file"
 SequenceAlignmentIndex ||--|o ReferenceGenome : "reference_genome"
 Metadatum ||--|| Sample : "sample"
-Metadatum ||--|| MetadataField : "metadata_field"
-MetadataField ||--}| MetadataFieldProject : "field_group"
-MetadataField ||--}o Metadatum : "metadatas"
-MetadataFieldProject ||--|| MetadataField : "metadata_field"
 ConsensusGenome ||--|| Taxon : "taxon"
 ConsensusGenome ||--|| SequencingRead : "sequence_read"
 ConsensusGenome ||--|| ReferenceGenome : "reference_genome"

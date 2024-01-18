@@ -486,231 +486,6 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type MetadataField implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  fieldGroup(
-    where: MetadataFieldProjectWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): MetadataFieldProjectConnection!
-  fieldGroupAggregate(where: MetadataFieldProjectWhereClause = null): MetadataFieldProjectAggregate
-  fieldName: String!
-  description: String!
-  fieldType: String!
-  isRequired: Boolean!
-  options: String
-  defaultValue: String
-  metadatas(
-    where: MetadatumWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): MetadatumConnection!
-  metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate
-}
-
-type MetadataFieldAggregate {
-  aggregate: MetadataFieldAggregateFunctions
-}
-
-type MetadataFieldAggregateFunctions {
-  sum: MetadataFieldNumericalColumns
-  avg: MetadataFieldNumericalColumns
-  min: MetadataFieldMinMaxColumns
-  max: MetadataFieldMinMaxColumns
-  stddev: MetadataFieldNumericalColumns
-  variance: MetadataFieldNumericalColumns
-  count(distinct: Boolean = false, columns: MetadataFieldCountColumns = null): Int
-}
-
-enum MetadataFieldCountColumns {
-  field_group
-  field_name
-  description
-  field_type
-  is_required
-  options
-  default_value
-  metadatas
-  entity_id
-  id
-  producing_run_id
-  owner_user_id
-  collection_id
-}
-
-input MetadataFieldCreateInput {
-  collectionId: Int!
-  fieldName: String!
-  description: String!
-  fieldType: String!
-  isRequired: Boolean!
-  options: String = null
-  defaultValue: String = null
-}
-
-type MetadataFieldMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-  fieldName: String
-  description: String
-  fieldType: String
-  options: String
-  defaultValue: String
-}
-
-type MetadataFieldNumericalColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-}
-
-type MetadataFieldProject implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  projectId: Int!
-  metadataField(where: MetadataFieldWhereClause = null): MetadataField
-}
-
-type MetadataFieldProjectAggregate {
-  aggregate: MetadataFieldProjectAggregateFunctions
-}
-
-type MetadataFieldProjectAggregateFunctions {
-  sum: MetadataFieldProjectNumericalColumns
-  avg: MetadataFieldProjectNumericalColumns
-  min: MetadataFieldProjectMinMaxColumns
-  max: MetadataFieldProjectMinMaxColumns
-  stddev: MetadataFieldProjectNumericalColumns
-  variance: MetadataFieldProjectNumericalColumns
-  count(distinct: Boolean = false, columns: MetadataFieldProjectCountColumns = null): Int
-}
-
-"""A connection to a list of items."""
-type MetadataFieldProjectConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [MetadataFieldProjectEdge!]!
-}
-
-enum MetadataFieldProjectCountColumns {
-  project_id
-  metadata_field
-  entity_id
-  id
-  producing_run_id
-  owner_user_id
-  collection_id
-}
-
-input MetadataFieldProjectCreateInput {
-  collectionId: Int!
-  projectId: Int!
-  metadataFieldId: ID!
-}
-
-"""An edge in a connection."""
-type MetadataFieldProjectEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: MetadataFieldProject!
-}
-
-type MetadataFieldProjectMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-  projectId: Int
-}
-
-type MetadataFieldProjectNumericalColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-  projectId: Int
-}
-
-input MetadataFieldProjectUpdateInput {
-  collectionId: Int = null
-  projectId: Int = null
-  metadataFieldId: ID = null
-}
-
-input MetadataFieldProjectWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  projectId: IntComparators
-  metadataField: MetadataFieldWhereClause
-}
-
-input MetadataFieldProjectWhereClauseMutations {
-  id: UUIDComparators
-}
-
-input MetadataFieldUpdateInput {
-  collectionId: Int = null
-  fieldName: String = null
-  description: String = null
-  fieldType: String = null
-  isRequired: Boolean = null
-  options: String = null
-  defaultValue: String = null
-}
-
-input MetadataFieldWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  fieldGroup: MetadataFieldProjectWhereClause
-  fieldName: StrComparators
-  description: StrComparators
-  fieldType: StrComparators
-  isRequired: BoolComparators
-  options: StrComparators
-  defaultValue: StrComparators
-  metadatas: MetadatumWhereClause
-}
-
-input MetadataFieldWhereClauseMutations {
-  id: UUIDComparators
-}
-
 type Metadatum implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
@@ -719,7 +494,7 @@ type Metadatum implements EntityInterface & Node {
   ownerUserId: Int!
   collectionId: Int!
   sample(where: SampleWhereClause = null): Sample
-  metadataField(where: MetadataFieldWhereClause = null): MetadataField
+  fieldName: String!
   value: String!
 }
 
@@ -748,7 +523,7 @@ type MetadatumConnection {
 
 enum MetadatumCountColumns {
   sample
-  metadata_field
+  field_name
   value
   entity_id
   id
@@ -760,7 +535,7 @@ enum MetadatumCountColumns {
 input MetadatumCreateInput {
   collectionId: Int!
   sampleId: ID!
-  metadataFieldId: ID!
+  fieldName: String!
   value: String!
 }
 
@@ -777,6 +552,7 @@ type MetadatumMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  fieldName: String
   value: String
 }
 
@@ -789,7 +565,7 @@ type MetadatumNumericalColumns {
 input MetadatumUpdateInput {
   collectionId: Int = null
   sampleId: ID = null
-  metadataFieldId: ID = null
+  fieldName: String = null
   value: String = null
 }
 
@@ -799,7 +575,7 @@ input MetadatumWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   sample: SampleWhereClause
-  metadataField: MetadataFieldWhereClause
+  fieldName: StrComparators
   value: StrComparators
 }
 
@@ -1012,12 +788,6 @@ type Mutation {
   createMetadatum(input: MetadatumCreateInput!): Metadatum!
   updateMetadatum(input: MetadatumUpdateInput!, where: MetadatumWhereClauseMutations!): [Metadatum!]!
   deleteMetadatum(where: MetadatumWhereClauseMutations!): [Metadatum!]!
-  createMetadataField(input: MetadataFieldCreateInput!): MetadataField!
-  updateMetadataField(input: MetadataFieldUpdateInput!, where: MetadataFieldWhereClauseMutations!): [MetadataField!]!
-  deleteMetadataField(where: MetadataFieldWhereClauseMutations!): [MetadataField!]!
-  createMetadataFieldProject(input: MetadataFieldProjectCreateInput!): MetadataFieldProject!
-  updateMetadataFieldProject(input: MetadataFieldProjectUpdateInput!, where: MetadataFieldProjectWhereClauseMutations!): [MetadataFieldProject!]!
-  deleteMetadataFieldProject(where: MetadataFieldProjectWhereClauseMutations!): [MetadataFieldProject!]!
   createConsensusGenome(input: ConsensusGenomeCreateInput!): ConsensusGenome!
   updateConsensusGenome(input: ConsensusGenomeUpdateInput!, where: ConsensusGenomeWhereClauseMutations!): [ConsensusGenome!]!
   deleteConsensusGenome(where: ConsensusGenomeWhereClauseMutations!): [ConsensusGenome!]!
@@ -1182,8 +952,6 @@ type Query {
   referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
   sequenceAlignmentIndices(where: SequenceAlignmentIndexWhereClause = null): [SequenceAlignmentIndex!]!
   metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
-  metadataFields(where: MetadataFieldWhereClause = null): [MetadataField!]!
-  metadataFieldProjects(where: MetadataFieldProjectWhereClause = null): [MetadataFieldProject!]!
   consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
   metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
   taxa(where: TaxonWhereClause = null): [Taxon!]!
@@ -1196,8 +964,6 @@ type Query {
   referenceGenomesAggregate(where: ReferenceGenomeWhereClause = null): ReferenceGenomeAggregate!
   sequenceAlignmentIndicesAggregate(where: SequenceAlignmentIndexWhereClause = null): SequenceAlignmentIndexAggregate!
   metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate!
-  metadataFieldsAggregate(where: MetadataFieldWhereClause = null): MetadataFieldAggregate!
-  metadataFieldProjectsAggregate(where: MetadataFieldProjectWhereClause = null): MetadataFieldProjectAggregate!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate!
   metricsConsensusGenomesAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate!
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate!
