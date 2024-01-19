@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 import database.models as db
 import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.sequencing_read import SequencingReadCreateInputValidator, SequencingReadUpdateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
@@ -478,6 +480,7 @@ async def create_sequencing_read(
     Create a new SequencingRead object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, SequencingReadCreateInputValidator)
 
     # Validate that user can create entity in this collection
     attr = {"collection_id": input.collection_id}
@@ -505,6 +508,7 @@ async def update_sequencing_read(
     Update SequencingRead objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, SequencingReadUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 import database.models as db
 import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.metadatum import MetadatumCreateInputValidator, MetadatumUpdateInputValidator
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -301,6 +303,7 @@ async def create_metadatum(
     Create a new Metadatum object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, MetadatumCreateInputValidator)
 
     # Validate that user can create entity in this collection
     attr = {"collection_id": input.collection_id}
@@ -328,6 +331,7 @@ async def update_metadatum(
     Update Metadatum objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, MetadatumUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

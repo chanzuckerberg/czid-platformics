@@ -179,6 +179,7 @@ classes:
       name:
         range: string
         required: true
+        pattern: '.*{4,64}'
       # Metadata provided by user
       sample_type:
         range: string
@@ -433,6 +434,8 @@ classes:
         range: float
       total_reads:
         range: int
+        minimum_value: 0
+        maximum_value: 999999999999
       mapped_reads:
         range: int
       ref_snps:

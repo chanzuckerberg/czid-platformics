@@ -14,6 +14,11 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 import database.models as db
 import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.sequence_alignment_index import (
+    SequenceAlignmentIndexCreateInputValidator,
+    SequenceAlignmentIndexUpdateInputValidator,
+)
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
@@ -341,6 +346,7 @@ async def create_sequence_alignment_index(
     Create a new SequenceAlignmentIndex object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, SequenceAlignmentIndexCreateInputValidator)
 
     # Validate that user can create entity in this collection
     attr = {"collection_id": input.collection_id}
@@ -368,6 +374,7 @@ async def update_sequence_alignment_index(
     Update SequenceAlignmentIndex objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, SequenceAlignmentIndexUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
