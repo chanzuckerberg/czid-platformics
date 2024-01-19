@@ -8,12 +8,10 @@ import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_engine)
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
 from platformics.api.core.error_handler import HandleErrors
 from platformics.api.core.gql_loaders import EntityLoader
-from platformics.codegen.tests.output.api.mutations import \
-    Mutation as MutationCodeGen
+from platformics.codegen.tests.output.api.mutations import Mutation as MutationCodeGen
 from platformics.codegen.tests.output.api.queries import Query as QueryCodeGen
 from platformics.database.connect import AsyncDB
 from platformics.settings import APISettings
@@ -78,7 +76,9 @@ def get_app(use_test_schema: bool = False) -> FastAPI:
 # Define schema and test schema
 strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
 schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config, extensions=[HandleErrors()])
-schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config, extensions=[HandleErrors()])
+schema_test = strawberry.Schema(
+    query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config, extensions=[HandleErrors()]
+)
 
 # Create and run app
 app = get_app()
