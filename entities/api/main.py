@@ -2,24 +2,28 @@
 Launch the GraphQL server.
 """
 
-import strawberry
 import typing
+
 import uvicorn
-from platformics.codegen.tests.output.api.queries import Query as QueryCodeGen
-from platformics.codegen.tests.output.api.mutations import Mutation as MutationCodeGen
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from strawberry.schema.name_converter import HasGraphQLName, NameConverter
-from strawberry.schema.config import StrawberryConfig
-from strawberry.fastapi import GraphQLRouter
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
+                                       get_engine)
+from platformics.api.core.error_handler import HandleErrors
 from platformics.api.core.gql_loaders import EntityLoader
+from platformics.codegen.tests.output.api.mutations import \
+    Mutation as MutationCodeGen
+from platformics.codegen.tests.output.api.queries import Query as QueryCodeGen
 from platformics.database.connect import AsyncDB
 from platformics.settings import APISettings
-from api.queries import Query
-from api.mutations import Mutation
 
+import strawberry
+from api.mutations import Mutation
+from api.queries import Query
+from strawberry.fastapi import GraphQLRouter
+from strawberry.schema.config import StrawberryConfig
+from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 
 # ------------------------------------------------------------------------------
 # Utilities
@@ -73,7 +77,7 @@ def get_app(use_test_schema: bool = False) -> FastAPI:
 
 # Define schema and test schema
 strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
-schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config)
+schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config, extensions=[HandleErrors()])
 schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config)
 
 # Create and run app

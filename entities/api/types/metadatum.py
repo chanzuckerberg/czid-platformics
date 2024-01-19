@@ -18,6 +18,7 @@ from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
+from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
@@ -305,7 +306,7 @@ async def create_metadatum(
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Metadatum.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
-        raise Exception("Unauthorized: Cannot create entity in this collection")
+        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -331,19 +332,19 @@ async def update_metadatum(
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
-        raise Exception("No fields to update")
+        raise PlatformicsException("No fields to update")
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Metadatum, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
-        raise Exception("Unauthorized: Cannot update entities")
+        raise PlatformicsException("Unauthorized: Cannot update entities")
 
     # Validate that the user has access to the new collection ID
     if input.collection_id:
         attr = {"collection_id": input.collection_id}
         resource = Resource(id="SOME_ID", kind=db.Metadatum.__tablename__, attr=attr)
         if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise Exception("Unauthorized: Cannot access new collection")
+            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:
@@ -367,7 +368,7 @@ async def delete_metadatum(
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(db.Metadatum, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
     if len(entities) == 0:
-        raise Exception("Unauthorized: Cannot delete entities")
+        raise PlatformicsException("Unauthorized: Cannot delete entities")
 
     # Update DB
     for entity in entities:
