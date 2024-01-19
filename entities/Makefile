@@ -58,9 +58,9 @@ DIR_LINT_CODEGEN_TEST = platformics/codegen/tests/output/
 .PHONY: codegen-test-schema
 codegen-test-schema:  ## Run codegen on the test schema
 	# Copy the default queries template into the test schema override dir so we're not trying to keep multiple copies in sync in git
-	$(docker_compose) exec entities cp platformics/codegen/templates/api/queries.py.j2 platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
+	cp platformics/codegen/templates/api/queries.py.j2 platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
 	# Add a little bit of extra code to the base Query class so we can use it in our tests
-	$(docker_compose) exec entities cat platformics/codegen/tests/test_schemas/overrides/api/extra_test_code.py.j2 >> platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
+	cat platformics/codegen/tests/test_schemas/overrides/api/extra_test_code.py.j2 >> platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
 	# Make sure the codegen CLI has a `template-override-dir` argument so it uses our modified template for queries.py
 	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --template-override-paths platformics/codegen/tests/test_schemas/overrides --output-prefix $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
