@@ -57,7 +57,10 @@ local-tests: ## Run entities tests
 DIR_LINT_CODEGEN_TEST = platformics/codegen/tests/output/
 .PHONY: codegen-test-schema
 codegen-test-schema:  ## Run codegen on the test schema
-	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --output-prefix $(DIR_LINT_CODEGEN_TEST)
+	$(docker_compose) exec entities cp platformics/codegen/templates/api/queries.py.j2 platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
+	# Add a little bit of extra code to the base Query
+	$(docker_compose) exec entities cat platformics/codegen/tests/test_schemas/overrides/api/extra_test_code.py.j2 >> platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
+	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --template-override-paths platformics/codegen/tests/test_schemas/overrides --output-prefix $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) ruff check --fix  $(DIR_LINT_CODEGEN_TEST)
 

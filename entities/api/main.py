@@ -78,7 +78,7 @@ def get_app(use_test_schema: bool = False) -> FastAPI:
 # Define schema and test schema
 strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())
 schema = strawberry.Schema(query=Query, mutation=Mutation, config=strawberry_config, extensions=[HandleErrors()])
-schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config)
+schema_test = strawberry.Schema(query=QueryCodeGen, mutation=MutationCodeGen, config=strawberry_config, extensions=[HandleErrors()])
 
 # Create and run app
 app = get_app()
