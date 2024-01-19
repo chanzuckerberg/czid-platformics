@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.workflow_run import WorkflowRunCreateInputValidator, WorkflowRunUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.workflow_run_step import WorkflowRunStepAggregate, format_workflow_run_step_aggregate_output
 from api.types.workflow_run_entity_input import (
@@ -408,7 +410,6 @@ class WorkflowRunUpdateInput:
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
     deprecated_by_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[strawberry.ID] = None
 
 
 """
@@ -486,6 +487,7 @@ async def create_workflow_run(
     Create a new WorkflowRun object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, WorkflowRunCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
@@ -550,6 +552,7 @@ async def update_workflow_run(
     Update WorkflowRun objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, WorkflowRunUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

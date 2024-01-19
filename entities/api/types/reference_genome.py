@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.reference_genome import ReferenceGenomeCreateInputValidator, ReferenceGenomeUpdateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
@@ -387,6 +389,7 @@ async def create_reference_genome(
     Create a new ReferenceGenome object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, ReferenceGenomeCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
@@ -421,6 +424,7 @@ async def update_reference_genome(
     Update ReferenceGenome objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, ReferenceGenomeUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

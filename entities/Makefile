@@ -90,7 +90,7 @@ codegen-test-schema:  ## Run codegen on the test schema
 	cp -r cerbos/policies/entity.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
 	cp -r cerbos/policies/file.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
 
-DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
+DIR_LINT_CODEGEN = database/models/ api/types/ api/validators/ api/{queries,mutations}.py test_infra/factories/
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI

@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.workflow import WorkflowCreateInputValidator, WorkflowUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.workflow_version import WorkflowVersionAggregate, format_workflow_version_aggregate_output
 from cerbos.sdk.client import CerbosClient
@@ -286,7 +288,6 @@ class WorkflowUpdateInput:
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
-    producing_run_id: Optional[strawberry.ID] = None
 
 
 """
@@ -364,6 +365,7 @@ async def create_workflow(
     Create a new Workflow object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, WorkflowCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
@@ -398,6 +400,7 @@ async def update_workflow(
     Update Workflow objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, WorkflowUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

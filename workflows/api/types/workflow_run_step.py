@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.workflow_run_step import WorkflowRunStepCreateInputValidator, WorkflowRunStepUpdateInputValidator
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -262,7 +264,6 @@ class WorkflowRunStepCreateInput:
 class WorkflowRunStepUpdateInput:
     ended_at: Optional[datetime.datetime] = None
     status: Optional[WorkflowRunStepStatus] = None
-    producing_run_id: Optional[strawberry.ID] = None
 
 
 """
@@ -340,6 +341,7 @@ async def create_workflow_run_step(
     Create a new WorkflowRunStep object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, WorkflowRunStepCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # Validate that the user can create entities in this collection
@@ -384,6 +386,7 @@ async def update_workflow_run_step(
     Update WorkflowRunStep objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, WorkflowRunStepUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

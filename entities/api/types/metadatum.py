@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.metadatum import MetadatumCreateInputValidator, MetadatumUpdateInputValidator
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -334,6 +336,7 @@ async def create_metadatum(
     Create a new Metadatum object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, MetadatumCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
@@ -375,6 +378,7 @@ async def update_metadatum(
     Update Metadatum objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, MetadatumUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

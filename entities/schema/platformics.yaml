@@ -271,6 +271,7 @@ classes:
           syntax: "{not_empty_string}"
           interpolated: true
           partial_match: true
+        pattern: '.*{4,64}'
       sample_type:
         range: string
         required: true
@@ -586,6 +587,8 @@ classes:
           mutable: false
       total_reads:
         range: integer
+        minimum_value: 0
+        maximum_value: 999999999999
         annotations:
           mutable: false
       mapped_reads:

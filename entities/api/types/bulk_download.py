@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.bulk_download import BulkDownloadCreateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
@@ -329,6 +331,7 @@ async def create_bulk_download(
     Create a new BulkDownload object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, BulkDownloadCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user

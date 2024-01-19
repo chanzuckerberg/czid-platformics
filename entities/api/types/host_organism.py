@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.host_organism import HostOrganismCreateInputValidator, HostOrganismUpdateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
@@ -448,6 +450,7 @@ async def create_host_organism(
     Create a new HostOrganism object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, HostOrganismCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
@@ -482,6 +485,7 @@ async def update_host_organism(
     Update HostOrganism objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, HostOrganismUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

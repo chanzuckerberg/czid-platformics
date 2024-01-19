@@ -6181,15 +6181,6 @@
                 "name": "ID",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": "null",
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -6292,15 +6283,6 @@
                 "name": "String",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": "null",
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -6392,15 +6374,6 @@
               "type": {
                 "kind": "ENUM",
                 "name": "WorkflowRunStepStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
                 "ofType": null
               }
             }

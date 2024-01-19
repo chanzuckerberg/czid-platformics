@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.accession import AccessionCreateInputValidator, AccessionUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from cerbos.sdk.client import CerbosClient
@@ -392,6 +394,7 @@ async def create_accession(
     Create a new Accession object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, AccessionCreateInputValidator)
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
@@ -439,6 +442,7 @@ async def update_accession(
     Update Accession objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    validate_input(input, AccessionUpdateInputValidator)
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
