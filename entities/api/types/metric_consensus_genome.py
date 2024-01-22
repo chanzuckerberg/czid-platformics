@@ -22,6 +22,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     FloatComparators,
     UUIDComparators,
@@ -113,6 +114,36 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     coverage_breadth: Optional[FloatComparators] | None
     coverage_bin_size: Optional[FloatComparators] | None
     coverage_total_length: Optional[IntComparators] | None
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+@strawberry.enum
+class MetricConsensusGenomeOrderByColumns(enum.Enum):
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+    consensus_genome = "consensus_genome"
+    coverage_depth = "coverage_depth"
+    reference_genome_length = "reference_genome_length"
+    percent_genome_called = "percent_genome_called"
+    percent_identity = "percent_identity"
+    gc_percent = "gc_percent"
+    total_reads = "total_reads"
+    mapped_reads = "mapped_reads"
+    ref_snps = "ref_snps"
+    n_actg = "n_actg"
+    n_missing = "n_missing"
+    n_ambiguous = "n_ambiguous"
+    coverage_viz_summary_file = "coverage_viz_summary_file"
+
+# GraphQL doesn't support tuples, so we need to define a custom type for the order_by clause
+@strawberry.input
+class MetricConsensusGenomeOrderByClause:
+    column: MetricConsensusGenomeOrderByColumns
+    direction: orderBy
 
 
 """
@@ -340,11 +371,12 @@ async def resolve_metrics_consensus_genomes(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetricConsensusGenomeWhereClause] = None,
+    order_by: Optional[list[MetricConsensusGenomeOrderByClause]] = [],
 ) -> typing.Sequence[MetricConsensusGenome]:
     """
     Resolve MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_metric_consensus_genome_aggregate_output(
