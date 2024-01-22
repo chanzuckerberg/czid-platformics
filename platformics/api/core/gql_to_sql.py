@@ -7,7 +7,7 @@ import datetime
 import strawberry
 from platformics.thirdparty.strawberry_sqlalchemy_mapper import SSAPlugin, StrawberrySQLAlchemyMapper
 from platformics.thirdparty.strawberry_sqlalchemy_mapper.mapper import _IS_GENERATED_RESOLVER_KEY
-from sqlalchemy import func, inspect, nullsfirst, nullslast
+from sqlalchemy import func, inspect
 from sqlalchemy.orm import Mapper, RelationshipProperty
 from sqlalchemy.orm.state import InstanceState
 from strawberry import input

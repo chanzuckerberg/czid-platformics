@@ -4,7 +4,6 @@ Helper functions for working with the database.
 
 import typing
 from typing import Any, Optional
-import enum
 
 import database.models as db
 from cerbos.sdk.client import CerbosClient
@@ -12,7 +11,7 @@ from cerbos.sdk.model import Principal
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import ColumnElement, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
-from platformics.api.core.gql_to_sql import operator_map, aggregator_map#, order_by_map
+from platformics.api.core.gql_to_sql import operator_map, aggregator_map
 from sqlalchemy import inspect, and_
 from sqlalchemy.orm import aliased
 from platformics.database.models.base import Base
