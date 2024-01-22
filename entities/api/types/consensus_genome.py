@@ -17,6 +17,7 @@ from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.metric_consensus_genome import (
+    MetricConsensusGenomeOrderByClause,
     MetricConsensusGenomeAggregate,
     format_metric_consensus_genome_aggregate_output,
 )
@@ -26,6 +27,7 @@ from fastapi import Depends
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     UUIDComparators,
 )
@@ -115,6 +117,8 @@ async def load_metric_consensus_genome_rows(
     info: Info,
     where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     | None = None,
+    # TODO: update loader to support nested order_by clauses
+    order_by: Optional[list[MetricConsensusGenomeOrderByClause]] = [],
 ) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
@@ -201,6 +205,38 @@ class ConsensusGenomeWhereClause(TypedDict):
     metrics: Optional[
         Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+@strawberry.enum
+class ConsensusGenomeOrderByColumns(enum.Enum):
+    # TODO:
+        # need to allow sorting within nested objects
+        # allow sorting on/by aggregate fields?
+        # allow sorting by nested objects' fields?
+    id = "id"
+    producing_run_id = "producing_run_id"
+    owner_user_id = "owner_user_id"
+    collection_id = "collection_id"
+    taxon_id = "taxon_id"
+    seqeunce_id = "sequence_id"
+    reference_genome_id = "reference_genome_id"
+    metrics_id = "metrics_id"
+    intermediate_outputs_id = "intermediate_outputs_id"
+    # taxon = "taxon"
+    # sequence_read = "sequence_read"
+    # reference_genome = "reference_genome"
+    # sequence = "sequence"
+    # intermediate_outputs = "intermediate_outputs"
+    # metrics = "metrics"
+
+# GraphQL doesn't support tuples, so we need to define a custom type for the order_by clause
+@strawberry.input
+class ConsensusGenomeOrderByClause:
+    column: ConsensusGenomeOrderByColumns
+    direction: orderBy
 
 
 """
@@ -364,11 +400,13 @@ async def resolve_consensus_genomes(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ConsensusGenomeWhereClause] = None,
+    # list input because we want to support sorting by multiple fields, and the order of the fields matters
+    order_by: Optional[list[ConsensusGenomeOrderByClause]] = [],
 ) -> typing.Sequence[ConsensusGenome]:
     """
     Resolve ConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_consensus_genome_aggregate_output(query_results: RowMapping) -> ConsensusGenomeAggregateFunctions:

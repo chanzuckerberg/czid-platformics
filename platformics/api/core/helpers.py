@@ -4,6 +4,7 @@ Helper functions for working with the database.
 
 import typing
 from typing import Any, Optional
+import enum
 
 import database.models as db
 from cerbos.sdk.client import CerbosClient
@@ -11,7 +12,7 @@ from cerbos.sdk.model import Principal
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import ColumnElement, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
-from platformics.api.core.gql_to_sql import operator_map, aggregator_map
+from platformics.api.core.gql_to_sql import operator_map, aggregator_map#, order_by_map
 from sqlalchemy import inspect, and_
 from sqlalchemy.orm import aliased
 from platformics.database.models.base import Base
@@ -87,7 +88,6 @@ def get_db_query(
     )
     return query
 
-
 async def get_db_rows(
     model_cls: type[E],  # type: ignore
     session: AsyncSession,
@@ -101,8 +101,24 @@ async def get_db_rows(
     Retrieve rows from the database, filtered by the where clause and the user's permissions.
     """
     query = get_db_query(model_cls, action, cerbos_client, principal, where)
+    order_clauses = []
+    for item in order_by:
+        col, direction = item.column.value, item.direction.value
+        match direction:
+            case "asc":
+                order_clauses.append(getattr(model_cls, col).asc())
+            case "asc_nulls_first":
+                order_clauses.append(getattr(model_cls, col).asc().nullsfirst())
+            case "asc_nulls_last":
+                order_clauses.append(getattr(model_cls, col).asc().nullslast())
+            case "desc":
+                order_clauses.append(getattr(model_cls, col).desc())
+            case "desc_nulls_first":
+                order_clauses.append(getattr(model_cls, col).desc().nullsfirst())
+            case "desc_nulls_last":
+                order_clauses.append(getattr(model_cls, col).desc().nullslast())
     if order_by:
-        query = query.order_by(*order_by)  # type: ignore
+        query = query.order_by(*order_clauses)  # type: ignore
     result = await session.execute(query)
     return result.scalars().all()
 
