@@ -33,3 +33,47 @@ variable "app" {
   type        = string
   description = "Happy App Name"
 }
+variable "TFC_RUN_ID" {
+  type    = string
+  default = "unknown"
+}
+variable "TFC_WORKSPACE_NAME" {
+  type    = string
+  default = "unknown"
+}
+variable "TFC_WORKSPACE_SLUG" {
+  type    = string
+  default = "unknown"
+}
+variable "TFC_CONFIGURATION_VERSION_GIT_BRANCH" {
+  type    = string
+  default = "unknown"
+}
+variable "TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA" {
+  type    = string
+  default = "unknown"
+}
+variable "TFC_CONFIGURATION_VERSION_GIT_TAG" {
+  type    = string
+  default = "unknown"
+}
+variable "TFC_PROJECT_NAME" {
+  type    = string
+  default = "unknown"
+}
+variable "project" {
+  type    = string
+  default = "unknown"
+}
+variable "env" {
+  type    = string
+  default = "unknown"
+}
+variable "service" {
+  type    = string
+  default = "unknown"
+}
+variable "owner" {
+  type    = string
+  default = "unknown"
+}

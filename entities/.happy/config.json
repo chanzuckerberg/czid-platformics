@@ -12,7 +12,54 @@
                 "auth_method": "eks"
             },
             "terraform_directory": ".happy/terraform/envs/dev",
-            "task_launch_type": "k8s"
+            "task_launch_type": "k8s",
+            "stack_overrides": {
+                "additional_env_vars": {
+                    "AWS_REGION": "us-west-2",
+                    "BOTO_ENDPOINT_URL": "http://motoserver.czidnet:4000",
+                    "CERBOS_URL": "http://cerbos:3592",
+                    "DEFAULT_UPLOAD_BUCKET": "local-bucket",
+                    "DEFAULT_UPLOAD_PROTOCOL": "s3",
+                    "JWK_PRIVATE_KEY_FILE": "/czid-platformics/entities/test_infra/fixtures/private_key.pem",
+                    "JWK_PUBLIC_KEY_FILE": "/czid-platformics/entities/test_infra/fixtures/public_key.pem",
+                    "WORKERS": "2"
+                },
+                "emptydir_volumes": [{
+                    "name": "policies",
+                    "parameters": {
+                        "size_limit": "100Mi"
+                    }
+                }],
+                "services": {
+                    "entities": {
+                        "cpu": "2",
+                        "health_check_path": "/graphql",
+                        "memory": "1000Mi",
+                        "service_type": "INTERNAL",
+                        "sidecars":{
+                            "cerbos":
+                                {
+                                    "image": "ghcr.io/cerbos/cerbos",
+                                    "tag": "0.29.0",
+                                    "port": 3592,
+                                    "cpu": "100m",
+                                    "memory": "300Mi",
+                                    "args": ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
+                                }
+                        }
+                    }
+                },
+                "tasks": {
+                    "migrate": {
+                        "cmd": [
+                            "/czid-platformics/entities/scripts/migrate.sh"
+                        ],
+                        "cpu": "100m",
+                        "image": "{entities}:${var.image_tag}",
+                        "memory": "1000Mi"
+                    }
+                }
+            }
         },
         "staging": {
             "aws_profile": "idseq-dev",
@@ -23,8 +70,24 @@
                 "auth_method": "eks"
             },
             "terraform_directory": ".happy/terraform/envs/staging",
-            "task_launch_type": "k8s"
+            "task_launch_type": "k8s",
+            "stack_overrides": {
+                "services": {
+                    "entities": {
+                        "health_check_path": "/graphql/",
+                        "path": "/graphql/*",
+                        "priority": 0,
+                        "service_type": "PRIVATE",
+                        "success_codes": "200-499"
+                    }
+                }
+            }
         }
+    },
+    "tasks": {
+        "migrate": [
+            "migrate"
+        ]
     },
     "services": [
         "entities"
@@ -32,7 +95,8 @@
     "features": {
         "enable_dynamo_locking": true,
         "enable_happy_api_usage": true,
-        "enable_ecr_auto_creation": true
+        "enable_ecr_auto_creation": true,
+        "enable_unified_config": true
     },
     "api": {},
     "stack_defaults": {
@@ -40,24 +104,11 @@
         "routing_method": "CONTEXT",
         "services": {
             "entities": {
-                "build": {
-                    "context": ".",
-                    "dockerfile": "Dockerfile"
-                },
-                "health_check_path": "/graphql",
                 "name": "entities",
-                "memory": "1000Mi",
-                "cpu": "2", 
                 "platform_architecture": "arm64",
-                "port": 8008,
-                "service_type": "INTERNAL"
+                "port": 8008
             }
         },
-        "stack_defaults": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
-    },
-    "tasks": {
-        "migrate": [
-            "migrate"
-        ]
+        "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=rlim/ephemeral-volume-support"
     }
 }
