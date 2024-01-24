@@ -18,6 +18,7 @@ from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
+from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
@@ -39,14 +40,11 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.sample import SampleWhereClause, Sample
-    from api.types.metadata_field import MetadataFieldWhereClause, MetadataField
 
     pass
 else:
     SampleWhereClause = "SampleWhereClause"
     Sample = "Sample"
-    MetadataFieldWhereClause = "MetadataFieldWhereClause"
-    MetadataField = "MetadataField"
     pass
 
 
@@ -68,18 +66,6 @@ async def load_sample_rows(
     mapper = inspect(db.Metadatum)
     relationship = mapper.relationships["sample"]
     return await dataloader.loader_for(relationship, where).load(root.sample_id)  # type:ignore
-
-
-@strawberry.field
-async def load_metadata_field_rows(
-    root: "Metadatum",
-    info: Info,
-    where: Annotated["MetadataFieldWhereClause", strawberry.lazy("api.types.metadata_field")] | None = None,
-) -> Optional[Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Metadatum)
-    relationship = mapper.relationships["metadata_field"]
-    return await dataloader.loader_for(relationship, where).load(root.metadata_field_id)  # type:ignore
 
 
 """
@@ -111,7 +97,7 @@ class MetadatumWhereClause(TypedDict):
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
     sample: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
-    metadata_field: Optional[Annotated["MetadataFieldWhereClause", strawberry.lazy("api.types.metadata_field")]] | None
+    field_name: Optional[StrComparators] | None
     value: Optional[StrComparators] | None
 
 
@@ -127,9 +113,7 @@ class Metadatum(EntityInterface):
     owner_user_id: int
     collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
-    metadata_field: Optional[
-        Annotated["MetadataField", strawberry.lazy("api.types.metadata_field")]
-    ] = load_metadata_field_rows  # type:ignore
+    field_name: str
     value: str
 
 
@@ -169,6 +153,7 @@ class MetadatumMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    field_name: Optional[str] = None
     value: Optional[str] = None
 
 
@@ -180,7 +165,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class MetadatumCountColumns(enum.Enum):
     sample = "sample"
-    metadata_field = "metadata_field"
+    field_name = "field_name"
     value = "value"
     entity_id = "entity_id"
     id = "id"
@@ -231,7 +216,7 @@ Mutation types
 class MetadatumCreateInput:
     collection_id: int
     sample_id: strawberry.ID
-    metadata_field_id: strawberry.ID
+    field_name: str
     value: str
 
 
@@ -239,7 +224,7 @@ class MetadatumCreateInput:
 class MetadatumUpdateInput:
     collection_id: Optional[int] = None
     sample_id: Optional[strawberry.ID] = None
-    metadata_field_id: Optional[strawberry.ID] = None
+    field_name: Optional[str] = None
     value: Optional[str] = None
 
 
@@ -321,7 +306,7 @@ async def create_metadatum(
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Metadatum.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
-        raise Exception("Unauthorized: Cannot create entity in this collection")
+        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -347,19 +332,19 @@ async def update_metadatum(
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
-        raise Exception("No fields to update")
+        raise PlatformicsException("No fields to update")
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Metadatum, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
-        raise Exception("Unauthorized: Cannot update entities")
+        raise PlatformicsException("Unauthorized: Cannot update entities")
 
     # Validate that the user has access to the new collection ID
     if input.collection_id:
         attr = {"collection_id": input.collection_id}
         resource = Resource(id="SOME_ID", kind=db.Metadatum.__tablename__, attr=attr)
         if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise Exception("Unauthorized: Cannot access new collection")
+            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:
@@ -383,7 +368,7 @@ async def delete_metadatum(
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(db.Metadatum, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
     if len(entities) == 0:
-        raise Exception("Unauthorized: Cannot delete entities")
+        raise PlatformicsException("Unauthorized: Cannot delete entities")
 
     # Update DB
     for entity in entities:

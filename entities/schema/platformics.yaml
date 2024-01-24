@@ -370,64 +370,14 @@ classes:
         range: Sample
         inverse: Sample.metadatas
         required: true
-      metadata_field:
-        range: MetadataField
+      field_name:
+        range: string
         required: true
-        inverse: MetadataField.metadatas
       value:
         range: string
         required: true
     annotations:
       plural: Metadatas
-
-  MetadataField:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      field_group:
-        range: MetadataFieldProject
-        inverse: MetadataFieldProject.metadata_field
-        multivalued: true
-        required: true
-      field_name:
-        range: string
-        required: true
-      description:
-        range: string
-        required: true
-      field_type:
-        range: string
-        required: true
-      is_required:
-        range: boolean
-        required: true
-      options:
-        range: string
-      default_value:
-        range: string
-      metadatas:
-        range: Metadatum
-        inverse: Metadatum.metadata_field
-        multivalued: true
-    annotations:
-      plural: MetadataFields
-
-  MetadataFieldProject:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      # TODO: should this be replaced with collection_id?
-      project_id:
-        range: int
-        required: true
-      metadata_field:
-        range: MetadataField
-        inverse: MetadataField.field_group
-        required: true
-    annotations:
-      plural: MetadataFieldProjects
 
   # ----------------------------------------------------------------------------
   # Result of generating a consensus genome
