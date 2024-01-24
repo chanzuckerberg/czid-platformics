@@ -33,7 +33,7 @@ def convert_where_clauses_to_sql(
     depth: int,
 ) -> Select:
     """
-    Convert a query with a where clause to a SQLAlchemy query.
+    Convert a query with a where clause and/or an order_by clause to a SQLAlchemy query.
     """
     if not whereClause:
         return query
@@ -46,7 +46,7 @@ def convert_where_clauses_to_sql(
                 relationship = mapper.relationships[k]  # type: ignore
                 related_cls = relationship.mapper.entity
                 subquery = get_db_query(
-                    related_cls, action, cerbos_client, principal, v, depth
+                    related_cls, action, cerbos_client, principal, v, None, depth
                 ).subquery()  # type: ignore
                 query_alias = aliased(related_cls, subquery)
                 joincondition_a = [
@@ -62,6 +62,50 @@ def convert_where_clauses_to_sql(
                 query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
     return query
 
+def convert_order_by_clauses_to_sql(
+    principal: Principal,
+    cerbos_client: CerbosClient,
+    action: CerbosAction,
+    query: Select,
+    sa_model: Base,
+    order_by: Optional[list[dict[str, Any]]],
+    depth: int,
+) -> Select:
+    """
+    Convert a query with an order_by clause to a SQLAlchemy query.
+    """
+    if not order_by:
+        return query
+    for item in order_by:
+        for k, v in item.items():
+            if isinstance(v, dict):
+                mapper = inspect(sa_model)
+                relationship = mapper.relationships[k]
+                related_cls = relationship.mapper.entity
+                subquery = get_db_query(
+                    related_cls, action, cerbos_client, principal, None, [v], depth
+                ).subquery()
+                query_alias = aliased(related_cls, subquery)
+                joincondition_a = [
+                    (getattr(sa_model, local.key) == getattr(query_alias, remote.key))
+                    for local, remote in relationship.local_remote_pairs
+                ]
+                query = query.join(query_alias, and_(*joincondition_a))
+                continue
+            match v.value:
+                case "asc":
+                    query = query.order_by(getattr(sa_model, k).asc())
+                case "asc_nulls_first":
+                    query = query.order_by(getattr(sa_model, k).asc().nullsfirst())
+                case "asc_nulls_last":
+                    query = query.order_by(getattr(sa_model, k).asc().nullslast())
+                case "desc":
+                    query = query.order_by(getattr(sa_model, k).desc())
+                case "desc_nulls_first":
+                    query = query.order_by(getattr(sa_model, k).desc().nullsfirst())
+                case "desc_nulls_last":
+                    query = query.order_by(getattr(sa_model, k).desc().nullslast())
+    return query
 
 def get_db_query(
     model_cls: type[E],
@@ -69,6 +113,7 @@ def get_db_query(
     cerbos_client: CerbosClient,
     principal: Principal,
     where: dict[str, Any],
+    order_by: Optional[list[dict[str, Any]]] = [],
     depth: Optional[int] = None,
 ) -> Select:
     """
@@ -85,6 +130,11 @@ def get_db_query(
     query = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, depth  # type: ignore
     )
+    # FIXME: ordering nested objects/by nested fields doesn't seem to be working properly
+    query = convert_order_by_clauses_to_sql(
+        principal, cerbos_client, action, query, model_cls, order_by, depth  # type: ignore
+    )
+    print(query)
     return query
 
 async def get_db_rows(
@@ -93,31 +143,13 @@ async def get_db_rows(
     cerbos_client: CerbosClient,
     principal: Principal,
     where: Any,
-    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
+    order_by: Optional[list[dict[str, Any]]] = [],
     action: CerbosAction = CerbosAction.VIEW,
 ) -> typing.Sequence[E]:
     """
     Retrieve rows from the database, filtered by the where clause and the user's permissions.
     """
-    query = get_db_query(model_cls, action, cerbos_client, principal, where)
-    order_clauses = []
-    for item in order_by:
-        col, direction = item.column.value, item.direction.value
-        match direction:
-            case "asc":
-                order_clauses.append(getattr(model_cls, col).asc())
-            case "asc_nulls_first":
-                order_clauses.append(getattr(model_cls, col).asc().nullsfirst())
-            case "asc_nulls_last":
-                order_clauses.append(getattr(model_cls, col).asc().nullslast())
-            case "desc":
-                order_clauses.append(getattr(model_cls, col).desc())
-            case "desc_nulls_first":
-                order_clauses.append(getattr(model_cls, col).desc().nullsfirst())
-            case "desc_nulls_last":
-                order_clauses.append(getattr(model_cls, col).desc().nullslast())
-    if order_by:
-        query = query.order_by(*order_clauses)  # type: ignore
+    query = get_db_query(model_cls, action, cerbos_client, principal, where, order_by)
     result = await session.execute(query)
     return result.scalars().all()
 
