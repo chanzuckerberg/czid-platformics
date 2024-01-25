@@ -256,7 +256,7 @@ classes:
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
-        inverse: ConsensusGenome.sequencing_read
+        inverse: ConsensusGenome.sequence_read
         multivalued: true
       # Contigs generated from these Sequencing Reads
       contigs:
@@ -275,9 +275,9 @@ classes:
       - EntityMixin
     attributes:
       # Genomic coordinates based on this reference sequence
-      reference_sequence:
-        range: Sequence
-        inverse: Sequence.genomic_ranges
+      reference_genome:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.genomic_ranges
       file:
         range: File
       sequencing_reads:
@@ -288,29 +288,34 @@ classes:
       plural: GenomicRanges
 
   # ----------------------------------------------------------------------------
-  # Sequence 
+  # Reference genomes 
   # ----------------------------------------------------------------------------
 
-  Sequence:
+  ReferenceGenome:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
+      # FASTA reference genome
       file:
         range: File
+      taxon:
+        range: Taxon
+        required: true
+        inverse: Taxon.reference_genomes
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
-      # consensus_genomes:
-      #   range: ConsensusGenome
-      #   inverse: ConsensusGenome.sequence
-      #   multivalued: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.reference_genome
+        multivalued: true
       genomic_ranges:
         range: GenomicRange
-        inverse: GenomicRange.reference_sequence
+        inverse: GenomicRange.reference_genome
         multivalued: true
     annotations:
-      plural: Sequences
+      plural: ReferenceGenomes
 
   # ----------------------------------------------------------------------------
   # Host organisms / host filtering information
@@ -378,11 +383,10 @@ classes:
         range: Taxon
         required: true
         inverse: Taxon.consensus_genomes
-      sequencing_read:
+      sequence_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
-      # FIXME:
       reference_genome:
         range: ReferenceGenome
         required: true
@@ -499,6 +503,10 @@ classes:
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.taxon
+        multivalued: true
+      reference_genomes:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.taxon
         multivalued: true
       samples:
         range: Sample
