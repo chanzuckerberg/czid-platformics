@@ -94,6 +94,10 @@ enums:
       newick:
       auspice_v1:
       auspice_v2:
+  BulkDownloadType:
+    permissible_values:
+      concatenate:
+      zip:
 
 classes:
   Entity:
@@ -290,7 +294,6 @@ classes:
   # ----------------------------------------------------------------------------
   # Reference genomes 
   # ----------------------------------------------------------------------------
-
   ReferenceGenome:
     is_a: Entity
     mixins:
@@ -500,13 +503,13 @@ classes:
         range: ConsensusGenome
         inverse: ConsensusGenome.taxon
         multivalued: true
-      sequencing_reads:
-        range: SequencingRead
-        inverse: SequencingRead.taxon
-        multivalued: true
       reference_genomes:
         range: ReferenceGenome
         inverse: ReferenceGenome.taxon
+        multivalued: true
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.taxon
         multivalued: true
       samples:
         range: Sample
@@ -568,14 +571,16 @@ classes:
 
 
   # ----------------------------------------------------------------------------
-  # BulkDownloads
-  # How else to list bulk downloads for a user? Query workflow runs for bulk download by owner user ID then query entities for File with producing_run_id....
+  # Bulk download results
   # ----------------------------------------------------------------------------
   BulkDownload:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
+      type:
+        range: BulkDownloadType
+        required: true
       file:
         range: File
     annotations:
