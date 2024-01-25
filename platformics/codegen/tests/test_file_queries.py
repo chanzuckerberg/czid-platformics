@@ -49,9 +49,9 @@ async def test_file_query(
     # Each SequencingRead results in 5 files:
     # r1_file, r2_file
     # primer_file -> GenomicRange file
-    # GenomicRange produces ReferenceGenome -> file and file_index
-    # so we expect 8 * 5 = 40 files.
-    assert len(output["data"]["files"]) == 40
+    # GenomicRange produces ReferenceGenome -> file
+    # so we expect 8 * 4 = 32 files.
+    assert len(output["data"]["files"]) == 32
     for file in output["data"]["files"]:
         assert file["path"] is not None
         assert file["entity"]["collectionId"] == project1_id
