@@ -108,6 +108,7 @@ ConsensusGenome {
     date deleted_at  
 }
 MetricConsensusGenome {
+    float coverage_depth  
     float reference_genome_length  
     float percent_genome_called  
     float percent_identity  
@@ -118,10 +119,6 @@ MetricConsensusGenome {
     int n_actg  
     int n_missing  
     int n_ambiguous  
-    float coverage_depth  
-    float coverage_breadth  
-    float coverage_bin_size  
-    int coverage_total_length  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -223,7 +220,7 @@ ConsensusGenome ||--|| ReferenceGenome : "reference_genome"
 ConsensusGenome ||--|o File : "sequence"
 ConsensusGenome ||--|o File : "intermediate_outputs"
 MetricConsensusGenome ||--|| ConsensusGenome : "consensus_genome"
-MetricConsensusGenome ||--|o File : "coverage_viz"
+MetricConsensusGenome ||--|o File : "coverage_viz_summary_file"
 Taxon ||--|| UpstreamDatabase : "upstream_database"
 Taxon ||--|o Taxon : "tax_parent"
 Taxon ||--|o Taxon : "tax_subspecies"

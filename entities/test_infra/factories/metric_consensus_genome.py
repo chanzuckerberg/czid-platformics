@@ -29,6 +29,7 @@ class MetricConsensusGenomeFactory(CommonFactory):
         sqlalchemy_get_or_create = ("entity_id",)
 
     consensus_genome = factory.Faker("ConsensusGenome")
+    coverage_depth = fuzzy.FuzzyFloat(1, 100)
     reference_genome_length = fuzzy.FuzzyFloat(1, 100)
     percent_genome_called = fuzzy.FuzzyFloat(1, 100)
     percent_identity = fuzzy.FuzzyFloat(1, 100)
@@ -39,13 +40,9 @@ class MetricConsensusGenomeFactory(CommonFactory):
     n_actg = fuzzy.FuzzyInteger(1, 1000)
     n_missing = fuzzy.FuzzyInteger(1, 1000)
     n_ambiguous = fuzzy.FuzzyInteger(1, 1000)
-    coverage_depth = fuzzy.FuzzyFloat(1, 100)
-    coverage_breadth = fuzzy.FuzzyFloat(1, 100)
-    coverage_bin_size = fuzzy.FuzzyFloat(1, 100)
-    coverage_total_length = fuzzy.FuzzyInteger(1, 1000)
-    coverage_viz = factory.RelatedFactory(
+    coverage_viz_summary_file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
-        entity_field_name="coverage_viz",
+        entity_field_name="coverage_viz_summary_file",
         file_format="fastq",
     )

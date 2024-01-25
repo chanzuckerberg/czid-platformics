@@ -9151,6 +9151,15 @@
             },
             {
               "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "referenceGenomeLength",
               "type": {
                 "kind": "SCALAR",
@@ -9241,43 +9250,7 @@
             },
             {
               "args": [],
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageVizId",
+              "name": "coverageVizSummaryFileId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -9296,7 +9269,7 @@
                   }
                 }
               ],
-              "name": "coverageViz",
+              "name": "coverageVizSummaryFile",
               "type": {
                 "kind": "OBJECT",
                 "name": "File",
@@ -9372,6 +9345,15 @@
             },
             {
               "defaultValue": null,
+              "name": "coverageDepth",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FloatComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "referenceGenomeLength",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -9454,42 +9436,6 @@
             {
               "defaultValue": null,
               "name": "nAmbiguous",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "coverageDepth",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "FloatComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "FloatComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "FloatComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "coverageTotalLength",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "IntComparators",
@@ -10606,6 +10552,15 @@
             },
             {
               "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "referenceGenomeLength",
               "type": {
                 "kind": "SCALAR",
@@ -10688,42 +10643,6 @@
             {
               "args": [],
               "name": "nAmbiguous",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageTotalLength",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
@@ -10769,6 +10688,15 @@
             },
             {
               "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "referenceGenomeLength",
               "type": {
                 "kind": "SCALAR",
@@ -10856,42 +10784,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            {
-              "args": [],
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
             }
           ],
           "inputFields": null,
@@ -10904,6 +10796,9 @@
           "enumValues": [
             {
               "name": "consensus_genome"
+            },
+            {
+              "name": "coverage_depth"
             },
             {
               "name": "reference_genome_length"
@@ -10936,19 +10831,7 @@
               "name": "n_ambiguous"
             },
             {
-              "name": "coverage_depth"
-            },
-            {
-              "name": "coverage_breadth"
-            },
-            {
-              "name": "coverage_bin_size"
-            },
-            {
-              "name": "coverage_total_length"
-            },
-            {
-              "name": "coverage_viz"
+              "name": "coverage_viz_summary_file"
             },
             {
               "name": "entity_id"
@@ -14657,6 +14540,15 @@
             },
             {
               "defaultValue": "null",
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "referenceGenomeLength",
               "type": {
                 "kind": "SCALAR",
@@ -14747,43 +14639,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageVizId",
+              "name": "coverageVizSummaryFileId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -14811,6 +14667,15 @@
             },
             {
               "defaultValue": "null",
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "referenceGenomeLength",
               "type": {
                 "kind": "SCALAR",
@@ -14901,43 +14766,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageVizId",
+              "name": "coverageVizSummaryFileId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",

@@ -406,6 +406,8 @@ classes:
       consensus_genome:
         range: ConsensusGenome
         required: true
+      coverage_depth:
+        range: float
       reference_genome_length:
         range: float
       percent_genome_called:
@@ -426,15 +428,7 @@ classes:
         range: int
       n_ambiguous:
         range: int
-      coverage_depth:
-        range: float
-      coverage_breadth:
-        range: float
-      coverage_bin_size:
-        range: float
-      coverage_total_length:
-        range: int
-      coverage_viz:
+      coverage_viz_summary_file:
         range: File
     annotations:
       plural: MetricsConsensusGenomes
