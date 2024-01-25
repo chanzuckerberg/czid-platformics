@@ -23,7 +23,7 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 
-def convert_where_clauses_to_sql(
+def convert_where_clauses_to_sql2(
     principal: Principal,
     cerbos_client: CerbosClient,
     action: CerbosAction,
@@ -33,7 +33,7 @@ def convert_where_clauses_to_sql(
     depth: int,
 ) -> Select:
     """
-    Convert a query with a where clause and/or an order_by clause to a SQLAlchemy query.
+    Convert a query with a where clause to a SQLAlchemy query.
     """
     if not whereClause:
         return query
@@ -94,19 +94,84 @@ def convert_order_by_clauses_to_sql(
                 ]
                 query = query.join(query_alias, and_(*joincondition_a))
                 continue
-            match v.value:
-                case "asc":
-                    query = query.order_by(getattr(sa_model, k).asc())
-                case "asc_nulls_first":
-                    query = query.order_by(getattr(sa_model, k).asc().nullsfirst())
-                case "asc_nulls_last":
-                    query = query.order_by(getattr(sa_model, k).asc().nullslast())
-                case "desc":
-                    query = query.order_by(getattr(sa_model, k).desc())
-                case "desc_nulls_first":
-                    query = query.order_by(getattr(sa_model, k).desc().nullsfirst())
-                case "desc_nulls_last":
-                    query = query.order_by(getattr(sa_model, k).desc().nullslast())
+            query = apply_order_by(k, v, query, sa_model)
+    return query
+
+def apply_order_by(field, direction, query: Select, sa_model: Base):
+    match direction.value:
+        case "asc":
+            query = query.order_by(getattr(sa_model, field).asc())
+        case "asc_nulls_first":
+            query = query.order_by(getattr(sa_model, field).asc().nullsfirst())
+        case "asc_nulls_last":
+            query = query.order_by(getattr(sa_model, field).asc().nullslast())
+        case "desc":
+            query = query.order_by(getattr(sa_model, field).desc())
+        case "desc_nulls_first":
+            query = query.order_by(getattr(sa_model, field).desc().nullsfirst())
+        case "desc_nulls_last":
+            query = query.order_by(getattr(sa_model, field).desc().nullslast())
+    return query
+
+def convert_where_clauses_to_sql(
+    principal: Principal,
+    cerbos_client: CerbosClient,
+    action: CerbosAction,
+    query: Select,
+    sa_model: Base,
+    whereClause: dict[str, Any],
+    order_by: Optional[list[dict[str, Any]]],
+    depth: int,
+) -> Select:
+    """
+    Convert a query with a where clause and/or an order_by clause to a SQLAlchemy query.
+    """
+    order_by_sql = []
+    subquery_order_by = []
+    # Sample -> SequencingRead -> Taxon, order Samples by Taxon.name
+
+    # create a dictionary with the keys as the related field/field names, the values are dict of {order_by: {...}, where: {...}}
+    # iterate over dict instead of whereClause.items()
+    # check if the key we're iterating on is a related field vs local field
+    if not whereClause:
+        return query
+    for k, v in whereClause.items():
+        for comparator, value in v.items():
+            # TODO it would be nicer if we could have the WhereClause classes inherit from a BaseWhereClause
+            # so that these type checks could be smarter, but TypedDict doesn't support type checks like that
+            mapper = inspect(sa_model)
+            if k in mapper.relationships: # check if it's a related model field or a local field
+                relationship = mapper.relationships[k]  # type: ignore
+                related_cls = relationship.mapper.entity
+                # return both a subquery and an order_by
+                # we need to keep re-mapping the order_by column all the way back up to the top level
+                query = get_resource_query(principal, cerbos_client, action, sa_model)
+                # generate subquery to get Taxon
+                # subquery_order_by = {current_alias: foo, direction: bar}
+                subquery, subquery_order_by = convert_where_clauses_to_sql(
+                    principal, cerbos_client, action, query, model_cls, where, depth  # type: ignore
+                )
+                order_by_sql.extend(subquery_order_by)
+                query_alias = aliased(related_cls, subquery)
+                joincondition_a = [
+                    (getattr(sa_model, local.key) == getattr(query_alias, remote.key))
+                    for local, remote in relationship.local_remote_pairs
+                ]
+                query = query.join(query_alias, and_(*joincondition_a))
+                # iterate over the order_by keys to get the actual field name, hardcoding "name" for now
+                # need to add Taxon.name to the subquery for SequencingRead
+                for sub in subquery_order_by:
+                    query.add_columns(getattr(query_alias, sub["current_alias"]))
+                # create a list of order_bys for the subquery
+                # {field: direction, {related_object: {field: direction}}}
+                for order_field in v["order_by"]:
+                    subquery_order_by.append({"current_alias": subquery, "direction": order_field})
+                continue
+            sa_comparator = operator_map[comparator]
+            if sa_comparator == "IS_NULL":
+                query = query.filter(getattr(sa_model, k).is_(None))
+            else:
+                query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
     return query
 
 def get_db_query(
@@ -137,6 +202,7 @@ def get_db_query(
         principal, cerbos_client, action, query, model_cls, order_by, depth  # type: ignore
     )
     print(query)
+    # probably need to return the subquery and order_by clauses
     return query
 
 async def get_db_rows(
