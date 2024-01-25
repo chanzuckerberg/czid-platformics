@@ -115,12 +115,12 @@ classes:
         range: int
         minimum_value: 0
       created_at:
-        range: datetime
+        range: date
         required: true
       updated_at:
-        range: datetime
+        range: date
       deleted_at:
-        range: datetime
+        range: date
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -342,11 +342,6 @@ classes:
       # Original FASTA file used in index generation; used for our record keeping
       sequence:
         range: File
-      # Taxa used to create the FASTA (e.g. for human, host filtering uses human, chimp and gorilla genomes); used for our record keeping
-      taxa:
-        range: Taxon
-        multivalued: true
-        inverse: Taxon.host_organisms
       # TODO: Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
       # background:
       #   range: Background
@@ -400,10 +395,6 @@ classes:
       # Zip file containing intermediate outputs
       intermediate_outputs:
         range: File
-      # Metrics generated from the CG pipeline
-      metrics:
-        range: MetricConsensusGenome
-        inverse: MetricConsensusGenome.consensus_genome
     annotations:
       plural: ConsensusGenomes
 
@@ -415,7 +406,6 @@ classes:
       consensus_genome:
         range: ConsensusGenome
         required: true
-        inverse: ConsensusGenome.metrics
       reference_genome_length:
         range: float
       percent_genome_called:
@@ -445,7 +435,7 @@ classes:
       coverage_total_length:
         range: int
       coverage_viz:
-        range: JSON
+        range: File
     annotations:
       plural: MetricsConsensusGenomes
 
@@ -515,10 +505,6 @@ classes:
         range: Sample
         inverse: Sample.host_taxon
         multivalued: true
-      host_organisms:
-        range: HostOrganism
-        inverse: HostOrganism.taxa
-        multivalued: true
     annotations:
       plural: Taxa
 
@@ -578,7 +564,7 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      type:
+      download_type:
         range: BulkDownloadType
         required: true
       file:

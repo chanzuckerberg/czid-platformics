@@ -67,6 +67,13 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
+      created_at:
+        range: date
+        required: true
+      updated_at:
+        range: date
+      deleted_at:
+        range: date
     annotations:
       plural: Entities
  
@@ -150,9 +157,6 @@ classes:
         required: true
       nucleic_acid:
         range: NucleicAcid
-        required: true
-      has_ercc:
-        range: boolean
         required: true
       primer_file:
         range: GenomicRange

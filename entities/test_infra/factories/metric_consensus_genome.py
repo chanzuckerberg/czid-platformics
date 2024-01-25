@@ -10,7 +10,6 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 import factory
 from database.models import MetricConsensusGenome
 from test_infra.factories.main import CommonFactory, FileFactory
-from test_infra.factories.consensus_genome import ConsensusGenomeFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -29,12 +28,7 @@ class MetricConsensusGenomeFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
-    consensus_genome = factory.SubFactory(
-        ConsensusGenomeFactory,
-        owner_user_id=factory.SelfAttribute("..owner_user_id"),
-        collection_id=factory.SelfAttribute("..collection_id"),
-    )
-    coverage_depth = fuzzy.FuzzyFloat(1, 100)
+    consensus_genome = factory.Faker("ConsensusGenome")
     reference_genome_length = fuzzy.FuzzyFloat(1, 100)
     percent_genome_called = fuzzy.FuzzyFloat(1, 100)
     percent_identity = fuzzy.FuzzyFloat(1, 100)
@@ -45,9 +39,13 @@ class MetricConsensusGenomeFactory(CommonFactory):
     n_actg = fuzzy.FuzzyInteger(1, 1000)
     n_missing = fuzzy.FuzzyInteger(1, 1000)
     n_ambiguous = fuzzy.FuzzyInteger(1, 1000)
-    coverage_viz_summary_file = factory.RelatedFactory(
+    coverage_depth = fuzzy.FuzzyFloat(1, 100)
+    coverage_breadth = fuzzy.FuzzyFloat(1, 100)
+    coverage_bin_size = fuzzy.FuzzyFloat(1, 100)
+    coverage_total_length = fuzzy.FuzzyInteger(1, 1000)
+    coverage_viz = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
-        entity_field_name="coverage_viz_summary_file",
+        entity_field_name="coverage_viz",
         file_format="fastq",
     )

@@ -14,7 +14,7 @@ from database.models.sample import Sample  # noqa: F401
 from database.models.sequencing_read import SequencingRead  # noqa: F401
 from database.models.genomic_range import GenomicRange  # noqa: F401
 from database.models.reference_genome import ReferenceGenome  # noqa: F401
-from database.models.sequence_alignment_index import SequenceAlignmentIndex  # noqa: F401
+from database.models.host_organism import HostOrganism  # noqa: F401
 from database.models.metadatum import Metadatum  # noqa: F401
 from database.models.consensus_genome import ConsensusGenome  # noqa: F401
 from database.models.metric_consensus_genome import MetricConsensusGenome  # noqa: F401
@@ -22,6 +22,7 @@ from database.models.taxon import Taxon  # noqa: F401
 from database.models.upstream_database import UpstreamDatabase  # noqa: F401
 from database.models.contig import Contig  # noqa: F401
 from database.models.phylogenetic_tree import PhylogeneticTree  # noqa: F401
+from database.models.bulk_download import BulkDownload  # noqa: F401
 
 from database.models.file import File, FileStatus  # noqa: F401
 

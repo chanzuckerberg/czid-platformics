@@ -5,6 +5,9 @@ Entity {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 File {
     uuid id  
@@ -20,6 +23,7 @@ File {
     string upload_error  
 }
 Sample {
+    int rails_sample_id  
     string name  
     string sample_type  
     boolean water_control  
@@ -31,17 +35,22 @@ Sample {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 SequencingRead {
     SequencingProtocol protocol  
     SequencingTechnology technology  
     NucleicAcid nucleic_acid  
-    boolean has_ercc  
     uuid entity_id  
     uuid id  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 GenomicRange {
     uuid entity_id  
@@ -49,25 +58,32 @@ GenomicRange {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 ReferenceGenome {
-    string name  
-    string description  
     string accession_id  
     uuid entity_id  
     uuid id  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
-SequenceAlignmentIndex {
-    AlignmentTool tool  
+HostOrganism {
+    string name  
     string version  
     uuid entity_id  
     uuid id  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 Metadatum {
     string field_name  
@@ -77,6 +93,9 @@ Metadatum {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 ConsensusGenome {
     uuid entity_id  
@@ -84,9 +103,11 @@ ConsensusGenome {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 MetricConsensusGenome {
-    float coverage_depth  
     float reference_genome_length  
     float percent_genome_called  
     float percent_identity  
@@ -97,11 +118,18 @@ MetricConsensusGenome {
     int n_actg  
     int n_missing  
     int n_ambiguous  
+    float coverage_depth  
+    float coverage_breadth  
+    float coverage_bin_size  
+    int coverage_total_length  
     uuid entity_id  
     uuid id  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 Taxon {
     string wikipedia_id  
@@ -116,6 +144,9 @@ Taxon {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 UpstreamDatabase {
     string name  
@@ -124,6 +155,9 @@ UpstreamDatabase {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 Contig {
     string sequence  
@@ -132,6 +166,9 @@ Contig {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 PhylogeneticTree {
     PhylogeneticTreeFormat format  
@@ -140,6 +177,20 @@ PhylogeneticTree {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
+}
+BulkDownload {
+    BulkDownloadType download_type  
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 EntityMixin {
     uuid entity_id  
@@ -156,26 +207,23 @@ SequencingRead ||--|o Taxon : "taxon"
 SequencingRead ||--|o GenomicRange : "primer_file"
 SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
 SequencingRead ||--}o Contig : "contigs"
-GenomicRange ||--|| ReferenceGenome : "reference_genome"
+GenomicRange ||--|o ReferenceGenome : "reference_genome"
 GenomicRange ||--|o File : "file"
 GenomicRange ||--}o SequencingRead : "sequencing_reads"
 ReferenceGenome ||--|o File : "file"
-ReferenceGenome ||--|o File : "file_index"
 ReferenceGenome ||--|| Taxon : "taxon"
-ReferenceGenome ||--}o SequenceAlignmentIndex : "sequence_alignment_indices"
 ReferenceGenome ||--}o ConsensusGenome : "consensus_genomes"
 ReferenceGenome ||--}o GenomicRange : "genomic_ranges"
-SequenceAlignmentIndex ||--|o File : "index_file"
-SequenceAlignmentIndex ||--|o ReferenceGenome : "reference_genome"
+HostOrganism ||--|o File : "host_filtering"
+HostOrganism ||--|o File : "sequence"
 Metadatum ||--|| Sample : "sample"
 ConsensusGenome ||--|| Taxon : "taxon"
 ConsensusGenome ||--|| SequencingRead : "sequence_read"
 ConsensusGenome ||--|| ReferenceGenome : "reference_genome"
 ConsensusGenome ||--|o File : "sequence"
 ConsensusGenome ||--|o File : "intermediate_outputs"
-ConsensusGenome ||--}o MetricConsensusGenome : "metrics"
 MetricConsensusGenome ||--|| ConsensusGenome : "consensus_genome"
-MetricConsensusGenome ||--|o File : "coverage_viz_summary_file"
+MetricConsensusGenome ||--|o File : "coverage_viz"
 Taxon ||--|| UpstreamDatabase : "upstream_database"
 Taxon ||--|o Taxon : "tax_parent"
 Taxon ||--|o Taxon : "tax_subspecies"
@@ -194,6 +242,7 @@ Taxon ||--}o Sample : "samples"
 UpstreamDatabase ||--}o Taxon : "taxa"
 Contig ||--|o SequencingRead : "sequencing_read"
 PhylogeneticTree ||--|o File : "tree"
+BulkDownload ||--|o File : "file"
 
 ```
 

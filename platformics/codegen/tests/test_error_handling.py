@@ -23,6 +23,7 @@ async def test_unauthorized_error(
                 sampleType: "Type 1"
                 waterControl: false
                 collectionLocation: "San Francisco, CA"
+                collectionDate: "2024-01-01"
                 collectionId: 123
             }) {
                 id,

@@ -170,6 +170,7 @@ class SampleWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
+    rails_sample_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
     sample_type: Optional[StrComparators] | None
     water_control: Optional[BoolComparators] | None
@@ -194,10 +195,11 @@ class Sample(EntityInterface):
     producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
+    rails_sample_id: Optional[int] = None
     name: str
     sample_type: str
     water_control: bool
-    collection_date: Optional[datetime.datetime] = None
+    collection_date: datetime.datetime
     collection_location: str
     description: Optional[str] = None
     host_taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
@@ -239,6 +241,7 @@ class SampleNumericalColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    rails_sample_id: Optional[int] = None
 
 
 """
@@ -251,6 +254,7 @@ class SampleMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    rails_sample_id: Optional[int] = None
     name: Optional[str] = None
     sample_type: Optional[str] = None
     collection_date: Optional[datetime.datetime] = None
@@ -265,6 +269,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class SampleCountColumns(enum.Enum):
+    rails_sample_id = "rails_sample_id"
     name = "name"
     sample_type = "sample_type"
     water_control = "water_control"
@@ -279,6 +284,9 @@ class SampleCountColumns(enum.Enum):
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    deleted_at = "deleted_at"
 
 
 """
@@ -322,10 +330,11 @@ Mutation types
 @strawberry.input()
 class SampleCreateInput:
     collection_id: int
+    rails_sample_id: Optional[int] = None
     name: str
     sample_type: str
     water_control: bool
-    collection_date: Optional[datetime.datetime] = None
+    collection_date: datetime.datetime
     collection_location: str
     description: Optional[str] = None
     host_taxon_id: Optional[strawberry.ID] = None
@@ -334,6 +343,7 @@ class SampleCreateInput:
 @strawberry.input()
 class SampleUpdateInput:
     collection_id: Optional[int] = None
+    rails_sample_id: Optional[int] = None
     name: Optional[str] = None
     sample_type: Optional[str] = None
     water_control: Optional[bool] = None

@@ -28,10 +28,7 @@ class MetricConsensusGenome(Entity):
     consensus_genome_id: Mapped[uuid.UUID] = mapped_column(
         UUID, ForeignKey("consensus_genome.entity_id"), nullable=False
     )
-    consensus_genome: Mapped["ConsensusGenome"] = relationship(
-        "ConsensusGenome", back_populates="metrics", foreign_keys=consensus_genome_id
-    )
-    coverage_depth: Mapped[int] = mapped_column(Float, nullable=True)
+    consensus_genome: Mapped["ConsensusGenome"] = relationship("ConsensusGenome", foreign_keys=consensus_genome_id)
     reference_genome_length: Mapped[int] = mapped_column(Float, nullable=True)
     percent_genome_called: Mapped[int] = mapped_column(Float, nullable=True)
     percent_identity: Mapped[int] = mapped_column(Float, nullable=True)
@@ -42,6 +39,10 @@ class MetricConsensusGenome(Entity):
     n_actg: Mapped[int] = mapped_column(Integer, nullable=True)
     n_missing: Mapped[int] = mapped_column(Integer, nullable=True)
     n_ambiguous: Mapped[int] = mapped_column(Integer, nullable=True)
-    coverage_viz_summary_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    coverage_viz_summary_file: Mapped["File"] = relationship("File", foreign_keys=coverage_viz_summary_file_id)
+    coverage_depth: Mapped[int] = mapped_column(Float, nullable=True)
+    coverage_breadth: Mapped[int] = mapped_column(Float, nullable=True)
+    coverage_bin_size: Mapped[int] = mapped_column(Float, nullable=True)
+    coverage_total_length: Mapped[int] = mapped_column(Integer, nullable=True)
+    coverage_viz_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    coverage_viz: Mapped["File"] = relationship("File", foreign_keys=coverage_viz_id)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

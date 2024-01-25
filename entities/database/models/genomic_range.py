@@ -28,7 +28,7 @@ class GenomicRange(Entity):
     __tablename__ = "genomic_range"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("reference_genome.entity_id"), nullable=False
+        UUID, ForeignKey("reference_genome.entity_id"), nullable=True
     )
     reference_genome: Mapped["ReferenceGenome"] = relationship(
         "ReferenceGenome", back_populates="genomic_ranges", foreign_keys=reference_genome_id

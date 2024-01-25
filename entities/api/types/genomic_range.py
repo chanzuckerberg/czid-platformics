@@ -242,6 +242,9 @@ class GenomicRangeCountColumns(enum.Enum):
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    deleted_at = "deleted_at"
 
 
 """
@@ -287,7 +290,7 @@ Mutation types
 @strawberry.input()
 class GenomicRangeCreateInput:
     collection_id: int
-    reference_genome_id: strawberry.ID
+    reference_genome_id: Optional[strawberry.ID] = None
     file_id: Optional[strawberry.ID] = None
 
 

@@ -28,11 +28,11 @@ from api.types.reference_genome import (
     ReferenceGenomeAggregate,
     resolve_reference_genomes_aggregate,
 )
-from api.types.sequence_alignment_index import (
-    SequenceAlignmentIndex,
-    resolve_sequence_alignment_indices,
-    SequenceAlignmentIndexAggregate,
-    resolve_sequence_alignment_indices_aggregate,
+from api.types.host_organism import (
+    HostOrganism,
+    resolve_host_organisms,
+    HostOrganismAggregate,
+    resolve_host_organisms_aggregate,
 )
 from api.types.metadatum import Metadatum, resolve_metadatas, MetadatumAggregate, resolve_metadatas_aggregate
 from api.types.consensus_genome import (
@@ -61,6 +61,12 @@ from api.types.phylogenetic_tree import (
     PhylogeneticTreeAggregate,
     resolve_phylogenetic_trees_aggregate,
 )
+from api.types.bulk_download import (
+    BulkDownload,
+    resolve_bulk_downloads,
+    BulkDownloadAggregate,
+    resolve_bulk_downloads_aggregate,
+)
 
 
 @strawberry.type
@@ -76,7 +82,7 @@ class Query:
     sequencing_reads: Sequence[SequencingRead] = resolve_sequencing_reads
     genomic_ranges: Sequence[GenomicRange] = resolve_genomic_ranges
     reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
-    sequence_alignment_indices: Sequence[SequenceAlignmentIndex] = resolve_sequence_alignment_indices
+    host_organisms: Sequence[HostOrganism] = resolve_host_organisms
     metadatas: Sequence[Metadatum] = resolve_metadatas
     consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
     metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
@@ -84,13 +90,14 @@ class Query:
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
     contigs: Sequence[Contig] = resolve_contigs
     phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
+    bulk_downloads: Sequence[BulkDownload] = resolve_bulk_downloads
 
     # Query entity aggregates
     samples_aggregate: SampleAggregate = resolve_samples_aggregate
     sequencing_reads_aggregate: SequencingReadAggregate = resolve_sequencing_reads_aggregate
     genomic_ranges_aggregate: GenomicRangeAggregate = resolve_genomic_ranges_aggregate
     reference_genomes_aggregate: ReferenceGenomeAggregate = resolve_reference_genomes_aggregate
-    sequence_alignment_indices_aggregate: SequenceAlignmentIndexAggregate = resolve_sequence_alignment_indices_aggregate
+    host_organisms_aggregate: HostOrganismAggregate = resolve_host_organisms_aggregate
     metadatas_aggregate: MetadatumAggregate = resolve_metadatas_aggregate
     consensus_genomes_aggregate: ConsensusGenomeAggregate = resolve_consensus_genomes_aggregate
     metrics_consensus_genomes_aggregate: MetricConsensusGenomeAggregate = resolve_metrics_consensus_genomes_aggregate
@@ -98,3 +105,4 @@ class Query:
     upstream_databases_aggregate: UpstreamDatabaseAggregate = resolve_upstream_databases_aggregate
     contigs_aggregate: ContigAggregate = resolve_contigs_aggregate
     phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate
+    bulk_downloads_aggregate: BulkDownloadAggregate = resolve_bulk_downloads_aggregate

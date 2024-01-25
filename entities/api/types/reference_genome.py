@@ -16,10 +16,6 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
-from api.types.sequence_alignment_index import (
-    SequenceAlignmentIndexAggregate,
-    format_sequence_alignment_index_aggregate_output,
-)
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from api.types.genomic_range import GenomicRangeAggregate, format_genomic_range_aggregate_output
 from cerbos.sdk.client import CerbosClient
@@ -48,7 +44,6 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.taxon import TaxonWhereClause, Taxon
-    from api.types.sequence_alignment_index import SequenceAlignmentIndexWhereClause, SequenceAlignmentIndex
     from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
     from api.types.genomic_range import GenomicRangeWhereClause, GenomicRange
 
@@ -56,8 +51,6 @@ if TYPE_CHECKING:
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
-    SequenceAlignmentIndexWhereClause = "SequenceAlignmentIndexWhereClause"
-    SequenceAlignmentIndex = "SequenceAlignmentIndex"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
     GenomicRangeWhereClause = "GenomicRangeWhereClause"
@@ -83,41 +76,6 @@ async def load_taxon_rows(
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["taxon"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
-
-
-@relay.connection(
-    relay.ListConnection[
-        Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]
-    ]  # type:ignore
-)
-async def load_sequence_alignment_index_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["SequenceAlignmentIndexWhereClause", strawberry.lazy("api.types.sequence_alignment_index")]
-    | None = None,
-) -> Sequence[Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["sequence_alignment_indices"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_sequence_alignment_index_aggregate_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["SequenceAlignmentIndexWhereClause", strawberry.lazy("api.types.sequence_alignment_index")]
-    | None = None,
-) -> Optional[Annotated["SequenceAlignmentIndexAggregate", strawberry.lazy("api.types.sequence_alignment_index")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["sequence_alignment_indices"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_sequence_alignment_index_aggregate_output(result)
-    return SequenceAlignmentIndexAggregate(aggregate=aggregate_output)
 
 
 @relay.connection(
@@ -235,13 +193,8 @@ class ReferenceGenomeWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    name: Optional[StrComparators] | None
-    description: Optional[StrComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     accession_id: Optional[StrComparators] | None
-    sequence_alignment_indices: Optional[
-        Annotated["SequenceAlignmentIndexWhereClause", strawberry.lazy("api.types.sequence_alignment_index")]
-    ] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
@@ -261,18 +214,8 @@ class ReferenceGenome(EntityInterface):
     collection_id: int
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    file_index_id: Optional[strawberry.ID]
-    file_index: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file_index")  # type: ignore
-    name: str
-    description: str
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: Optional[str] = None
-    sequence_alignment_indices: Sequence[
-        Annotated["SequenceAlignmentIndex", strawberry.lazy("api.types.sequence_alignment_index")]
-    ] = load_sequence_alignment_index_rows  # type:ignore
-    sequence_alignment_indices_aggregate: Optional[
-        Annotated["SequenceAlignmentIndexAggregate", strawberry.lazy("api.types.sequence_alignment_index")]
-    ] = load_sequence_alignment_index_aggregate_rows  # type:ignore
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -323,8 +266,6 @@ class ReferenceGenomeMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
     accession_id: Optional[str] = None
 
 
@@ -336,12 +277,8 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class ReferenceGenomeCountColumns(enum.Enum):
     file = "file"
-    file_index = "file_index"
-    name = "name"
-    description = "description"
     taxon = "taxon"
     accession_id = "accession_id"
-    sequence_alignment_indices = "sequence_alignment_indices"
     consensus_genomes = "consensus_genomes"
     genomic_ranges = "genomic_ranges"
     entity_id = "entity_id"
@@ -349,6 +286,9 @@ class ReferenceGenomeCountColumns(enum.Enum):
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    deleted_at = "deleted_at"
 
 
 """
@@ -395,9 +335,6 @@ Mutation types
 class ReferenceGenomeCreateInput:
     collection_id: int
     file_id: Optional[strawberry.ID] = None
-    file_index_id: Optional[strawberry.ID] = None
-    name: str
-    description: str
     taxon_id: strawberry.ID
     accession_id: Optional[str] = None
 
@@ -406,9 +343,6 @@ class ReferenceGenomeCreateInput:
 class ReferenceGenomeUpdateInput:
     collection_id: Optional[int] = None
     file_id: Optional[strawberry.ID] = None
-    file_index_id: Optional[strawberry.ID] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     accession_id: Optional[str] = None
 
