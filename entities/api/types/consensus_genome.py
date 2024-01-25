@@ -17,7 +17,8 @@ from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.metric_consensus_genome import (
-    # MetricConsensusGenomeAggregateOrderClause,
+    MetricConsensusGenomeOrderByClause,
+    MetricConsensusGenomeAggregateOrderClause,
     MetricConsensusGenomeAggregate,
     format_metric_consensus_genome_aggregate_output,
 )
@@ -117,13 +118,12 @@ async def load_metric_consensus_genome_rows(
     info: Info,
     where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     | None = None,
-    # order_by: Optional[list[MetricConsensusGenomeAggregateOrderClause]] = [],
+    order_by: Optional[list[MetricConsensusGenomeOrderByClause]] = [],
 ) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["metrics"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-    # return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -221,7 +221,7 @@ class ConsensusGenomeOrderByClause(TypedDict):
     reference_genome_id: Optional[orderBy] | None
     metrics_id: Optional[orderBy] | None
     intermediate_outputs_id: Optional[orderBy] | None
-    # metrics_aggregate: Optional[Annotated["MetricConsensusGenomeAggregateOrderClause", strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    metrics_aggregate: Optional[Annotated["MetricConsensusGenomeAggregateOrderClause", strawberry.lazy("api.types.metric_consensus_genome")]] | None
 
 
 """
