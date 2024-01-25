@@ -11,8 +11,15 @@ module "stack" {
   deployment_stage = "dev"
   services = {
     entities = {
-      cpu                   = "2"
-      health_check_path     = "/graphql"
+      cpu               = "2"
+      health_check_path = "/graphql"
+      init_containers = {
+        init = {
+          cmd   = ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]
+          image = "{entities}"
+          tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
+        }
+      }
       memory                = "1000Mi"
       name                  = "entities"
       platform_architecture = "arm64"
@@ -26,13 +33,6 @@ module "stack" {
           memory = "300Mi"
           port   = 3592
           tag    = "0.29.0"
-        }
-      }
-      init_containers = {
-        init = {
-          image = "{entities}",
-          tag   = "${var.image_tag}",
-          cmd   = ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]
         }
       }
     }

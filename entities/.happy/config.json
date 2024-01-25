@@ -46,6 +46,13 @@
                                     "memory": "300Mi",
                                     "args": ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
                                 }
+                        },
+                        "init_containers": {
+                            "init": {
+                                "image": "{entities}",
+                                "tag":  "${var.image_tag}",
+                                "cmd": ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]
+                            }
                         }
                     }
                 },

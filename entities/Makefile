@@ -84,7 +84,7 @@ codegen:  ## Update the GQL types used by the CLI
 
 ### CERBOS #############################################
 cerbos-tests:
-	$(docker_compose_run) cerbos compile --tests=/entities/test/ /entities/policies
+	$(docker_compose_run) cerbos compile --tests=/var/policies/cerbos/test/ /var/policies/cerbos/policies
 
 ### SHARED MAKEFILE #############################################
 %: 
