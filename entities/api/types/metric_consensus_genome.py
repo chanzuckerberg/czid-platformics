@@ -305,53 +305,53 @@ class MetricConsensusGenomeAggregate:
     aggregate: Optional[MetricConsensusGenomeAggregateFunctions] = None
 
 
-# """
-# Supported ORDER BY clause attributes for aggregate queries
-# """
+"""
+Supported ORDER BY clause attributes for aggregate queries
+"""
 
-# @strawberry.input
-# class MetricConsensusGenomeMinMaxColumnsOrderByClause(TypedDict):
-#     producing_run_id: Optional[orderBy] | None
-#     owner_user_id: Optional[orderBy] | None
-#     collection_id: Optional[orderBy] | None
-#     coverage_depth: Optional[orderBy] | None
-#     reference_genome_length: Optional[orderBy] | None
-#     percent_genome_called: Optional[orderBy] | None
-#     percent_identity: Optional[orderBy] | None
-#     gc_percent: Optional[orderBy] | None
-#     total_reads: Optional[orderBy] | None
-#     mapped_reads: Optional[orderBy] | None
-#     ref_snps: Optional[orderBy] | None
-#     n_actg: Optional[orderBy] | None
-#     n_missing: Optional[orderBy] | None
-#     n_ambiguous: Optional[orderBy] | None
+@strawberry.input
+class MetricConsensusGenomeMinMaxColumnsOrderByClause(TypedDict):
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    coverage_depth: Optional[orderBy] | None
+    reference_genome_length: Optional[orderBy] | None
+    percent_genome_called: Optional[orderBy] | None
+    percent_identity: Optional[orderBy] | None
+    gc_percent: Optional[orderBy] | None
+    total_reads: Optional[orderBy] | None
+    mapped_reads: Optional[orderBy] | None
+    ref_snps: Optional[orderBy] | None
+    n_actg: Optional[orderBy] | None
+    n_missing: Optional[orderBy] | None
+    n_ambiguous: Optional[orderBy] | None
 
-# @strawberry.input
-# class MetricConsensusGenomeNumericalColumnsOrderByClause(TypedDict):
-#     producing_run_id: Optional[orderBy] | None
-#     owner_user_id: Optional[orderBy] | None
-#     collection_id: Optional[orderBy] | None
-#     coverage_depth: Optional[orderBy] | None
-#     reference_genome_length: Optional[orderBy] | None
-#     percent_genome_called: Optional[orderBy] | None
-#     percent_identity: Optional[orderBy] | None
-#     gc_percent: Optional[orderBy] | None
-#     total_reads: Optional[orderBy] | None
-#     mapped_reads: Optional[orderBy] | None
-#     ref_snps: Optional[orderBy] | None
-#     n_actg: Optional[orderBy] | None
-#     n_missing: Optional[orderBy] | None
-#     n_ambiguous: Optional[orderBy] | None
+@strawberry.input
+class MetricConsensusGenomeNumericalColumnsOrderByClause(TypedDict):
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    coverage_depth: Optional[orderBy] | None
+    reference_genome_length: Optional[orderBy] | None
+    percent_genome_called: Optional[orderBy] | None
+    percent_identity: Optional[orderBy] | None
+    gc_percent: Optional[orderBy] | None
+    total_reads: Optional[orderBy] | None
+    mapped_reads: Optional[orderBy] | None
+    ref_snps: Optional[orderBy] | None
+    n_actg: Optional[orderBy] | None
+    n_missing: Optional[orderBy] | None
+    n_ambiguous: Optional[orderBy] | None
 
-# @strawberry.input
-# class MetricConsensusGenomeAggregateOrderClause(TypedDict):
-#     count: Optional[orderBy] | None
-#     sum: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-#     avg: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-#     min: Optional[Annotated[MetricConsensusGenomeMinMaxColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-#     max: Optional[Annotated[MetricConsensusGenomeMinMaxColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-#     stddev: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-#     variance: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
+@strawberry.input
+class MetricConsensusGenomeAggregateOrderClause(TypedDict):
+    count: Optional[orderBy] | None
+    sum: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    avg: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    min: Optional[Annotated[MetricConsensusGenomeMinMaxColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    max: Optional[Annotated[MetricConsensusGenomeMinMaxColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    stddev: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    variance: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
 
 
 """

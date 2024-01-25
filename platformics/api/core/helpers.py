@@ -62,6 +62,7 @@ def convert_where_clauses_to_sql(
                 query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
     return query
 
+# TODO: Ideally we would merge this with convert_where_clauses_to_sql to avoid redudant joins
 def convert_order_by_clauses_to_sql(
     principal: Principal,
     cerbos_client: CerbosClient,
@@ -78,6 +79,7 @@ def convert_order_by_clauses_to_sql(
         return query
     for item in order_by:
         for k, v in item.items():
+            # TODO: support sorting by aggregate of related objects
             if isinstance(v, dict):
                 mapper = inspect(sa_model)
                 relationship = mapper.relationships[k]
@@ -130,7 +132,7 @@ def get_db_query(
     query = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, depth  # type: ignore
     )
-    # FIXME: ordering nested objects/by nested fields doesn't seem to be working properly
+    # FIXME: ordering by nested fields doesn't seem to be working properly
     query = convert_order_by_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, order_by, depth  # type: ignore
     )
