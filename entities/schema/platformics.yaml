@@ -77,11 +77,6 @@ enums:
     permissible_values:
       Illumina:
       Nanopore:
-  AlignmentTool:
-    permissible_values:
-      bowtie2:
-      minimap2:
-      czid_index_generation:
   TaxonLevel:
     permissible_values:
       # Prepending "level_" because "class" is a reserved word, so can't create an Enum with it.
@@ -115,6 +110,14 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
+      # TODO: need to modify base.py files
+      created_at:
+        range: datetime
+        required: true
+      updated_at:
+        range: datetime
+      deleted_at:
+        range: datetime
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -176,6 +179,9 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # If this Sample is a copy of what's in the Rails DB, store its ID here
+      rails_sample_id:
+        range: int
       name:
         range: string
         required: true
@@ -190,6 +196,7 @@ classes:
         required: true
       collection_date:
         range: date
+        required: true
       collection_location:
         range: string
         required: true
@@ -226,7 +233,6 @@ classes:
       # Wet lab protocol
       protocol:
         range: SequencingProtocol
-        required: true
       # Files containing sequencing reads (R1 and R2 refer to read pairs 1/2 in Illumina paired-end sequencing)
       r1_file:
         range: File
@@ -240,10 +246,6 @@ classes:
       nucleic_acid:
         range: NucleicAcid
         required: true
-      # Does the sample include ERCCs, synthetic sequences of known quantity used for QC checks
-      has_ercc:
-        range: boolean
-        required: true
       # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline (optional)
       taxon:
         range: Taxon
@@ -255,7 +257,7 @@ classes:
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
-        inverse: ConsensusGenome.sequence_read
+        inverse: ConsensusGenome.sequencing_read
         multivalued: true
       # Contigs generated from these Sequencing Reads
       contigs:
@@ -273,11 +275,10 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      # Genomic coordinates based this reference genome
-      reference_genome:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.genomic_ranges
-        required: true
+      # Genomic coordinates based on this reference sequence
+      reference_sequence:
+        range: Sequence
+        inverse: Sequence.genomic_ranges
       file:
         range: File
       sequencing_reads:
@@ -288,75 +289,63 @@ classes:
       plural: GenomicRanges
 
   # ----------------------------------------------------------------------------
-  # Reference genomes / host genomes
+  # Sequence 
   # ----------------------------------------------------------------------------
-  ReferenceGenome:
+
+  Sequence:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      # FASTA reference genome
       file:
         range: File
-      # Indexed FASTA file (.FAI file if any)
-      file_index:
-        range: File
-      # e.g. GRCh38.p14
-      name:
-        range: string
-        required: true
-      # e.g. Human (GRCh38)
-      description:
-        range: string
-        required: true
-      taxon:
-        range: Taxon
-        required: true
-        inverse: Taxon.reference_genomes
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
-      sequence_alignment_indices:
-        range: SequenceAlignmentIndex
-        inverse: SequenceAlignmentIndex.reference_genome
-        multivalued: true
-      consensus_genomes:
-        range: ConsensusGenome
-        inverse: ConsensusGenome.reference_genome
-        multivalued: true
+      # consensus_genomes:
+      #   range: ConsensusGenome
+      #   inverse: ConsensusGenome.sequence
+      #   multivalued: true
       genomic_ranges:
         range: GenomicRange
-        inverse: GenomicRange.reference_genome
+        inverse: GenomicRange.reference_sequence
         multivalued: true
-      # TODO: Uncomment this when we have support for backgrounds
-      # Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
-      # background:
-      #   range: Background
     annotations:
-      plural: ReferenceGenomes
+      plural: Sequences
 
   # ----------------------------------------------------------------------------
-  # Index used by sequence aligners (bowtie, minimap, etc) to represent the
-  # reference genome more efficiently for querying.
+  # Host organisms / host filtering information
   # ----------------------------------------------------------------------------
-  SequenceAlignmentIndex:
+  HostOrganism:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      index_file:
-        range: File
-      reference_genome:
-        range: ReferenceGenome
-        required: false
-        inverse: ReferenceGenome.sequence_alignment_indices
-      tool:
-        range: AlignmentTool
+      # e.g. Human
+      name:
+        range: string
         required: true
+      # e.g. v1-hg38, v2-t2t, etc
       version:
         range: string
+        required: true
+      # Host filtering information; output by index generation
+      # FIXME: how to support JSON?
+      host_filtering:
+        range: JSON
+      # Original FASTA file used in index generation; used for our record keeping
+      sequence:
+        range: File
+      # Taxa used to create the FASTA (e.g. for human, host filtering uses human, chimp and gorilla genomes); used for our record keeping
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.host_organisms
+      # TODO: Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
+      # background:
+      #   range: Background
     annotations:
-      plural: SequenceAlignmentIndices
+      plural: HostOrganisms
 
   # ----------------------------------------------------------------------------
   # Metadata
@@ -391,10 +380,11 @@ classes:
         range: Taxon
         required: true
         inverse: Taxon.consensus_genomes
-      sequence_read:
+      sequencing_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
+      # FIXME:
       reference_genome:
         range: ReferenceGenome
         required: true
@@ -405,10 +395,10 @@ classes:
       # Zip file containing intermediate outputs
       intermediate_outputs:
         range: File
+      # Metrics generated from the CG pipeline
       metrics:
         range: MetricConsensusGenome
         inverse: MetricConsensusGenome.consensus_genome
-        multivalued: true
     annotations:
       plural: ConsensusGenomes
 
@@ -443,8 +433,8 @@ classes:
         range: int
       n_ambiguous:
         range: int
-      coverage_viz_summary_file:
-        range: File
+      coverage_viz:
+        range: JSON
     annotations:
       plural: MetricsConsensusGenomes
 
@@ -502,10 +492,6 @@ classes:
         range: ConsensusGenome
         inverse: ConsensusGenome.taxon
         multivalued: true
-      reference_genomes:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.taxon
-        multivalued: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.taxon
@@ -513,6 +499,10 @@ classes:
       samples:
         range: Sample
         inverse: Sample.host_taxon
+        multivalued: true
+      host_organisms:
+        range: HostOrganism
+        inverse: HostOrganism.taxa
         multivalued: true
     annotations:
       plural: Taxa
@@ -563,6 +553,21 @@ classes:
         required: true
     annotations:
       plural: PhylogeneticTrees
+
+
+  # ----------------------------------------------------------------------------
+  # BulkDownloads
+  # How else to list bulk downloads for a user? Query workflow runs for bulk download by owner user ID then query entities for File with producing_run_id....
+  # ----------------------------------------------------------------------------
+  BulkDownload:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      file:
+        range: File
+    annotations:
+      plural: BulkDownloads
 
 
   # ============================================================================
