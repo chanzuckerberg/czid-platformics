@@ -1,10 +1,11 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import MetaData, Column, Integer, String
-import uuid6
-
+import datetime
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
+import uuid6
 from typing import TYPE_CHECKING
+from sqlalchemy import MetaData, Column, Integer, String, DateTime
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import UUID
 
 if TYPE_CHECKING:
     from database.models.file import File
@@ -40,3 +41,6 @@ class Entity(Base):
     producing_run_id: Mapped[uuid.UUID] = mapped_column(Integer, nullable=True)
     owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
     collection_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)

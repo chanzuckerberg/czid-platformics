@@ -110,7 +110,6 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
-      # TODO: need to modify base.py files
       created_at:
         range: datetime
         required: true
@@ -330,9 +329,8 @@ classes:
         range: string
         required: true
       # Host filtering information; output by index generation
-      # FIXME: how to support JSON?
       host_filtering:
-        range: JSON
+        range: File
       # Original FASTA file used in index generation; used for our record keeping
       sequence:
         range: File
@@ -411,8 +409,6 @@ classes:
         range: ConsensusGenome
         required: true
         inverse: ConsensusGenome.metrics
-      coverage_depth:
-        range: float
       reference_genome_length:
         range: float
       percent_genome_called:
@@ -432,6 +428,14 @@ classes:
       n_missing:
         range: int
       n_ambiguous:
+        range: int
+      coverage_depth:
+        range: float
+      coverage_breadth:
+        range: float
+      coverage_bin_size:
+        range: float
+      coverage_total_length:
         range: int
       coverage_viz:
         range: JSON
