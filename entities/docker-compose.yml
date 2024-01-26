@@ -20,11 +20,12 @@ services:
       - "3592:3592"
       - "3593:3593"
     volumes:
-      - ./cerbos:/entities
+      - ./cerbos:/var/policies/cerbos/
     command:
-      ["server", "--config", "/entities/config/config.yaml"]
+      ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
   entities:
     image: "platformics-entities"
+    platform: linux/arm64
     build:
       context: ".."
       dockerfile: "entities/Dockerfile"
