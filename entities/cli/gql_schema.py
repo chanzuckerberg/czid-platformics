@@ -47,6 +47,7 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
         "entity_id",
         "id",
         "intermediate_outputs",
+        "metrics",
         "owner_user_id",
         "producing_run_id",
         "reference_genome",
@@ -159,8 +160,11 @@ class MetricConsensusGenomeCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "consensus_genome",
+        "coverage_bin_size",
+        "coverage_breadth",
         "coverage_depth",
-        "coverage_viz_summary_file",
+        "coverage_total_length",
+        "coverage_viz",
         "created_at",
         "deleted_at",
         "entity_id",
@@ -480,6 +484,7 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "taxon",
         "sequence_read",
         "reference_genome",
+        "metrics",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
@@ -488,6 +493,7 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
+    metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
 
 
 class ConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -757,7 +763,7 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "collection_id",
-        "coverage_depth",
+        "consensus_genome_id",
         "reference_genome_length",
         "percent_genome_called",
         "percent_identity",
@@ -768,10 +774,14 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
         "n_actg",
         "n_missing",
         "n_ambiguous",
-        "coverage_viz_summary_file_id",
+        "coverage_depth",
+        "coverage_breadth",
+        "coverage_bin_size",
+        "coverage_total_length",
+        "coverage_viz",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    consensus_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="consensusGenomeId")
     reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
     percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
@@ -782,14 +792,21 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     n_actg = sgqlc.types.Field(Int, graphql_name="nActg")
     n_missing = sgqlc.types.Field(Int, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(Int, graphql_name="nAmbiguous")
-    coverage_viz_summary_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizSummaryFileId")
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    coverage_breadth = sgqlc.types.Field(Float, graphql_name="coverageBreadth")
+    coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
+    coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
+    coverage_viz = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))),
+        graphql_name="coverageViz",
+    )
 
 
 class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "collection_id",
-        "coverage_depth",
+        "consensus_genome_id",
         "reference_genome_length",
         "percent_genome_called",
         "percent_identity",
@@ -800,10 +817,14 @@ class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
         "n_actg",
         "n_missing",
         "n_ambiguous",
-        "coverage_viz_summary_file_id",
+        "coverage_depth",
+        "coverage_breadth",
+        "coverage_bin_size",
+        "coverage_total_length",
+        "coverage_viz",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    consensus_genome_id = sgqlc.types.Field(ID, graphql_name="consensusGenomeId")
     reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
     percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
@@ -814,7 +835,14 @@ class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
     n_actg = sgqlc.types.Field(Int, graphql_name="nActg")
     n_missing = sgqlc.types.Field(Int, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(Int, graphql_name="nAmbiguous")
-    coverage_viz_summary_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizSummaryFileId")
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    coverage_breadth = sgqlc.types.Field(Float, graphql_name="coverageBreadth")
+    coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
+    coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
+    coverage_viz = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))),
+        graphql_name="coverageViz",
+    )
 
 
 class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
@@ -824,7 +852,7 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "coverage_depth",
+        "consensus_genome",
         "reference_genome_length",
         "percent_genome_called",
         "percent_identity",
@@ -835,12 +863,16 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
         "n_actg",
         "n_missing",
         "n_ambiguous",
+        "coverage_depth",
+        "coverage_breadth",
+        "coverage_bin_size",
+        "coverage_total_length",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
-    coverage_depth = sgqlc.types.Field(FloatComparators, graphql_name="coverageDepth")
+    consensus_genome = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenome")
     reference_genome_length = sgqlc.types.Field(FloatComparators, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(FloatComparators, graphql_name="percentGenomeCalled")
     percent_identity = sgqlc.types.Field(FloatComparators, graphql_name="percentIdentity")
@@ -851,6 +883,10 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
     n_actg = sgqlc.types.Field(IntComparators, graphql_name="nActg")
     n_missing = sgqlc.types.Field(IntComparators, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(IntComparators, graphql_name="nAmbiguous")
+    coverage_depth = sgqlc.types.Field(FloatComparators, graphql_name="coverageDepth")
+    coverage_breadth = sgqlc.types.Field(FloatComparators, graphql_name="coverageBreadth")
+    coverage_bin_size = sgqlc.types.Field(FloatComparators, graphql_name="coverageBinSize")
+    coverage_total_length = sgqlc.types.Field(IntComparators, graphql_name="coverageTotalLength")
 
 
 class MetricConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -1778,13 +1814,29 @@ class MetricConsensusGenomeAggregateFunctions(sgqlc.types.Type):
     )
 
 
+class MetricConsensusGenomeConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetricConsensusGenomeEdge"))),
+        graphql_name="edges",
+    )
+
+
+class MetricConsensusGenomeEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("MetricConsensusGenome"), graphql_name="node")
+
+
 class MetricConsensusGenomeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "coverage_depth",
         "reference_genome_length",
         "percent_genome_called",
         "percent_identity",
@@ -1795,11 +1847,14 @@ class MetricConsensusGenomeMinMaxColumns(sgqlc.types.Type):
         "n_actg",
         "n_missing",
         "n_ambiguous",
+        "coverage_depth",
+        "coverage_breadth",
+        "coverage_bin_size",
+        "coverage_total_length",
     )
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
     reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
     percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
@@ -1810,6 +1865,10 @@ class MetricConsensusGenomeMinMaxColumns(sgqlc.types.Type):
     n_actg = sgqlc.types.Field(Int, graphql_name="nActg")
     n_missing = sgqlc.types.Field(Int, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(Int, graphql_name="nAmbiguous")
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    coverage_breadth = sgqlc.types.Field(Float, graphql_name="coverageBreadth")
+    coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
+    coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
 
 
 class MetricConsensusGenomeNumericalColumns(sgqlc.types.Type):
@@ -1818,7 +1877,6 @@ class MetricConsensusGenomeNumericalColumns(sgqlc.types.Type):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "coverage_depth",
         "reference_genome_length",
         "percent_genome_called",
         "percent_identity",
@@ -1829,11 +1887,14 @@ class MetricConsensusGenomeNumericalColumns(sgqlc.types.Type):
         "n_actg",
         "n_missing",
         "n_ambiguous",
+        "coverage_depth",
+        "coverage_breadth",
+        "coverage_bin_size",
+        "coverage_total_length",
     )
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
     reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
     percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
@@ -1844,6 +1905,10 @@ class MetricConsensusGenomeNumericalColumns(sgqlc.types.Type):
     n_actg = sgqlc.types.Field(Int, graphql_name="nActg")
     n_missing = sgqlc.types.Field(Int, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(Int, graphql_name="nAmbiguous")
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    coverage_breadth = sgqlc.types.Field(Float, graphql_name="coverageBreadth")
+    coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
+    coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
 
 
 class MultipartUploadCredentials(sgqlc.types.Type):
@@ -3185,6 +3250,8 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "reference_genome",
         "sequence_id",
         "sequence",
+        "metrics",
+        "metrics_aggregate",
         "intermediate_outputs_id",
         "intermediate_outputs",
     )
@@ -3216,6 +3283,26 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         File,
         graphql_name="sequence",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
+    )
+    metrics = sgqlc.types.Field(
+        sgqlc.types.non_null(MetricConsensusGenomeConnection),
+        graphql_name="metrics",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
+    )
+    metrics_aggregate = sgqlc.types.Field(
+        MetricConsensusGenomeAggregate,
+        graphql_name="metricsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+        ),
     )
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
     intermediate_outputs = sgqlc.types.Field(
@@ -3351,7 +3438,7 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "coverage_depth",
+        "consensus_genome",
         "reference_genome_length",
         "percent_genome_called",
         "percent_identity",
@@ -3362,14 +3449,23 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "n_actg",
         "n_missing",
         "n_ambiguous",
-        "coverage_viz_summary_file_id",
-        "coverage_viz_summary_file",
+        "coverage_depth",
+        "coverage_breadth",
+        "coverage_bin_size",
+        "coverage_total_length",
+        "coverage_viz",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    consensus_genome = sgqlc.types.Field(
+        ConsensusGenome,
+        graphql_name="consensusGenome",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
     reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
     percent_identity = sgqlc.types.Field(Float, graphql_name="percentIdentity")
@@ -3380,11 +3476,13 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     n_actg = sgqlc.types.Field(Int, graphql_name="nActg")
     n_missing = sgqlc.types.Field(Int, graphql_name="nMissing")
     n_ambiguous = sgqlc.types.Field(Int, graphql_name="nAmbiguous")
-    coverage_viz_summary_file_id = sgqlc.types.Field(ID, graphql_name="coverageVizSummaryFileId")
-    coverage_viz_summary_file = sgqlc.types.Field(
-        File,
-        graphql_name="coverageVizSummaryFile",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
+    coverage_depth = sgqlc.types.Field(Float, graphql_name="coverageDepth")
+    coverage_breadth = sgqlc.types.Field(Float, graphql_name="coverageBreadth")
+    coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
+    coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
+    coverage_viz = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))),
+        graphql_name="coverageViz",
     )
 
 

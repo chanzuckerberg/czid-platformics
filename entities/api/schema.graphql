@@ -114,6 +114,22 @@ type ConsensusGenome implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
+  metrics(
+    where: MetricConsensusGenomeWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): MetricConsensusGenomeConnection!
+  metricsAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
 }
@@ -146,6 +162,7 @@ enum ConsensusGenomeCountColumns {
   sequence_read
   reference_genome
   sequence
+  metrics
   intermediate_outputs
   entity_id
   id
@@ -204,6 +221,7 @@ input ConsensusGenomeWhereClause {
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
   referenceGenome: ReferenceGenomeWhereClause
+  metrics: MetricConsensusGenomeWhereClause
 }
 
 input ConsensusGenomeWhereClauseMutations {
@@ -745,7 +763,7 @@ type MetricConsensusGenome implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  coverageDepth: Float
+  consensusGenome(where: ConsensusGenomeWhereClause = null): ConsensusGenome
   referenceGenomeLength: Float
   percentGenomeCalled: Float
   percentIdentity: Float
@@ -756,8 +774,11 @@ type MetricConsensusGenome implements EntityInterface & Node {
   nActg: Int
   nMissing: Int
   nAmbiguous: Int
-  coverageVizSummaryFileId: ID
-  coverageVizSummaryFile(where: FileWhereClause = null): File
+  coverageDepth: Float
+  coverageBreadth: Float
+  coverageBinSize: Float
+  coverageTotalLength: Int
+  coverageViz: [[Int!]!]
 }
 
 type MetricConsensusGenomeAggregate {
@@ -774,9 +795,17 @@ type MetricConsensusGenomeAggregateFunctions {
   count(distinct: Boolean = false, columns: MetricConsensusGenomeCountColumns = null): Int
 }
 
+"""A connection to a list of items."""
+type MetricConsensusGenomeConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [MetricConsensusGenomeEdge!]!
+}
+
 enum MetricConsensusGenomeCountColumns {
   consensus_genome
-  coverage_depth
   reference_genome_length
   percent_genome_called
   percent_identity
@@ -787,7 +816,11 @@ enum MetricConsensusGenomeCountColumns {
   n_actg
   n_missing
   n_ambiguous
-  coverage_viz_summary_file
+  coverage_depth
+  coverage_breadth
+  coverage_bin_size
+  coverage_total_length
+  coverage_viz
   entity_id
   id
   producing_run_id
@@ -800,7 +833,7 @@ enum MetricConsensusGenomeCountColumns {
 
 input MetricConsensusGenomeCreateInput {
   collectionId: Int!
-  coverageDepth: Float = null
+  consensusGenomeId: ID!
   referenceGenomeLength: Float = null
   percentGenomeCalled: Float = null
   percentIdentity: Float = null
@@ -811,14 +844,26 @@ input MetricConsensusGenomeCreateInput {
   nActg: Int = null
   nMissing: Int = null
   nAmbiguous: Int = null
-  coverageVizSummaryFileId: ID = null
+  coverageDepth: Float = null
+  coverageBreadth: Float = null
+  coverageBinSize: Float = null
+  coverageTotalLength: Int = null
+  coverageViz: [[Int!]!] = null
+}
+
+"""An edge in a connection."""
+type MetricConsensusGenomeEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: MetricConsensusGenome!
 }
 
 type MetricConsensusGenomeMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
-  coverageDepth: Float
   referenceGenomeLength: Float
   percentGenomeCalled: Float
   percentIdentity: Float
@@ -829,13 +874,16 @@ type MetricConsensusGenomeMinMaxColumns {
   nActg: Int
   nMissing: Int
   nAmbiguous: Int
+  coverageDepth: Float
+  coverageBreadth: Float
+  coverageBinSize: Float
+  coverageTotalLength: Int
 }
 
 type MetricConsensusGenomeNumericalColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
-  coverageDepth: Float
   referenceGenomeLength: Float
   percentGenomeCalled: Float
   percentIdentity: Float
@@ -846,11 +894,15 @@ type MetricConsensusGenomeNumericalColumns {
   nActg: Int
   nMissing: Int
   nAmbiguous: Int
+  coverageDepth: Float
+  coverageBreadth: Float
+  coverageBinSize: Float
+  coverageTotalLength: Int
 }
 
 input MetricConsensusGenomeUpdateInput {
   collectionId: Int = null
-  coverageDepth: Float = null
+  consensusGenomeId: ID = null
   referenceGenomeLength: Float = null
   percentGenomeCalled: Float = null
   percentIdentity: Float = null
@@ -861,7 +913,11 @@ input MetricConsensusGenomeUpdateInput {
   nActg: Int = null
   nMissing: Int = null
   nAmbiguous: Int = null
-  coverageVizSummaryFileId: ID = null
+  coverageDepth: Float = null
+  coverageBreadth: Float = null
+  coverageBinSize: Float = null
+  coverageTotalLength: Int = null
+  coverageViz: [[Int!]!] = null
 }
 
 input MetricConsensusGenomeWhereClause {
@@ -869,7 +925,7 @@ input MetricConsensusGenomeWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  coverageDepth: FloatComparators
+  consensusGenome: ConsensusGenomeWhereClause
   referenceGenomeLength: FloatComparators
   percentGenomeCalled: FloatComparators
   percentIdentity: FloatComparators
@@ -880,6 +936,10 @@ input MetricConsensusGenomeWhereClause {
   nActg: IntComparators
   nMissing: IntComparators
   nAmbiguous: IntComparators
+  coverageDepth: FloatComparators
+  coverageBreadth: FloatComparators
+  coverageBinSize: FloatComparators
+  coverageTotalLength: IntComparators
 }
 
 input MetricConsensusGenomeWhereClauseMutations {

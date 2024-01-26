@@ -19,11 +19,13 @@ if TYPE_CHECKING:
     from database.models.taxon import Taxon
     from database.models.sequencing_read import SequencingRead
     from database.models.reference_genome import ReferenceGenome
+    from database.models.metric_consensus_genome import MetricConsensusGenome
 else:
     File = "File"
     Taxon = "Taxon"
     SequencingRead = "SequencingRead"
     ReferenceGenome = "ReferenceGenome"
+    MetricConsensusGenome = "MetricConsensusGenome"
 
 
 class ConsensusGenome(Entity):
@@ -43,6 +45,12 @@ class ConsensusGenome(Entity):
     )
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
+    metrics: Mapped[list[MetricConsensusGenome]] = relationship(
+        "MetricConsensusGenome",
+        back_populates="consensus_genome",
+        uselist=True,
+        foreign_keys="MetricConsensusGenome.consensus_genome_id",
+    )
     intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     intermediate_outputs: Mapped["File"] = relationship("File", foreign_keys=intermediate_outputs_id)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

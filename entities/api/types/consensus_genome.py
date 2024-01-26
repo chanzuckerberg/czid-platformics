@@ -16,6 +16,10 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
+from api.types.metric_consensus_genome import (
+    MetricConsensusGenomeAggregate,
+    format_metric_consensus_genome_aggregate_output,
+)
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -31,6 +35,7 @@ from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -42,6 +47,7 @@ if TYPE_CHECKING:
     from api.types.taxon import TaxonWhereClause, Taxon
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
     from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
+    from api.types.metric_consensus_genome import MetricConsensusGenomeWhereClause, MetricConsensusGenome
 
     pass
 else:
@@ -51,6 +57,8 @@ else:
     SequencingRead = "SequencingRead"
     ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
     ReferenceGenome = "ReferenceGenome"
+    MetricConsensusGenomeWhereClause = "MetricConsensusGenomeWhereClause"
+    MetricConsensusGenome = "MetricConsensusGenome"
     pass
 
 
@@ -96,6 +104,41 @@ async def load_reference_genome_rows(
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["reference_genome"]
     return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
+
+
+@relay.connection(
+    relay.ListConnection[
+        Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
+    ]  # type:ignore
+)
+async def load_metric_consensus_genome_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
+    | None = None,
+) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["metrics"]
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_metric_consensus_genome_aggregate_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
+    | None = None,
+) -> Optional[Annotated["MetricConsensusGenomeAggregate", strawberry.lazy("api.types.metric_consensus_genome")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["metrics"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_metric_consensus_genome_aggregate_output(result)
+    return MetricConsensusGenomeAggregate(aggregate=aggregate_output)
 
 
 """
@@ -156,6 +199,9 @@ class ConsensusGenomeWhereClause(TypedDict):
     reference_genome: Optional[
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
+    metrics: Optional[
+        Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
+    ] | None
 
 
 """
@@ -178,6 +224,12 @@ class ConsensusGenome(EntityInterface):
     ] = load_reference_genome_rows  # type:ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
+    metrics: Sequence[
+        Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
+    ] = load_metric_consensus_genome_rows  # type:ignore
+    metrics_aggregate: Optional[
+        Annotated["MetricConsensusGenomeAggregate", strawberry.lazy("api.types.metric_consensus_genome")]
+    ] = load_metric_consensus_genome_aggregate_rows  # type:ignore
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
 
@@ -231,6 +283,7 @@ class ConsensusGenomeCountColumns(enum.Enum):
     sequence_read = "sequence_read"
     reference_genome = "reference_genome"
     sequence = "sequence"
+    metrics = "metrics"
     intermediate_outputs = "intermediate_outputs"
     entity_id = "entity_id"
     id = "id"

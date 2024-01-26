@@ -397,6 +397,10 @@ classes:
       # Consensus Genome sequence
       sequence:
         range: File
+      metrics:
+        range: MetricConsensusGenome
+        multivalued: true
+        inverse: MetricConsensusGenome.consensus_genome
       # Zip file containing intermediate outputs
       intermediate_outputs:
         range: File
@@ -410,6 +414,7 @@ classes:
     attributes:
       consensus_genome:
         range: ConsensusGenome
+        inverse: ConsensusGenome.metrics
         required: true
       reference_genome_length:
         range: float
