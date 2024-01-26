@@ -132,8 +132,8 @@ def convert_where_clauses_to_sql(
     # create a dictionary with the keys as the related field/field names, the values are dict of {order_by: {...}, where: {...}}
     # iterate over dict instead of whereClause.items()
     # check if the key we're iterating on is a related field vs local field
-    if not whereClause and not query:
-        return query
+    if not whereClause and not order_by:
+        return query, []
 
     local_order_by = []  # Fields that we can sort by on the *current* class without having to deal with recursion
     local_where_clauses = {}  # Fields that we can filter on the *current* class without having to deal with recursion
