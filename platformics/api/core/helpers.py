@@ -97,20 +97,21 @@ def convert_order_by_clauses_to_sql(
     return query
 
 
-def apply_order_by(field, direction, query: Select, sa_model: Base):
+def apply_order_by(field, direction, query: Select):
+    print(f"applying order by on {field} {direction}")
     match direction.value:
         case "asc":
-            query = query.order_by(getattr(sa_model, field).asc())
+            query = query.order_by(getattr(query.selected_columns, field).asc())
         case "asc_nulls_first":
-            query = query.order_by(getattr(sa_model, field).asc().nullsfirst())
+            query = query.order_by(getattr(query.selected_columns, field).asc().nullsfirst())
         case "asc_nulls_last":
-            query = query.order_by(getattr(sa_model, field).asc().nullslast())
+            query = query.order_by(getattr(query.selected_columns, field).asc().nullslast())
         case "desc":
-            query = query.order_by(getattr(sa_model, field).desc())
+            query = query.order_by(getattr(query.selected_columns, field).desc())
         case "desc_nulls_first":
-            query = query.order_by(getattr(sa_model, field).desc().nullsfirst())
+            query = query.order_by(getattr(query.selected_columns, field).desc().nullsfirst())
         case "desc_nulls_last":
-            query = query.order_by(getattr(sa_model, field).desc().nullslast())
+            query = query.order_by(getattr(query.selected_columns, field).desc().nullslast())
     return query
 
 
@@ -191,13 +192,12 @@ def convert_where_clauses_to_sql(
         aliased_field_num = 0
         for item in subquery_order_by:
             aliased_field_name = f"order_field_{aliased_field_num}"
-            field_to_match = getattr(query_alias, item["field"])
+            field_to_match = getattr(subquery.c, item["field"])
             aliased_field_num += 1
             print(f"adding alias {aliased_field_name} to query for {item}")
             print(field_to_match)
 
-            # TODO FIXME THIS ISN'T ADDING FIELDS TO OUR SQL FOR SOME REASON!!
-            query.add_columns(field_to_match.label(aliased_field_name))
+            query = query.add_columns(field_to_match.label(aliased_field_name))
 
             local_order_by.append({"field": aliased_field_name, "sort": item["sort"]})
 
@@ -239,10 +239,10 @@ def get_db_query(
     query, order_by = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, order_by, depth  # type: ignore
     )
-    # FIXME: ordering by nested fields doesn't seem to be working properly
-    # query = convert_order_by_clauses_to_sql(
-    # principal, cerbos_client, action, query, model_cls, order_by, depth  # type: ignore
-    # )
+    for item in order_by:
+        # TODO, apply the field ordering to the query!
+        query = apply_order_by(item["field"], item["sort"], query)
+
     print(query)
     # probably need to return the subquery and order_by clauses
     return query
