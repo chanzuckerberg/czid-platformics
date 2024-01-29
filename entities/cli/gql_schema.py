@@ -275,6 +275,7 @@ class SequencingProtocol(sgqlc.types.Enum):
 class SequencingReadCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
+        "clearlabs_export",
         "collection_id",
         "consensus_genomes",
         "contigs",
@@ -1117,6 +1118,7 @@ class SequencingReadCreateInput(sgqlc.types.Input):
         "r2_file_id",
         "technology",
         "nucleic_acid",
+        "clearlabs_export",
         "taxon_id",
         "primer_file_id",
     )
@@ -1127,6 +1129,7 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     r2_file_id = sgqlc.types.Field(ID, graphql_name="r2FileId")
     technology = sgqlc.types.Field(sgqlc.types.non_null(SequencingTechnology), graphql_name="technology")
     nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name="nucleicAcid")
+    clearlabs_export = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="clearlabsExport")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
 
@@ -1141,6 +1144,7 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
         "r2_file_id",
         "technology",
         "nucleic_acid",
+        "clearlabs_export",
         "taxon_id",
         "primer_file_id",
     )
@@ -1151,6 +1155,7 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
     r2_file_id = sgqlc.types.Field(ID, graphql_name="r2FileId")
     technology = sgqlc.types.Field(SequencingTechnology, graphql_name="technology")
     nucleic_acid = sgqlc.types.Field(NucleicAcid, graphql_name="nucleicAcid")
+    clearlabs_export = sgqlc.types.Field(Boolean, graphql_name="clearlabsExport")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
 
@@ -1166,6 +1171,7 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "protocol",
         "technology",
         "nucleic_acid",
+        "clearlabs_export",
         "taxon",
         "primer_file",
         "consensus_genomes",
@@ -1179,6 +1185,7 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     protocol = sgqlc.types.Field(SequencingProtocolEnumComparators, graphql_name="protocol")
     technology = sgqlc.types.Field("SequencingTechnologyEnumComparators", graphql_name="technology")
     nucleic_acid = sgqlc.types.Field(NucleicAcidEnumComparators, graphql_name="nucleicAcid")
+    clearlabs_export = sgqlc.types.Field(BoolComparators, graphql_name="clearlabsExport")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     primer_file = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="primerFile")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
@@ -3642,6 +3649,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "r2_file",
         "technology",
         "nucleic_acid",
+        "clearlabs_export",
         "taxon",
         "primer_file",
         "consensus_genomes",
@@ -3673,6 +3681,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
     )
     technology = sgqlc.types.Field(sgqlc.types.non_null(SequencingTechnology), graphql_name="technology")
     nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name="nucleicAcid")
+    clearlabs_export = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="clearlabsExport")
     taxon = sgqlc.types.Field(
         "Taxon",
         graphql_name="taxon",

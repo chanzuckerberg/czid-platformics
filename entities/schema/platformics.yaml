@@ -254,6 +254,10 @@ classes:
       nucleic_acid:
         range: NucleicAcid
         required: true
+      # Is this sequencing read exported from clearlabs? Clearlabs exports have undergone filtering
+      clearlabs_export:
+        range: boolean
+        required: true
       # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline (optional)
       taxon:
         range: Taxon

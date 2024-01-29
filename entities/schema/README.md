@@ -43,6 +43,7 @@ SequencingRead {
     SequencingProtocol protocol  
     SequencingTechnology technology  
     NucleicAcid nucleic_acid  
+    boolean clearlabs_export  
     uuid entity_id  
     uuid id  
     int producing_run_id  

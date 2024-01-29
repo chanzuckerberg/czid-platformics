@@ -1,0 +1,50 @@
+workflow_name: Bad Reference Manifest
+specification_language: WDL
+description: A manifest YAML with bad loader input references
+entity_inputs:
+  sample:
+    name: Sample
+    description: Your sample
+    entity_type: sample
+raw_inputs:
+  mood:
+    name: Mood
+    description: What mood were you in when you ran this workflow?
+    type: str
+    default: happy
+    options:
+      - happy
+      - neutral
+      - sad
+  ranking:
+    name: Ranking
+    description: How would you rate this workflow on a scale of 1-5
+    type: int
+    required: False
+input_loaders:
+  - name: sample
+    version: ">=0.0.1"
+    inputs:
+      sample: ~
+    outputs:
+      name: sample
+  - name: kindness
+    version: ">=0.0.1"
+    inputs:
+      mood: ~
+      ranking: score  # This is bad because score does not exist
+    outputs:
+      kindness_level: ~
+  - name: docker_image
+    version: ">=0.0.1"
+    outputs:
+      docker_image_id: ~
+output_loaders:
+  - name: sequencing_read
+    version: ">=0.0.1"
+    inputs:
+      sample: ~
+      bleep: ~  # This is bad because bleep does not exist
+    workflow_outputs:
+      fastq: synthetic_sample.out_fastq
+

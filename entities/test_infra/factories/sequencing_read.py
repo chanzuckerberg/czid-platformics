@@ -66,6 +66,7 @@ class SequencingReadFactory(CommonFactory):
     )
     technology = fuzzy.FuzzyChoice(["Illumina", "Nanopore"])
     nucleic_acid = fuzzy.FuzzyChoice(["RNA", "DNA"])
+    clearlabs_export = factory.Faker("boolean")
     taxon = factory.SubFactory(
         TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

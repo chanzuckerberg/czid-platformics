@@ -12,10 +12,10 @@ from platformics.database.connect import SyncDB, init_sync_db
 from platformics.database.models.base import Base
 from test_infra.factories.main import SessionStorage
 
-from test_infra.factories.run import RunFactory
+from test_infra.factories.workflow_run import WorkflowRunFactory
 from test_infra.factories.workflow import WorkflowFactory
 import database.models as db
-from support.enums import RunStatus
+from support.enums import WorkflowRunStatus
 
 
 test_db = factories.postgresql_noproc(
@@ -68,7 +68,7 @@ def test_run_creation(sync_db: SyncDB) -> None:
     """Test creating runs"""
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        RunFactory.create_batch(2, status=RunStatus["FAILED"])
-        RunFactory.create_batch(3, status=RunStatus["SUCCEEDED"])
+        WorkflowRunFactory.create_batch(2, status=WorkflowRunStatus["FAILED"])
+        WorkflowRunFactory.create_batch(3, status=WorkflowRunStatus["SUCCEEDED"])
 
-        assert session.query(db.Run).filter_by(status=RunStatus["SUCCEEDED"]).count() == 3
+        assert session.query(db.WorkflowRun).filter_by(status=WorkflowRunStatus["SUCCEEDED"]).count() == 3

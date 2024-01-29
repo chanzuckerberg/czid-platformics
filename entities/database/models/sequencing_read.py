@@ -10,7 +10,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, Enum
+from sqlalchemy import ForeignKey, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
@@ -45,6 +45,7 @@ class SequencingRead(Entity):
         Enum(SequencingTechnology, native_enum=False), nullable=False
     )
     nucleic_acid: Mapped[NucleicAcid] = mapped_column(Enum(NucleicAcid, native_enum=False), nullable=False)
+    clearlabs_export: Mapped[bool] = mapped_column(Boolean, nullable=False)
     taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="sequencing_reads", foreign_keys=taxon_id)
     primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("genomic_range.entity_id"), nullable=True)

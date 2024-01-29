@@ -3942,6 +3942,15 @@
             },
             {
               "defaultValue": null,
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "BoolComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "taxon",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6003,6 +6012,19 @@
               }
             },
             {
+              "args": [],
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
               "args": [
                 {
                   "defaultValue": "null",
@@ -7544,6 +7566,9 @@
             },
             {
               "name": "nucleic_acid"
+            },
+            {
+              "name": "clearlabs_export"
             },
             {
               "name": "taxon"
@@ -13914,6 +13939,19 @@
               }
             },
             {
+              "defaultValue": null,
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
               "defaultValue": "null",
               "name": "taxonId",
               "type": {
@@ -14001,6 +14039,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "NucleicAcid",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },

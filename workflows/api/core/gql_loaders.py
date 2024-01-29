@@ -34,13 +34,13 @@ def get_authz_map(
     model_cls: type[db.Base],
 ) -> tuple[dict, list]:
     authz_map = {
-        "request.resource.attr.owner_user_id": db.Run.owner_user_id,
-        "request.resource.attr.collection_id": db.Run.collection_id,
+        "request.resource.attr.owner_user_id": db.WorkflowRun.owner_user_id,
+        "request.resource.attr.collection_id": db.WorkflowRun.collection_id,
     }
 
-    if model_cls == db.Run:
+    if model_cls == db.WorkflowRun:
         return authz_map, []
-    if model_cls in [db.RunStep, db.RunEntityInput]:
+    if model_cls in [db.WorkflowRunStep, db.WorkflowRunEntityInput]:
         return authz_map, [(db.Run, model_cls.run_id == db.Run.id)]  # type: ignore
     # The rest don't apply authorization rules, they just require authentication.
     return {}, []

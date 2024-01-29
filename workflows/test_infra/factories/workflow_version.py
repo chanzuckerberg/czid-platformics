@@ -30,6 +30,8 @@ class WorkflowVersionFactory(CommonFactory):
         sqlalchemy_get_or_create = ("entity_id",)
 
     graph_json = fuzzy.FuzzyText()
+    workflow_uri = fuzzy.FuzzyText()
+    version = fuzzy.FuzzyText()
     manifest = fuzzy.FuzzyText()
     workflow = factory.SubFactory(
         WorkflowFactory,

@@ -1488,6 +1488,7 @@ type SequencingRead implements EntityInterface & Node {
   r2File(where: FileWhereClause = null): File
   technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
+  clearlabsExport: Boolean!
   taxon(where: TaxonWhereClause = null): Taxon
   primerFile(where: GenomicRangeWhereClause = null): GenomicRange
   consensusGenomes(
@@ -1554,6 +1555,7 @@ enum SequencingReadCountColumns {
   r2_file
   technology
   nucleic_acid
+  clearlabs_export
   taxon
   primer_file
   consensus_genomes
@@ -1576,6 +1578,7 @@ input SequencingReadCreateInput {
   r2FileId: ID = null
   technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
+  clearlabsExport: Boolean!
   taxonId: ID = null
   primerFileId: ID = null
 }
@@ -1609,6 +1612,7 @@ input SequencingReadUpdateInput {
   r2FileId: ID = null
   technology: SequencingTechnology = null
   nucleicAcid: NucleicAcid = null
+  clearlabsExport: Boolean = null
   taxonId: ID = null
   primerFileId: ID = null
 }
@@ -1622,6 +1626,7 @@ input SequencingReadWhereClause {
   protocol: SequencingProtocolEnumComparators
   technology: SequencingTechnologyEnumComparators
   nucleicAcid: NucleicAcidEnumComparators
+  clearlabsExport: BoolComparators
   taxon: TaxonWhereClause
   primerFile: GenomicRangeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause

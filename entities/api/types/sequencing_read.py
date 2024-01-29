@@ -28,6 +28,7 @@ from platformics.api.core.gql_to_sql import (
     EnumComparators,
     IntComparators,
     UUIDComparators,
+    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
@@ -228,6 +229,7 @@ class SequencingReadWhereClause(TypedDict):
     protocol: Optional[EnumComparators[SequencingProtocol]] | None
     technology: Optional[EnumComparators[SequencingTechnology]] | None
     nucleic_acid: Optional[EnumComparators[NucleicAcid]] | None
+    clearlabs_export: Optional[BoolComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     primer_file: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
     consensus_genomes: Optional[
@@ -255,6 +257,7 @@ class SequencingRead(EntityInterface):
     r2_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r2_file")  # type: ignore
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
+    clearlabs_export: bool
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     primer_file: Optional[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
@@ -322,6 +325,7 @@ class SequencingReadCountColumns(enum.Enum):
     r2_file = "r2_file"
     technology = "technology"
     nucleic_acid = "nucleic_acid"
+    clearlabs_export = "clearlabs_export"
     taxon = "taxon"
     primer_file = "primer_file"
     consensus_genomes = "consensus_genomes"
@@ -385,6 +389,7 @@ class SequencingReadCreateInput:
     r2_file_id: Optional[strawberry.ID] = None
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
+    clearlabs_export: bool
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
 
@@ -398,6 +403,7 @@ class SequencingReadUpdateInput:
     r2_file_id: Optional[strawberry.ID] = None
     technology: Optional[SequencingTechnology] = None
     nucleic_acid: Optional[NucleicAcid] = None
+    clearlabs_export: Optional[bool] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
 

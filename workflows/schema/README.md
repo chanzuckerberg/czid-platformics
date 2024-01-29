@@ -6,13 +6,14 @@ Entity {
     int owner_user_id  
     int collection_id  
 }
-Run {
+WorkflowRun {
     date started_at  
     date ended_at  
     string execution_id  
     string outputs_json  
-    string inputs_json  
-    RunStatus status  
+    string workflow_runner_inputs_json  
+    WorkflowRunStatus status  
+    string raw_inputs_json  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -29,18 +30,18 @@ Workflow {
     int owner_user_id  
     int collection_id  
 }
-RunStep {
+WorkflowRunStep {
     date started_at  
     date ended_at  
-    RunStatus status  
+    WorkflowRunStepStatus status  
     uuid entity_id  
     uuid id  
     int producing_run_id  
     int owner_user_id  
     int collection_id  
 }
-RunEntityInput {
-    int new_entity_id  
+WorkflowRunEntityInput {
+    uuid input_entity_id  
     string field_name  
     uuid entity_id  
     uuid id  
@@ -50,6 +51,8 @@ RunEntityInput {
 }
 WorkflowVersion {
     string graph_json  
+    string workflow_uri  
+    string version  
     string manifest  
     uuid entity_id  
     uuid id  
@@ -61,14 +64,15 @@ EntityMixin {
     uuid entity_id  
 }
 
-Run ||--|o WorkflowVersion : "workflow_version"
-Run ||--}o RunStep : "run_steps"
-Run ||--}o RunEntityInput : "run_entity_inputs"
+WorkflowRun ||--|o WorkflowVersion : "workflow_version"
+WorkflowRun ||--}o WorkflowRunStep : "steps"
+WorkflowRun ||--}o WorkflowRunEntityInput : "entity_inputs"
+WorkflowRun ||--|o WorkflowRun : "deprecated_by"
 Workflow ||--}o WorkflowVersion : "versions"
-RunStep ||--|o Run : "run"
-RunEntityInput ||--|o Run : "run"
+WorkflowRunStep ||--|o WorkflowRun : "workflow_run"
+WorkflowRunEntityInput ||--|o WorkflowRun : "workflow_run"
 WorkflowVersion ||--|o Workflow : "workflow"
-WorkflowVersion ||--}o Run : "runs"
+WorkflowVersion ||--}o WorkflowRun : "runs"
 
 ```
 

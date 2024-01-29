@@ -22,7 +22,7 @@ types:
     description: A UUID
 
 enums:
-  RunStatus:
+  WorkflowRunStatus:
     permissible_values:
       SUCCEEDED:
         description: The run has completed successfully
@@ -35,8 +35,10 @@ enums:
       RUNNING:
         description: The run is running 
 
-  RunStepStatus:
+  WorkflowRunStepStatus:
     permissible_values:
+      RUNNING:
+        description: The run is running 
       SUCCEEDED:
         description: The run step has completed successfully
       FAILED:
@@ -64,7 +66,7 @@ classes:
     # pluralization can be added to the core spec in the future.
     annotations:
       plural: Entities
-  Run:
+  WorkflowRun:
     is_a: Entity
     mixins:
       - EntityMixin
@@ -77,23 +79,30 @@ classes:
         range: string
       outputs_json:
         range: string
-      inputs_json: 
+      workflow_runner_inputs_json: 
         range: string
       status: 
-        range: RunStatus 
+        range: WorkflowRunStatus 
       workflow_version:
         range: WorkflowVersion
         inverse: WorkflowVersion.runs
-      run_steps:
-        range: RunStep
+      steps:
+        range: WorkflowRunStep
         multivalued: true
-        inverse: RunStep.run
-      run_entity_inputs:
-        range: RunEntityInput
+        inverse: WorkflowRunStep.workflow_run
+      entity_inputs:
+        range: WorkflowRunEntityInput
         multivalued: true
-        inverse: RunEntityInput.run
+        inverse: RunEntityInput.workflow_run
+      raw_inputs_json:
+        range: string
+      # If a workflow is re-run the new run id is stored here. The presence a run here indicates that
+      # the run id deprecated and maintains a history of previous runs that are considered re-runs of
+      # each other.
+      deprecated_by:
+        range: WorkflowRun
     annotations:
-      plural: Runs
+      plural: WorkflowRuns
 
   Workflow:
     is_a: Entity
@@ -113,37 +122,37 @@ classes:
     annotations:
       plural: Workflows
 
-  RunStep:
+  WorkflowRunStep:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      run:
-        range: Run
-        inverse: Run.run_steps
+      workflow_run:
+        range: WorkflowRun
+        inverse: WorkflowRun.steps
       started_at:
         range: date 
       ended_at:
         range: date
       status: 
-        range: RunStatus
+        range: WorkflowRunStepStatus
     annotations:
-      plural: RunSteps
+      plural: WorkflowRunSteps
 
-  RunEntityInput:
+  WorkflowRunEntityInput:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      new_entity_id:
-        range: int
+      input_entity_id:
+        range: uuid
       field_name: 
         range: string
-      run: 
-        range: Run
-        inverse: Run.run_entity_inputs
+      workflow_run: 
+        range: WorkflowRun
+        inverse: WorkflowRun.entity_inputs
     annotations:
-      plural: RunEntityInputs
+      plural: WorkflowRunEntityInputs
 
   WorkflowVersion:
     is_a: Entity
@@ -151,16 +160,20 @@ classes:
       - EntityMixin
     attributes:
       graph_json:
-        range: string # fix this type
+        range: string
+      workflow_uri:
+        range: string
+      version:
+        range: string
       manifest:
         range: string
       workflow:
         range: Workflow
         inverse: Workflow.versions
       runs:
-        range: Run
+        range: WorkflowRun
         multivalued: true
-        inverse: Run.workflow_version
+        inverse: WorkflowRun.workflow_version
     annotations:
       plural: WorkflowVersions
 
@@ -173,3 +186,4 @@ classes:
         range: uuid
         identifier: true
         inverse: entity.id
+
