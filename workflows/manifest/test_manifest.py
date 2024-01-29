@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from manifest.manifest import Manifest, EntityInput, RawInput
 
 
-def test_valid_parse():
+def test_valid_parse() -> None:
     """
     This is a happy path test that parses and serializes a valid manifest.
     It also contains tests for several default value cases.
@@ -30,7 +30,7 @@ def test_valid_parse():
     ), "Null input loader inputs should default to their loader input name"
 
 
-def test_bad_references():
+def test_bad_references() -> None:
     """
     Input and output loaders take in inputs that must be defined elsewhere in the manifest.
     The model has logic to ensure these references are valid. This tests for that logic as well
@@ -48,7 +48,7 @@ def test_bad_references():
     ]
 
 
-def test_bad_options():
+def test_bad_options() -> None:
     """
     Tests some of the validation for our options property for raw inputs
     """
@@ -64,7 +64,7 @@ def test_bad_options():
     ]
 
 
-def test_malformed():
+def test_malformed() -> None:
     """
     Some of our custom logic operates before the model is validated. This test ensures we still
     get sensible errors if these values are malformed.
@@ -81,7 +81,7 @@ def test_malformed():
     ]
 
 
-def test_duplicate_inputs():
+def test_duplicate_inputs() -> None:
     """
     Input names must be unique between entity_inputs and raw_inputs. Ensure issues
     with this are caught.
@@ -94,7 +94,7 @@ def test_duplicate_inputs():
     assert messages == ["Value error, Raw input names duplicate entity input names: ['sample']"]
 
 
-def test_validate_input():
+def test_validate_input() -> None:
     """
     Tests the validation logic entity and raw inputs
     """

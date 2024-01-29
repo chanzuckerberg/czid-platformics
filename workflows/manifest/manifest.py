@@ -284,25 +284,22 @@ class Manifest(BaseModel):
         return self
 
     def validate_inputs(self, entity_inputs: list[EntityInput], raw_inputs: list[RawInput]) -> _InputValidationErrors:
-        # appease the mypy
-        _entity_name: Literal["raw", "entity"] = "entity"
-        _raw_name: Literal["raw", "entity"] = "raw"
         for entity_or_raw, inputs, input_arguments in [
-            (_entity_name, entity_inputs, self.entity_inputs),
-            (_raw_name, raw_inputs, self.raw_inputs),
+            ("entity", entity_inputs, self.entity_inputs),
+            ("raw", raw_inputs, self.raw_inputs),
         ]:
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}
             for input in inputs:
                 input_argument = input_arguments.get(input.name)
                 if not input_argument:
-                    yield InputNotSupported(input.name, entity_or_raw)
+                    yield InputNotSupported(input.name, entity_or_raw)  # type: ignore
                     continue
                 if input.name in required_inputs:
                     required_inputs[input.name] = True
                 for error in input_argument.validate_input(input):
                     yield error
             for required_input in [k for k, v in required_inputs.items() if not v]:
-                yield MissingRequiredInput(required_input, entity_or_raw)
+                yield MissingRequiredInput(required_input, entity_or_raw)  # type: ignore
 
 
 if __name__ == "__main__":

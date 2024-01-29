@@ -45,6 +45,9 @@ linkml-runtime = "^1.6.0"
 faker-enum = "^0.0.2"
 
 
+[tool.poetry.group.dev.dependencies]
+types-pyyaml = "^6.0.12.12"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
