@@ -163,12 +163,12 @@ class Mutation:
         ), f"Workflow runner {workflow_runner} does not support WDL"
 
         workflow_version = await session.get_one(db.WorkflowVersion, workflow_version_id)
-        manifest = Manifest.model_validate_json(str(workflow_version.manifest))
+        Manifest.model_validate_json(str(workflow_version.manifest))
         inputs = {input.name: input.value for input in workflow_inputs}
 
         execution_id = await _workflow_runner.run_workflow(
             event_bus=event_bus,
-            workflow_path=manifest.package_uri,
+            workflow_path=workflow_version.workflow_uri,
             inputs=inputs,
         )
         workflow_run = db.Run(
