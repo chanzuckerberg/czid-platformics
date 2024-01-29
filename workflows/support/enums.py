@@ -10,7 +10,7 @@ import enum
 
 
 @strawberry.enum
-class RunStatus(enum.Enum):
+class WorkflowRunStatus(enum.Enum):
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     PENDING = "PENDING"
@@ -19,6 +19,7 @@ class RunStatus(enum.Enum):
 
 
 @strawberry.enum
-class RunStepStatus(enum.Enum):
+class WorkflowRunStepStatus(enum.Enum):
+    RUNNING = "RUNNING"
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"

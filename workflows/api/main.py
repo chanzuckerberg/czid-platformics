@@ -56,18 +56,18 @@ class WorkflowVersion:
     pass
 
 
-@strawberry_sqlalchemy_mapper.type(db.Run)
-class Run:
+@strawberry_sqlalchemy_mapper.type(db.WorkflowRun)
+class WorkflowRun:
     pass
 
 
-@strawberry_sqlalchemy_mapper.type(db.RunStep)
-class RunStep:
+@strawberry_sqlalchemy_mapper.type(db.WorkflowRunStep)
+class WorkflowRunStep:
     pass
 
 
-@strawberry_sqlalchemy_mapper.type(db.RunEntityInput)
-class RunEntityInput:
+@strawberry_sqlalchemy_mapper.type(db.WorkflowRunEntityInput)
+class WorkflowRunEntityInput:
     pass
 
 
@@ -87,10 +87,10 @@ class WorkflowInput:
 @strawberry.type
 class Query:
     workflows: typing.Sequence[Workflow] = get_base_loader(db.Workflow, Workflow)
-    runs: typing.Sequence[Run] = get_base_loader(db.Run, Run)
+    runs: typing.Sequence[WorkflowRun] = get_base_loader(db.WorkflowRun, WorkflowRun)
     workflow_versions: typing.Sequence[WorkflowVersion] = get_base_loader(db.WorkflowVersion, WorkflowVersion)
-    run_steps: typing.Sequence[RunStep] = get_base_loader(db.RunStep, RunStep)
-    run_entity_inputs: typing.Sequence[RunEntityInput] = get_base_loader(db.RunEntityInput, RunEntityInput)
+    run_steps: typing.Sequence[WorkflowRunStep] = get_base_loader(db.WorkflowRunStep, WorkflowRunStep)
+    run_entity_inputs: typing.Sequence[WorkflowRunEntityInput] = get_base_loader(db.WorkflowRunEntityInput, WorkflowRunEntityInput)
 
     @strawberry.field(extensions=[DependencyExtension()])
     async def get_workflow_runners(self) -> typing.List[WorkflowRunner]:
@@ -155,7 +155,7 @@ class Mutation:
         workflow_runner: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         event_bus: EventBus = Depends(get_event_bus),
-    ) -> Run:
+    ) -> WorkflowRun:
         assert workflow_runner in workflow_runners, f"Workflow runner {workflow_runner} not found"
         _workflow_runner = workflow_runners[workflow_runner]
         assert (
@@ -171,7 +171,7 @@ class Mutation:
             workflow_path=workflow_version.workflow_uri,
             inputs=inputs,
         )
-        workflow_run = db.Run(
+        workflow_run = db.WorkflowRun(
             user_id=111,
             project_id=project_id,
             execution_id=execution_id,
@@ -193,8 +193,8 @@ class Mutation:
         start_time: str,
         end_time: str,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> RunStep:
-        db_run_step = db.RunStep(
+    ) -> WorkflowRunStep:
+        db_run_step = db.WorkflowRunStep(
             run_id=run_id, step_name=step_name, status=status, start_time=start_time, end_time=end_time
         )
         session.add(db_run_step)
@@ -208,8 +208,8 @@ class Mutation:
         workflow_version_input_id: int,
         entity_id: int,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
-    ) -> RunEntityInput:
-        db_run_entity_input = db.RunEntityInput(
+    ) -> WorkflowRunEntityInput:
+        db_run_entity_input = db.WorkflowRunEntityInput(
             run_id=run_id, workflow_version_input_id=workflow_version_input_id, entity_id=entity_id
         )
         session.add(db_run_entity_input)

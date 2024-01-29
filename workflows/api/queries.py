@@ -8,14 +8,24 @@ Make changes to the template codegen/templates/api/queries.py.j2 instead.
 import strawberry
 from strawberry import relay
 from typing import Sequence, List
-from api.types.run import Run, resolve_runs, RunAggregate, resolve_runs_aggregate
+from api.types.workflow_run import (
+    WorkflowRun,
+    resolve_workflow_runs,
+    WorkflowRunAggregate,
+    resolve_workflow_runs_aggregate,
+)
 from api.types.workflow import Workflow, resolve_workflows, WorkflowAggregate, resolve_workflows_aggregate
-from api.types.run_step import RunStep, resolve_run_steps, RunStepAggregate, resolve_run_steps_aggregate
-from api.types.run_entity_input import (
-    RunEntityInput,
-    resolve_run_entity_inputs,
-    RunEntityInputAggregate,
-    resolve_run_entity_inputs_aggregate,
+from api.types.workflow_run_step import (
+    WorkflowRunStep,
+    resolve_workflow_run_steps,
+    WorkflowRunStepAggregate,
+    resolve_workflow_run_steps_aggregate,
+)
+from api.types.workflow_run_entity_input import (
+    WorkflowRunEntityInput,
+    resolve_workflow_run_entity_inputs,
+    WorkflowRunEntityInputAggregate,
+    resolve_workflow_run_entity_inputs_aggregate,
 )
 from api.types.workflow_version import (
     WorkflowVersion,
@@ -32,15 +42,15 @@ class Query:
     nodes: List[relay.Node] = relay.node()
 
     # Query entities
-    runs: Sequence[Run] = resolve_runs
+    workflow_runs: Sequence[WorkflowRun] = resolve_workflow_runs
     workflows: Sequence[Workflow] = resolve_workflows
-    run_steps: Sequence[RunStep] = resolve_run_steps
-    run_entity_inputs: Sequence[RunEntityInput] = resolve_run_entity_inputs
+    workflow_run_steps: Sequence[WorkflowRunStep] = resolve_workflow_run_steps
+    workflow_run_entity_inputs: Sequence[WorkflowRunEntityInput] = resolve_workflow_run_entity_inputs
     workflow_versions: Sequence[WorkflowVersion] = resolve_workflow_versions
 
     # Query entity aggregates
-    runs_aggregate: RunAggregate = resolve_runs_aggregate
+    workflow_runs_aggregate: WorkflowRunAggregate = resolve_workflow_runs_aggregate
     workflows_aggregate: WorkflowAggregate = resolve_workflows_aggregate
-    run_steps_aggregate: RunStepAggregate = resolve_run_steps_aggregate
-    run_entity_inputs_aggregate: RunEntityInputAggregate = resolve_run_entity_inputs_aggregate
+    workflow_run_steps_aggregate: WorkflowRunStepAggregate = resolve_workflow_run_steps_aggregate
+    workflow_run_entity_inputs_aggregate: WorkflowRunEntityInputAggregate = resolve_workflow_run_entity_inputs_aggregate
     workflow_versions_aggregate: WorkflowVersionAggregate = resolve_workflow_versions_aggregate
