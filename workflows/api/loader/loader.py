@@ -15,7 +15,7 @@ from entity_interface import create_entities
 
 from plugins.plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
 from database.models import Run
-from manifest.manifest import Manifest
+from manifest.manifest import EntityInputArgument, Manifest, RawInputArgument
 
 T = TypeVar("T", bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
 
@@ -97,7 +97,7 @@ class LoaderDriver:
         loaders = resolve_entity_output_loaders(workflow_manifest)
         loader_futures = []
         for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
-            args = {}
+            args: dict[str, EntityInputArgument | RawInputArgument | str] = {}
             for loader_input_name, workflow_input_name in loader_config.inputs.items():
                 if workflow_input_name in workflow_manifest.raw_inputs:
                     args[loader_input_name] = workflow_manifest.raw_inputs[workflow_input_name]
@@ -105,7 +105,7 @@ class LoaderDriver:
                     args[loader_input_name] = workflow_manifest.entity_inputs[workflow_input_name]
                 else:
                     raise Exception(f"Could not find input '{workflow_input_name}'")
-            for loader_input_name, workflow_output_name in loader_config.workflow_outputs:
+            for loader_input_name, workflow_output_name in loader_config.workflow_outputs.items():
                 args[loader_input_name] = outputs[workflow_output_name]
 
             loader_futures.append(loader.load(args=args))  # type: ignore
