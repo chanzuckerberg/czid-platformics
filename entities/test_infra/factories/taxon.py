@@ -10,7 +10,6 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 import factory
 from database.models import Taxon
 from test_infra.factories.main import CommonFactory
-from test_infra.factories.upstream_database import UpstreamDatabaseFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -34,11 +33,6 @@ class TaxonFactory(CommonFactory):
     common_name = fuzzy.FuzzyText()
     name = fuzzy.FuzzyText()
     is_phage = factory.Faker("boolean")
-    upstream_database = factory.SubFactory(
-        UpstreamDatabaseFactory,
-        owner_user_id=factory.SelfAttribute("..owner_user_id"),
-        collection_id=factory.SelfAttribute("..collection_id"),
-    )
     upstream_database_identifier = fuzzy.FuzzyText()
     level = fuzzy.FuzzyChoice(
         [
