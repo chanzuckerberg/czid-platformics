@@ -11,7 +11,6 @@ import random
 import factory
 from database.models import MetricConsensusGenome
 from test_infra.factories.main import CommonFactory
-from test_infra.factories.consensus_genome import ConsensusGenomeFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -30,11 +29,6 @@ class MetricConsensusGenomeFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
-    consensus_genome = factory.SubFactory(
-        ConsensusGenomeFactory,
-        owner_user_id=factory.SelfAttribute("..owner_user_id"),
-        collection_id=factory.SelfAttribute("..collection_id"),
-    )
     reference_genome_length = fuzzy.FuzzyFloat(1, 100)
     percent_genome_called = fuzzy.FuzzyFloat(1, 100)
     percent_identity = fuzzy.FuzzyFloat(1, 100)

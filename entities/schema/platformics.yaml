@@ -404,6 +404,10 @@ classes:
       metrics:
         range: MetricConsensusGenome
         inverse: MetricConsensusGenome.consensus_genome
+        # TODO FIXME this is a hack to support 1:1 relationships. It currently specifies that the related
+        # class actually defines the relationship and this is just a virtual field. We're misusing the LinkML
+        # "inlined" field property until we learn how to use LinkML better and find a better way to express this
+        inlined: true
       # Zip file containing intermediate outputs
       intermediate_outputs:
         range: File

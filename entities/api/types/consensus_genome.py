@@ -111,7 +111,7 @@ async def load_metric_consensus_genome_rows(
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["metrics"]
-    return await dataloader.loader_for(relationship, where).load(root.metrics_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 """

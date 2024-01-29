@@ -7,10 +7,8 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 
 # ruff: noqa: E501 Line too long
 
-import factory
 from database.models import Metadatum
 from test_infra.factories.main import CommonFactory
-from test_infra.factories.sample import SampleFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -29,10 +27,5 @@ class MetadatumFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
-    sample = factory.SubFactory(
-        SampleFactory,
-        owner_user_id=factory.SelfAttribute("..owner_user_id"),
-        collection_id=factory.SelfAttribute("..collection_id"),
-    )
     field_name = fuzzy.FuzzyText()
     value = fuzzy.FuzzyText()
