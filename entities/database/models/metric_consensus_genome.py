@@ -28,9 +28,7 @@ class MetricConsensusGenome(Entity):
     consensus_genome_id: Mapped[uuid.UUID] = mapped_column(
         UUID, ForeignKey("consensus_genome.entity_id"), nullable=False
     )
-    consensus_genome: Mapped["ConsensusGenome"] = relationship(
-        "ConsensusGenome", back_populates="metrics", foreign_keys=consensus_genome_id
-    )
+    consensus_genome: Mapped["ConsensusGenome"] = relationship("ConsensusGenome", foreign_keys=consensus_genome_id)
     reference_genome_length: Mapped[int] = mapped_column(Float, nullable=True)
     percent_genome_called: Mapped[int] = mapped_column(Float, nullable=True)
     percent_identity: Mapped[int] = mapped_column(Float, nullable=True)

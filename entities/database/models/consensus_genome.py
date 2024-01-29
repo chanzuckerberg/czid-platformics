@@ -45,11 +45,9 @@ class ConsensusGenome(Entity):
     )
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
-    metrics: Mapped[list[MetricConsensusGenome]] = relationship(
-        "MetricConsensusGenome",
-        back_populates="consensus_genome",
-        uselist=True,
-        foreign_keys="MetricConsensusGenome.consensus_genome_id",
+    metrics_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("metric_consensus_genome.entity_id"), nullable=True)
+    metrics: Mapped["MetricConsensusGenome"] = relationship(
+        "MetricConsensusGenome", back_populates="consensus_genome", foreign_keys=metrics_id
     )
     intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     intermediate_outputs: Mapped["File"] = relationship("File", foreign_keys=intermediate_outputs_id)

@@ -446,6 +446,7 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
         "sequence_read_id",
         "reference_genome_id",
         "sequence_id",
+        "metrics_id",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
@@ -453,6 +454,7 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
     reference_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
+    metrics_id = sgqlc.types.Field(ID, graphql_name="metricsId")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
 
@@ -464,6 +466,7 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
         "sequence_read_id",
         "reference_genome_id",
         "sequence_id",
+        "metrics_id",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
@@ -471,6 +474,7 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
     sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
+    metrics_id = sgqlc.types.Field(ID, graphql_name="metricsId")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
 
 
@@ -1812,23 +1816,6 @@ class MetricConsensusGenomeAggregateFunctions(sgqlc.types.Type):
             )
         ),
     )
-
-
-class MetricConsensusGenomeConnection(sgqlc.types.relay.Connection):
-    __schema__ = gql_schema
-    __field_names__ = ("page_info", "edges")
-    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
-    edges = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("MetricConsensusGenomeEdge"))),
-        graphql_name="edges",
-    )
-
-
-class MetricConsensusGenomeEdge(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("cursor", "node")
-    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
-    node = sgqlc.types.Field(sgqlc.types.non_null("MetricConsensusGenome"), graphql_name="node")
 
 
 class MetricConsensusGenomeMinMaxColumns(sgqlc.types.Type):
@@ -3251,7 +3238,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "sequence_id",
         "sequence",
         "metrics",
-        "metrics_aggregate",
         "intermediate_outputs_id",
         "intermediate_outputs",
     )
@@ -3285,21 +3271,8 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     metrics = sgqlc.types.Field(
-        sgqlc.types.non_null(MetricConsensusGenomeConnection),
+        "MetricConsensusGenome",
         graphql_name="metrics",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
-    )
-    metrics_aggregate = sgqlc.types.Field(
-        MetricConsensusGenomeAggregate,
-        graphql_name="metricsAggregate",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name="where", default=None)),)
         ),

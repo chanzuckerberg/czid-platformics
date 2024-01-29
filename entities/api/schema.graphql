@@ -114,22 +114,7 @@ type ConsensusGenome implements EntityInterface & Node {
   referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
-  metrics(
-    where: MetricConsensusGenomeWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): MetricConsensusGenomeConnection!
-  metricsAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate
+  metrics(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenome
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
 }
@@ -180,6 +165,7 @@ input ConsensusGenomeCreateInput {
   sequenceReadId: ID!
   referenceGenomeId: ID!
   sequenceId: ID = null
+  metricsId: ID = null
   intermediateOutputsId: ID = null
 }
 
@@ -210,6 +196,7 @@ input ConsensusGenomeUpdateInput {
   sequenceReadId: ID = null
   referenceGenomeId: ID = null
   sequenceId: ID = null
+  metricsId: ID = null
   intermediateOutputsId: ID = null
 }
 
@@ -795,15 +782,6 @@ type MetricConsensusGenomeAggregateFunctions {
   count(distinct: Boolean = false, columns: MetricConsensusGenomeCountColumns = null): Int
 }
 
-"""A connection to a list of items."""
-type MetricConsensusGenomeConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [MetricConsensusGenomeEdge!]!
-}
-
 enum MetricConsensusGenomeCountColumns {
   consensus_genome
   reference_genome_length
@@ -849,15 +827,6 @@ input MetricConsensusGenomeCreateInput {
   coverageBinSize: Float = null
   coverageTotalLength: Int = null
   coverageViz: [[Int!]!] = null
-}
-
-"""An edge in a connection."""
-type MetricConsensusGenomeEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: MetricConsensusGenome!
 }
 
 type MetricConsensusGenomeMinMaxColumns {

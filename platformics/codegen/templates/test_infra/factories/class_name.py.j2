@@ -37,7 +37,8 @@ class {{ cls.name }}Factory(CommonFactory):
     {% for field in cls.owned_fields %}
         {%- if field.type != "uuid" %}
             {%- if field.inverse and field.related_class.name != "Entity" %}
-                {%- if not field.multivalued %}
+            {#- If the field is a one-to-one relationship, avoid circular imports by only defining the SubFactory on the child #}
+                {%- if not field.multivalued and not (field.is_one_to_one and not field.required) %}
     {{ field.name }} = factory.SubFactory(
         {{ field.related_class.name }}Factory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

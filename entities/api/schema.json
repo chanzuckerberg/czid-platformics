@@ -5773,71 +5773,12 @@
                     "name": "MetricConsensusGenomeWhereClause",
                     "ofType": null
                   }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
                 }
               ],
               "name": "metrics",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "MetricConsensusGenomeConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "MetricConsensusGenomeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "metricsAggregate",
-              "type": {
                 "kind": "OBJECT",
-                "name": "MetricConsensusGenomeAggregate",
+                "name": "MetricConsensusGenome",
                 "ofType": null
               }
             },
@@ -8081,86 +8022,6 @@
           "fields": [
             {
               "args": [],
-              "name": "pageInfo",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PageInfo",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "edges",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "MetricConsensusGenomeEdge",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MetricConsensusGenomeConnection",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "cursor",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "node",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "MetricConsensusGenome",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MetricConsensusGenomeEdge",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
               "name": "_id",
               "type": {
                 "kind": "NON_NULL",
@@ -8406,525 +8267,6 @@
           ],
           "kind": "OBJECT",
           "name": "MetricConsensusGenome",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "aggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeAggregateFunctions",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MetricConsensusGenomeAggregate",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "sum",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "avg",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "stddev",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "variance",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "false",
-                  "name": "distinct",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "columns",
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "MetricConsensusGenomeCountColumns",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "count",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MetricConsensusGenomeAggregateFunctions",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "referenceGenomeLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "percentGenomeCalled",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "percentIdentity",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "gcPercent",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "totalReads",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "mappedReads",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "refSnps",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "nActg",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "nMissing",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "nAmbiguous",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MetricConsensusGenomeNumericalColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "referenceGenomeLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "percentGenomeCalled",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "percentIdentity",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "gcPercent",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "totalReads",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "mappedReads",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "refSnps",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "nActg",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "nMissing",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "nAmbiguous",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MetricConsensusGenomeMinMaxColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "consensus_genome"
-            },
-            {
-              "name": "reference_genome_length"
-            },
-            {
-              "name": "percent_genome_called"
-            },
-            {
-              "name": "percent_identity"
-            },
-            {
-              "name": "gc_percent"
-            },
-            {
-              "name": "total_reads"
-            },
-            {
-              "name": "mapped_reads"
-            },
-            {
-              "name": "ref_snps"
-            },
-            {
-              "name": "n_actg"
-            },
-            {
-              "name": "n_missing"
-            },
-            {
-              "name": "n_ambiguous"
-            },
-            {
-              "name": "coverage_depth"
-            },
-            {
-              "name": "coverage_breadth"
-            },
-            {
-              "name": "coverage_bin_size"
-            },
-            {
-              "name": "coverage_total_length"
-            },
-            {
-              "name": "coverage_viz"
-            },
-            {
-              "name": "entity_id"
-            },
-            {
-              "name": "id"
-            },
-            {
-              "name": "producing_run_id"
-            },
-            {
-              "name": "owner_user_id"
-            },
-            {
-              "name": "collection_id"
-            },
-            {
-              "name": "created_at"
-            },
-            {
-              "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "MetricConsensusGenomeCountColumns",
           "possibleTypes": null
         },
         {
@@ -11175,6 +10517,525 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "HostOrganismCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MetricConsensusGenomeCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "totalReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "mappedReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "refSnps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nActg",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nMissing",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nAmbiguous",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageBreadth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageBinSize",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageTotalLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "totalReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "mappedReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "refSnps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nActg",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nMissing",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nAmbiguous",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageBreadth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageBinSize",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageTotalLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "consensus_genome"
+            },
+            {
+              "name": "reference_genome_length"
+            },
+            {
+              "name": "percent_genome_called"
+            },
+            {
+              "name": "percent_identity"
+            },
+            {
+              "name": "gc_percent"
+            },
+            {
+              "name": "total_reads"
+            },
+            {
+              "name": "mapped_reads"
+            },
+            {
+              "name": "ref_snps"
+            },
+            {
+              "name": "n_actg"
+            },
+            {
+              "name": "n_missing"
+            },
+            {
+              "name": "n_ambiguous"
+            },
+            {
+              "name": "coverage_depth"
+            },
+            {
+              "name": "coverage_breadth"
+            },
+            {
+              "name": "coverage_bin_size"
+            },
+            {
+              "name": "coverage_total_length"
+            },
+            {
+              "name": "coverage_viz"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MetricConsensusGenomeCountColumns",
           "possibleTypes": null
         },
         {
@@ -14737,6 +14598,15 @@
             },
             {
               "defaultValue": "null",
+              "name": "metricsId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "intermediateOutputsId",
               "type": {
                 "kind": "SCALAR",
@@ -14793,6 +14663,15 @@
             {
               "defaultValue": "null",
               "name": "sequenceId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "metricsId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",

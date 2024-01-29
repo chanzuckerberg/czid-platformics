@@ -93,6 +93,22 @@ class FieldWrapper:
             else None
         )
 
+    # If we have a 1:1 relationship, we shouldn't use back_populate, otherwise it generates an error about the entities
+    # "are both of the same direction <RelationshipDirection.MANYTOONE: 2>".
+    @property
+    def is_one_to_one(self) -> bool:
+        for related_field in self.related_class.related_fields:
+            if related_field.name == self.inverse_field:
+                # If multivalued is not True, this is a 1:1 relationship
+                return not related_field.multivalued
+
+    @property
+    def should_back_populate(self) -> bool:
+        # If 1:1 relationship, set back_populate on the parent entity.
+        if self.is_one_to_one:
+            return not self.required
+        return True
+
 
 class EnumWrapper:
     """

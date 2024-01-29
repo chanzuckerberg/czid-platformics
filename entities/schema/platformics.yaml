@@ -399,7 +399,6 @@ classes:
         range: File
       metrics:
         range: MetricConsensusGenome
-        multivalued: true
         inverse: MetricConsensusGenome.consensus_genome
       # Zip file containing intermediate outputs
       intermediate_outputs:
