@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from entity_interface import create_entities
 
 from plugins.plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
-from database.models import Run
+from database.models import WorkflowRun
 from manifest.manifest import EntityInputArgument, Manifest, RawInputArgument
 
 T = TypeVar("T", bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
