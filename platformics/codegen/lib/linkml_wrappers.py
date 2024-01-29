@@ -101,6 +101,7 @@ class FieldWrapper:
             if related_field.name == self.inverse_field:
                 # If multivalued is not True, this is a 1:1 relationship
                 return not related_field.multivalued
+        return False
 
     @property
     def should_back_populate(self) -> bool:
