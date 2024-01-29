@@ -165,6 +165,9 @@ classes:
         range: Contig
         inverse: Contig.sequencing_read
         multivalued: true
+      clearlabs_export:
+        range: boolean
+        required: true
     annotations:
       plural: SequencingReads
 
