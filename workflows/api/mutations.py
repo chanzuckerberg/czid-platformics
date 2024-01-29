@@ -7,14 +7,19 @@ Make changes to the template codegen/templates/api/mutations.py.j2 instead.
 
 import strawberry
 from typing import Sequence
-from api.types.run import Run, create_run, update_run, delete_run
+from api.types.workflow_run import WorkflowRun, create_workflow_run, update_workflow_run, delete_workflow_run
 from api.types.workflow import Workflow, create_workflow, update_workflow, delete_workflow
-from api.types.run_step import RunStep, create_run_step, update_run_step, delete_run_step
-from api.types.run_entity_input import (
-    RunEntityInput,
-    create_run_entity_input,
-    update_run_entity_input,
-    delete_run_entity_input,
+from api.types.workflow_run_step import (
+    WorkflowRunStep,
+    create_workflow_run_step,
+    update_workflow_run_step,
+    delete_workflow_run_step,
+)
+from api.types.workflow_run_entity_input import (
+    WorkflowRunEntityInput,
+    create_workflow_run_entity_input,
+    update_workflow_run_entity_input,
+    delete_workflow_run_entity_input,
 )
 from api.types.workflow_version import (
     WorkflowVersion,
@@ -26,25 +31,25 @@ from api.types.workflow_version import (
 
 @strawberry.type
 class Mutation:
-    # Run mutations
-    create_run: Run = create_run
-    update_run: Sequence[Run] = update_run
-    delete_run: Sequence[Run] = delete_run
+    # WorkflowRun mutations
+    create_workflow_run: WorkflowRun = create_workflow_run
+    update_workflow_run: Sequence[WorkflowRun] = update_workflow_run
+    delete_workflow_run: Sequence[WorkflowRun] = delete_workflow_run
 
     # Workflow mutations
     create_workflow: Workflow = create_workflow
     update_workflow: Sequence[Workflow] = update_workflow
     delete_workflow: Sequence[Workflow] = delete_workflow
 
-    # RunStep mutations
-    create_run_step: RunStep = create_run_step
-    update_run_step: Sequence[RunStep] = update_run_step
-    delete_run_step: Sequence[RunStep] = delete_run_step
+    # WorkflowRunStep mutations
+    create_workflow_run_step: WorkflowRunStep = create_workflow_run_step
+    update_workflow_run_step: Sequence[WorkflowRunStep] = update_workflow_run_step
+    delete_workflow_run_step: Sequence[WorkflowRunStep] = delete_workflow_run_step
 
-    # RunEntityInput mutations
-    create_run_entity_input: RunEntityInput = create_run_entity_input
-    update_run_entity_input: Sequence[RunEntityInput] = update_run_entity_input
-    delete_run_entity_input: Sequence[RunEntityInput] = delete_run_entity_input
+    # WorkflowRunEntityInput mutations
+    create_workflow_run_entity_input: WorkflowRunEntityInput = create_workflow_run_entity_input
+    update_workflow_run_entity_input: Sequence[WorkflowRunEntityInput] = update_workflow_run_entity_input
+    delete_workflow_run_entity_input: Sequence[WorkflowRunEntityInput] = delete_workflow_run_entity_input
 
     # WorkflowVersion mutations
     create_workflow_version: WorkflowVersion = create_workflow_version

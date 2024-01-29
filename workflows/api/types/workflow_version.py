@@ -15,10 +15,11 @@ import database.models as db
 import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
-from api.types.run import RunAggregate, format_run_aggregate_output
+from api.types.workflow_run import WorkflowRunAggregate, format_workflow_run_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
+from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
@@ -41,14 +42,14 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.workflow import WorkflowWhereClause, Workflow
-    from api.types.run import RunWhereClause, Run
+    from api.types.workflow_run import WorkflowRunWhereClause, WorkflowRun
 
     pass
 else:
     WorkflowWhereClause = "WorkflowWhereClause"
     Workflow = "Workflow"
-    RunWhereClause = "RunWhereClause"
-    Run = "Run"
+    WorkflowRunWhereClause = "WorkflowRunWhereClause"
+    WorkflowRun = "WorkflowRun"
     pass
 
 
@@ -73,13 +74,13 @@ async def load_workflow_rows(
 
 
 @relay.connection(
-    relay.ListConnection[Annotated["Run", strawberry.lazy("api.types.run")]]  # type:ignore
+    relay.ListConnection[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]]  # type:ignore
 )
-async def load_run_rows(
+async def load_workflow_run_rows(
     root: "WorkflowVersion",
     info: Info,
-    where: Annotated["RunWhereClause", strawberry.lazy("api.types.run")] | None = None,
-) -> Sequence[Annotated["Run", strawberry.lazy("api.types.run")]]:
+    where: Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")] | None = None,
+) -> Sequence[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowVersion)
     relationship = mapper.relationships["runs"]
@@ -87,11 +88,11 @@ async def load_run_rows(
 
 
 @strawberry.field
-async def load_run_aggregate_rows(
+async def load_workflow_run_aggregate_rows(
     root: "WorkflowVersion",
     info: Info,
-    where: Annotated["RunWhereClause", strawberry.lazy("api.types.run")] | None = None,
-) -> Optional[Annotated["RunAggregate", strawberry.lazy("api.types.run")]]:
+    where: Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")] | None = None,
+) -> Optional[Annotated["WorkflowRunAggregate", strawberry.lazy("api.types.workflow_run")]]:
     selections = info.selected_fields[0].selections[0].selections
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowVersion)
@@ -99,8 +100,8 @@ async def load_run_aggregate_rows(
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
     # Aggregate queries always return a single row, so just grab the first one
     result = rows[0] if rows else None
-    aggregate_output = format_run_aggregate_output(result)
-    return RunAggregate(aggregate=aggregate_output)
+    aggregate_output = format_workflow_run_aggregate_output(result)
+    return WorkflowRunAggregate(aggregate=aggregate_output)
 
 
 """
@@ -136,7 +137,7 @@ class WorkflowVersionWhereClause(TypedDict):
     version: Optional[StrComparators] | None
     manifest: Optional[StrComparators] | None
     workflow: Optional[Annotated["WorkflowWhereClause", strawberry.lazy("api.types.workflow")]] | None
-    runs: Optional[Annotated["RunWhereClause", strawberry.lazy("api.types.run")]] | None
+    runs: Optional[Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")]] | None
 
 
 """
@@ -155,10 +156,12 @@ class WorkflowVersion(EntityInterface):
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow: Optional[Annotated["Workflow", strawberry.lazy("api.types.workflow")]] = load_workflow_rows  # type:ignore
-    runs: Sequence[Annotated["Run", strawberry.lazy("api.types.run")]] = load_run_rows  # type:ignore
+    runs: Sequence[
+        Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
+    ] = load_workflow_run_rows  # type:ignore
     runs_aggregate: Optional[
-        Annotated["RunAggregate", strawberry.lazy("api.types.run")]
-    ] = load_run_aggregate_rows  # type:ignore
+        Annotated["WorkflowRunAggregate", strawberry.lazy("api.types.workflow_run")]
+    ] = load_workflow_run_aggregate_rows  # type:ignore
 
 
 """
@@ -361,7 +364,7 @@ async def create_workflow_version(
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowVersion.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
-        raise Exception("Unauthorized: Cannot create entity in this collection")
+        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -387,19 +390,19 @@ async def update_workflow_version(
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
-        raise Exception("No fields to update")
+        raise PlatformicsException("No fields to update")
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
-        raise Exception("Unauthorized: Cannot update entities")
+        raise PlatformicsException("Unauthorized: Cannot update entities")
 
     # Validate that the user has access to the new collection ID
     if input.collection_id:
         attr = {"collection_id": input.collection_id}
         resource = Resource(id="SOME_ID", kind=db.WorkflowVersion.__tablename__, attr=attr)
         if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise Exception("Unauthorized: Cannot access new collection")
+            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:
@@ -423,7 +426,7 @@ async def delete_workflow_version(
     # Fetch entities for deletion, if we have access to them
     entities = await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
     if len(entities) == 0:
-        raise Exception("Unauthorized: Cannot delete entities")
+        raise PlatformicsException("Unauthorized: Cannot delete entities")
 
     # Update DB
     for entity in entities:

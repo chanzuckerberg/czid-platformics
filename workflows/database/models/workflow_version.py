@@ -17,11 +17,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from database.models.file import File
     from database.models.workflow import Workflow
-    from database.models.run import Run
+    from database.models.workflow_run import WorkflowRun
 else:
     File = "File"
     Workflow = "Workflow"
-    Run = "Run"
+    WorkflowRun = "WorkflowRun"
 
 
 class WorkflowVersion(Entity):
@@ -33,7 +33,7 @@ class WorkflowVersion(Entity):
     manifest: Mapped[str] = mapped_column(String, nullable=True)
     workflow_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("workflow.entity_id"), nullable=True)
     workflow: Mapped["Workflow"] = relationship("Workflow", back_populates="versions", foreign_keys=workflow_id)
-    runs: Mapped[list[Run]] = relationship(
-        "Run", back_populates="workflow_version", uselist=True, foreign_keys="Run.workflow_version_id"
+    runs: Mapped[list[WorkflowRun]] = relationship(
+        "WorkflowRun", back_populates="workflow_version", uselist=True, foreign_keys="WorkflowRun.workflow_version_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

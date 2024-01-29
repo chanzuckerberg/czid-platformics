@@ -12,7 +12,7 @@ from database.models import Workflow, WorkflowVersion
 from test_infra.factories.main import SessionStorage
 from test_infra.factories.workflow import WorkflowFactory
 from test_infra.factories.workflow_version import WorkflowVersionFactory
-from test_infra.factories.run import RunFactory
+from test_infra.factories.workflow_run import WorkflowRunFactory
 
 
 def import_manifest(session: Session) -> None:
@@ -56,7 +56,7 @@ def use_factoryboy() -> None:
 
     WorkflowVersionFactory.create()
 
-    RunFactory.create_batch(5)
+    WorkflowRunFactory.create_batch(5)
     session.commit()
 
 

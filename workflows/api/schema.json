@@ -178,12 +178,12 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunWhereClause",
+                    "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runs",
+              "name": "workflowRuns",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -195,7 +195,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "Run",
+                      "name": "WorkflowRun",
                       "ofType": null
                     }
                   }
@@ -240,12 +240,12 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunStepWhereClause",
+                    "name": "WorkflowRunStepWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runSteps",
+              "name": "workflowRunSteps",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -257,7 +257,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunStep",
+                      "name": "WorkflowRunStep",
                       "ofType": null
                     }
                   }
@@ -271,12 +271,12 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunEntityInputWhereClause",
+                    "name": "WorkflowRunEntityInputWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runEntityInputs",
+              "name": "workflowRunEntityInputs",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -288,7 +288,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunEntityInput",
+                      "name": "WorkflowRunEntityInput",
                       "ofType": null
                     }
                   }
@@ -333,18 +333,18 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunWhereClause",
+                    "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runsAggregate",
+              "name": "workflowRunsAggregate",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunAggregate",
+                  "name": "WorkflowRunAggregate",
                   "ofType": null
                 }
               }
@@ -379,18 +379,18 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunStepWhereClause",
+                    "name": "WorkflowRunStepWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runStepsAggregate",
+              "name": "workflowRunStepsAggregate",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunStepAggregate",
+                  "name": "WorkflowRunStepAggregate",
                   "ofType": null
                 }
               }
@@ -402,18 +402,18 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunEntityInputWhereClause",
+                    "name": "WorkflowRunEntityInputWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runEntityInputsAggregate",
+              "name": "workflowRunEntityInputsAggregate",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunEntityInputAggregate",
+                  "name": "WorkflowRunEntityInputAggregate",
                   "ofType": null
                 }
               }
@@ -472,7 +472,7 @@
           "possibleTypes": [
             {
               "kind": "OBJECT",
-              "name": "Run",
+              "name": "WorkflowRun",
               "ofType": null
             },
             {
@@ -487,12 +487,12 @@
             },
             {
               "kind": "OBJECT",
-              "name": "RunStep",
+              "name": "WorkflowRunStep",
               "ofType": null
             },
             {
               "kind": "OBJECT",
-              "name": "RunEntityInput",
+              "name": "WorkflowRunEntityInput",
               "ofType": null
             }
           ]
@@ -608,7 +608,7 @@
             },
             {
               "args": [],
-              "name": "inputsJson",
+              "name": "workflowRunnerInputsJson",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -620,7 +620,7 @@
               "name": "status",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -650,7 +650,7 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunStepWhereClause",
+                    "name": "WorkflowRunStepWhereClause",
                     "ofType": null
                   }
                 },
@@ -691,13 +691,13 @@
                   }
                 }
               ],
-              "name": "runSteps",
+              "name": "steps",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunStepConnection",
+                  "name": "WorkflowRunStepConnection",
                   "ofType": null
                 }
               }
@@ -709,15 +709,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunStepWhereClause",
+                    "name": "WorkflowRunStepWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runStepsAggregate",
+              "name": "stepsAggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepAggregate",
+                "name": "WorkflowRunStepAggregate",
                 "ofType": null
               }
             },
@@ -728,7 +728,7 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunEntityInputWhereClause",
+                    "name": "WorkflowRunEntityInputWhereClause",
                     "ofType": null
                   }
                 },
@@ -769,13 +769,13 @@
                   }
                 }
               ],
-              "name": "runEntityInputs",
+              "name": "entityInputs",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunEntityInputConnection",
+                  "name": "WorkflowRunEntityInputConnection",
                   "ofType": null
                 }
               }
@@ -787,15 +787,24 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunEntityInputWhereClause",
+                    "name": "WorkflowRunEntityInputWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "runEntityInputsAggregate",
+              "name": "entityInputsAggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputAggregate",
+                "name": "WorkflowRunEntityInputAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             }
@@ -814,7 +823,7 @@
             }
           ],
           "kind": "OBJECT",
-          "name": "Run",
+          "name": "WorkflowRun",
           "possibleTypes": null
         },
         {
@@ -847,7 +856,7 @@
           "possibleTypes": [
             {
               "kind": "OBJECT",
-              "name": "Run",
+              "name": "WorkflowRun",
               "ofType": null
             },
             {
@@ -862,12 +871,12 @@
             },
             {
               "kind": "OBJECT",
-              "name": "RunStep",
+              "name": "WorkflowRunStep",
               "ofType": null
             },
             {
               "kind": "OBJECT",
-              "name": "RunEntityInput",
+              "name": "WorkflowRunEntityInput",
               "ofType": null
             }
           ]
@@ -930,7 +939,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "RunStatus",
+          "name": "WorkflowRunStatus",
           "possibleTypes": null
         },
         {
@@ -1059,7 +1068,7 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunWhereClause",
+                    "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
                 },
@@ -1106,7 +1115,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunConnection",
+                  "name": "WorkflowRunConnection",
                   "ofType": null
                 }
               }
@@ -1118,7 +1127,7 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunWhereClause",
+                    "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
                 }
@@ -1126,7 +1135,7 @@
               "name": "runsAggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunAggregate",
+                "name": "WorkflowRunAggregate",
                 "ofType": null
               }
             }
@@ -1568,7 +1577,7 @@
               "name": "runs",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunWhereClause",
+                "name": "WorkflowRunWhereClause",
                 "ofType": null
               }
             }
@@ -2131,7 +2140,7 @@
             },
             {
               "defaultValue": null,
-              "name": "inputsJson",
+              "name": "workflowRunnerInputsJson",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "StrComparators",
@@ -2143,7 +2152,7 @@
               "name": "status",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunStatusEnumComparators",
+                "name": "WorkflowRunStatusEnumComparators",
                 "ofType": null
               }
             },
@@ -2158,26 +2167,35 @@
             },
             {
               "defaultValue": null,
-              "name": "runSteps",
+              "name": "steps",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunStepWhereClause",
+                "name": "WorkflowRunStepWhereClause",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "runEntityInputs",
+              "name": "entityInputs",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunEntityInputWhereClause",
+                "name": "WorkflowRunEntityInputWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunWhereClause",
+          "name": "WorkflowRunWhereClause",
           "possibleTypes": null
         },
         {
@@ -2296,7 +2314,7 @@
               "name": "_eq",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -2305,7 +2323,7 @@
               "name": "_neq",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -2320,7 +2338,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "ENUM",
-                    "name": "RunStatus",
+                    "name": "WorkflowRunStatus",
                     "ofType": null
                   }
                 }
@@ -2337,7 +2355,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "ENUM",
-                    "name": "RunStatus",
+                    "name": "WorkflowRunStatus",
                     "ofType": null
                   }
                 }
@@ -2348,7 +2366,7 @@
               "name": "_gt",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -2357,7 +2375,7 @@
               "name": "_gte",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -2366,7 +2384,7 @@
               "name": "_lt",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -2375,7 +2393,7 @@
               "name": "_lte",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -2384,14 +2402,14 @@
               "name": "_is_null",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunStatusEnumComparators",
+          "name": "WorkflowRunStatusEnumComparators",
           "possibleTypes": null
         },
         {
@@ -2436,10 +2454,10 @@
             },
             {
               "defaultValue": null,
-              "name": "run",
+              "name": "workflowRun",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunWhereClause",
+                "name": "WorkflowRunWhereClause",
                 "ofType": null
               }
             },
@@ -2466,14 +2484,140 @@
               "name": "status",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunStatusEnumComparators",
+                "name": "WorkflowRunStepStatusEnumComparators",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunStepWhereClause",
+          "name": "WorkflowRunStepWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "WorkflowRunStepStatus",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "WorkflowRunStepStatus",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowRunStepStatusEnumComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "RUNNING"
+            },
+            {
+              "name": "SUCCEEDED"
+            },
+            {
+              "name": "FAILED"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "WorkflowRunStepStatus",
           "possibleTypes": null
         },
         {
@@ -2518,10 +2662,10 @@
             },
             {
               "defaultValue": null,
-              "name": "newEntityId",
+              "name": "inputEntityId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -2536,17 +2680,17 @@
             },
             {
               "defaultValue": null,
-              "name": "run",
+              "name": "workflowRun",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "RunWhereClause",
+                "name": "WorkflowRunWhereClause",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunEntityInputWhereClause",
+          "name": "WorkflowRunEntityInputWhereClause",
           "possibleTypes": null
         },
         {
@@ -2843,7 +2987,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunEdge",
+                      "name": "WorkflowRunEdge",
                       "ofType": null
                     }
                   }
@@ -2854,7 +2998,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunConnection",
+          "name": "WorkflowRunConnection",
           "possibleTypes": null
         },
         {
@@ -2881,7 +3025,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Run",
+                  "name": "WorkflowRun",
                   "ofType": null
                 }
               }
@@ -2890,7 +3034,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEdge",
+          "name": "WorkflowRunEdge",
           "possibleTypes": null
         },
         {
@@ -2901,7 +3045,7 @@
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunAggregateFunctions",
+                "name": "WorkflowRunAggregateFunctions",
                 "ofType": null
               }
             }
@@ -2909,7 +3053,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunAggregate",
+          "name": "WorkflowRunAggregate",
           "possibleTypes": null
         },
         {
@@ -2920,7 +3064,7 @@
               "name": "sum",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunNumericalColumns",
+                "name": "WorkflowRunNumericalColumns",
                 "ofType": null
               }
             },
@@ -2929,7 +3073,7 @@
               "name": "avg",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunNumericalColumns",
+                "name": "WorkflowRunNumericalColumns",
                 "ofType": null
               }
             },
@@ -2938,7 +3082,7 @@
               "name": "min",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunMinMaxColumns",
+                "name": "WorkflowRunMinMaxColumns",
                 "ofType": null
               }
             },
@@ -2947,7 +3091,7 @@
               "name": "max",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunMinMaxColumns",
+                "name": "WorkflowRunMinMaxColumns",
                 "ofType": null
               }
             },
@@ -2956,7 +3100,7 @@
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunNumericalColumns",
+                "name": "WorkflowRunNumericalColumns",
                 "ofType": null
               }
             },
@@ -2965,7 +3109,7 @@
               "name": "variance",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunNumericalColumns",
+                "name": "WorkflowRunNumericalColumns",
                 "ofType": null
               }
             },
@@ -2985,7 +3129,7 @@
                   "name": "columns",
                   "type": {
                     "kind": "ENUM",
-                    "name": "RunCountColumns",
+                    "name": "WorkflowRunCountColumns",
                     "ofType": null
                   }
                 }
@@ -3001,7 +3145,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunAggregateFunctions",
+          "name": "WorkflowRunAggregateFunctions",
           "possibleTypes": null
         },
         {
@@ -3038,7 +3182,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunNumericalColumns",
+          "name": "WorkflowRunNumericalColumns",
           "possibleTypes": null
         },
         {
@@ -3109,7 +3253,16 @@
             },
             {
               "args": [],
-              "name": "inputsJson",
+              "name": "workflowRunnerInputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "rawInputsJson",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -3120,7 +3273,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunMinMaxColumns",
+          "name": "WorkflowRunMinMaxColumns",
           "possibleTypes": null
         },
         {
@@ -3138,7 +3291,7 @@
               "name": "outputs_json"
             },
             {
-              "name": "inputs_json"
+              "name": "workflow_runner_inputs_json"
             },
             {
               "name": "status"
@@ -3147,10 +3300,16 @@
               "name": "workflow_version"
             },
             {
-              "name": "run_steps"
+              "name": "steps"
             },
             {
-              "name": "run_entity_inputs"
+              "name": "entity_inputs"
+            },
+            {
+              "name": "raw_inputs_json"
+            },
+            {
+              "name": "deprecated_by"
             },
             {
               "name": "entity_id"
@@ -3172,7 +3331,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "RunCountColumns",
+          "name": "WorkflowRunCountColumns",
           "possibleTypes": null
         },
         {
@@ -3205,7 +3364,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunStepEdge",
+                      "name": "WorkflowRunStepEdge",
                       "ofType": null
                     }
                   }
@@ -3216,7 +3375,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunStepConnection",
+          "name": "WorkflowRunStepConnection",
           "possibleTypes": null
         },
         {
@@ -3243,7 +3402,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunStep",
+                  "name": "WorkflowRunStep",
                   "ofType": null
                 }
               }
@@ -3252,7 +3411,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunStepEdge",
+          "name": "WorkflowRunStepEdge",
           "possibleTypes": null
         },
         {
@@ -3326,15 +3485,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunWhereClause",
+                    "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "run",
+              "name": "workflowRun",
               "type": {
                 "kind": "OBJECT",
-                "name": "Run",
+                "name": "WorkflowRun",
                 "ofType": null
               }
             },
@@ -3361,7 +3520,7 @@
               "name": "status",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStepStatus",
                 "ofType": null
               }
             }
@@ -3380,7 +3539,7 @@
             }
           ],
           "kind": "OBJECT",
-          "name": "RunStep",
+          "name": "WorkflowRunStep",
           "possibleTypes": null
         },
         {
@@ -3391,7 +3550,7 @@
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepAggregateFunctions",
+                "name": "WorkflowRunStepAggregateFunctions",
                 "ofType": null
               }
             }
@@ -3399,7 +3558,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunStepAggregate",
+          "name": "WorkflowRunStepAggregate",
           "possibleTypes": null
         },
         {
@@ -3410,7 +3569,7 @@
               "name": "sum",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepNumericalColumns",
+                "name": "WorkflowRunStepNumericalColumns",
                 "ofType": null
               }
             },
@@ -3419,7 +3578,7 @@
               "name": "avg",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepNumericalColumns",
+                "name": "WorkflowRunStepNumericalColumns",
                 "ofType": null
               }
             },
@@ -3428,7 +3587,7 @@
               "name": "min",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepMinMaxColumns",
+                "name": "WorkflowRunStepMinMaxColumns",
                 "ofType": null
               }
             },
@@ -3437,7 +3596,7 @@
               "name": "max",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepMinMaxColumns",
+                "name": "WorkflowRunStepMinMaxColumns",
                 "ofType": null
               }
             },
@@ -3446,7 +3605,7 @@
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepNumericalColumns",
+                "name": "WorkflowRunStepNumericalColumns",
                 "ofType": null
               }
             },
@@ -3455,7 +3614,7 @@
               "name": "variance",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunStepNumericalColumns",
+                "name": "WorkflowRunStepNumericalColumns",
                 "ofType": null
               }
             },
@@ -3475,7 +3634,7 @@
                   "name": "columns",
                   "type": {
                     "kind": "ENUM",
-                    "name": "RunStepCountColumns",
+                    "name": "WorkflowRunStepCountColumns",
                     "ofType": null
                   }
                 }
@@ -3491,7 +3650,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunStepAggregateFunctions",
+          "name": "WorkflowRunStepAggregateFunctions",
           "possibleTypes": null
         },
         {
@@ -3528,7 +3687,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunStepNumericalColumns",
+          "name": "WorkflowRunStepNumericalColumns",
           "possibleTypes": null
         },
         {
@@ -3583,13 +3742,13 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunStepMinMaxColumns",
+          "name": "WorkflowRunStepMinMaxColumns",
           "possibleTypes": null
         },
         {
           "enumValues": [
             {
-              "name": "run"
+              "name": "workflow_run"
             },
             {
               "name": "started_at"
@@ -3620,7 +3779,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "RunStepCountColumns",
+          "name": "WorkflowRunStepCountColumns",
           "possibleTypes": null
         },
         {
@@ -3653,7 +3812,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunEntityInputEdge",
+                      "name": "WorkflowRunEntityInputEdge",
                       "ofType": null
                     }
                   }
@@ -3664,7 +3823,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEntityInputConnection",
+          "name": "WorkflowRunEntityInputConnection",
           "possibleTypes": null
         },
         {
@@ -3691,7 +3850,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunEntityInput",
+                  "name": "WorkflowRunEntityInput",
                   "ofType": null
                 }
               }
@@ -3700,7 +3859,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEntityInputEdge",
+          "name": "WorkflowRunEntityInputEdge",
           "possibleTypes": null
         },
         {
@@ -3769,10 +3928,10 @@
             },
             {
               "args": [],
-              "name": "newEntityId",
+              "name": "inputEntityId",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -3792,15 +3951,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "RunWhereClause",
+                    "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "run",
+              "name": "workflowRun",
               "type": {
                 "kind": "OBJECT",
-                "name": "Run",
+                "name": "WorkflowRun",
                 "ofType": null
               }
             }
@@ -3819,7 +3978,7 @@
             }
           ],
           "kind": "OBJECT",
-          "name": "RunEntityInput",
+          "name": "WorkflowRunEntityInput",
           "possibleTypes": null
         },
         {
@@ -3830,7 +3989,7 @@
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputAggregateFunctions",
+                "name": "WorkflowRunEntityInputAggregateFunctions",
                 "ofType": null
               }
             }
@@ -3838,7 +3997,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEntityInputAggregate",
+          "name": "WorkflowRunEntityInputAggregate",
           "possibleTypes": null
         },
         {
@@ -3849,7 +4008,7 @@
               "name": "sum",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputNumericalColumns",
+                "name": "WorkflowRunEntityInputNumericalColumns",
                 "ofType": null
               }
             },
@@ -3858,7 +4017,7 @@
               "name": "avg",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputNumericalColumns",
+                "name": "WorkflowRunEntityInputNumericalColumns",
                 "ofType": null
               }
             },
@@ -3867,7 +4026,7 @@
               "name": "min",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputMinMaxColumns",
+                "name": "WorkflowRunEntityInputMinMaxColumns",
                 "ofType": null
               }
             },
@@ -3876,7 +4035,7 @@
               "name": "max",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputMinMaxColumns",
+                "name": "WorkflowRunEntityInputMinMaxColumns",
                 "ofType": null
               }
             },
@@ -3885,7 +4044,7 @@
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputNumericalColumns",
+                "name": "WorkflowRunEntityInputNumericalColumns",
                 "ofType": null
               }
             },
@@ -3894,7 +4053,7 @@
               "name": "variance",
               "type": {
                 "kind": "OBJECT",
-                "name": "RunEntityInputNumericalColumns",
+                "name": "WorkflowRunEntityInputNumericalColumns",
                 "ofType": null
               }
             },
@@ -3914,7 +4073,7 @@
                   "name": "columns",
                   "type": {
                     "kind": "ENUM",
-                    "name": "RunEntityInputCountColumns",
+                    "name": "WorkflowRunEntityInputCountColumns",
                     "ofType": null
                   }
                 }
@@ -3930,7 +4089,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEntityInputAggregateFunctions",
+          "name": "WorkflowRunEntityInputAggregateFunctions",
           "possibleTypes": null
         },
         {
@@ -3957,15 +4116,6 @@
             {
               "args": [],
               "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "newEntityId",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
@@ -3976,7 +4126,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEntityInputNumericalColumns",
+          "name": "WorkflowRunEntityInputNumericalColumns",
           "possibleTypes": null
         },
         {
@@ -4003,15 +4153,6 @@
             {
               "args": [],
               "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "newEntityId",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
@@ -4031,19 +4172,19 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "RunEntityInputMinMaxColumns",
+          "name": "WorkflowRunEntityInputMinMaxColumns",
           "possibleTypes": null
         },
         {
           "enumValues": [
             {
-              "name": "new_entity_id"
+              "name": "input_entity_id"
             },
             {
               "name": "field_name"
             },
             {
-              "name": "run"
+              "name": "workflow_run"
             },
             {
               "name": "entity_id"
@@ -4065,7 +4206,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "RunEntityInputCountColumns",
+          "name": "WorkflowRunEntityInputCountColumns",
           "possibleTypes": null
         },
         {
@@ -4330,19 +4471,19 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunCreateInput",
+                      "name": "WorkflowRunCreateInput",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "createRun",
+              "name": "createWorkflowRun",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Run",
+                  "name": "WorkflowRun",
                   "ofType": null
                 }
               }
@@ -4357,7 +4498,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunUpdateInput",
+                      "name": "WorkflowRunUpdateInput",
                       "ofType": null
                     }
                   }
@@ -4370,13 +4511,13 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunWhereClauseMutations",
+                      "name": "WorkflowRunWhereClauseMutations",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "updateRun",
+              "name": "updateWorkflowRun",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -4388,7 +4529,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "Run",
+                      "name": "WorkflowRun",
                       "ofType": null
                     }
                   }
@@ -4405,13 +4546,13 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunWhereClauseMutations",
+                      "name": "WorkflowRunWhereClauseMutations",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "deleteRun",
+              "name": "deleteWorkflowRun",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -4423,7 +4564,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "Run",
+                      "name": "WorkflowRun",
                       "ofType": null
                     }
                   }
@@ -4550,19 +4691,19 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunStepCreateInput",
+                      "name": "WorkflowRunStepCreateInput",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "createRunStep",
+              "name": "createWorkflowRunStep",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunStep",
+                  "name": "WorkflowRunStep",
                   "ofType": null
                 }
               }
@@ -4577,7 +4718,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunStepUpdateInput",
+                      "name": "WorkflowRunStepUpdateInput",
                       "ofType": null
                     }
                   }
@@ -4590,13 +4731,13 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunStepWhereClauseMutations",
+                      "name": "WorkflowRunStepWhereClauseMutations",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "updateRunStep",
+              "name": "updateWorkflowRunStep",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -4608,7 +4749,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunStep",
+                      "name": "WorkflowRunStep",
                       "ofType": null
                     }
                   }
@@ -4625,13 +4766,13 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunStepWhereClauseMutations",
+                      "name": "WorkflowRunStepWhereClauseMutations",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "deleteRunStep",
+              "name": "deleteWorkflowRunStep",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -4643,7 +4784,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunStep",
+                      "name": "WorkflowRunStep",
                       "ofType": null
                     }
                   }
@@ -4660,19 +4801,19 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunEntityInputCreateInput",
+                      "name": "WorkflowRunEntityInputCreateInput",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "createRunEntityInput",
+              "name": "createWorkflowRunEntityInput",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "RunEntityInput",
+                  "name": "WorkflowRunEntityInput",
                   "ofType": null
                 }
               }
@@ -4687,7 +4828,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunEntityInputUpdateInput",
+                      "name": "WorkflowRunEntityInputUpdateInput",
                       "ofType": null
                     }
                   }
@@ -4700,13 +4841,13 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunEntityInputWhereClauseMutations",
+                      "name": "WorkflowRunEntityInputWhereClauseMutations",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "updateRunEntityInput",
+              "name": "updateWorkflowRunEntityInput",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -4718,7 +4859,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunEntityInput",
+                      "name": "WorkflowRunEntityInput",
                       "ofType": null
                     }
                   }
@@ -4735,13 +4876,13 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "RunEntityInputWhereClauseMutations",
+                      "name": "WorkflowRunEntityInputWhereClauseMutations",
                       "ofType": null
                     }
                   }
                 }
               ],
-              "name": "deleteRunEntityInput",
+              "name": "deleteWorkflowRunEntityInput",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -4753,7 +4894,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "RunEntityInput",
+                      "name": "WorkflowRunEntityInput",
                       "ofType": null
                     }
                   }
@@ -4932,7 +5073,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "inputsJson",
+              "name": "workflowRunnerInputsJson",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -4944,7 +5085,7 @@
               "name": "status",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -4956,11 +5097,20 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunCreateInput",
+          "name": "WorkflowRunCreateInput",
           "possibleTypes": null
         },
         {
@@ -5014,7 +5164,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "inputsJson",
+              "name": "workflowRunnerInputsJson",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -5026,7 +5176,7 @@
               "name": "status",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStatus",
                 "ofType": null
               }
             },
@@ -5038,11 +5188,20 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunUpdateInput",
+          "name": "WorkflowRunUpdateInput",
           "possibleTypes": null
         },
         {
@@ -5061,7 +5220,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunWhereClauseMutations",
+          "name": "WorkflowRunWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -5198,7 +5357,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "runId",
+              "name": "workflowRunId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -5228,14 +5387,14 @@
               "name": "status",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStepStatus",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunStepCreateInput",
+          "name": "WorkflowRunStepCreateInput",
           "possibleTypes": null
         },
         {
@@ -5253,7 +5412,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "runId",
+              "name": "workflowRunId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -5283,14 +5442,14 @@
               "name": "status",
               "type": {
                 "kind": "ENUM",
-                "name": "RunStatus",
+                "name": "WorkflowRunStepStatus",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunStepUpdateInput",
+          "name": "WorkflowRunStepUpdateInput",
           "possibleTypes": null
         },
         {
@@ -5309,7 +5468,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunStepWhereClauseMutations",
+          "name": "WorkflowRunStepWhereClauseMutations",
           "possibleTypes": null
         },
         {
@@ -5331,15 +5490,6 @@
             },
             {
               "defaultValue": "null",
-              "name": "newEntityId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "fieldName",
               "type": {
                 "kind": "SCALAR",
@@ -5349,7 +5499,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "runId",
+              "name": "workflowRunId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -5359,7 +5509,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunEntityInputCreateInput",
+          "name": "WorkflowRunEntityInputCreateInput",
           "possibleTypes": null
         },
         {
@@ -5377,15 +5527,6 @@
             },
             {
               "defaultValue": "null",
-              "name": "newEntityId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "fieldName",
               "type": {
                 "kind": "SCALAR",
@@ -5395,7 +5536,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "runId",
+              "name": "workflowRunId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -5405,7 +5546,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunEntityInputUpdateInput",
+          "name": "WorkflowRunEntityInputUpdateInput",
           "possibleTypes": null
         },
         {
@@ -5424,7 +5565,7 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "RunEntityInputWhereClauseMutations",
+          "name": "WorkflowRunEntityInputWhereClauseMutations",
           "possibleTypes": null
         },
         {

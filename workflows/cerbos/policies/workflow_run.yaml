@@ -6,7 +6,7 @@ resourcePolicy:
   version: "default"
   importDerivedRoles:
     - common_roles
-  resource: "run_entity_input"
+  resource: "workflow_run"
   rules:
     - actions: ['view']
       effect: EFFECT_ALLOW
