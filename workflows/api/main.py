@@ -10,7 +10,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from api.config import load_event_bus, load_workflow_runners
 from fastapi import APIRouter, Depends, FastAPI, Request
-from api.manifest import Manifest
+from manifest.manifest import Manifest
 from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_db_session, get_engine
 from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -163,12 +163,12 @@ class Mutation:
         ), f"Workflow runner {workflow_runner} does not support WDL"
 
         workflow_version = await session.get_one(db.WorkflowVersion, workflow_version_id)
-        manifest = Manifest.model_validate_json(str(workflow_version.manifest))
+        Manifest.model_validate_json(str(workflow_version.manifest))
         inputs = {input.name: input.value for input in workflow_inputs}
 
         execution_id = await _workflow_runner.run_workflow(
             event_bus=event_bus,
-            workflow_path=manifest.package_uri,
+            workflow_path=workflow_version.workflow_uri,
             inputs=inputs,
         )
         workflow_run = db.Run(

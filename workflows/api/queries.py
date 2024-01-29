@@ -8,11 +8,21 @@ Make changes to the template codegen/templates/api/queries.py.j2 instead.
 import strawberry
 from strawberry import relay
 from typing import Sequence, List
-from api.types.run import Run, resolve_runs
-from api.types.workflow import Workflow, resolve_workflows
-from api.types.run_step import RunStep, resolve_run_steps
-from api.types.run_entity_input import RunEntityInput, resolve_run_entity_inputs
-from api.types.workflow_version import WorkflowVersion, resolve_workflow_versions
+from api.types.run import Run, resolve_runs, RunAggregate, resolve_runs_aggregate
+from api.types.workflow import Workflow, resolve_workflows, WorkflowAggregate, resolve_workflows_aggregate
+from api.types.run_step import RunStep, resolve_run_steps, RunStepAggregate, resolve_run_steps_aggregate
+from api.types.run_entity_input import (
+    RunEntityInput,
+    resolve_run_entity_inputs,
+    RunEntityInputAggregate,
+    resolve_run_entity_inputs_aggregate,
+)
+from api.types.workflow_version import (
+    WorkflowVersion,
+    resolve_workflow_versions,
+    WorkflowVersionAggregate,
+    resolve_workflow_versions_aggregate,
+)
 
 
 @strawberry.type
@@ -27,3 +37,10 @@ class Query:
     run_steps: Sequence[RunStep] = resolve_run_steps
     run_entity_inputs: Sequence[RunEntityInput] = resolve_run_entity_inputs
     workflow_versions: Sequence[WorkflowVersion] = resolve_workflow_versions
+
+    # Query entity aggregates
+    runs_aggregate: RunAggregate = resolve_runs_aggregate
+    workflows_aggregate: WorkflowAggregate = resolve_workflows_aggregate
+    run_steps_aggregate: RunStepAggregate = resolve_run_steps_aggregate
+    run_entity_inputs_aggregate: RunEntityInputAggregate = resolve_run_entity_inputs_aggregate
+    workflow_versions_aggregate: WorkflowVersionAggregate = resolve_workflow_versions_aggregate

@@ -152,6 +152,10 @@ classes:
     attributes:
       graph_json:
         range: string # fix this type
+      workflow_uri:
+        range: string
+      version:
+        range: string
       manifest:
         range: string
       workflow:
