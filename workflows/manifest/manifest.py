@@ -288,9 +288,9 @@ class Manifest(BaseModel):
             ("entity", entity_inputs, self.entity_inputs),
             ("raw", raw_inputs, self.raw_inputs),
         ]:
-            required_inputs = {k: False for k, v in input_arguments.items() if v.required}
+            required_inputs = {k: False for k, v in input_arguments.items() if v.required}  # type: ignore
             for input in inputs:
-                input_argument = input_arguments.get(input.name)
+                input_argument = input_arguments.get(input.name)  # type: ignore
                 if not input_argument:
                     yield InputNotSupported(input.name, entity_or_raw)  # type: ignore
                     continue

@@ -98,7 +98,7 @@ class LoaderDriver:
         loader_futures = []
         for loader_config, loader in zip(workflow_manifest.output_loaders, loaders):
             args = {}
-            for loader_input_name, workflow_input_name in loader_config.inputs:
+            for loader_input_name, workflow_input_name in loader_config.inputs.items():
                 if workflow_input_name in workflow_manifest.raw_inputs:
                     args[loader_input_name] = workflow_manifest.raw_inputs[workflow_input_name]
                 elif workflow_input_name in workflow_manifest.entity_inputs:
