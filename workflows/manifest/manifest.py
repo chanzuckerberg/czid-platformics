@@ -1,7 +1,7 @@
-from abc import ABC
-from collections.abc import Generator
 import typing
 import yaml
+from abc import ABC
+from collections.abc import Generator
 from dataclasses import dataclass
 from typing import IO, Annotated, Any, Literal, Optional
 
@@ -11,8 +11,6 @@ from pydantic_core import InitErrorDetails, core_schema
 
 
 class _SpecifierSetPydanticAnnotation:
-    """ """
-
     @classmethod
     def __get_pydantic_core_schema__(
         cls,
@@ -52,14 +50,16 @@ PrimitiveTypeName = Literal["str", "int", "float", "bool"]
 Primitive = str | int | float | bool
 
 
-class EntityInput(BaseModel):
+class _Input(BaseModel):
     name: str
+
+
+class EntityInput(_Input):
     entity_type: str
     entity_id: str
 
 
-class RawInput(BaseModel):
-    name: str
+class RawInput(_Input):
     value: typing.Any
 
 
@@ -68,7 +68,7 @@ class _InputValidationError(ABC):
     input_name: str
     raw_or_entity: Literal["raw", "entity"]
 
-    def message(self):
+    def message(self) -> str:
         raise NotImplementedError
 
 
@@ -77,13 +77,13 @@ _InputValidationErrors = Generator[_InputValidationError, None, None]
 
 @dataclass
 class InputNotSupported(_InputValidationError):
-    def message(self):
+    def message(self) -> str:
         return f"{self.raw_or_entity.title()} input not found: {self.input_name}"
 
 
 @dataclass
 class MissingRequiredInput(_InputValidationError):
-    def message(self):
+    def message(self) -> str:
         return f"Missing required {self.raw_or_entity.title()} input: {self.input_name}"
 
 
@@ -92,7 +92,7 @@ class InputTypeInvalid(_InputValidationError):
     expected_type: str
     provided_type: str
 
-    def message(self):
+    def message(self) -> str:
         return (
             f"Invalid type for {self.raw_or_entity} input: "
             + f"{self.input_name} (expected {self.expected_type}, got {self.provided_type})"
@@ -103,7 +103,7 @@ class InputTypeInvalid(_InputValidationError):
 class InputConstraintUnsatisfied(_InputValidationError):
     explaination: str
 
-    def message(self):
+    def message(self) -> str:
         return f"Invalid value for {self.raw_or_entity} input: {self.input_name} ({self.explaination})"
 
 
@@ -128,7 +128,7 @@ class RawInputArgument(BaseInputArgument):
     options: list[Primitive] = []
 
     @model_validator(mode="after")
-    def check_option_types(self):
+    def check_option_types(self):  # type: ignore
         if not self.options:
             return self
 
@@ -147,7 +147,7 @@ class RawInputArgument(BaseInputArgument):
         return self
 
     @model_validator(mode="after")
-    def check_default_options(self):
+    def _check_default_options(self):  # type: ignore
         if not self.options or not self.default:
             return self
         if self.default not in self.options:
@@ -155,13 +155,13 @@ class RawInputArgument(BaseInputArgument):
         return self
 
     @model_validator(mode="after")
-    def check_default(self):
+    def _check_default(self):  # type: ignore
         if self.default is not None and type(self.default).__name__ != self.type:
             raise ValueError(f"Default value for '{self.name}': {self.default} is not of type {self.type}")
         return self
 
     @model_validator(mode="after")
-    def default_not_required(self):
+    def _default_not_required(self):  # type: ignore
         """
         Inputs are required by default but if a manifest has a default then it should not be required.
         This could lead to weird cases where an input is explicitly marked as required but has a default,
@@ -185,7 +185,7 @@ class InvalidInputReference:
     loader_input_name: str
     workflow_input_name: str
 
-    def message(self):
+    def message(self) -> str:
         path = f"{self.loader_type}_loaders.{self.loader_name}.{self.loader_input_name}"
         return f"Invalid reference at {path}:{self.workflow_input_name} (not found)"
 
@@ -196,7 +196,7 @@ class IOLoader(BaseModel):
     inputs: dict[str, str] = {}
 
     @field_validator("inputs", mode="before")
-    def inputs_default(cls, inputs_dict):
+    def _inputs_default(cls, inputs_dict):  # type: ignore
         """
         Fills in default values for inputs based on the keys of the input references
         """
@@ -206,7 +206,7 @@ class IOLoader(BaseModel):
 
         return {k: v or k for k, v in inputs_dict.items()}
 
-    def check_references(
+    def _check_references(
         self,
         loader_type: Literal["input", "output"],
         loader_name: str,
@@ -226,7 +226,7 @@ class InputLoader(IOLoader):
     outputs: dict[str, str]
 
     @field_validator("outputs", mode="before")
-    def outputs_default(cls, value):
+    def outputs_default(cls, value):  # type: ignore
         if not value or not isinstance(value, dict):
             return value
 
@@ -252,7 +252,7 @@ class Manifest(BaseModel):
         return Manifest.model_validate(obj)
 
     @model_validator(mode="after")
-    def unique_input_names(self):
+    def _unique_input_names(self):  # type: ignore
         input_names = set(self.entity_inputs.keys())
         duplicate_names = [k for k in self.raw_inputs if k in input_names]
         if duplicate_names:
@@ -260,14 +260,14 @@ class Manifest(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def validate_references(self):
+    def _validate_references(self):  # type: ignore
         errors: list[InvalidInputReference] = []
         inputs = set(self.entity_inputs.keys()) | set(self.raw_inputs.keys())
         for input_loader in self.input_loaders:
-            errors += list(input_loader.check_references("input", input_loader.name, inputs))
+            errors += list(input_loader._check_references("input", input_loader.name, inputs))
 
         for output_loader in self.output_loaders:
-            errors += list(output_loader.check_references("output", output_loader.name, inputs))
+            errors += list(output_loader._check_references("output", output_loader.name, inputs))
 
         if errors:
             raise ValidationError.from_exception_data(
@@ -284,9 +284,12 @@ class Manifest(BaseModel):
         return self
 
     def validate_inputs(self, entity_inputs: list[EntityInput], raw_inputs: list[RawInput]) -> _InputValidationErrors:
+        # appease the mypy
+        _entity_name: Literal["raw", "entity"] = "entity"
+        _raw_name: Literal["raw", "entity"] = "raw"
         for entity_or_raw, inputs, input_arguments in [
-            ("entity", entity_inputs, self.entity_inputs),
-            ("raw", raw_inputs, self.raw_inputs),
+            (_entity_name, entity_inputs, self.entity_inputs),
+            (_raw_name, raw_inputs, self.raw_inputs),
         ]:
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}
             for input in inputs:
