@@ -19,4 +19,5 @@ RUN poetry install
 COPY entities/ .
 COPY platformics ./platformics
 
+RUN chmod +x ./scripts/*.sh
 CMD ["/usr/local/bin/supervisord", "-c", "/czid-platformics/entities/etc/supervisord.conf"]
