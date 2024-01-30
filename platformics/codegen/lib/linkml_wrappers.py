@@ -8,7 +8,8 @@ functions to keep complicated LinkML-specific logic out of our Jinja2 templates.
 from functools import cached_property
 
 import strcase
-from linkml_runtime.linkml_model.meta import ClassDefinition, EnumDefinition, SlotDefinition
+from linkml_runtime.linkml_model.meta import (ClassDefinition, EnumDefinition,
+                                              SlotDefinition)
 from linkml_runtime.utils.schemaview import SchemaView
 
 
@@ -92,6 +93,10 @@ class FieldWrapper:
             if self.wrapped_field.annotations and self.wrapped_field.annotations["factory_type"]
             else None
         )
+
+    @cached_property
+    def is_virtual_relationship(self) -> bool | None:
+        return self.wrapped_field.inlined or self.multivalued  # type: ignore
 
 
 class EnumWrapper:

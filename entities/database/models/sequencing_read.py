@@ -36,7 +36,7 @@ class SequencingRead(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     sample_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sample.entity_id"), nullable=True)
     sample: Mapped["Sample"] = relationship("Sample", back_populates="sequencing_reads", foreign_keys=sample_id)
-    protocol: Mapped[SequencingProtocol] = mapped_column(Enum(SequencingProtocol, native_enum=False), nullable=False)
+    protocol: Mapped[SequencingProtocol] = mapped_column(Enum(SequencingProtocol, native_enum=False), nullable=True)
     r1_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     r1_file: Mapped["File"] = relationship("File", foreign_keys=r1_file_id)
     r2_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
@@ -45,7 +45,7 @@ class SequencingRead(Entity):
         Enum(SequencingTechnology, native_enum=False), nullable=False
     )
     nucleic_acid: Mapped[NucleicAcid] = mapped_column(Enum(NucleicAcid, native_enum=False), nullable=False)
-    has_ercc: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    clearlabs_export: Mapped[bool] = mapped_column(Boolean, nullable=False)
     taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="sequencing_reads", foreign_keys=taxon_id)
     primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("genomic_range.entity_id"), nullable=True)

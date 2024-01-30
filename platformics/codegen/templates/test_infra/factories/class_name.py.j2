@@ -7,6 +7,7 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 
 # ruff: noqa: E501 Line too long
 
+import random
 import factory
 from database.models import {{ cls.name }}
 from test_infra.factories.main import CommonFactory, FileFactory
@@ -36,7 +37,8 @@ class {{ cls.name }}Factory(CommonFactory):
     {% for field in cls.owned_fields %}
         {%- if field.type != "uuid" %}
             {%- if field.inverse and field.related_class.name != "Entity" %}
-                {%- if not field.multivalued %}
+            {#- If the field is a one-to-one relationship, avoid circular imports by only defining the SubFactory on the child #}
+                {%- if not field.multivalued and not field.is_virtual_relationship %}
     {{ field.name }} = factory.SubFactory(
         {{ field.related_class.name }}Factory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
@@ -75,6 +77,8 @@ class {{ cls.name }}Factory(CommonFactory):
     {{ field.name }} = factory.Faker("{{ field.factory_type }}")
                 {%- elif field.type == "string" %}
     {{ field.name }} = fuzzy.FuzzyText()
+                {%- elif field.type == "2dArrayInt" %}
+    {{ field.name }} = factory.LazyAttribute(lambda o: [ [random.randint(0, 10) for _ in range(5)] ] * random.randint(2, 5) )
                 {%- elif field.type == "int" %}
     {{ field.name }} = fuzzy.FuzzyInteger(1, 1000)
                 {%- elif field.type == "float" %}

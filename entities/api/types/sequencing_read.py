@@ -229,7 +229,7 @@ class SequencingReadWhereClause(TypedDict):
     protocol: Optional[EnumComparators[SequencingProtocol]] | None
     technology: Optional[EnumComparators[SequencingTechnology]] | None
     nucleic_acid: Optional[EnumComparators[NucleicAcid]] | None
-    has_ercc: Optional[BoolComparators] | None
+    clearlabs_export: Optional[BoolComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     primer_file: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
     consensus_genomes: Optional[
@@ -250,14 +250,14 @@ class SequencingRead(EntityInterface):
     owner_user_id: int
     collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
-    protocol: SequencingProtocol
+    protocol: Optional[SequencingProtocol] = None
     r1_file_id: Optional[strawberry.ID]
     r1_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r1_file")  # type: ignore
     r2_file_id: Optional[strawberry.ID]
     r2_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("r2_file")  # type: ignore
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
-    has_ercc: bool
+    clearlabs_export: bool
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     primer_file: Optional[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
@@ -325,7 +325,7 @@ class SequencingReadCountColumns(enum.Enum):
     r2_file = "r2_file"
     technology = "technology"
     nucleic_acid = "nucleic_acid"
-    has_ercc = "has_ercc"
+    clearlabs_export = "clearlabs_export"
     taxon = "taxon"
     primer_file = "primer_file"
     consensus_genomes = "consensus_genomes"
@@ -335,6 +335,9 @@ class SequencingReadCountColumns(enum.Enum):
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    deleted_at = "deleted_at"
 
 
 """
@@ -381,12 +384,12 @@ Mutation types
 class SequencingReadCreateInput:
     collection_id: int
     sample_id: Optional[strawberry.ID] = None
-    protocol: SequencingProtocol
+    protocol: Optional[SequencingProtocol] = None
     r1_file_id: Optional[strawberry.ID] = None
     r2_file_id: Optional[strawberry.ID] = None
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
-    has_ercc: bool
+    clearlabs_export: bool
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
 
@@ -400,7 +403,7 @@ class SequencingReadUpdateInput:
     r2_file_id: Optional[strawberry.ID] = None
     technology: Optional[SequencingTechnology] = None
     nucleic_acid: Optional[NucleicAcid] = None
-    has_ercc: Optional[bool] = None
+    clearlabs_export: Optional[bool] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
 

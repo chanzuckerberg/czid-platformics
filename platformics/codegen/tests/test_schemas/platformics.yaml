@@ -67,6 +67,13 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
+      created_at:
+        range: date
+        required: true
+      updated_at:
+        range: date
+      deleted_at:
+        range: date
     annotations:
       plural: Entities
  
@@ -151,9 +158,6 @@ classes:
       nucleic_acid:
         range: NucleicAcid
         required: true
-      has_ercc:
-        range: boolean
-        required: true
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
@@ -161,6 +165,9 @@ classes:
         range: Contig
         inverse: Contig.sequencing_read
         multivalued: true
+      clearlabs_export:
+        range: boolean
+        required: true
     annotations:
       plural: SequencingReads
 

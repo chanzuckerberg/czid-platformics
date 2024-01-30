@@ -11,7 +11,7 @@ import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Boolean, DateTime
+from sqlalchemy import ForeignKey, String, Integer, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -30,10 +30,11 @@ else:
 class Sample(Entity):
     __tablename__ = "sample"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
+    rails_sample_id: Mapped[int] = mapped_column(Integer, nullable=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     sample_type: Mapped[str] = mapped_column(String, nullable=False)
     water_control: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    collection_date: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
+    collection_date: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False)
     collection_location: Mapped[str] = mapped_column(String, nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
     host_taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)

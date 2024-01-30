@@ -30,12 +30,7 @@ from api.types.reference_genome import (
     update_reference_genome,
     delete_reference_genome,
 )
-from api.types.sequence_alignment_index import (
-    SequenceAlignmentIndex,
-    create_sequence_alignment_index,
-    update_sequence_alignment_index,
-    delete_sequence_alignment_index,
-)
+from api.types.host_organism import HostOrganism, create_host_organism, update_host_organism, delete_host_organism
 from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
 from api.types.consensus_genome import (
     ConsensusGenome,
@@ -63,6 +58,7 @@ from api.types.phylogenetic_tree import (
     update_phylogenetic_tree,
     delete_phylogenetic_tree,
 )
+from api.types.bulk_download import BulkDownload, create_bulk_download, update_bulk_download, delete_bulk_download
 
 
 @strawberry.type
@@ -93,10 +89,10 @@ class Mutation:
     update_reference_genome: Sequence[ReferenceGenome] = update_reference_genome
     delete_reference_genome: Sequence[ReferenceGenome] = delete_reference_genome
 
-    # SequenceAlignmentIndex mutations
-    create_sequence_alignment_index: SequenceAlignmentIndex = create_sequence_alignment_index
-    update_sequence_alignment_index: Sequence[SequenceAlignmentIndex] = update_sequence_alignment_index
-    delete_sequence_alignment_index: Sequence[SequenceAlignmentIndex] = delete_sequence_alignment_index
+    # HostOrganism mutations
+    create_host_organism: HostOrganism = create_host_organism
+    update_host_organism: Sequence[HostOrganism] = update_host_organism
+    delete_host_organism: Sequence[HostOrganism] = delete_host_organism
 
     # Metadatum mutations
     create_metadatum: Metadatum = create_metadatum
@@ -132,3 +128,8 @@ class Mutation:
     create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree
     update_phylogenetic_tree: Sequence[PhylogeneticTree] = update_phylogenetic_tree
     delete_phylogenetic_tree: Sequence[PhylogeneticTree] = delete_phylogenetic_tree
+
+    # BulkDownload mutations
+    create_bulk_download: BulkDownload = create_bulk_download
+    update_bulk_download: Sequence[BulkDownload] = update_bulk_download
+    delete_bulk_download: Sequence[BulkDownload] = delete_bulk_download

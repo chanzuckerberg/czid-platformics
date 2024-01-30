@@ -11,7 +11,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 {% set ignored_fields = ["File", "Entity", cls.name] %}
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
@@ -104,8 +104,13 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
         {%- else %}
+	   {%- if related_field.is_virtual_relationship %}
+    relationship = mapper.relationships["{{ related_field.name }}"]
+    return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
+	   {%- else %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id) # type:ignore
+           {%- endif %}
         {%- endif %}
 
 
@@ -225,6 +230,8 @@ class {{ cls.name }}(EntityInterface):
            {%- endif %}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getType("str", attr.required) }}
+        {%- elif attr.type == "2dArrayInt" %}
+    {{ attr.name }}: {{ getType("List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getType(attr.type, attr.required) }}
         {%- elif attr.type == "int" %}
@@ -350,6 +357,8 @@ class {{ cls.name }}{{ action }}Input:
         {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
+        {%- elif attr.type == "2dArrayInt" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
         {%- elif attr.type == "int" %}

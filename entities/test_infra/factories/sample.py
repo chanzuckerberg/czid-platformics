@@ -29,6 +29,7 @@ class SampleFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
+    rails_sample_id = fuzzy.FuzzyInteger(1, 1000)
     name = fuzzy.FuzzyText()
     sample_type = factory.Faker("organ")
     water_control = factory.Faker("boolean")

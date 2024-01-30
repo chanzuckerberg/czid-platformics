@@ -9,12 +9,11 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, List
 
 import database.models as db
 import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -71,31 +70,6 @@ async def load_consensus_genome_rows(
 
 """
 ------------------------------------------------------------------------------
-Dataloader for File object
-------------------------------------------------------------------------------
-"""
-
-
-def load_files_from(attr_name: str) -> Callable:
-    @strawberry.field
-    async def load_files(
-        root: "MetricConsensusGenome",
-        info: Info,
-        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
-    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
-        """
-        Given a list of MetricConsensusGenome IDs for a certain file type, return related Files
-        """
-        dataloader = info.context["sqlalchemy_loader"]
-        mapper = inspect(db.MetricConsensusGenome)
-        relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
-
-    return load_files
-
-
-"""
-------------------------------------------------------------------------------
 Define Strawberry GQL types
 ------------------------------------------------------------------------------
 """
@@ -125,7 +99,6 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     consensus_genome: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
-    coverage_depth: Optional[FloatComparators] | None
     reference_genome_length: Optional[FloatComparators] | None
     percent_genome_called: Optional[FloatComparators] | None
     percent_identity: Optional[FloatComparators] | None
@@ -136,6 +109,10 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     n_actg: Optional[IntComparators] | None
     n_missing: Optional[IntComparators] | None
     n_ambiguous: Optional[IntComparators] | None
+    coverage_depth: Optional[FloatComparators] | None
+    coverage_breadth: Optional[FloatComparators] | None
+    coverage_bin_size: Optional[FloatComparators] | None
+    coverage_total_length: Optional[IntComparators] | None
 
 
 """
@@ -152,7 +129,6 @@ class MetricConsensusGenome(EntityInterface):
     consensus_genome: Optional[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
-    coverage_depth: Optional[float] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -163,8 +139,11 @@ class MetricConsensusGenome(EntityInterface):
     n_actg: Optional[int] = None
     n_missing: Optional[int] = None
     n_ambiguous: Optional[int] = None
-    coverage_viz_summary_file_id: Optional[strawberry.ID]
-    coverage_viz_summary_file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("coverage_viz_summary_file")  # type: ignore
+    coverage_depth: Optional[float] = None
+    coverage_breadth: Optional[float] = None
+    coverage_bin_size: Optional[float] = None
+    coverage_total_length: Optional[int] = None
+    coverage_viz: Optional[List[List[int]]] = None
 
 
 """
@@ -191,7 +170,6 @@ class MetricConsensusGenomeNumericalColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    coverage_depth: Optional[float] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -202,6 +180,10 @@ class MetricConsensusGenomeNumericalColumns:
     n_actg: Optional[int] = None
     n_missing: Optional[int] = None
     n_ambiguous: Optional[int] = None
+    coverage_depth: Optional[float] = None
+    coverage_breadth: Optional[float] = None
+    coverage_bin_size: Optional[float] = None
+    coverage_total_length: Optional[int] = None
 
 
 """
@@ -214,7 +196,6 @@ class MetricConsensusGenomeMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    coverage_depth: Optional[float] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -225,6 +206,10 @@ class MetricConsensusGenomeMinMaxColumns:
     n_actg: Optional[int] = None
     n_missing: Optional[int] = None
     n_ambiguous: Optional[int] = None
+    coverage_depth: Optional[float] = None
+    coverage_breadth: Optional[float] = None
+    coverage_bin_size: Optional[float] = None
+    coverage_total_length: Optional[int] = None
 
 
 """
@@ -235,7 +220,6 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class MetricConsensusGenomeCountColumns(enum.Enum):
     consensus_genome = "consensus_genome"
-    coverage_depth = "coverage_depth"
     reference_genome_length = "reference_genome_length"
     percent_genome_called = "percent_genome_called"
     percent_identity = "percent_identity"
@@ -246,12 +230,19 @@ class MetricConsensusGenomeCountColumns(enum.Enum):
     n_actg = "n_actg"
     n_missing = "n_missing"
     n_ambiguous = "n_ambiguous"
-    coverage_viz_summary_file = "coverage_viz_summary_file"
+    coverage_depth = "coverage_depth"
+    coverage_breadth = "coverage_breadth"
+    coverage_bin_size = "coverage_bin_size"
+    coverage_total_length = "coverage_total_length"
+    coverage_viz = "coverage_viz"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    deleted_at = "deleted_at"
 
 
 """
@@ -298,7 +289,6 @@ Mutation types
 class MetricConsensusGenomeCreateInput:
     collection_id: int
     consensus_genome_id: strawberry.ID
-    coverage_depth: Optional[float] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -309,14 +299,17 @@ class MetricConsensusGenomeCreateInput:
     n_actg: Optional[int] = None
     n_missing: Optional[int] = None
     n_ambiguous: Optional[int] = None
-    coverage_viz_summary_file_id: Optional[strawberry.ID] = None
+    coverage_depth: Optional[float] = None
+    coverage_breadth: Optional[float] = None
+    coverage_bin_size: Optional[float] = None
+    coverage_total_length: Optional[int] = None
+    coverage_viz: Optional[List[List[int]]] = None
 
 
 @strawberry.input()
 class MetricConsensusGenomeUpdateInput:
     collection_id: Optional[int] = None
     consensus_genome_id: Optional[strawberry.ID] = None
-    coverage_depth: Optional[float] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -327,7 +320,11 @@ class MetricConsensusGenomeUpdateInput:
     n_actg: Optional[int] = None
     n_missing: Optional[int] = None
     n_ambiguous: Optional[int] = None
-    coverage_viz_summary_file_id: Optional[strawberry.ID] = None
+    coverage_depth: Optional[float] = None
+    coverage_breadth: Optional[float] = None
+    coverage_bin_size: Optional[float] = None
+    coverage_total_length: Optional[int] = None
+    coverage_viz: Optional[List[List[int]]] = None
 
 
 """

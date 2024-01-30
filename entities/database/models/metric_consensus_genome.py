@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
 from sqlalchemy import ForeignKey, Float, Integer
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
@@ -31,7 +31,6 @@ class MetricConsensusGenome(Entity):
     consensus_genome: Mapped["ConsensusGenome"] = relationship(
         "ConsensusGenome", back_populates="metrics", foreign_keys=consensus_genome_id
     )
-    coverage_depth: Mapped[int] = mapped_column(Float, nullable=True)
     reference_genome_length: Mapped[int] = mapped_column(Float, nullable=True)
     percent_genome_called: Mapped[int] = mapped_column(Float, nullable=True)
     percent_identity: Mapped[int] = mapped_column(Float, nullable=True)
@@ -42,6 +41,9 @@ class MetricConsensusGenome(Entity):
     n_actg: Mapped[int] = mapped_column(Integer, nullable=True)
     n_missing: Mapped[int] = mapped_column(Integer, nullable=True)
     n_ambiguous: Mapped[int] = mapped_column(Integer, nullable=True)
-    coverage_viz_summary_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    coverage_viz_summary_file: Mapped["File"] = relationship("File", foreign_keys=coverage_viz_summary_file_id)
+    coverage_depth: Mapped[int] = mapped_column(Float, nullable=True)
+    coverage_breadth: Mapped[int] = mapped_column(Float, nullable=True)
+    coverage_bin_size: Mapped[int] = mapped_column(Float, nullable=True)
+    coverage_total_length: Mapped[int] = mapped_column(Integer, nullable=True)
+    coverage_viz: Mapped[JSONB] = mapped_column(JSONB, nullable=True)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

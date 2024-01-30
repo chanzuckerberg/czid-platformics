@@ -58,13 +58,6 @@ class SequencingTechnology(enum.Enum):
 
 
 @strawberry.enum
-class AlignmentTool(enum.Enum):
-    bowtie2 = "bowtie2"
-    minimap2 = "minimap2"
-    czid_index_generation = "czid_index_generation"
-
-
-@strawberry.enum
 class TaxonLevel(enum.Enum):
     level_subspecies = "level_subspecies"
     level_species = "level_species"
@@ -82,3 +75,9 @@ class PhylogeneticTreeFormat(enum.Enum):
     newick = "newick"
     auspice_v1 = "auspice_v1"
     auspice_v2 = "auspice_v2"
+
+
+@strawberry.enum
+class BulkDownloadType(enum.Enum):
+    concatenate = "concatenate"
+    zip = "zip"

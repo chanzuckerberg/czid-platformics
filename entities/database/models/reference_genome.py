@@ -17,13 +17,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from database.models.file import File
     from database.models.taxon import Taxon
-    from database.models.sequence_alignment_index import SequenceAlignmentIndex
     from database.models.consensus_genome import ConsensusGenome
     from database.models.genomic_range import GenomicRange
 else:
     File = "File"
     Taxon = "Taxon"
-    SequenceAlignmentIndex = "SequenceAlignmentIndex"
     ConsensusGenome = "ConsensusGenome"
     GenomicRange = "GenomicRange"
 
@@ -33,19 +31,10 @@ class ReferenceGenome(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file: Mapped["File"] = relationship("File", foreign_keys=file_id)
-    file_index_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    file_index: Mapped["File"] = relationship("File", foreign_keys=file_index_id)
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    description: Mapped[str] = mapped_column(String, nullable=False)
     taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="reference_genomes", foreign_keys=taxon_id)
     accession_id: Mapped[str] = mapped_column(String, nullable=True)
-    sequence_alignment_indices: Mapped[list[SequenceAlignmentIndex]] = relationship(
-        "SequenceAlignmentIndex",
-        back_populates="reference_genome",
-        uselist=True,
-        foreign_keys="SequenceAlignmentIndex.reference_genome_id",
-    )
+    accession_name: Mapped[str] = mapped_column(String, nullable=True)
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome",
         back_populates="reference_genome",

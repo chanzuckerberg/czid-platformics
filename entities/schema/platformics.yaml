@@ -20,6 +20,11 @@ types:
     base: str
     description: A UUID
 
+  2dArrayInt:
+    uri: xsd:array
+    base: int
+    description: A 2D array of integers, e.g. [[1, 2, 3], [4, 5, 6]]
+
 enums:
   FileStatus:
     permissible_values:
@@ -77,11 +82,6 @@ enums:
     permissible_values:
       Illumina:
       Nanopore:
-  AlignmentTool:
-    permissible_values:
-      bowtie2:
-      minimap2:
-      czid_index_generation:
   TaxonLevel:
     permissible_values:
       # Prepending "level_" because "class" is a reserved word, so can't create an Enum with it.
@@ -99,6 +99,10 @@ enums:
       newick:
       auspice_v1:
       auspice_v2:
+  BulkDownloadType:
+    permissible_values:
+      concatenate:
+      zip:
 
 classes:
   Entity:
@@ -115,6 +119,13 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
+      created_at:
+        range: date
+        required: true
+      updated_at:
+        range: date
+      deleted_at:
+        range: date
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -176,6 +187,9 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # If this Sample is a copy of what's in the Rails DB, store its ID here
+      rails_sample_id:
+        range: int
       name:
         range: string
         required: true
@@ -190,6 +204,7 @@ classes:
         required: true
       collection_date:
         range: date
+        required: true
       collection_location:
         range: string
         required: true
@@ -226,7 +241,6 @@ classes:
       # Wet lab protocol
       protocol:
         range: SequencingProtocol
-        required: true
       # Files containing sequencing reads (R1 and R2 refer to read pairs 1/2 in Illumina paired-end sequencing)
       r1_file:
         range: File
@@ -239,10 +253,6 @@ classes:
       # Did we sequence DNA or RNA?
       nucleic_acid:
         range: NucleicAcid
-        required: true
-      # Does the sample include ERCCs, synthetic sequences of known quantity used for QC checks
-      has_ercc:
-        range: boolean
         required: true
       # Is this sequencing read exported from clearlabs? Clearlabs exports have undergone filtering
       clearlabs_export:
@@ -277,11 +287,10 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      # Genomic coordinates based this reference genome
+      # Genomic coordinates based on this reference sequence
       reference_genome:
         range: ReferenceGenome
         inverse: ReferenceGenome.genomic_ranges
-        required: true
       file:
         range: File
       sequencing_reads:
@@ -292,7 +301,7 @@ classes:
       plural: GenomicRanges
 
   # ----------------------------------------------------------------------------
-  # Reference genomes / host genomes
+  # Reference genomes 
   # ----------------------------------------------------------------------------
   ReferenceGenome:
     is_a: Entity
@@ -302,17 +311,6 @@ classes:
       # FASTA reference genome
       file:
         range: File
-      # Indexed FASTA file (.FAI file if any)
-      file_index:
-        range: File
-      # e.g. GRCh38.p14
-      name:
-        range: string
-        required: true
-      # e.g. Human (GRCh38)
-      description:
-        range: string
-        required: true
       taxon:
         range: Taxon
         required: true
@@ -320,10 +318,8 @@ classes:
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
-      sequence_alignment_indices:
-        range: SequenceAlignmentIndex
-        inverse: SequenceAlignmentIndex.reference_genome
-        multivalued: true
+      accession_name:
+        range: string
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.reference_genome
@@ -332,35 +328,36 @@ classes:
         range: GenomicRange
         inverse: GenomicRange.reference_genome
         multivalued: true
-      # TODO: Uncomment this when we have support for backgrounds
-      # Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
-      # background:
-      #   range: Background
     annotations:
       plural: ReferenceGenomes
 
   # ----------------------------------------------------------------------------
-  # Index used by sequence aligners (bowtie, minimap, etc) to represent the
-  # reference genome more efficiently for querying.
+  # Host organisms / host filtering information
   # ----------------------------------------------------------------------------
-  SequenceAlignmentIndex:
+  HostOrganism:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      index_file:
-        range: File
-      reference_genome:
-        range: ReferenceGenome
-        required: false
-        inverse: ReferenceGenome.sequence_alignment_indices
-      tool:
-        range: AlignmentTool
+      # e.g. Human
+      name:
+        range: string
         required: true
+      # e.g. v1-hg38, v2-t2t, etc
       version:
         range: string
+        required: true
+      # Host filtering information; output by index generation
+      host_filtering:
+        range: File
+      # Original FASTA file used in index generation; used for our record keeping
+      sequence:
+        range: File
+      # TODO: Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
+      # background:
+      #   range: Background
     annotations:
-      plural: SequenceAlignmentIndices
+      plural: HostOrganisms
 
   # ----------------------------------------------------------------------------
   # Metadata
@@ -406,13 +403,16 @@ classes:
       # Consensus Genome sequence
       sequence:
         range: File
-      # Zip file containing intermediate outputs
-      intermediate_outputs:
-        range: File
       metrics:
         range: MetricConsensusGenome
         inverse: MetricConsensusGenome.consensus_genome
-        multivalued: true
+        # TODO FIXME this is a hack to support 1:1 relationships. It currently specifies that the related
+        # class actually defines the relationship and this is just a virtual field. We're misusing the LinkML
+        # "inlined" field property until we learn how to use LinkML better and find a better way to express this
+        inlined: true
+      # Zip file containing intermediate outputs
+      intermediate_outputs:
+        range: File
     annotations:
       plural: ConsensusGenomes
 
@@ -423,10 +423,8 @@ classes:
     attributes:
       consensus_genome:
         range: ConsensusGenome
-        required: true
         inverse: ConsensusGenome.metrics
-      coverage_depth:
-        range: float
+        required: true
       reference_genome_length:
         range: float
       percent_genome_called:
@@ -447,8 +445,16 @@ classes:
         range: int
       n_ambiguous:
         range: int
-      coverage_viz_summary_file:
-        range: File
+      coverage_depth:
+        range: float
+      coverage_breadth:
+        range: float
+      coverage_bin_size:
+        range: float
+      coverage_total_length:
+        range: int
+      coverage_viz:
+        range: 2dArrayInt
     annotations:
       plural: MetricsConsensusGenomes
 
@@ -567,6 +573,23 @@ classes:
         required: true
     annotations:
       plural: PhylogeneticTrees
+
+
+  # ----------------------------------------------------------------------------
+  # Bulk download results
+  # ----------------------------------------------------------------------------
+  BulkDownload:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      download_type:
+        range: BulkDownloadType
+        required: true
+      file:
+        range: File
+    annotations:
+      plural: BulkDownloads
 
 
   # ============================================================================
