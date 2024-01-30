@@ -40,7 +40,7 @@ module "stack" {
   additional_env_vars = {
     AWS_REGION              = "us-west-2"
     BOTO_ENDPOINT_URL       = "http://motoserver.czidnet:4000"
-    CERBOS_URL              = "http://cerbos:3592"
+    CERBOS_URL              = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET   = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL = "s3"
     JWK_PRIVATE_KEY_FILE    = "/czid-platformics/entities/test_infra/fixtures/private_key.pem"
@@ -57,10 +57,11 @@ module "stack" {
   routing_method = "CONTEXT"
   tasks = {
     migrate = {
-      cmd    = ["/czid-platformics/entities/scripts/migrate.sh"]
-      cpu    = "100m"
-      image  = "{entities}:${var.image_tag}"
-      memory = "1000Mi"
+      cmd                   = ["/czid-platformics/entities/scripts/migrate.sh"]
+      cpu                   = "100m"
+      image                 = "{entities}:${var.image_tag}"
+      memory                = "1000Mi"
+      platform_architecture = "arm64"
     }
   }
 }

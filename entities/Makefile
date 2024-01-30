@@ -17,13 +17,14 @@ LOCAL_DB_PASSWORD = password_postgres
 LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)
 
 ### HELPFUL #################################################
-.PHONY: shared-help
-shared-help: 
-	$(MAKE) -f platformics/Makefile help
 
 help: shared-help ## display help for this makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 .PHONY: help
+
+.PHONY: shared-help
+shared-help: 
+	$(MAKE) -f platformics/Makefile help
 
 .PHONY: rm-pycache
 rm-pycache: ## remove all __pycache__ files (run if encountering issues with pycharm debugger (containers exiting prematurely))
