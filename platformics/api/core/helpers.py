@@ -47,7 +47,7 @@ def convert_where_clauses_to_sql(
     query: Select,
     sa_model: Base,
     whereClause: dict[str, Any],
-    order_by: Optional[list[dict[str, Any]]],
+    order_by: Optional[list[dict[str, Any]]], # FIXME: update this type
     depth: int,
 ) -> Tuple[Select, list[Any]]:
     """
@@ -71,27 +71,30 @@ def convert_where_clauses_to_sql(
 
     # create a dictionary with the keys as the related field/field names, the values are dict of {order_by: {...}, where: {...}}
     all_joins = defaultdict(dict)
-    order_index = 0
+    # {'field': {'mapped_reads': <orderBy.asc: 'asc'>}, 'index': 1}
+    # {'field': {'consensus_genome': {'mapped_reads': <orderBy.asc: 'asc'>}}, 'index': 0}
     for item in order_by:
-        for col, v in item.items():
+        for col, v in item["field"].items():
             if col in mapper.relationships:
                 if not all_joins[col].get("order_by"):
                     all_joins[col]["order_by"] = []
                 print(f"order join field {col}")
-                all_joins[col]["order_by"].append(v)
+                all_joins[col]["order_by"].append({"field": v, "index": item["index"]})
             else:
                 print(f"order local field {col}")
-                local_order_by.append({"field": col, "sort": v, "index": order_index})
+                local_order_by.append({"field": col, "sort": v, "index": item["index"]})
         # TODO we're not preserving the order of the order_by fields properly, we need
         # to stash that information somewhere so we can re-sort these fields after we're
         # done recursing.
-        order_index += 1
     for col, v in whereClause.items():
         if col in mapper.relationships:
             all_joins[col]["where"] = v
         else:
             local_where_clauses[col] = v
+    print("===all_joins===")
     print(all_joins)
+    print("===local_order_by===")
+    print(local_order_by)
 
     # handle related fields
     for join_field, join_info in all_joins.items():
@@ -102,9 +105,9 @@ def convert_where_clauses_to_sql(
         subquery, subquery_order_by = convert_where_clauses_to_sql(
             principal, cerbos_client, action, cerbos_query, related_cls, join_info.get("where"), join_info.get("order_by"), depth  # type: ignore
         )
-        if subquery_order_by:
-            print(f"Got related order by for {related_cls}")
-            print(subquery_order_by)
+        # if subquery_order_by:
+        #     print(f"Got related order by for {related_cls}")
+        #     print(subquery_order_by)
         subquery = subquery.subquery()
         query_alias = aliased(related_cls, subquery)
         joincondition_a = [
@@ -113,7 +116,11 @@ def convert_where_clauses_to_sql(
         ]
         query = query.join(query_alias, and_(*joincondition_a))
         aliased_field_num = 0
+        print("===subquery order by====")
+        print(subquery_order_by)
         for item in subquery_order_by:
+            print(f"item {item}")
+            print(order_by)
             aliased_field_name = f"order_field_{aliased_field_num}"
             field_to_match = getattr(subquery.c, item["field"])
             aliased_field_num += 1
@@ -122,7 +129,8 @@ def convert_where_clauses_to_sql(
 
             query = query.add_columns(field_to_match.label(aliased_field_name))
 
-            local_order_by.append({"field": aliased_field_name, "sort": item["sort"]})
+            local_order_by.append({"field": aliased_field_name, "sort": item["sort"], "index": item["index"]})
+            # local_order_by.append({"field": aliased_field_name, "sort": item["sort"]})
 
     # handle not-related fields
     print(local_where_clauses)
@@ -159,12 +167,15 @@ def get_db_query(
     if depth >= 5:
         raise Exception("Max filter depth exceeded")
     query = get_resource_query(principal, cerbos_client, action, model_cls)
+    # create a new order_by type that includes the index of the order_by field
+    # this is needed to preserve the order of the order_by fields
+    order_by = [{"field": x, "index": i} for i, x in enumerate(order_by)]
     query, order_by = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, order_by, depth  # type: ignore
     )
-    print(order_by)
+    order_by.sort(key=lambda x: x["index"])
+    print(f"final order_by: {order_by}")
     for item in order_by:
-        # TODO, apply the field ordering to the query!
         query = apply_order_by(item["field"], item["sort"], query)
 
     print(query)
