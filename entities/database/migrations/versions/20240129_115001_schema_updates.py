@@ -44,14 +44,6 @@ def upgrade() -> None:
     op.drop_index("sequence_alignment_index_index_file", table_name="sequence_alignment_index")
     op.drop_index("sequence_alignment_index_reference_genome", table_name="sequence_alignment_index")
     op.drop_table("sequence_alignment_index")
-    op.add_column("consensus_genome", sa.Column("metrics_id", sa.UUID(), nullable=True))
-    op.create_foreign_key(
-        op.f("fk_consensus_genome_metrics_id_metric_consensus_genome"),
-        "consensus_genome",
-        "metric_consensus_genome",
-        ["metrics_id"],
-        ["entity_id"],
-    )
     op.add_column(
         "entity", sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False)
     )
@@ -79,6 +71,7 @@ def upgrade() -> None:
     op.add_column("sequencing_read", sa.Column("clearlabs_export", sa.Boolean(), nullable=False))
     op.alter_column("sequencing_read", "protocol", existing_type=sa.VARCHAR(length=20), nullable=True)
     op.drop_column("sequencing_read", "has_ercc")
+    op.add_column("reference_genome", sa.Column("accession_name", sa.String(), nullable=True))
     # ### end Alembic commands ###
 
 
@@ -152,4 +145,5 @@ def downgrade() -> None:
     op.create_index("sequence_alignment_index_index_file", "sequence_alignment_index", ["index_file_id"], unique=False)
     op.drop_table("host_organism")
     op.drop_table("bulk_download")
+    op.drop_column("reference_genome", "accession_name")
     # ### end Alembic commands ###
