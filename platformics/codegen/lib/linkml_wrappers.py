@@ -96,7 +96,7 @@ class FieldWrapper:
 
     @cached_property
     def is_virtual_relationship(self) -> bool | None:
-        return self.wrapped_field.inlined or self.multivalued
+        return self.wrapped_field.inlined or self.multivalued  # type: ignore
 
 
 class EnumWrapper:

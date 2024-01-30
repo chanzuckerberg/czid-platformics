@@ -10,6 +10,9 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 import factory
 from database.models import ConsensusGenome
 from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.taxon import TaxonFactory
+from test_infra.factories.sequencing_read import SequencingReadFactory
+from test_infra.factories.reference_genome import ReferenceGenomeFactory
 from factory import Faker
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -28,6 +31,21 @@ class ConsensusGenomeFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
+    taxon = factory.SubFactory(
+        TaxonFactory,
+        owner_user_id=factory.SelfAttribute("..owner_user_id"),
+        collection_id=factory.SelfAttribute("..collection_id"),
+    )
+    sequence_read = factory.SubFactory(
+        SequencingReadFactory,
+        owner_user_id=factory.SelfAttribute("..owner_user_id"),
+        collection_id=factory.SelfAttribute("..collection_id"),
+    )
+    reference_genome = factory.SubFactory(
+        ReferenceGenomeFactory,
+        owner_user_id=factory.SelfAttribute("..owner_user_id"),
+        collection_id=factory.SelfAttribute("..collection_id"),
+    )
     sequence = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",
