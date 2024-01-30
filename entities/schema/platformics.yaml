@@ -318,6 +318,8 @@ classes:
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
+      accession_name:
+        range: string
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.reference_genome

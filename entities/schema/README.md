@@ -65,6 +65,7 @@ GenomicRange {
 }
 ReferenceGenome {
     string accession_id  
+    string accession_name  
     uuid entity_id  
     uuid id  
     int producing_run_id  

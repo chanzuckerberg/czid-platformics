@@ -195,6 +195,7 @@ class ReferenceGenomeWhereClause(TypedDict):
     collection_id: IntComparators | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     accession_id: Optional[StrComparators] | None
+    accession_name: Optional[StrComparators] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
@@ -216,6 +217,7 @@ class ReferenceGenome(EntityInterface):
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: Optional[str] = None
+    accession_name: Optional[str] = None
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -267,6 +269,7 @@ class ReferenceGenomeMinMaxColumns:
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     accession_id: Optional[str] = None
+    accession_name: Optional[str] = None
 
 
 """
@@ -279,6 +282,7 @@ class ReferenceGenomeCountColumns(enum.Enum):
     file = "file"
     taxon = "taxon"
     accession_id = "accession_id"
+    accession_name = "accession_name"
     consensus_genomes = "consensus_genomes"
     genomic_ranges = "genomic_ranges"
     entity_id = "entity_id"
@@ -337,6 +341,7 @@ class ReferenceGenomeCreateInput:
     file_id: Optional[strawberry.ID] = None
     taxon_id: strawberry.ID
     accession_id: Optional[str] = None
+    accession_name: Optional[str] = None
 
 
 @strawberry.input()
@@ -345,6 +350,7 @@ class ReferenceGenomeUpdateInput:
     file_id: Optional[strawberry.ID] = None
     taxon_id: Optional[strawberry.ID] = None
     accession_id: Optional[str] = None
+    accession_name: Optional[str] = None
 
 
 """

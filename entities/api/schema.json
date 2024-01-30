@@ -4830,6 +4830,15 @@
             },
             {
               "defaultValue": null,
+              "name": "accessionName",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "consensusGenomes",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6557,6 +6566,15 @@
             {
               "args": [],
               "name": "accessionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "accessionName",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -8560,6 +8578,15 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "accessionName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -8578,6 +8605,9 @@
             },
             {
               "name": "accession_id"
+            },
+            {
+              "name": "accession_name"
             },
             {
               "name": "consensus_genomes"
@@ -14238,6 +14268,15 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "accessionName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -14279,6 +14318,15 @@
             {
               "defaultValue": "null",
               "name": "accessionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "accessionName",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",

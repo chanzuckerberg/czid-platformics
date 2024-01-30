@@ -215,6 +215,7 @@ class ReferenceGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "accession_id",
+        "accession_name",
         "collection_id",
         "consensus_genomes",
         "created_at",
@@ -962,20 +963,22 @@ class PhylogeneticTreeWhereClauseMutations(sgqlc.types.Input):
 
 class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "file_id", "taxon_id", "accession_id")
+    __field_names__ = ("collection_id", "file_id", "taxon_id", "accession_id", "accession_name")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="taxonId")
     accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
 
 
 class ReferenceGenomeUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "file_id", "taxon_id", "accession_id")
+    __field_names__ = ("collection_id", "file_id", "taxon_id", "accession_id", "accession_name")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
 
 
 class ReferenceGenomeWhereClause(sgqlc.types.Input):
@@ -987,6 +990,7 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
         "collection_id",
         "taxon",
         "accession_id",
+        "accession_name",
         "consensus_genomes",
         "genomic_ranges",
     )
@@ -996,6 +1000,7 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
+    accession_name = sgqlc.types.Field("StrComparators", graphql_name="accessionName")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     genomic_ranges = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="genomicRanges")
 
@@ -2939,11 +2944,12 @@ class ReferenceGenomeEdge(sgqlc.types.Type):
 
 class ReferenceGenomeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "accession_id")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "accession_id", "accession_name")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
 
 
 class ReferenceGenomeNumericalColumns(sgqlc.types.Type):
@@ -3493,6 +3499,7 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         "file",
         "taxon",
         "accession_id",
+        "accession_name",
         "consensus_genomes",
         "consensus_genomes_aggregate",
         "genomic_ranges",
@@ -3514,6 +3521,7 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),)),
     )
     accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
     consensus_genomes = sgqlc.types.Field(
         sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",

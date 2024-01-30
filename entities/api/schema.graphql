@@ -1156,6 +1156,7 @@ type ReferenceGenome implements EntityInterface & Node {
   file(where: FileWhereClause = null): File
   taxon(where: TaxonWhereClause = null): Taxon
   accessionId: String
+  accessionName: String
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -1217,6 +1218,7 @@ enum ReferenceGenomeCountColumns {
   file
   taxon
   accession_id
+  accession_name
   consensus_genomes
   genomic_ranges
   entity_id
@@ -1234,6 +1236,7 @@ input ReferenceGenomeCreateInput {
   fileId: ID = null
   taxonId: ID!
   accessionId: String = null
+  accessionName: String = null
 }
 
 """An edge in a connection."""
@@ -1250,6 +1253,7 @@ type ReferenceGenomeMinMaxColumns {
   ownerUserId: Int
   collectionId: Int
   accessionId: String
+  accessionName: String
 }
 
 type ReferenceGenomeNumericalColumns {
@@ -1263,6 +1267,7 @@ input ReferenceGenomeUpdateInput {
   fileId: ID = null
   taxonId: ID = null
   accessionId: String = null
+  accessionName: String = null
 }
 
 input ReferenceGenomeWhereClause {
@@ -1272,6 +1277,7 @@ input ReferenceGenomeWhereClause {
   collectionId: IntComparators
   taxon: TaxonWhereClause
   accessionId: StrComparators
+  accessionName: StrComparators
   consensusGenomes: ConsensusGenomeWhereClause
   genomicRanges: GenomicRangeWhereClause
 }

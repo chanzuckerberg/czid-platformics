@@ -34,6 +34,7 @@ class ReferenceGenome(Entity):
     taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="reference_genomes", foreign_keys=taxon_id)
     accession_id: Mapped[str] = mapped_column(String, nullable=True)
+    accession_name: Mapped[str] = mapped_column(String, nullable=True)
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome",
         back_populates="reference_genome",

@@ -41,3 +41,4 @@ class ReferenceGenomeFactory(CommonFactory):
         collection_id=factory.SelfAttribute("..collection_id"),
     )
     accession_id = fuzzy.FuzzyText()
+    accession_name = fuzzy.FuzzyText()
