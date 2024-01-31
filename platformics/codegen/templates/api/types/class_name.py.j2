@@ -23,7 +23,7 @@ from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 {%- for related_field in related_fields %}
     {%- if related_field.related_class.name not in ignored_fields and related_field.multivalued %}
-from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}OrderByClause, {{related_field.related_class.name}}Aggregate, format_{{related_field.related_class.snake_name}}_aggregate_output)
+from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}Aggregate, format_{{related_field.related_class.snake_name}}_aggregate_output)
     {%- endif %}
 {%- endfor %}
 from cerbos.sdk.client import CerbosClient
@@ -67,6 +67,7 @@ else:
         {%- if related_field.related_class.name not in ignored_fields %}
     {{related_field.related_class.name}}WhereClause = "{{related_field.related_class.name}}WhereClause"
     {{related_field.related_class.name}} = "{{related_field.related_class.name}}"
+    {{related_field.related_class.name}}OrderByClause = "{{related_field.related_class.name}}OrderByClause"
         {%- endif %}
     {%- endfor %}
     pass
@@ -89,6 +90,7 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")] | None = None,
+    order_by: Optional[list[Annotated["{{ related_field.type }}OrderByClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]] = [],
 ) -> Sequence[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- else %}
 @strawberry.field
@@ -96,21 +98,21 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")] | None = None,
-    order_by: Optional[list[{{ related_field.type }}OrderByClause]] = [],
+    order_by: Optional[list[Annotated["{{ related_field.type }}OrderByClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]] = [],
 ) -> Optional[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.{{ cls.name }})
         {%- if related_field.multivalued %}
     relationship = mapper.relationships["{{ related_field.name }}"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
         {%- else %}
 	   {%- if related_field.is_virtual_relationship %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
 	   {%- else %}
     relationship = mapper.relationships["{{ related_field.name }}"]
-    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id), order_by # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.{{ related_field.name }}_id) # type:ignore
         {%- endif %}
 
 
@@ -217,7 +219,11 @@ class {{ cls.name }}OrderByClause(TypedDict):
     owner_user_id: Optional[orderBy] | None
     collection_id: Optional[orderBy] | None
     {%- for attr in cls.owned_fields %}
-        {%- if attr.inverse %}
+        {%- if attr.type == "uuid" %}
+            {%- if attr.name != "entity_id" %}
+    {{ attr.name }}: Optional[orderBy] | None
+            {%- endif %}
+        {%- elif attr.inverse %}
             {%- if not attr.multivalued %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}OrderByClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
             {%- endif %}
