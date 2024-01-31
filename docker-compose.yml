@@ -23,7 +23,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     entrypoint: ["/bin/bash"]
     command: ["/moto/bin/init_moto.sh"]
-  stepfunctions_local:
+  stepfunctions:
     container_name: stepfunctions_local_workflows
     image: amazon/aws-stepfunctions-local
     environment:
