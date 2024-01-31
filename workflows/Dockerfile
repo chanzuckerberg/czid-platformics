@@ -5,6 +5,10 @@ RUN apt-get update && \
       python3-pip nginx nginx-extras procps
 
 ENV POETRY_VERSION=1.5
+
+# Override when deploying to staging/prod
+ARG ENVIRONMENT=TEST
+ENV ENVIRONMENT=${ENVIRONMENT}
 # Some base python dependencies to kickstart our container build.
 RUN python3 -m pip install --no-cache-dir poetry==$POETRY_VERSION supervisor
 
@@ -22,6 +26,10 @@ RUN poetry install
 COPY workflows/ .
 COPY platformics ./platformics
 
-RUN pip install plugins/*/*
+RUN if [ "$ENVIRONMENT" = "TEST" ]; then \
+        for plugin in plugins/*/*; do pip install -e "$plugin"; done \
+    else \
+        for plugin in plugins/*/*; do pip install "$plugin"; done \
+    fi
 
 CMD ["/usr/local/bin/supervisord", "-c", "/workflows/etc/supervisord.conf"]
