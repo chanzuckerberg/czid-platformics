@@ -7,7 +7,6 @@ from os.path import join
 from typing import List
 from uuid import uuid4
 import boto3
-import os
 
 from settings import SWIPEWorkflowRunnerSettings
 from plugins.plugin_types import EventBus, WorkflowRunner
@@ -21,7 +20,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
     def __init__(self, settings: SWIPEWorkflowRunnerSettings):
         self.output_s3_prefix = settings.OUTPUT_S3_PREFIX
         self.state_machine_arn = settings.STATE_MACHINE_ARN
-        self.sfn = boto3.client("stepfunctions", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
+        self.sfn = boto3.client("stepfunctions", endpoint_url=settings.AWS_ENDPOINT_URL)
 
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types"""

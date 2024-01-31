@@ -31,8 +31,10 @@ x-workflow-variables: &workflow-variables
   ? PLATFORMICS_WORKFLOW_RUNNER_PLUGIN=local
   ? PLATFORMICS_EVENT_BUS_PLUGIN=redis
   ? PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL=http://motoserver.czidnet:4000/123456789012/swipe-test-notifications-sfn-notifications-queue
+  ? PLATFORMICS_EVENT_BUS__SWIPE__AWS_ENDPOINT_URL=http://motoserver.czidnet:4000
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX=s3://local-bucket/nextgen/
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN=arn:aws:states:us-east-1:123456789012:stateMachine:swipe-test-default-wdl
+  ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__AWS_ENDPOINT_URL=http://stepfunctions.czidnet:8083
 
 x-cerbos-variables: &cerbos-variables
   ? CERBOS_URL=http://wf-cerbos:3592

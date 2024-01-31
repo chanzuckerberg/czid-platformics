@@ -3,7 +3,6 @@ Remote Event Bus plugin
 Retrieves messages from AWS SQS
 """
 import json
-import os
 from typing import List, cast
 import boto3
 from settings import SWIPEEventBusSettings
@@ -19,7 +18,7 @@ from plugins.plugin_types import (
 
 class EventBusSWIPE(EventBus):
     def __init__(self, settings: SWIPEEventBusSettings) -> None:
-        self.sqs = boto3.client("sqs", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
+        self.sqs = boto3.client("sqs", endpoint_url=settings.AWS_ENDPOINT_URL)
         self.settings = settings
         if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")

@@ -2,6 +2,7 @@
 A module that contains settings to load into the web app
 """
 
+from typing import Optional
 from pydantic import BaseModel
 
 from platformics.settings import Settings as PlatformicsSettings
@@ -11,6 +12,7 @@ from platformics.settings import CLISettings as PlatformicCLISettings
 
 class SWIPEEventBusSettings(BaseModel):
     SQS_QUEUE_URL: str
+    AWS_ENDPOINT_URL: Optional[str]
 
 
 class RedisEventBusSettings(BaseModel):
@@ -26,6 +28,7 @@ class EventBusSettings(BaseModel):
 class SWIPEWorkflowRunnerSettings(BaseModel):
     STATE_MACHINE_ARN: str
     OUTPUT_S3_PREFIX: str
+    AWS_ENDPOINT_URL: Optional[str]
 
 
 class WorkflowRunnerSettings(BaseModel):
