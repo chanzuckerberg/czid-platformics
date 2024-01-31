@@ -21,6 +21,7 @@ from plugins.plugin_types import (
     WorkflowStartedMessage,
     WorkflowSucceededMessage,
 )
+from settings import LocalWorkflowRunnerSettings
 
 
 def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
@@ -34,6 +35,9 @@ def _search_group(pattern: str | re.Pattern[str], string: str, n: int) -> str:
 
 class LocalWorkflowRunner(WorkflowRunner):
     """Class to run a workflow locally"""
+
+    def __init__(self, settings: LocalWorkflowRunnerSettings):
+        self.s3_endpoint_url = settings.S3_ENDPOINT
 
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
@@ -84,8 +88,8 @@ allow_networks = ["czidnet"]"""
                 "run",
                 "--verbose",
             ]
-            if os.environ.get("BOTO_ENDPOINT_URL"):
-                cmd += ["--env", f"AWS_ENDPOINT_URL={os.environ.get('BOTO_ENDPOINT_URL')}"]
+            if self.s3_endpoint_url:
+                cmd += ["--env", f"AWS_ENDPOINT_URL={self.s3_endpoint_url}"]
             if config_path:
                 cmd += [
                     "--cfg",
