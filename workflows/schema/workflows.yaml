@@ -59,6 +59,13 @@ classes:
       collection_id:
         range: int
         minimum_value: 0
+      created_at:
+        range: date
+        required: true
+      updated_at:
+        range: date
+      deleted_at:
+        range: date
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.

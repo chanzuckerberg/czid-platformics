@@ -261,7 +261,7 @@ class Manifest(BaseModel):
 
     @model_validator(mode="after")
     def _validate_references(self):  # type: ignore
-        errors: list[InvalidInputReference] = []
+        errors = []
         inputs = set(self.entity_inputs.keys()) | set(self.raw_inputs.keys())
         for input_loader in self.input_loaders:
             errors += list(input_loader._check_references("input", input_loader.name, inputs))

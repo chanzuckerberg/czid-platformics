@@ -38,13 +38,16 @@ class WorkflowCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "collection_id",
+        "created_at",
         "default_version",
+        "deleted_at",
         "entity_id",
         "id",
         "minimum_supported_version",
         "name",
         "owner_user_id",
         "producing_run_id",
+        "updated_at",
         "versions",
     )
 
@@ -53,6 +56,8 @@ class WorkflowRunCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "collection_id",
+        "created_at",
+        "deleted_at",
         "deprecated_by",
         "ended_at",
         "entity_id",
@@ -66,6 +71,7 @@ class WorkflowRunCountColumns(sgqlc.types.Enum):
         "started_at",
         "status",
         "steps",
+        "updated_at",
         "workflow_runner_inputs_json",
         "workflow_version",
     )
@@ -75,12 +81,15 @@ class WorkflowRunEntityInputCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "collection_id",
+        "created_at",
+        "deleted_at",
         "entity_id",
         "field_name",
         "id",
         "input_entity_id",
         "owner_user_id",
         "producing_run_id",
+        "updated_at",
         "workflow_run",
     )
 
@@ -94,6 +103,8 @@ class WorkflowRunStepCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "collection_id",
+        "created_at",
+        "deleted_at",
         "ended_at",
         "entity_id",
         "id",
@@ -101,6 +112,7 @@ class WorkflowRunStepCountColumns(sgqlc.types.Enum):
         "producing_run_id",
         "started_at",
         "status",
+        "updated_at",
         "workflow_run",
     )
 
@@ -114,6 +126,8 @@ class WorkflowVersionCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "collection_id",
+        "created_at",
+        "deleted_at",
         "entity_id",
         "graph_json",
         "id",
@@ -121,6 +135,7 @@ class WorkflowVersionCountColumns(sgqlc.types.Enum):
         "owner_user_id",
         "producing_run_id",
         "runs",
+        "updated_at",
         "version",
         "workflow",
         "workflow_uri",

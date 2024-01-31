@@ -6,7 +6,14 @@ import json
 from typing import List, cast
 import boto3
 from settings import SWIPEEventBusSettings
-from plugins.plugin_types import EventBus, WorkflowStatusMessage, WorkflowStatus
+from plugins.plugin_types import (
+    EventBus,
+    WorkflowStartedMessage,
+    WorkflowStatusMessage,
+    WorkflowSucceededMessage,
+    WorkflowFailedMessage,
+    WorkflowStatus,
+)
 
 
 class EventBusSWIPE(EventBus):
@@ -58,15 +65,29 @@ class EventBusSWIPE(EventBus):
             return []
 
         messages = self.retrieve_messages(self.settings.SQS_QUEUE_URL)
-        workflow_statuses = []
+        workflow_statuses: list[WorkflowStatusMessage] = []
 
         for message in messages:
             if message["source"] == "aws.states":
-                workflow_status = WorkflowStatusMessage(
-                    runner_id=message["detail"]["executionArn"],
-                    status=self.create_workflow_status(message["detail"]["status"]),
-                )
-                workflow_statuses.append(workflow_status)
+                status = self.create_workflow_status(message["detail"]["status"])
+                if status == "WORKFLOW_SUCCESS":
+                    workflow_statuses.append(
+                        WorkflowSucceededMessage(
+                            runner_id=message["detail"]["executionArn"],
+                        )
+                    )
+                if status == "WORKFLOW_FAILURE":
+                    workflow_statuses.append(
+                        WorkflowFailedMessage(
+                            runner_id=message["detail"]["executionArn"],
+                        )
+                    )
+                if status == "WORKFLOW_STARTED":
+                    workflow_statuses.append(
+                        WorkflowStartedMessage(
+                            runner_id=message["detail"]["executionArn"],
+                        )
+                    )
             elif message["source"] == "aws.batch":
                 # TODO: return step status messages
                 pass

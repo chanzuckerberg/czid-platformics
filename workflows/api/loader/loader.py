@@ -13,11 +13,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from entity_interface import create_entities
 
-from plugins.plugin_types import EventBus, EntityInputLoader, EntityOutputLoader, WorkflowSucceededMessage
+from plugins.plugin_types import EventBus, InputLoader, OutputLoader, WorkflowSucceededMessage
 from database.models import WorkflowRun
 from manifest.manifest import EntityInputArgument, Manifest, RawInputArgument
 
-T = TypeVar("T", bound=Type[EntityInputLoader] | Type[EntityOutputLoader])
+T = TypeVar("T", bound=Type[InputLoader] | Type[OutputLoader])
 
 
 def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> Dict[str, List[Tuple[Version, T]]]:
@@ -35,10 +35,10 @@ def load_loader_plugins(input_or_output: Literal["input", "output"], cls: T) -> 
     return loaders
 
 
-input_loaders = load_loader_plugins("input", EntityInputLoader)
+input_loaders = load_loader_plugins("input", InputLoader)
 
 
-def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[type[EntityInputLoader]]:
+def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[type[InputLoader]]:
     """
     Given a manifest, resolve input loaders
     """
@@ -55,11 +55,11 @@ def resolve_entity_input_loaders(workflow_manifest: Manifest) -> List[type[Entit
     return resolved_loaders
 
 
-output_loaders = load_loader_plugins("output", EntityOutputLoader)
+output_loaders = load_loader_plugins("output", OutputLoader)
 
 
 # TODO: DRY with above but make the types work poperly
-def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[type[EntityOutputLoader]]:
+def resolve_entity_output_loaders(workflow_manifest: Manifest) -> List[type[OutputLoader]]:
     """
     Given a manifest, resolve output loaders
     """

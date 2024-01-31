@@ -5,6 +5,9 @@ Entity {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 WorkflowRun {
     date started_at  
@@ -19,6 +22,9 @@ WorkflowRun {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 Workflow {
     string name  
@@ -29,6 +35,9 @@ Workflow {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 WorkflowRunStep {
     date started_at  
@@ -39,6 +48,9 @@ WorkflowRunStep {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 WorkflowRunEntityInput {
     uuid input_entity_id  
@@ -48,6 +60,9 @@ WorkflowRunEntityInput {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 WorkflowVersion {
     string graph_json  
@@ -59,6 +74,9 @@ WorkflowVersion {
     int producing_run_id  
     int owner_user_id  
     int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
 }
 EntityMixin {
     uuid entity_id  

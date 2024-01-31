@@ -180,6 +180,9 @@ enum WorkflowCountColumns {
   producing_run_id
   owner_user_id
   collection_id
+  created_at
+  updated_at
+  deleted_at
 }
 
 input WorkflowCreateInput {
@@ -293,6 +296,9 @@ enum WorkflowRunCountColumns {
   producing_run_id
   owner_user_id
   collection_id
+  created_at
+  updated_at
+  deleted_at
 }
 
 input WorkflowRunCreateInput {
@@ -360,6 +366,9 @@ enum WorkflowRunEntityInputCountColumns {
   producing_run_id
   owner_user_id
   collection_id
+  created_at
+  updated_at
+  deleted_at
 }
 
 input WorkflowRunEntityInputCreateInput {
@@ -494,6 +503,9 @@ enum WorkflowRunStepCountColumns {
   producing_run_id
   owner_user_id
   collection_id
+  created_at
+  updated_at
+  deleted_at
 }
 
 input WorkflowRunStepCreateInput {
@@ -673,6 +685,9 @@ enum WorkflowVersionCountColumns {
   producing_run_id
   owner_user_id
   collection_id
+  created_at
+  updated_at
+  deleted_at
 }
 
 input WorkflowVersionCreateInput {

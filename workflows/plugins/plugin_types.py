@@ -3,8 +3,14 @@ Module to define basic plugin types
 """
 
 from abc import ABC, abstractmethod
+from gql import Client
 from pydantic import BaseModel
-from typing import Dict, List, Literal, Any
+from typing import Dict, List, Literal
+from entity_interface import Entity
+
+from manifest.manifest import EntityInput, RawInput
+
+from mypy_boto3_s3 import S3Client
 
 WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
@@ -13,7 +19,6 @@ class WorkflowStatusMessage(BaseModel):
     """Base status message"""
 
     runner_id: str
-    status: WorkflowStatus
 
 
 class WorkflowStartedMessage(WorkflowStatusMessage):
@@ -74,9 +79,9 @@ class WorkflowRunner(ABC):
         raise NotImplementedError()
 
 
-class EntityInputLoader(ABC):
+class InputLoader:
     @abstractmethod
-    async def load(self, args: Any) -> List[List[Any]]:
+    async def load(self, entity_inputs: dict[str, EntityInput], raw_inputs: dict[str, RawInput]) -> dict[str, str]:
         """Processes workflow output specified by the type constraints in
         worrkflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities
@@ -85,10 +90,16 @@ class EntityInputLoader(ABC):
         raise NotImplementedError()
 
 
-class EntityOutputLoader(ABC):
+class OutputLoader:
+    entity_client: Client
+    s3_client: S3Client
+
+    def __init__(self, entity_client: Client, s3_client: S3Client):
+        self.entity_client = entity_client
+        self.s3_client = s3_client
+
     @abstractmethod
-    # TODO: type specificity on workflow_outputs, convert values from str to a representation of workflow outputs
-    async def load(self, args: Any) -> List[Any]:
+    async def load(self, entity_inputs: dict[str, EntityInput], raw_inputs: dict[str, RawInput]) -> List[Entity]:
         """Processes workflow output specified by the type constraints
         in workflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities must be created
