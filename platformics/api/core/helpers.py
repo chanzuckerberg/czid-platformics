@@ -10,7 +10,7 @@ import database.models as db
 import strcase
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from platformics.api.core.gql_to_sql import aggregator_map, operator_map
+from platformics.api.core.gql_to_sql import aggregator_map, operator_map, orderBy
 from platformics.database.models.base import Base
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import ColumnElement, and_, distinct, inspect
@@ -18,12 +18,12 @@ from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import Select
+from typing_extensions import TypedDict
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 def apply_order_by(field, direction, query: Select):
-    print(f"applying order by on {field} {direction}")
     match direction.value:
         case "asc":
             query = query.order_by(getattr(query.selected_columns, field).asc())
@@ -39,6 +39,9 @@ def apply_order_by(field, direction, query: Select):
             query = query.order_by(getattr(query.selected_columns, field).desc().nullslast())
     return query
 
+class indexedOrderByClause(TypedDict):
+    field: dict[str, orderBy] | dict[str, dict[str, Any]]
+    index: int
 
 def convert_where_clauses_to_sql(
     principal: Principal,
@@ -47,14 +50,13 @@ def convert_where_clauses_to_sql(
     query: Select,
     sa_model: Base,
     whereClause: dict[str, Any],
-    order_by: Optional[list[dict[str, Any]]], # FIXME: update this type
+    order_by: Optional[list[indexedOrderByClause]],
     depth: int,
 ) -> Tuple[Select, list[Any]]:
     """
     Convert a query with a where clause clause to a SQLAlchemy query.
     If order_by is provided, also return a list of order_by fields that need to be applied.
     """
-    print(f"=== generate query for {sa_model}")
     if not whereClause and not order_by:
         return query, []
     if not order_by:
@@ -64,50 +66,35 @@ def convert_where_clauses_to_sql(
 
     local_order_by = []  # Fields that we can sort by on the *current* class without having to deal with recursion
     local_where_clauses = {}  # Fields that we can filter on the *current* class without having to deal with recursion
-    print(order_by)
-    print(whereClause)
 
     mapper = inspect(sa_model)
 
-    # create a dictionary with the keys as the related field/field names, the values are dict of {order_by: {...}, where: {...}}
+    # Create a dictionary with the keys as the related field/field names
+    # The values are dict of {order_by: {"field": ..., "index": ...}, where: {...}}
     all_joins = defaultdict(dict)
-    # {'field': {'mapped_reads': <orderBy.asc: 'asc'>}, 'index': 1}
-    # {'field': {'consensus_genome': {'mapped_reads': <orderBy.asc: 'asc'>}}, 'index': 0}
     for item in order_by:
         for col, v in item["field"].items():
             if col in mapper.relationships:
                 if not all_joins[col].get("order_by"):
                     all_joins[col]["order_by"] = []
-                print(f"order join field {col}")
                 all_joins[col]["order_by"].append({"field": v, "index": item["index"]})
             else:
-                print(f"order local field {col}")
                 local_order_by.append({"field": col, "sort": v, "index": item["index"]})
-        # TODO we're not preserving the order of the order_by fields properly, we need
-        # to stash that information somewhere so we can re-sort these fields after we're
-        # done recursing.
     for col, v in whereClause.items():
         if col in mapper.relationships:
             all_joins[col]["where"] = v
         else:
             local_where_clauses[col] = v
-    print("===all_joins===")
-    print(all_joins)
-    print("===local_order_by===")
-    print(local_order_by)
 
-    # handle related fields
+    # Handle related fields
     for join_field, join_info in all_joins.items():
         relationship = mapper.relationships[join_field]  # type: ignore
         related_cls = relationship.mapper.entity
         cerbos_query = get_resource_query(principal, cerbos_client, action, related_cls)
-        # get the subquery and nested order_by fields that need to be applied to the current query
+        # Get the subquery and nested order_by fields that need to be applied to the current query
         subquery, subquery_order_by = convert_where_clauses_to_sql(
             principal, cerbos_client, action, cerbos_query, related_cls, join_info.get("where"), join_info.get("order_by"), depth  # type: ignore
         )
-        # if subquery_order_by:
-        #     print(f"Got related order by for {related_cls}")
-        #     print(subquery_order_by)
         subquery = subquery.subquery()
         query_alias = aliased(related_cls, subquery)
         joincondition_a = [
@@ -115,25 +102,16 @@ def convert_where_clauses_to_sql(
             for local, remote in relationship.local_remote_pairs
         ]
         query = query.join(query_alias, and_(*joincondition_a))
+        # Add the subquery columns and subquery_order_by fields to the current query
         aliased_field_num = 0
-        print("===subquery order by====")
-        print(subquery_order_by)
         for item in subquery_order_by:
-            print(f"item {item}")
-            print(order_by)
             aliased_field_name = f"order_field_{aliased_field_num}"
             field_to_match = getattr(subquery.c, item["field"])
             aliased_field_num += 1
-            print(f"adding alias {aliased_field_name} to query for {item}")
-            print(field_to_match)
-
             query = query.add_columns(field_to_match.label(aliased_field_name))
-
             local_order_by.append({"field": aliased_field_name, "sort": item["sort"], "index": item["index"]})
-            # local_order_by.append({"field": aliased_field_name, "sort": item["sort"]})
 
-    # handle not-related fields
-    print(local_where_clauses)
+    # Handle not-related fields
     for col, v in local_where_clauses.items():
         for comparator, value in v.items():
             sa_comparator = operator_map[comparator]
@@ -142,16 +120,15 @@ def convert_where_clauses_to_sql(
             else:
                 query = query.filter(getattr(getattr(sa_model, col), sa_comparator)(value))
 
-    # print(f"*** {sa_model} query ***")
-    # print(f"{query}")
     return query, local_order_by
-
 
 def get_db_query(
     model_cls: type[E],
     action: CerbosAction,
     cerbos_client: CerbosClient,
     principal: Principal,
+    # TODO it would be nicer if we could have the WhereClause classes inherit from a BaseWhereClause
+    # so that these type checks could be smarter, but TypedDict doesn't support type checks like that
     where: dict[str, Any],
     order_by: Optional[list[dict[str, Any]]] = [],
     depth: Optional[int] = None,
@@ -167,18 +144,15 @@ def get_db_query(
     if depth >= 5:
         raise Exception("Max filter depth exceeded")
     query = get_resource_query(principal, cerbos_client, action, model_cls)
-    # create a new order_by type that includes the index of the order_by field
-    # this is needed to preserve the order of the order_by fields
-    order_by = [{"field": x, "index": i} for i, x in enumerate(order_by)]
+    # Add indices to the order_by fields so that we can preserve the order of the fields
+    order_by = [indexedOrderByClause({"field": x, "index": i}) for i, x in enumerate(order_by)]
     query, order_by = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, order_by, depth  # type: ignore
     )
+    # Sort the order_by fields by their index so that we can apply them in the correct order
     order_by.sort(key=lambda x: x["index"])
-    print(f"final order_by: {order_by}")
     for item in order_by:
         query = apply_order_by(item["field"], item["sort"], query)
-
-    print(query)
     return query
 
 
