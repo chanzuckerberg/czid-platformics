@@ -13,7 +13,6 @@ x-db-variables: &db-variables
   ? PLATFORMICS_DATABASE_USER=postgres
   ? PLATFORMICS_DATABASE_PASSWORD=password_postgres
   ? PLATFORMICS_DATABASE_NAME=workflows
-  ? PLATFORMICS_S3_PREFIX=platformics
 
 x-webservice-variables: &webservice-variables
   ? WORKERS=2
