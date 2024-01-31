@@ -183,7 +183,7 @@ async def get_aggregate_db_rows(
     result = await session.execute(query)
     return result.mappings().one()
 
-def filter_out_deleted_entities(query):
+def filter_out_deleted_entities(query: Select) -> Select:
     """
     Filter out deleted entities from a query. Deleted entities must not only have `deleted_at` != null,
     but also the timestamp must be in the past. This allows us to mark entities for future deletion,

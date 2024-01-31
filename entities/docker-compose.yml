@@ -44,7 +44,7 @@ services:
       - PLATFORMICS_DATABASE_USER=postgres
       - PLATFORMICS_DATABASE_PASSWORD=password_postgres
       - PLATFORMICS_DATABASE_NAME=entities
-      - PLATFORMICS_S3_PREFIX=nextgen
+      - OUTPUT_S3_PREFIX=nextgen
       - DEFAULT_UPLOAD_BUCKET=local-bucket
       - DEFAULT_UPLOAD_PROTOCOL=s3
       - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
