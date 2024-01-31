@@ -435,7 +435,7 @@ async def create_or_upload_file(
     if isinstance(file, FileUpload):
         file_protocol = settings.DEFAULT_UPLOAD_PROTOCOL
         file_namespace = settings.DEFAULT_UPLOAD_BUCKET
-        file_path = f"uploads/{file_id}/{file.name}"
+        file_path = f"{settings.PLATFORMICS_S3_PREFIX}/uploads/{file_id}/{file.name}"
     else:
         file_protocol = file.protocol  # type: ignore
         file_namespace = file.namespace
