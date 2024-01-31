@@ -16,7 +16,6 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
-from api.types.genomic_range import GenomicRangeAggregate, format_genomic_range_aggregate_output
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -44,15 +43,12 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.taxon import TaxonWhereClause, Taxon
-    from api.types.genomic_range import GenomicRangeWhereClause, GenomicRange
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
 
     pass
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
-    GenomicRangeWhereClause = "GenomicRangeWhereClause"
-    GenomicRange = "GenomicRange"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     pass
@@ -76,37 +72,6 @@ async def load_taxon_rows(
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["taxon"]
     return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
-
-
-@relay.connection(
-    relay.ListConnection[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]  # type:ignore
-)
-async def load_genomic_range_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
-) -> Sequence[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["genomic_ranges"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_genomic_range_aggregate_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
-) -> Optional[Annotated["GenomicRangeAggregate", strawberry.lazy("api.types.genomic_range")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["genomic_ranges"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_genomic_range_aggregate_output(result)
-    return GenomicRangeAggregate(aggregate=aggregate_output)
 
 
 @relay.connection(
@@ -196,7 +161,6 @@ class ReferenceGenomeWhereClause(TypedDict):
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     accession_id: Optional[StrComparators] | None
     accession_name: Optional[StrComparators] | None
-    genomic_ranges: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
@@ -218,12 +182,6 @@ class ReferenceGenome(EntityInterface):
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
-    genomic_ranges: Sequence[
-        Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows  # type:ignore
-    genomic_ranges_aggregate: Optional[
-        Annotated["GenomicRangeAggregate", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_aggregate_rows  # type:ignore
     sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
@@ -283,7 +241,6 @@ class ReferenceGenomeCountColumns(enum.Enum):
     taxon = "taxon"
     accession_id = "accession_id"
     accession_name = "accession_name"
-    genomic_ranges = "genomic_ranges"
     sequencing_reads = "sequencing_reads"
     entity_id = "entity_id"
     id = "id"

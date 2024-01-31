@@ -17,12 +17,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from database.models.file import File
     from database.models.taxon import Taxon
-    from database.models.genomic_range import GenomicRange
     from database.models.sequencing_read import SequencingRead
 else:
     File = "File"
     Taxon = "Taxon"
-    GenomicRange = "GenomicRange"
     SequencingRead = "SequencingRead"
 
 
@@ -35,9 +33,6 @@ class ReferenceGenome(Entity):
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="reference_genomes", foreign_keys=taxon_id)
     accession_id: Mapped[str] = mapped_column(String, nullable=True)
     accession_name: Mapped[str] = mapped_column(String, nullable=True)
-    genomic_ranges: Mapped[list[GenomicRange]] = relationship(
-        "GenomicRange", back_populates="reference_genome", uselist=True, foreign_keys="GenomicRange.reference_genome_id"
-    )
     sequencing_reads: Mapped[list[SequencingRead]] = relationship(
         "SequencingRead",
         back_populates="reference_sequence",

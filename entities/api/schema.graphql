@@ -326,7 +326,6 @@ type GenomicRange implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   fileId: ID
   file(where: FileWhereClause = null): File
   sequencingReads(
@@ -361,17 +360,7 @@ type GenomicRangeAggregateFunctions {
   count(distinct: Boolean = false, columns: GenomicRangeCountColumns = null): Int
 }
 
-"""A connection to a list of items."""
-type GenomicRangeConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [GenomicRangeEdge!]!
-}
-
 enum GenomicRangeCountColumns {
-  reference_genome
   file
   sequencing_reads
   entity_id
@@ -386,17 +375,7 @@ enum GenomicRangeCountColumns {
 
 input GenomicRangeCreateInput {
   collectionId: Int!
-  referenceGenomeId: ID = null
   fileId: ID = null
-}
-
-"""An edge in a connection."""
-type GenomicRangeEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: GenomicRange!
 }
 
 type GenomicRangeMinMaxColumns {
@@ -413,7 +392,6 @@ type GenomicRangeNumericalColumns {
 
 input GenomicRangeUpdateInput {
   collectionId: Int = null
-  referenceGenomeId: ID = null
   fileId: ID = null
 }
 
@@ -422,7 +400,6 @@ input GenomicRangeWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  referenceGenome: ReferenceGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
 }
 
@@ -1066,22 +1043,6 @@ type ReferenceGenome implements EntityInterface & Node {
   taxon(where: TaxonWhereClause = null): Taxon
   accessionId: String
   accessionName: String
-  genomicRanges(
-    where: GenomicRangeWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): GenomicRangeConnection!
-  genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate
   sequencingReads(
     where: SequencingReadWhereClause = null
 
@@ -1128,7 +1089,6 @@ enum ReferenceGenomeCountColumns {
   taxon
   accession_id
   accession_name
-  genomic_ranges
   sequencing_reads
   entity_id
   id
@@ -1187,7 +1147,6 @@ input ReferenceGenomeWhereClause {
   taxon: TaxonWhereClause
   accessionId: StrComparators
   accessionName: StrComparators
-  genomicRanges: GenomicRangeWhereClause
   sequencingReads: SequencingReadWhereClause
 }
 

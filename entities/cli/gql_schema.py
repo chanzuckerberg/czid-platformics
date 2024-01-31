@@ -83,7 +83,6 @@ class GenomicRangeCountColumns(sgqlc.types.Enum):
         "id",
         "owner_user_id",
         "producing_run_id",
-        "reference_genome",
         "sequencing_reads",
         "updated_at",
     )
@@ -204,7 +203,6 @@ class ReferenceGenomeCountColumns(sgqlc.types.Enum):
         "deleted_at",
         "entity_id",
         "file",
-        "genomic_ranges",
         "id",
         "owner_user_id",
         "producing_run_id",
@@ -558,35 +556,25 @@ class FloatComparators(sgqlc.types.Input):
 
 class GenomicRangeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "reference_genome_id", "file_id")
+    __field_names__ = ("collection_id", "file_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
 
 
 class GenomicRangeUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "reference_genome_id", "file_id")
+    __field_names__ = ("collection_id", "file_id")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
 
 
 class GenomicRangeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "reference_genome",
-        "sequencing_reads",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_reads")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
-    reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
 
 
@@ -910,7 +898,6 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
         "taxon",
         "accession_id",
         "accession_name",
-        "genomic_ranges",
         "sequencing_reads",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -920,7 +907,6 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
     accession_name = sgqlc.types.Field("StrComparators", graphql_name="accessionName")
-    genomic_ranges = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="genomicRanges")
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
 
 
@@ -1528,22 +1514,6 @@ class GenomicRangeAggregateFunctions(sgqlc.types.Type):
             )
         ),
     )
-
-
-class GenomicRangeConnection(sgqlc.types.relay.Connection):
-    __schema__ = gql_schema
-    __field_names__ = ("page_info", "edges")
-    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
-    edges = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("GenomicRangeEdge"))), graphql_name="edges"
-    )
-
-
-class GenomicRangeEdge(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("cursor", "node")
-    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
-    node = sgqlc.types.Field(sgqlc.types.non_null("GenomicRange"), graphql_name="node")
 
 
 class GenomicRangeMinMaxColumns(sgqlc.types.Type):
@@ -3106,7 +3076,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "reference_genome",
         "file_id",
         "file",
         "sequencing_reads",
@@ -3116,13 +3085,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    reference_genome = sgqlc.types.Field(
-        "ReferenceGenome",
-        graphql_name="referenceGenome",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     file = sgqlc.types.Field(
         File,
@@ -3304,8 +3266,6 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         "taxon",
         "accession_id",
         "accession_name",
-        "genomic_ranges",
-        "genomic_ranges_aggregate",
         "sequencing_reads",
         "sequencing_reads_aggregate",
     )
@@ -3326,26 +3286,6 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
     )
     accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
     accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
-    genomic_ranges = sgqlc.types.Field(
-        sgqlc.types.non_null(GenomicRangeConnection),
-        graphql_name="genomicRanges",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name="where", default=None)),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
-    )
-    genomic_ranges_aggregate = sgqlc.types.Field(
-        GenomicRangeAggregate,
-        graphql_name="genomicRangesAggregate",
-        args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name="where", default=None)),)
-        ),
-    )
     sequencing_reads = sgqlc.types.Field(
         sgqlc.types.non_null(SequencingReadConnection),
         graphql_name="sequencingReads",

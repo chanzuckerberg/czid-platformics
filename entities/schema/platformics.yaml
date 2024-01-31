@@ -288,10 +288,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      # Genomic coordinates based on this reference sequence
-      reference_genome:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.genomic_ranges
       file:
         range: File
       sequencing_reads:
@@ -321,10 +317,6 @@ classes:
         range: string
       accession_name:
         range: string
-      genomic_ranges:
-        range: GenomicRange
-        inverse: GenomicRange.reference_genome
-        multivalued: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.reference_sequence
