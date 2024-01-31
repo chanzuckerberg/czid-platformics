@@ -6,6 +6,8 @@ CONTAINER ?= workflows
 # Sets .env.localdev file. [AWS|TEST] Otherwise sets an empty file
 AWS_ENVIRONMENT ?= TEST 
 
+MOTO_ENDPOINT_URL = http://localhost:4000
+
 ### DOCKER ENVIRONMENTAL VARS #################################################
 export DOCKER_BUILDKIT:=1
 export COMPOSE_DOCKER_CLI_BUILD:=1
@@ -62,23 +64,31 @@ local-db-tests: ## Run workflow db tests
 
 ### SWIPE Plugin Tests
 
-.PHONY: local-swipe-plugin-tests
-local-swipe-plugin-start: .env.localdev
+.PHONY: local-swipe-plugin-clean
+local-swipe-plugin-clean: ## Clean and reset infrastructure for running plugin tests
+	- curl -X POST $(MOTO_ENDPOINT_URL)/moto-api/reset
+	cd terraform_test && \
+	find . -name '*tfstate*' | xargs rm -f && \
+	rm -f ".terraform.lock.hcl" && \
+	rm -rf ".terraform" && \
+	unset TF_CLI_ARGS_init
+
+.PHONY: local-swipe-plugin-start
+local-swipe-plugin-start: .env.localdev ## Force restart containers
 	$(docker_compose) up --force-recreate -d 
 
 .PHONY: local-swipe-plugin-deploy-mock
-local-swipe-plugin-deploy-mock: local-swipe-plugin-start
-	- source environment.test; aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id --value ami-12345678 --type String --endpoint-url http://localhost:4000 --no-cli-pager
-	source environment.test && \
+local-swipe-plugin-deploy-mock: local-swipe-plugin-start local-swipe-plugin-clean ## Deploy SWIPE onto mock AWS infrastucture
+	- source environment.test && \
+	aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id \
+	--value ami-12345678 --type String --endpoint-url $(MOTO_ENDPOINT_URL) --no-cli-pager && \
 	cd terraform_test && \
-	find . -name '*tfstate*' | xargs rm -f && \
-	unset TF_CLI_ARGS_init && \
 	terraform init && \
 	terraform apply --auto-approve
 
 .PHONY: local-swipe-plugin-tests
-local-swipe-plugin-tests: local-swipe-plugin-deploy-mock
-	$(docker_compose) exec workflows sh -c 'pytest terraform_test/'
+local-swipe-plugin-tests: local-swipe-plugin-deploy-mock ## Run SWIPE plugin tests
+	$(docker_compose) exec $(FOLDER) sh -c 'pytest terraform_test/'
 
 DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
 DIR_LINT_GRAPHQL = cli/gql_schema.py
