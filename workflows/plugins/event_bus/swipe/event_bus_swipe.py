@@ -6,7 +6,14 @@ import json
 from typing import List, cast
 import boto3
 from settings import SWIPEEventBusSettings
-from plugins.plugin_types import EventBus, WorkflowStartedMessage, WorkflowStatusMessage, WorkflowSucceededMessage, WorkflowFailedMessage, WorkflowStatus
+from plugins.plugin_types import (
+    EventBus,
+    WorkflowStartedMessage,
+    WorkflowStatusMessage,
+    WorkflowSucceededMessage,
+    WorkflowFailedMessage,
+    WorkflowStatus,
+)
 
 
 class EventBusSWIPE(EventBus):
@@ -64,17 +71,23 @@ class EventBusSWIPE(EventBus):
             if message["source"] == "aws.states":
                 status = self.create_workflow_status(message["detail"]["status"])
                 if status == "WORKFLOW_SUCCESS":
-                    workflow_statuses.append(WorkflowSucceededMessage(
-                        runner_id=message["detail"]["executionArn"],
-                    ))
+                    workflow_statuses.append(
+                        WorkflowSucceededMessage(
+                            runner_id=message["detail"]["executionArn"],
+                        )
+                    )
                 if status == "WORKFLOW_FAILURE":
-                    workflow_statuses.append(WorkflowFailedMessage(
-                        runner_id=message["detail"]["executionArn"],
-                    ))
+                    workflow_statuses.append(
+                        WorkflowFailedMessage(
+                            runner_id=message["detail"]["executionArn"],
+                        )
+                    )
                 if status == "WORKFLOW_STARTED":
-                    workflow_statuses.append(WorkflowStartedMessage(
-                        runner_id=message["detail"]["executionArn"],
-                    ))
+                    workflow_statuses.append(
+                        WorkflowStartedMessage(
+                            runner_id=message["detail"]["executionArn"],
+                        )
+                    )
             elif message["source"] == "aws.batch":
                 # TODO: return step status messages
                 pass

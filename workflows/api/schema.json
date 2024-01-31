@@ -2948,6 +2948,15 @@
             },
             {
               "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -3325,6 +3334,15 @@
             },
             {
               "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -3773,6 +3791,15 @@
             },
             {
               "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -4200,6 +4227,15 @@
             },
             {
               "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -4449,6 +4485,15 @@
             },
             {
               "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
             }
           ],
           "fields": null,

@@ -173,6 +173,9 @@ class WorkflowRunEntityInputCountColumns(enum.Enum):
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
+    created_at = "created_at"
+    updated_at = "updated_at"
+    deleted_at = "deleted_at"
 
 
 """
