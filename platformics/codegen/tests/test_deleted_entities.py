@@ -5,9 +5,12 @@ Make sure deleted entities are not returned by the API.
 import time
 import datetime
 import pytest
+import sqlalchemy as sa
+from database.models import File
 from platformics.database.connect import SyncDB
-from platformics.codegen.conftest import GQLTestClient, SessionStorage
+from platformics.codegen.conftest import GQLTestClient, SessionStorage, FileFactory
 from platformics.codegen.tests.output.test_infra.factories.sample import SampleFactory
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 @pytest.mark.asyncio
@@ -16,7 +19,7 @@ async def test_deleted_at(
     gql_client: GQLTestClient,
 ) -> None:
     """
-    Make sure deleted entities don't show up
+    Make sure deleted entities aren't returned by the API.
     """
     user_id = 12345
     project_id = 123
@@ -60,7 +63,7 @@ async def test_deleted_at_aggregate(
     gql_client: GQLTestClient,
 ) -> None:
     """
-    Make sure deleted entities don't show up in aggregate queries either
+    Make sure deleted entities aren't returned by the API in aggregate queries.
     """
     user_id = 12345
     project_id = 123
@@ -99,3 +102,37 @@ async def test_deleted_at_aggregate(
     time.sleep(3)
     output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
     assert output["data"]["samplesAggregate"]["aggregate"]["count"] == 5
+
+@pytest.mark.asyncio
+async def test_deleted_at_files(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Make sure deleted files aren't returned by the API.
+    """
+    user_id = 12345
+    project_id = 123
+
+    # Create mock data and mark 1 of the files as deleted
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        SequencingReadFactory.create(owner_user_id=user_id, collection_id=project_id)
+        FileFactory.update_file_ids()
+        session.commit()
+        files = session.execute(sa.select(File)).scalars().all()
+        files[0].deleted_at = datetime.datetime.now()
+        session.commit()
+
+    # Fetch all samples
+    query = """
+        query MyQuery {
+            files {
+                id
+            }
+        }
+    """
+
+    # Should not return the 1 file that was deleted
+    output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
+    assert len([f for f in output["data"]["files"] if f["id"] == files[0].id]) == 0
