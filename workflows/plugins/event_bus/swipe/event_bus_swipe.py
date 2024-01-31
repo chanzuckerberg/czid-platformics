@@ -18,7 +18,7 @@ from plugins.plugin_types import (
 
 class EventBusSWIPE(EventBus):
     def __init__(self, settings: SWIPEEventBusSettings) -> None:
-        self.sqs = boto3.client("sqs", endpoint_url=settings.AWS_ENDPOINT_URL)
+        self.sqs = boto3.client("sqs", endpoint_url=settings.SQS_ENDPOINT)
         self.settings = settings
         if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")
