@@ -11,7 +11,6 @@ from platformics.settings import CLISettings as PlatformicCLISettings
 
 class SWIPEEventBusSettings(BaseModel):
     SQS_QUEUE_URL: str
-    BOTO_ENDPOINT_URL: str
 
 
 class RedisEventBusSettings(BaseModel):
@@ -24,8 +23,18 @@ class EventBusSettings(BaseModel):
     SWIPE: SWIPEEventBusSettings
 
 
+class SWIPEWorkflowRunnerSettings(BaseModel):
+    STATE_MACHINE_ARN: str
+    OUTPUT_S3_PREFIX: str
+
+
+class WorkflowRunnerSettings(BaseModel):
+    SWIPE: SWIPEWorkflowRunnerSettings
+
+
 class Settings(PlatformicsSettings):
     PLATFORMICS_WORKFLOW_RUNNER_PLUGIN: str
+    PLATFORMICS_WORKFLOW_RUNNER: WorkflowRunnerSettings
 
     PLATFORMICS_EVENT_BUS_PLUGIN: str
     PLATFORMICS_EVENT_BUS: EventBusSettings

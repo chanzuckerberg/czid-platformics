@@ -30,8 +30,9 @@ x-workflow-variables: &workflow-variables
   ? DEFAULT_UPLOAD_PROTOCOL=S3 # don't need this in workflows
   ? PLATFORMICS_WORKFLOW_RUNNER_PLUGIN=local
   ? PLATFORMICS_EVENT_BUS_PLUGIN=redis
-  ? PLATFORMICS_EVENT_BUS__SWIPE__BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
   ? PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL=http://motoserver.czidnet:4000/123456789012/swipe-test-notifications-sfn-notifications-queue
+  ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX=s3://local-bucket/nextgen/
+  ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN=arn:aws:states:us-east-1:123456789012:stateMachine:swipe-test-default-wdl
 
 x-cerbos-variables: &cerbos-variables
   ? CERBOS_URL=http://wf-cerbos:3592
