@@ -104,7 +104,7 @@ async def get_db_rows(
     query = get_db_query(model_cls, action, cerbos_client, principal, where)
     if order_by:
         query = query.order_by(*order_by)  # type: ignore
-    query = filter_out_deleted_entities(query)
+    query = filter_out_deleted_entities(model_cls, query)
     result = await session.execute(query)
     return result.scalars().all()
 
@@ -179,15 +179,15 @@ async def get_aggregate_db_rows(
     query = get_aggregate_db_query(model_cls, action, cerbos_client, principal, where, aggregate, group_by)
     if order_by:
         query = query.order_by(*order_by)  # type: ignore
-    query = filter_out_deleted_entities(query)
+    query = filter_out_deleted_entities(model_cls, query)
     result = await session.execute(query)
     return result.mappings().one()
 
-def filter_out_deleted_entities(query: Select) -> Select:
+def filter_out_deleted_entities(model_cls: type[E], query: Select) -> Select:
     """
-    Filter out deleted entities from a query. Deleted entities must not only have `deleted_at` != null,
+    Filter out deleted Entities or Files. Deleted entities must not only have `deleted_at` != null,
     but also the timestamp must be in the past. This allows us to mark entities for future deletion,
     but they still show up in queries until that time. For example, when creating BulkDownload, we could
     set `deleted_at = now() + 7 days`, so it gets auto-deleted after a week.
     """
-    return query.where(or_(db.Entity.deleted_at == None, db.Entity.deleted_at > datetime.utcnow()))
+    return query.where(or_(model_cls.deleted_at == None, model_cls.deleted_at > datetime.utcnow()))
