@@ -3,6 +3,7 @@ Helper functions for working with the database.
 """
 
 import typing
+from datetime import datetime
 from typing import Any, Optional
 
 import database.models as db
@@ -12,7 +13,7 @@ from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import ColumnElement, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from platformics.api.core.gql_to_sql import operator_map, aggregator_map
-from sqlalchemy import inspect, and_
+from sqlalchemy import inspect, and_, or_
 from sqlalchemy.orm import aliased
 from platformics.database.models.base import Base
 from sqlalchemy.sql import Select
@@ -103,6 +104,7 @@ async def get_db_rows(
     query = get_db_query(model_cls, action, cerbos_client, principal, where)
     if order_by:
         query = query.order_by(*order_by)  # type: ignore
+    query = filter_out_deleted_entities(query)
     result = await session.execute(query)
     return result.scalars().all()
 
@@ -177,5 +179,15 @@ async def get_aggregate_db_rows(
     query = get_aggregate_db_query(model_cls, action, cerbos_client, principal, where, aggregate, group_by)
     if order_by:
         query = query.order_by(*order_by)  # type: ignore
+    query = filter_out_deleted_entities(query)
     result = await session.execute(query)
     return result.mappings().one()
+
+def filter_out_deleted_entities(query):
+    """
+    Filter out deleted entities from a query. Deleted entities must not only have `deleted_at` != null,
+    but also the timestamp must be in the past. This allows us to mark entities for future deletion,
+    but they still show up in queries until that time. For example, when creating BulkDownload, we could
+    set `deleted_at = now() + 7 days`, so it gets auto-deleted after a week.
+    """
+    return query.where(or_(db.Entity.deleted_at == None, db.Entity.deleted_at > datetime.utcnow()))
