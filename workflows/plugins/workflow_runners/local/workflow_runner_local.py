@@ -11,6 +11,7 @@ import tempfile
 import threading
 from typing import List
 from uuid import uuid4
+from pathlib import Path
 import re
 
 from plugins.plugin_types import (
@@ -51,6 +52,22 @@ class LocalWorkflowRunner(WorkflowRunner):
             for key, output in outputs.items():
                 print(f"{key}: {output}")
 
+    def config_file(self, dir_path: str) -> str:
+        config_file_str = """
+[download_awscli]
+host_credentials = true
+
+[task_runtime]
+defaults = {
+  "docker_network": "czidnet" }
+
+[docker_swarm] 
+allow_networks = ["czidnet"]"""
+        file_path = str(Path(dir_path) / "miniwdl.cfg")
+        with open(file_path, "w+") as f:
+            f.write(config_file_str)
+        return file_path
+
     async def _run_workflow_work(
         self,
         event_bus: EventBus,
@@ -61,10 +78,24 @@ class LocalWorkflowRunner(WorkflowRunner):
         """Run miniwdl workflows locally"""
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
+            config_path = self.config_file(tmpdir)
+            cmd = [
+                "miniwdl",
+                "run",
+                "--verbose",
+            ]
+            if os.environ.get("BOTO_ENDPOINT_URL"):
+                cmd += ["--env", f"AWS_ENDPOINT_URL={os.environ.get('BOTO_ENDPOINT_URL')}"]
+            if config_path:
+                cmd += [
+                    "--cfg",
+                    config_path,
+                ]
+            cmd += [os.path.abspath(workflow_path)]
+            cmd += [f"{k}={v}" for k, v in inputs.items()]
             try:
                 p = subprocess.Popen(
-                    ["miniwdl", "run", "--verbose", os.path.abspath(workflow_path)]
-                    + [f"{k}={v}" for k, v in inputs.items()],
+                    cmd,
                     cwd=tmpdir,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
