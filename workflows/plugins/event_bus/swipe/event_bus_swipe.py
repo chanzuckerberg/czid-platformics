@@ -65,7 +65,7 @@ class EventBusSWIPE(EventBus):
             return []
 
         messages = self.retrieve_messages(self.settings.SQS_QUEUE_URL)
-        workflow_statuses = []
+        workflow_statuses: list[WorkflowStatusMessage] = []
 
         for message in messages:
             if message["source"] == "aws.states":
