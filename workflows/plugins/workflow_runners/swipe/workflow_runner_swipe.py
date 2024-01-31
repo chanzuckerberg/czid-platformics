@@ -31,7 +31,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
         """Returns a description of the workflow runner"""
         return "Runs WDL workflows on SWIPE infrastructure, using AWS Step Functions and Batch"
 
-    def run_workflow(
+    async def run_workflow(
         self,
         event_bus: EventBus,
         workflow_path: str,
