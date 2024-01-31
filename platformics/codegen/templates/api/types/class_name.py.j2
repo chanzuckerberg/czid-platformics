@@ -107,12 +107,13 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
         {%- else %}
-	   {%- if related_field.is_virtual_relationship %}
+	        {%- if related_field.is_virtual_relationship %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
-	   {%- else %}
+	        {%- else %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.{{ related_field.name }}_id) # type:ignore
+            {%- endif %}
         {%- endif %}
 
 
@@ -214,21 +215,13 @@ Supported ORDER BY clause attributes
 """
 @strawberry.input
 class {{ cls.name }}OrderByClause(TypedDict):
-    id: Optional[orderBy] | None
-    producing_run_id: Optional[orderBy] | None
-    owner_user_id: Optional[orderBy] | None
-    collection_id: Optional[orderBy] | None
-    {%- for attr in cls.owned_fields %}
-        {%- if attr.type == "uuid" %}
-            {%- if attr.name != "entity_id" %}
-    {{ attr.name }}: Optional[orderBy] | None
-            {%- endif %}
-        {%- elif attr.inverse %}
-            {%- if not attr.multivalued %}
+    {%- for attr in cls.all_fields %}
+        {%- if attr.type != "File" and attr.name != "entity_id" and not attr.multivalued %}
+            {%- if attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}OrderByClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
-            {%- endif %}
-        {%- else %}
+            {%- else %}
     {{ attr.name }}: Optional[orderBy] | None
+            {%- endif %}
         {%- endif %}
     {%- endfor %}
 

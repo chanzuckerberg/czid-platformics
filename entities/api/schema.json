@@ -212,6 +212,23 @@
                     "name": "SampleWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SampleOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "samples",
@@ -242,6 +259,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "SequencingReadWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SequencingReadOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -274,6 +308,23 @@
                     "name": "GenomicRangeWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "GenomicRangeOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "genomicRanges",
@@ -304,6 +355,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ReferenceGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ReferenceGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -336,6 +404,23 @@
                     "name": "HostOrganismWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "HostOrganismOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "hostOrganisms",
@@ -366,6 +451,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "MetadatumWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "MetadatumOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -398,6 +500,23 @@
                     "name": "ConsensusGenomeWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "consensusGenomes",
@@ -428,6 +547,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "MetricConsensusGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "MetricConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -460,6 +596,23 @@
                     "name": "TaxonWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "TaxonOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "taxa",
@@ -490,6 +643,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "UpstreamDatabaseWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "UpstreamDatabaseOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -522,6 +692,23 @@
                     "name": "ContigWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ContigOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "contigs",
@@ -553,6 +740,23 @@
                     "name": "PhylogeneticTreeWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "PhylogeneticTreeOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "phylogeneticTrees",
@@ -583,6 +787,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "BulkDownloadWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "BulkDownloadOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -2218,6 +2439,23 @@
                     "name": "TaxonWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "TaxonOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "hostTaxon",
@@ -2236,6 +2474,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "SequencingReadWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SequencingReadOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -2314,6 +2569,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "MetadatumWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "MetadatumOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -2641,6 +2913,23 @@
                     "name": "UpstreamDatabaseWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "UpstreamDatabaseOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "upstreamDatabase",
@@ -2685,6 +2974,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ConsensusGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -2766,6 +3072,23 @@
                   }
                 },
                 {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ReferenceGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
+                },
+                {
                   "defaultValue": "null",
                   "name": "before",
                   "type": {
@@ -2844,6 +3167,23 @@
                   }
                 },
                 {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SequencingReadOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
+                },
+                {
                   "defaultValue": "null",
                   "name": "before",
                   "type": {
@@ -2919,6 +3259,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "SampleWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SampleOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -3092,6 +3449,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "TaxonWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "TaxonOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -5224,6 +5598,351 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "wikipediaId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "description",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "commonName",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "isPhage",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "upstreamDatabase",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UpstreamDatabaseOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "upstreamDatabaseIdentifier",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "level",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxParent",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxSubspecies",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxSpecies",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxGenus",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxFamily",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxOrder",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxClass",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxPhylum",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxKingdom",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxSuperkingdom",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "TaxonOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "asc"
+            },
+            {
+              "name": "asc_nulls_first"
+            },
+            {
+              "name": "asc_nulls_last"
+            },
+            {
+              "name": "desc"
+            },
+            {
+              "name": "desc_nulls_first"
+            },
+            {
+              "name": "desc_nulls_last"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "orderBy",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "UpstreamDatabaseOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -5706,6 +6425,23 @@
                     "name": "TaxonWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "TaxonOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "taxon",
@@ -5725,6 +6461,23 @@
                     "name": "SequencingReadWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SequencingReadOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "sequenceRead",
@@ -5743,6 +6496,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ReferenceGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ReferenceGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -5790,6 +6560,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "MetricConsensusGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "MetricConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -5920,6 +6707,23 @@
                     "name": "SampleWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SampleOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "sample",
@@ -6043,6 +6847,23 @@
                     "name": "TaxonWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "TaxonOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "taxon",
@@ -6062,6 +6883,23 @@
                     "name": "GenomicRangeWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "GenomicRangeOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "primerFile",
@@ -6080,6 +6918,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ConsensusGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -6158,6 +7013,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ContigWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ContigOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -6247,6 +7119,151 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "railsSampleId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "sampleType",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "waterControl",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionDate",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionLocation",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "description",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "hostTaxon",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "TaxonOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "SampleOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -6319,6 +7336,23 @@
                     "name": "ReferenceGenomeWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ReferenceGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "referenceGenome",
@@ -6365,6 +7399,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "SequencingReadWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SequencingReadOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -6554,6 +7605,23 @@
                     "name": "TaxonWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "TaxonOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "taxon",
@@ -6590,6 +7658,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ConsensusGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -6668,6 +7753,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "GenomicRangeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "GenomicRangeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -6753,6 +7855,650 @@
           ],
           "kind": "OBJECT",
           "name": "ReferenceGenome",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "taxon",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "TaxonOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "sequenceRead",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SequencingReadOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "referenceGenome",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "ReferenceGenomeOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "metrics",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "MetricConsensusGenomeOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ConsensusGenomeOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "sample",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SampleOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "protocol",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "technology",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "nucleicAcid",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxon",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "TaxonOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "primerFile",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "GenomicRangeOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "SequencingReadOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "referenceGenome",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "ReferenceGenomeOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "GenomicRangeOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "taxon",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "TaxonOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "accessionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "accessionName",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ReferenceGenomeOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "consensusGenome",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "ConsensusGenomeOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "percentIdentity",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "gcPercent",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "totalReads",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "mappedReads",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "refSnps",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "nActg",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "nMissing",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "nAmbiguous",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "coverageDepth",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "coverageBreadth",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "coverageBinSize",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "coverageTotalLength",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "coverageViz",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetricConsensusGenomeOrderByClause",
           "possibleTypes": null
         },
         {
@@ -7786,6 +9532,23 @@
                     "name": "SequencingReadWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SequencingReadOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "sequencingRead",
@@ -7824,6 +9587,97 @@
           ],
           "kind": "OBJECT",
           "name": "Contig",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "sequencingRead",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SequencingReadOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "sequence",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ContigOrderByClause",
           "possibleTypes": null
         },
         {
@@ -8133,6 +9987,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "ConsensusGenomeWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ConsensusGenomeOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -9193,6 +11064,23 @@
                     "name": "SampleWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "SampleOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "sample",
@@ -9244,6 +11132,106 @@
           ],
           "kind": "OBJECT",
           "name": "Metadatum",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "sample",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SampleOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "fieldName",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "value",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetadatumOrderByClause",
           "possibleTypes": null
         },
         {
@@ -9722,6 +11710,97 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "version",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "HostOrganismOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -10026,6 +12105,88 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "format",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "PhylogeneticTreeOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -10323,6 +12484,88 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "BulkDownloadTypeEnumComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "downloadType",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "BulkDownloadOrderByClause",
           "possibleTypes": null
         },
         {

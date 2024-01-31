@@ -16,12 +16,6 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
-from api.types.metric_consensus_genome import (
-    MetricConsensusGenomeOrderByClause,
-    MetricConsensusGenomeAggregateOrderClause,
-    MetricConsensusGenomeAggregate,
-    format_metric_consensus_genome_aggregate_output,
-)
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -46,21 +40,29 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
-    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
-    from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
-    from api.types.metric_consensus_genome import MetricConsensusGenomeWhereClause, MetricConsensusGenome
+    from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
+    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
+    from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
+    from api.types.metric_consensus_genome import (
+        MetricConsensusGenomeOrderByClause,
+        MetricConsensusGenomeWhereClause,
+        MetricConsensusGenome,
+    )
 
     pass
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
+    TaxonOrderByClause = "TaxonOrderByClause"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
+    SequencingReadOrderByClause = "SequencingReadOrderByClause"
     ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
     ReferenceGenome = "ReferenceGenome"
+    ReferenceGenomeOrderByClause = "ReferenceGenomeOrderByClause"
     MetricConsensusGenomeWhereClause = "MetricConsensusGenomeWhereClause"
     MetricConsensusGenome = "MetricConsensusGenome"
+    MetricConsensusGenomeOrderByClause = "MetricConsensusGenomeOrderByClause"
     pass
 
 
@@ -77,11 +79,12 @@ async def load_taxon_rows(
     root: "ConsensusGenome",
     info: Info,
     where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+    order_by: Optional[list[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]]] = [],
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["taxon"]
-    return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.taxon_id)  # type:ignore
 
 
 @strawberry.field
@@ -89,11 +92,14 @@ async def load_sequencing_read_rows(
     root: "ConsensusGenome",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
+    order_by: Optional[
+        list[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]]
+    ] = [],
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["sequence_read"]
-    return await dataloader.loader_for(relationship, where).load(root.sequence_read_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.sequence_read_id)  # type:ignore
 
 
 @strawberry.field
@@ -101,11 +107,14 @@ async def load_reference_genome_rows(
     root: "ConsensusGenome",
     info: Info,
     where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
+    order_by: Optional[
+        list[Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]]
+    ] = [],
 ) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["reference_genome"]
-    return await dataloader.loader_for(relationship, where).load(root.reference_genome_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.reference_genome_id)  # type:ignore
 
 
 @strawberry.field
@@ -114,12 +123,14 @@ async def load_metric_consensus_genome_rows(
     info: Info,
     where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     | None = None,
-    order_by: Optional[list[MetricConsensusGenomeOrderByClause]] = [],
-) -> Sequence[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
+    order_by: Optional[
+        list[Annotated["MetricConsensusGenomeOrderByClause", strawberry.lazy("api.types.metric_consensus_genome")]]
+    ] = [],
+) -> Optional[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["metrics"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
 
 
 """
@@ -184,22 +195,31 @@ class ConsensusGenomeWhereClause(TypedDict):
         Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
 
+
 """
 Supported ORDER BY clause attributes
 """
 
+
 @strawberry.input
 class ConsensusGenomeOrderByClause(TypedDict):
+    taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
+    sequence_read: Optional[
+        Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]
+    ] | None
+    reference_genome: Optional[
+        Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]
+    ] | None
+    metrics: Optional[
+        Annotated["MetricConsensusGenomeOrderByClause", strawberry.lazy("api.types.metric_consensus_genome")]
+    ] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
     collection_id: Optional[orderBy] | None
-    taxon_id: Optional[orderBy] | None
-    sequence_id: Optional[orderBy] | None
-    reference_genome_id: Optional[orderBy] | None
-    metrics_id: Optional[orderBy] | None
-    intermediate_outputs_id: Optional[orderBy] | None
-    metrics_aggregate: Optional[Annotated["MetricConsensusGenomeAggregateOrderClause", strawberry.lazy("api.types.metric_consensus_genome")]] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -365,7 +385,6 @@ async def resolve_consensus_genomes(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ConsensusGenomeWhereClause] = None,
-    # list input because we want to support sorting by multiple fields, and the order of the fields matters
     order_by: Optional[list[ConsensusGenomeOrderByClause]] = [],
 ) -> typing.Sequence[ConsensusGenome]:
     """

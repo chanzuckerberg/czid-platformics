@@ -25,6 +25,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -43,18 +44,21 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
-    from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
-    from api.types.genomic_range import GenomicRangeWhereClause, GenomicRange
+    from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
+    from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
+    from api.types.genomic_range import GenomicRangeOrderByClause, GenomicRangeWhereClause, GenomicRange
 
     pass
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
+    TaxonOrderByClause = "TaxonOrderByClause"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
+    ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
     GenomicRangeWhereClause = "GenomicRangeWhereClause"
     GenomicRange = "GenomicRange"
+    GenomicRangeOrderByClause = "GenomicRangeOrderByClause"
     pass
 
 
@@ -71,11 +75,12 @@ async def load_taxon_rows(
     root: "ReferenceGenome",
     info: Info,
     where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+    order_by: Optional[list[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]]] = [],
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["taxon"]
-    return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.taxon_id)  # type:ignore
 
 
 @relay.connection(
@@ -85,11 +90,14 @@ async def load_consensus_genome_rows(
     root: "ReferenceGenome",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
+    order_by: Optional[
+        list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]
+    ] = [],
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["consensus_genomes"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -116,11 +124,12 @@ async def load_genomic_range_rows(
     root: "ReferenceGenome",
     info: Info,
     where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
+    order_by: Optional[list[Annotated["GenomicRangeOrderByClause", strawberry.lazy("api.types.genomic_range")]]] = [],
 ) -> Sequence[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["genomic_ranges"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -200,6 +209,25 @@ class ReferenceGenomeWhereClause(TypedDict):
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
     genomic_ranges: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class ReferenceGenomeOrderByClause(TypedDict):
+    taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
+    accession_id: Optional[orderBy] | None
+    accession_name: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -366,11 +394,12 @@ async def resolve_reference_genomes(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[ReferenceGenomeWhereClause] = None,
+    order_by: Optional[list[ReferenceGenomeOrderByClause]] = [],
 ) -> typing.Sequence[ReferenceGenome]:
     """
     Resolve ReferenceGenome objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_reference_genome_aggregate_output(query_results: RowMapping) -> ReferenceGenomeAggregateFunctions:

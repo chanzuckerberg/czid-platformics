@@ -40,12 +40,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome, ConsensusGenomeOrderByClause
+    from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
 
     pass
 else:
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
+    ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
     pass
 
 
@@ -62,7 +63,9 @@ async def load_consensus_genome_rows(
     root: "MetricConsensusGenome",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-    order_by: Optional[list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]] = [],
+    order_by: Optional[
+        list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]
+    ] = [],
 ) -> Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetricConsensusGenome)
@@ -116,18 +119,17 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     coverage_bin_size: Optional[FloatComparators] | None
     coverage_total_length: Optional[IntComparators] | None
 
+
 """
 Supported ORDER BY clause attributes
 """
 
+
 @strawberry.input
 class MetricConsensusGenomeOrderByClause(TypedDict):
-    id: Optional[orderBy] | None
-    producing_run_id: Optional[orderBy] | None
-    owner_user_id: Optional[orderBy] | None
-    collection_id: Optional[orderBy] | None
-    consensus_genome: Optional[orderBy] | None
-    coverage_depth: Optional[orderBy] | None
+    consensus_genome: Optional[
+        Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]
+    ] | None
     reference_genome_length: Optional[orderBy] | None
     percent_genome_called: Optional[orderBy] | None
     percent_identity: Optional[orderBy] | None
@@ -138,8 +140,18 @@ class MetricConsensusGenomeOrderByClause(TypedDict):
     n_actg: Optional[orderBy] | None
     n_missing: Optional[orderBy] | None
     n_ambiguous: Optional[orderBy] | None
-    coverage_viz_summary_file: Optional[orderBy] | None
-    consensus_genome: Optional[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    coverage_depth: Optional[orderBy] | None
+    coverage_breadth: Optional[orderBy] | None
+    coverage_bin_size: Optional[orderBy] | None
+    coverage_total_length: Optional[orderBy] | None
+    coverage_viz: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -303,55 +315,6 @@ Wrapper around MetricConsensusGenomeAggregateFunctions
 @strawberry.type
 class MetricConsensusGenomeAggregate:
     aggregate: Optional[MetricConsensusGenomeAggregateFunctions] = None
-
-
-"""
-Supported ORDER BY clause attributes for aggregate queries
-"""
-
-@strawberry.input
-class MetricConsensusGenomeMinMaxColumnsOrderByClause(TypedDict):
-    producing_run_id: Optional[orderBy] | None
-    owner_user_id: Optional[orderBy] | None
-    collection_id: Optional[orderBy] | None
-    coverage_depth: Optional[orderBy] | None
-    reference_genome_length: Optional[orderBy] | None
-    percent_genome_called: Optional[orderBy] | None
-    percent_identity: Optional[orderBy] | None
-    gc_percent: Optional[orderBy] | None
-    total_reads: Optional[orderBy] | None
-    mapped_reads: Optional[orderBy] | None
-    ref_snps: Optional[orderBy] | None
-    n_actg: Optional[orderBy] | None
-    n_missing: Optional[orderBy] | None
-    n_ambiguous: Optional[orderBy] | None
-
-@strawberry.input
-class MetricConsensusGenomeNumericalColumnsOrderByClause(TypedDict):
-    producing_run_id: Optional[orderBy] | None
-    owner_user_id: Optional[orderBy] | None
-    collection_id: Optional[orderBy] | None
-    coverage_depth: Optional[orderBy] | None
-    reference_genome_length: Optional[orderBy] | None
-    percent_genome_called: Optional[orderBy] | None
-    percent_identity: Optional[orderBy] | None
-    gc_percent: Optional[orderBy] | None
-    total_reads: Optional[orderBy] | None
-    mapped_reads: Optional[orderBy] | None
-    ref_snps: Optional[orderBy] | None
-    n_actg: Optional[orderBy] | None
-    n_missing: Optional[orderBy] | None
-    n_ambiguous: Optional[orderBy] | None
-
-@strawberry.input
-class MetricConsensusGenomeAggregateOrderClause(TypedDict):
-    count: Optional[orderBy] | None
-    sum: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-    avg: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-    min: Optional[Annotated[MetricConsensusGenomeMinMaxColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-    max: Optional[Annotated[MetricConsensusGenomeMinMaxColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-    stddev: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
-    variance: Optional[Annotated[MetricConsensusGenomeNumericalColumnsOrderByClause, strawberry.lazy("api.types.metric_consensus_genome")]] | None
 
 
 """
