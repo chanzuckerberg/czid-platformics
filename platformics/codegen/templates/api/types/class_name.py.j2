@@ -23,7 +23,7 @@ from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 {%- for related_field in related_fields %}
     {%- if related_field.related_class.name not in ignored_fields and related_field.multivalued %}
-from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}Aggregate, format_{{related_field.related_class.snake_name}}_aggregate_output)
+from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}OrderByClause, {{related_field.related_class.name}}Aggregate, format_{{related_field.related_class.snake_name}}_aggregate_output)
     {%- endif %}
 {%- endfor %}
 from cerbos.sdk.client import CerbosClient
@@ -31,7 +31,7 @@ from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import aggregator_map, EnumComparators, DatetimeComparators, IntComparators, FloatComparators, StrComparators, UUIDComparators, BoolComparators
+from platformics.api.core.gql_to_sql import aggregator_map, orderBy, EnumComparators, DatetimeComparators, IntComparators, FloatComparators, StrComparators, UUIDComparators, BoolComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
@@ -58,7 +58,7 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     {%- for related_field in related_fields %}
         {%- if related_field.related_class.name not in ignored_fields %}
-    from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}WhereClause, {{related_field.related_class.name}})
+    from api.types.{{related_field.related_class.snake_name}} import ({{related_field.related_class.name}}OrderByClause, {{related_field.related_class.name}}WhereClause, {{related_field.related_class.name}})
         {%- endif %}
     {%- endfor %}
     pass
@@ -96,6 +96,7 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     root: "{{ cls.name }}",
     info: Info,
     where: Annotated["{{ related_field.type }}WhereClause", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")] | None = None,
+    order_by: Optional[list[{{ related_field.type }}OrderByClause]] = [],
 ) -> Optional[Annotated["{{ related_field.type }}", strawberry.lazy("api.types.{{ related_field.related_class.snake_name }}")]]:
         {%- endif %}
     dataloader = info.context["sqlalchemy_loader"]
@@ -109,8 +110,7 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
 	   {%- else %}
     relationship = mapper.relationships["{{ related_field.name }}"]
-    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id) # type:ignore
-           {%- endif %}
+    return await dataloader.loader_for(relationship, where).load(root.{{ related_field.name }}_id), order_by # type:ignore
         {%- endif %}
 
 
@@ -204,6 +204,25 @@ class {{ cls.name }}WhereClause(TypedDict):
     {{ attr.name }}: Optional[DatetimeComparators] | None
         {%- elif attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
+        {%- endif %}
+    {%- endfor %}
+
+"""
+Supported ORDER BY clause attributes
+"""
+@strawberry.input
+class {{ cls.name }}OrderByClause(TypedDict):
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    {%- for attr in cls.owned_fields %}
+        {%- if attr.inverse %}
+            {%- if not attr.multivalued %}
+    {{ attr.name }}: Optional[Annotated["{{ attr.type }}OrderByClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
+            {%- endif %}
+        {%- else %}
+    {{ attr.name }}: Optional[orderBy] | None
         {%- endif %}
     {%- endfor %}
 
@@ -390,11 +409,12 @@ async def resolve_{{ cls.plural_snake_name }}(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[{{ cls.name }}WhereClause] = None,
+    order_by: Optional[list[{{ cls.name }}OrderByClause]] = [],
 ) -> typing.Sequence[{{ cls.name }}]:
     """
     Resolve {{ cls.name }} objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_{{ cls.snake_name }}_aggregate_output(query_results: RowMapping) -> {{ cls.name }}AggregateFunctions:
