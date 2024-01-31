@@ -210,11 +210,11 @@ classes:
         required: true
         annotations:
           factory_type: city
-      description:
+      notes:
         range: string
-      host_taxon:
-        range: Taxon
-        inverse: Taxon.samples
+      host_organism:
+        range: HostOrganism
+        inverse: HostOrganism.samples
       sequencing_reads:
         range: SequencingRead
         multivalued: true
@@ -258,23 +258,24 @@ classes:
       clearlabs_export:
         range: boolean
         required: true
-      # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline (optional)
+      medaka_model:
+        range: string
+      # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline
       taxon:
         range: Taxon
         inverse: Taxon.sequencing_reads
-      # Can specify a primer BED file, used to trim primers, e.g. for "Viral Consensus Genome" pipeline (optional)
+      # Can specify a primer BED file, used to trim primers, e.g. for "Viral Consensus Genome" pipeline
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+      # Can specify a reference sequence for "Viral Consensus Genome" pipeline
+      reference_sequence:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.sequencing_reads
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
-        multivalued: true
-      # Contigs generated from these Sequencing Reads
-      contigs:
-        range: Contig
-        inverse: Contig.sequencing_read
         multivalued: true
     annotations:
       plural: SequencingReads
@@ -320,13 +321,13 @@ classes:
         range: string
       accession_name:
         range: string
-      consensus_genomes:
-        range: ConsensusGenome
-        inverse: ConsensusGenome.reference_genome
-        multivalued: true
       genomic_ranges:
         range: GenomicRange
         inverse: GenomicRange.reference_genome
+        multivalued: true
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.reference_sequence
         multivalued: true
     annotations:
       plural: ReferenceGenomes
@@ -353,6 +354,11 @@ classes:
       # Original FASTA file used in index generation; used for our record keeping
       sequence:
         range: File
+      # Samples that use this host organism
+      samples:
+        range: Sample
+        inverse: Sample.host_organism
+        multivalued: true
       # TODO: Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
       # background:
       #   range: Background
@@ -388,18 +394,10 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      taxon:
-        range: Taxon
-        required: true
-        inverse: Taxon.consensus_genomes
       sequence_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
-      reference_genome:
-        range: ReferenceGenome
-        required: true
-        inverse: ReferenceGenome.consensus_genomes
       # Consensus Genome sequence
       sequence:
         range: File
@@ -508,10 +506,6 @@ classes:
         range: Taxon
       tax_superkingdom:
         range: Taxon
-      consensus_genomes:
-        range: ConsensusGenome
-        inverse: ConsensusGenome.taxon
-        multivalued: true
       reference_genomes:
         range: ReferenceGenome
         inverse: ReferenceGenome.taxon
@@ -519,10 +513,6 @@ classes:
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.taxon
-        multivalued: true
-      samples:
-        range: Sample
-        inverse: Sample.host_taxon
         multivalued: true
     annotations:
       plural: Taxa
@@ -541,22 +531,6 @@ classes:
         inverse: Taxon.upstream_database
     annotations:
       plural: UpstreamDatabases
-
-  # ----------------------------------------------------------------------------
-  # Contigs generated from SequencingReads
-  # ----------------------------------------------------------------------------
-  Contig:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      sequencing_read:
-        range: SequencingRead
-        inverse: Sample.contigs
-      sequence:
-        required: true
-    annotations:
-      plural: Contigs
 
   # ----------------------------------------------------------------------------
   # Phylogenetic tree

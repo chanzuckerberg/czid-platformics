@@ -519,37 +519,6 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "ContigWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "contigs",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "Contig",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
                     "name": "PhylogeneticTreeWhereClause",
                     "ofType": null
                   }
@@ -842,29 +811,6 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "ContigWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "contigsAggregate",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ContigAggregate",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
                     "name": "PhylogeneticTreeWhereClause",
                     "ofType": null
                   }
@@ -940,6 +886,16 @@
             },
             {
               "kind": "OBJECT",
+              "name": "HostOrganism",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "SequencingRead",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
               "name": "Taxon",
               "ofType": null
             },
@@ -950,12 +906,7 @@
             },
             {
               "kind": "OBJECT",
-              "name": "ConsensusGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "SequencingRead",
+              "name": "ReferenceGenome",
               "ofType": null
             },
             {
@@ -965,12 +916,7 @@
             },
             {
               "kind": "OBJECT",
-              "name": "ReferenceGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Contig",
+              "name": "ConsensusGenome",
               "ofType": null
             },
             {
@@ -981,11 +927,6 @@
             {
               "kind": "OBJECT",
               "name": "Metadatum",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "HostOrganism",
               "ofType": null
             },
             {
@@ -2201,7 +2142,7 @@
             },
             {
               "args": [],
-              "name": "description",
+              "name": "notes",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -2215,15 +2156,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "TaxonWhereClause",
+                    "name": "HostOrganismWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "hostTaxon",
+              "name": "hostOrganism",
               "type": {
                 "kind": "OBJECT",
-                "name": "Taxon",
+                "name": "HostOrganism",
                 "ofType": null
               }
             },
@@ -2436,6 +2377,16 @@
             },
             {
               "kind": "OBJECT",
+              "name": "HostOrganism",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "SequencingRead",
+              "ofType": null
+            },
+            {
+              "kind": "OBJECT",
               "name": "Taxon",
               "ofType": null
             },
@@ -2446,12 +2397,7 @@
             },
             {
               "kind": "OBJECT",
-              "name": "ConsensusGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "SequencingRead",
+              "name": "ReferenceGenome",
               "ofType": null
             },
             {
@@ -2461,12 +2407,7 @@
             },
             {
               "kind": "OBJECT",
-              "name": "ReferenceGenome",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "Contig",
+              "name": "ConsensusGenome",
               "ofType": null
             },
             {
@@ -2477,11 +2418,6 @@
             {
               "kind": "OBJECT",
               "name": "Metadatum",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "HostOrganism",
               "ofType": null
             },
             {
@@ -2580,33 +2516,6 @@
             },
             {
               "args": [],
-              "name": "wikipediaId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "commonName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "name",
               "type": {
                 "kind": "NON_NULL",
@@ -2620,39 +2529,7 @@
             },
             {
               "args": [],
-              "name": "isPhage",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "UpstreamDatabaseWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "upstreamDatabase",
-              "type": {
-                "kind": "OBJECT",
-                "name": "UpstreamDatabase",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "upstreamDatabaseIdentifier",
+              "name": "version",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -2665,92 +2542,10 @@
             },
             {
               "args": [],
-              "name": "level",
+              "name": "hostFilteringId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "TaxonLevel",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ConsensusGenomeWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "consensusGenomes",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ConsensusGenomeConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ConsensusGenomeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "consensusGenomesAggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ConsensusGenomeAggregate",
+                "kind": "SCALAR",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -2761,74 +2556,24 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "ReferenceGenomeWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "FileWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "referenceGenomes",
+              "name": "hostFiltering",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ReferenceGenomeConnection",
-                  "ofType": null
-                }
+                "kind": "OBJECT",
+                "name": "File",
+                "ofType": null
               }
             },
             {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ReferenceGenomeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "referenceGenomesAggregate",
+              "args": [],
+              "name": "sequenceId",
               "type": {
-                "kind": "OBJECT",
-                "name": "ReferenceGenomeAggregate",
+                "kind": "SCALAR",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -2839,74 +2584,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "SequencingReadWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "FileWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "sequencingReads",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SequencingReadConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SequencingReadWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "sequencingReadsAggregate",
+              "name": "sequence",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadAggregate",
+                "name": "File",
                 "ofType": null
               }
             },
@@ -3003,180 +2689,7 @@
             }
           ],
           "kind": "OBJECT",
-          "name": "Taxon",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "_id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "GlobalID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "name",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "TaxonWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "taxa",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "TaxonConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "TaxonWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "taxaAggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "TaxonAggregate",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [
-            {
-              "kind": "INTERFACE",
-              "name": "EntityInterface",
-              "ofType": null
-            },
-            {
-              "kind": "INTERFACE",
-              "name": "Node",
-              "ofType": null
-            }
-          ],
-          "kind": "OBJECT",
-          "name": "UpstreamDatabase",
+          "name": "HostOrganism",
           "possibleTypes": null
         },
         {
@@ -3209,7 +2722,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "TaxonEdge",
+                      "name": "SampleEdge",
                       "ofType": null
                     }
                   }
@@ -3220,7 +2733,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "TaxonConnection",
+          "name": "SampleConnection",
           "possibleTypes": null
         },
         {
@@ -3301,7 +2814,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Taxon",
+                  "name": "Sample",
                   "ofType": null
                 }
               }
@@ -3310,7 +2823,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "TaxonEdge",
+          "name": "SampleEdge",
           "possibleTypes": null
         },
         {
@@ -3355,28 +2868,10 @@
             },
             {
               "defaultValue": null,
-              "name": "wikipediaId",
+              "name": "railsSampleId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "description",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "commonName",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
+                "name": "IntComparators",
                 "ofType": null
               }
             },
@@ -3391,25 +2886,7 @@
             },
             {
               "defaultValue": null,
-              "name": "isPhage",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "BoolComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "upstreamDatabase",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UpstreamDatabaseWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "upstreamDatabaseIdentifier",
+              "name": "sampleType",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "StrComparators",
@@ -3418,28 +2895,46 @@
             },
             {
               "defaultValue": null,
-              "name": "level",
+              "name": "waterControl",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "TaxonLevelEnumComparators",
+                "name": "BoolComparators",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "consensusGenomes",
+              "name": "collectionDate",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "ConsensusGenomeWhereClause",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "referenceGenomes",
+              "name": "collectionLocation",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "ReferenceGenomeWhereClause",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "notes",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "hostOrganism",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "HostOrganismWhereClause",
                 "ofType": null
               }
             },
@@ -3454,17 +2949,17 @@
             },
             {
               "defaultValue": null,
-              "name": "samples",
+              "name": "metadatas",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "SampleWhereClause",
+                "name": "MetadatumWhereClause",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "TaxonWhereClause",
+          "name": "SampleWhereClause",
           "possibleTypes": null
         },
         {
@@ -3572,559 +3067,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "BoolComparators",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "name",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxa",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "TaxonWhereClause",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "UpstreamDatabaseWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "_eq",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_neq",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_in",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "TaxonLevel",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nin",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "TaxonLevel",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gt",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gte",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lt",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lte",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_is_null",
-              "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "TaxonLevelEnumComparators",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "level_subspecies"
-            },
-            {
-              "name": "level_species"
-            },
-            {
-              "name": "level_genus"
-            },
-            {
-              "name": "level_family"
-            },
-            {
-              "name": "level_order"
-            },
-            {
-              "name": "level_class"
-            },
-            {
-              "name": "level_phylum"
-            },
-            {
-              "name": "level_kingdom"
-            },
-            {
-              "name": "level_superkingdom"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "TaxonLevel",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxon",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "TaxonWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "sequenceRead",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "SequencingReadWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "referenceGenome",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "ReferenceGenomeWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "metrics",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "MetricConsensusGenomeWhereClause",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "ConsensusGenomeWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "sample",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "SampleWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "protocol",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "SequencingProtocolEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "technology",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "SequencingTechnologyEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "NucleicAcidEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "clearlabsExport",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "BoolComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "taxon",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "TaxonWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "primerFile",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "GenomicRangeWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "consensusGenomes",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "ConsensusGenomeWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "contigs",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "ContigWhereClause",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "SequencingReadWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "railsSampleId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "name",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "sampleType",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "waterControl",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "BoolComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionDate",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "DatetimeComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionLocation",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "description",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "hostTaxon",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "TaxonWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "sequencingReads",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "SequencingReadWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "metadatas",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "MetadatumWhereClause",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "SampleWhereClause",
           "possibleTypes": null
         },
         {
@@ -4276,6 +3218,79 @@
             },
             {
               "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "version",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "samples",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SampleWhereClause",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "HostOrganismWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "sample",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -4285,7 +3300,43 @@
             },
             {
               "defaultValue": null,
-              "name": "fieldName",
+              "name": "protocol",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SequencingProtocolEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "technology",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SequencingTechnologyEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "nucleicAcid",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "NucleicAcidEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "BoolComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "medakaModel",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "StrComparators",
@@ -4294,17 +3345,44 @@
             },
             {
               "defaultValue": null,
-              "name": "value",
+              "name": "taxon",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
+                "name": "TaxonWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "primerFile",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "GenomicRangeWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "referenceSequence",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "ReferenceGenomeWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "consensusGenomes",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "ConsensusGenomeWhereClause",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "MetadatumWhereClause",
+          "name": "SequencingReadWhereClause",
           "possibleTypes": null
         },
         {
@@ -4748,7 +3826,79 @@
             },
             {
               "defaultValue": null,
-              "name": "referenceGenome",
+              "name": "wikipediaId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "description",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "commonName",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "isPhage",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "BoolComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "upstreamDatabase",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UpstreamDatabaseWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "upstreamDatabaseIdentifier",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "level",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "TaxonLevelEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "referenceGenomes",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "ReferenceGenomeWhereClause",
@@ -4767,7 +3917,215 @@
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "GenomicRangeWhereClause",
+          "name": "TaxonWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxa",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "TaxonWhereClause",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "UpstreamDatabaseWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "TaxonLevel",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "TaxonLevel",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "TaxonLevelEnumComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "level_subspecies"
+            },
+            {
+              "name": "level_species"
+            },
+            {
+              "name": "level_genus"
+            },
+            {
+              "name": "level_family"
+            },
+            {
+              "name": "level_order"
+            },
+            {
+              "name": "level_class"
+            },
+            {
+              "name": "level_phylum"
+            },
+            {
+              "name": "level_kingdom"
+            },
+            {
+              "name": "level_superkingdom"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "TaxonLevel",
           "possibleTypes": null
         },
         {
@@ -4839,19 +4197,19 @@
             },
             {
               "defaultValue": null,
-              "name": "consensusGenomes",
+              "name": "genomicRanges",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "ConsensusGenomeWhereClause",
+                "name": "GenomicRangeWhereClause",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "genomicRanges",
+              "name": "sequencingReads",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "GenomicRangeWhereClause",
+                "name": "SequencingReadWhereClause",
                 "ofType": null
               }
             }
@@ -4903,7 +4261,71 @@
             },
             {
               "defaultValue": null,
-              "name": "sequencingRead",
+              "name": "referenceGenome",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "ReferenceGenomeWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "sequencingReads",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SequencingReadWhereClause",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "GenomicRangeWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "sequenceRead",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "SequencingReadWhereClause",
@@ -4912,17 +4334,17 @@
             },
             {
               "defaultValue": null,
-              "name": "sequence",
+              "name": "metrics",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
+                "name": "MetricConsensusGenomeWhereClause",
                 "ofType": null
               }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "ContigWhereClause",
+          "name": "ConsensusGenomeWhereClause",
           "possibleTypes": null
         },
         {
@@ -5224,6 +4646,1409 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "sample",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SampleWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "fieldName",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "value",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "MetadatumWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "aggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleAggregateFunctions",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleAggregate",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "avg",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "stddev",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "variance",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "false",
+                  "name": "distinct",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "columns",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "SampleCountColumns",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "count",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleAggregateFunctions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "railsSampleId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleNumericalColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "railsSampleId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "sampleType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionLocation",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "notes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleMinMaxColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "rails_sample_id"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "sample_type"
+            },
+            {
+              "name": "water_control"
+            },
+            {
+              "name": "collection_date"
+            },
+            {
+              "name": "collection_location"
+            },
+            {
+              "name": "notes"
+            },
+            {
+              "name": "host_organism"
+            },
+            {
+              "name": "sequencing_reads"
+            },
+            {
+              "name": "metadatas"
+            },
+            {
+              "name": "entity_id"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "producing_run_id"
+            },
+            {
+              "name": "owner_user_id"
+            },
+            {
+              "name": "collection_id"
+            },
+            {
+              "name": "created_at"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "deleted_at"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "SampleCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "pageInfo",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PageInfo",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "edges",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "SequencingReadEdge",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadConnection",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "cursor",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "node",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SequencingRead",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadEdge",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "_id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GlobalID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SampleWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sample",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Sample",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "protocol",
+              "type": {
+                "kind": "ENUM",
+                "name": "SequencingProtocol",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "r1FileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FileWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "r1File",
+              "type": {
+                "kind": "OBJECT",
+                "name": "File",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "r2FileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FileWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "r2File",
+              "type": {
+                "kind": "OBJECT",
+                "name": "File",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "technology",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "SequencingTechnology",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "nucleicAcid",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "NucleicAcid",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "medakaModel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TaxonWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "taxon",
+              "type": {
+                "kind": "OBJECT",
+                "name": "Taxon",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "GenomicRangeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "primerFile",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRange",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReferenceGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "referenceSequence",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenome",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "consensusGenomes",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ConsensusGenomeConnection",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "consensusGenomesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeAggregate",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "EntityInterface",
+              "ofType": null
+            },
+            {
+              "kind": "INTERFACE",
+              "name": "Node",
+              "ofType": null
+            }
+          ],
+          "kind": "OBJECT",
+          "name": "SequencingRead",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "_id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GlobalID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "wikipediaId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "commonName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "isPhage",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "UpstreamDatabaseWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "upstreamDatabase",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabase",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "upstreamDatabaseIdentifier",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "level",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "TaxonLevel",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReferenceGenomeWhereClause",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "referenceGenomes",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ReferenceGenomeConnection",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReferenceGenomeWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "referenceGenomesAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SequencingReadWhereClause",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequencingReads",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SequencingReadConnection",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "SequencingReadWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "sequencingReadsAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadAggregate",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "EntityInterface",
+              "ofType": null
+            },
+            {
+              "kind": "INTERFACE",
+              "name": "Node",
+              "ofType": null
+            }
+          ],
+          "kind": "OBJECT",
+          "name": "Taxon",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "_id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "GlobalID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TaxonWhereClause",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "taxa",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "TaxonConnection",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "TaxonWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "taxaAggregate",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonAggregate",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [
+            {
+              "kind": "INTERFACE",
+              "name": "EntityInterface",
+              "ofType": null
+            },
+            {
+              "kind": "INTERFACE",
+              "name": "Node",
+              "ofType": null
+            }
+          ],
+          "kind": "OBJECT",
+          "name": "UpstreamDatabase",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "pageInfo",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PageInfo",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "edges",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "TaxonEdge",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonConnection",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "cursor",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "node",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Taxon",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonEdge",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -5509,16 +6334,10 @@
               "name": "tax_superkingdom"
             },
             {
-              "name": "consensus_genomes"
-            },
-            {
               "name": "reference_genomes"
             },
             {
               "name": "sequencing_reads"
-            },
-            {
-              "name": "samples"
             },
             {
               "name": "entity_id"
@@ -5582,7 +6401,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "ConsensusGenomeEdge",
+                      "name": "ReferenceGenomeEdge",
                       "ofType": null
                     }
                   }
@@ -5593,7 +6412,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ConsensusGenomeConnection",
+          "name": "ReferenceGenomeConnection",
           "possibleTypes": null
         },
         {
@@ -5620,7 +6439,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ConsensusGenome",
+                  "name": "ReferenceGenome",
                   "ofType": null
                 }
               }
@@ -5629,7 +6448,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ConsensusGenomeEdge",
+          "name": "ReferenceGenomeEdge",
           "possibleTypes": null
         },
         {
@@ -5697,6 +6516,34 @@
               }
             },
             {
+              "args": [],
+              "name": "fileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FileWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "file",
+              "type": {
+                "kind": "OBJECT",
+                "name": "File",
+                "ofType": null
+              }
+            },
+            {
               "args": [
                 {
                   "defaultValue": "null",
@@ -5716,96 +6563,20 @@
               }
             },
             {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SequencingReadWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "sequenceRead",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SequencingRead",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ReferenceGenomeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "referenceGenome",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ReferenceGenome",
-                "ofType": null
-              }
-            },
-            {
               "args": [],
-              "name": "sequenceId",
+              "name": "accessionId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "sequence",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "MetricConsensusGenomeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "metrics",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenome",
+                "name": "String",
                 "ofType": null
               }
             },
             {
               "args": [],
-              "name": "intermediateOutputsId",
+              "name": "accessionName",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -5816,240 +6587,56 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
+                    "name": "GenomicRangeWhereClause",
                     "ofType": null
                   }
-                }
-              ],
-              "name": "intermediateOutputs",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [
-            {
-              "kind": "INTERFACE",
-              "name": "EntityInterface",
-              "ofType": null
-            },
-            {
-              "kind": "INTERFACE",
-              "name": "Node",
-              "ofType": null
-            }
-          ],
-          "kind": "OBJECT",
-          "name": "ConsensusGenome",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "_id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "GlobalID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
+                },
                 {
                   "defaultValue": "null",
-                  "name": "where",
+                  "name": "before",
                   "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "SampleWhereClause",
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
-                }
-              ],
-              "name": "sample",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Sample",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "protocol",
-              "type": {
-                "kind": "ENUM",
-                "name": "SequencingProtocol",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "r1FileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
+                },
                 {
                   "defaultValue": "null",
-                  "name": "where",
+                  "name": "after",
                   "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
-                }
-              ],
-              "name": "r1File",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "r2FileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
+                },
                 {
                   "defaultValue": "null",
-                  "name": "where",
+                  "name": "first",
                   "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
                     "ofType": null
                   }
                 }
               ],
-              "name": "r2File",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "technology",
+              "name": "genomicRanges",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "ENUM",
-                  "name": "SequencingTechnology",
+                  "kind": "OBJECT",
+                  "name": "GenomicRangeConnection",
                   "ofType": null
                 }
-              }
-            },
-            {
-              "args": [],
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "NucleicAcid",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "clearlabsExport",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "TaxonWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "taxon",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Taxon",
-                "ofType": null
               }
             },
             {
@@ -6064,10 +6651,10 @@
                   }
                 }
               ],
-              "name": "primerFile",
+              "name": "genomicRangesAggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "GenomicRange",
+                "name": "GenomicRangeAggregate",
                 "ofType": null
               }
             },
@@ -6078,7 +6665,7 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "ConsensusGenomeWhereClause",
+                    "name": "SequencingReadWhereClause",
                     "ofType": null
                   }
                 },
@@ -6119,13 +6706,13 @@
                   }
                 }
               ],
-              "name": "consensusGenomes",
+              "name": "sequencingReads",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ConsensusGenomeConnection",
+                  "name": "SequencingReadConnection",
                   "ofType": null
                 }
               }
@@ -6137,93 +6724,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "ConsensusGenomeWhereClause",
+                    "name": "SequencingReadWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "consensusGenomesAggregate",
+              "name": "sequencingReadsAggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeAggregate",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ContigWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "contigs",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ContigConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ContigWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "contigsAggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigAggregate",
+                "name": "SequencingReadAggregate",
                 "ofType": null
               }
             }
@@ -6242,7 +6751,87 @@
             }
           ],
           "kind": "OBJECT",
-          "name": "SequencingRead",
+          "name": "ReferenceGenome",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "pageInfo",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PageInfo",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "edges",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "GenomicRangeEdge",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeConnection",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "cursor",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "node",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "GenomicRange",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeEdge",
           "possibleTypes": null
         },
         {
@@ -6457,313 +7046,10 @@
           "fields": [
             {
               "args": [],
-              "name": "_id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "GlobalID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "fileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "file",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "TaxonWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "taxon",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Taxon",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "accessionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "accessionName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ConsensusGenomeWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "consensusGenomes",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ConsensusGenomeConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ConsensusGenomeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "consensusGenomesAggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ConsensusGenomeAggregate",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "GenomicRangeWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "genomicRanges",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "GenomicRangeConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "GenomicRangeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "genomicRangesAggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "GenomicRangeAggregate",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [
-            {
-              "kind": "INTERFACE",
-              "name": "EntityInterface",
-              "ofType": null
-            },
-            {
-              "kind": "INTERFACE",
-              "name": "Node",
-              "ofType": null
-            }
-          ],
-          "kind": "OBJECT",
-          "name": "ReferenceGenome",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeAggregateFunctions",
+                "name": "SequencingReadAggregateFunctions",
                 "ofType": null
               }
             }
@@ -6771,7 +7057,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ConsensusGenomeAggregate",
+          "name": "SequencingReadAggregate",
           "possibleTypes": null
         },
         {
@@ -6782,7 +7068,7 @@
               "name": "sum",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeNumericalColumns",
+                "name": "SequencingReadNumericalColumns",
                 "ofType": null
               }
             },
@@ -6791,7 +7077,7 @@
               "name": "avg",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeNumericalColumns",
+                "name": "SequencingReadNumericalColumns",
                 "ofType": null
               }
             },
@@ -6800,7 +7086,7 @@
               "name": "min",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeMinMaxColumns",
+                "name": "SequencingReadMinMaxColumns",
                 "ofType": null
               }
             },
@@ -6809,7 +7095,7 @@
               "name": "max",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeMinMaxColumns",
+                "name": "SequencingReadMinMaxColumns",
                 "ofType": null
               }
             },
@@ -6818,7 +7104,7 @@
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeNumericalColumns",
+                "name": "SequencingReadNumericalColumns",
                 "ofType": null
               }
             },
@@ -6827,7 +7113,7 @@
               "name": "variance",
               "type": {
                 "kind": "OBJECT",
-                "name": "ConsensusGenomeNumericalColumns",
+                "name": "SequencingReadNumericalColumns",
                 "ofType": null
               }
             },
@@ -6847,7 +7133,7 @@
                   "name": "columns",
                   "type": {
                     "kind": "ENUM",
-                    "name": "ConsensusGenomeCountColumns",
+                    "name": "SequencingReadCountColumns",
                     "ofType": null
                   }
                 }
@@ -6863,7 +7149,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ConsensusGenomeAggregateFunctions",
+          "name": "SequencingReadAggregateFunctions",
           "possibleTypes": null
         },
         {
@@ -6900,7 +7186,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ConsensusGenomeNumericalColumns",
+          "name": "SequencingReadNumericalColumns",
           "possibleTypes": null
         },
         {
@@ -6932,33 +7218,60 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "medakaModel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ConsensusGenomeMinMaxColumns",
+          "name": "SequencingReadMinMaxColumns",
           "possibleTypes": null
         },
         {
           "enumValues": [
             {
+              "name": "sample"
+            },
+            {
+              "name": "protocol"
+            },
+            {
+              "name": "r1_file"
+            },
+            {
+              "name": "r2_file"
+            },
+            {
+              "name": "technology"
+            },
+            {
+              "name": "nucleic_acid"
+            },
+            {
+              "name": "clearlabs_export"
+            },
+            {
+              "name": "medaka_model"
+            },
+            {
               "name": "taxon"
             },
             {
-              "name": "sequence_read"
+              "name": "primer_file"
             },
             {
-              "name": "reference_genome"
+              "name": "reference_sequence"
             },
             {
-              "name": "sequence"
-            },
-            {
-              "name": "metrics"
-            },
-            {
-              "name": "intermediate_outputs"
+              "name": "consensus_genomes"
             },
             {
               "name": "entity_id"
@@ -6989,87 +7302,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "ConsensusGenomeCountColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "pageInfo",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PageInfo",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "edges",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "GenomicRangeEdge",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "GenomicRangeConnection",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "cursor",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "node",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "GenomicRange",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "GenomicRangeEdge",
+          "name": "SequencingReadCountColumns",
           "possibleTypes": null
         },
         {
@@ -7305,90 +7538,10 @@
           "fields": [
             {
               "args": [],
-              "name": "pageInfo",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PageInfo",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "edges",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "SequencingReadEdge",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SequencingReadConnection",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "cursor",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "node",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SequencingRead",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SequencingReadEdge",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadAggregateFunctions",
+                "name": "ReferenceGenomeAggregateFunctions",
                 "ofType": null
               }
             }
@@ -7396,7 +7549,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "SequencingReadAggregate",
+          "name": "ReferenceGenomeAggregate",
           "possibleTypes": null
         },
         {
@@ -7407,7 +7560,7 @@
               "name": "sum",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadNumericalColumns",
+                "name": "ReferenceGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -7416,7 +7569,7 @@
               "name": "avg",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadNumericalColumns",
+                "name": "ReferenceGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -7425,7 +7578,7 @@
               "name": "min",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadMinMaxColumns",
+                "name": "ReferenceGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -7434,7 +7587,7 @@
               "name": "max",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadMinMaxColumns",
+                "name": "ReferenceGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -7443,7 +7596,7 @@
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadNumericalColumns",
+                "name": "ReferenceGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -7452,7 +7605,7 @@
               "name": "variance",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingReadNumericalColumns",
+                "name": "ReferenceGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -7472,7 +7625,7 @@
                   "name": "columns",
                   "type": {
                     "kind": "ENUM",
-                    "name": "SequencingReadCountColumns",
+                    "name": "ReferenceGenomeCountColumns",
                     "ofType": null
                   }
                 }
@@ -7488,7 +7641,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "SequencingReadAggregateFunctions",
+          "name": "ReferenceGenomeAggregateFunctions",
           "possibleTypes": null
         },
         {
@@ -7525,7 +7678,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "SequencingReadNumericalColumns",
+          "name": "ReferenceGenomeNumericalColumns",
           "possibleTypes": null
         },
         {
@@ -7557,48 +7710,51 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "accessionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "accessionName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "SequencingReadMinMaxColumns",
+          "name": "ReferenceGenomeMinMaxColumns",
           "possibleTypes": null
         },
         {
           "enumValues": [
             {
-              "name": "sample"
-            },
-            {
-              "name": "protocol"
-            },
-            {
-              "name": "r1_file"
-            },
-            {
-              "name": "r2_file"
-            },
-            {
-              "name": "technology"
-            },
-            {
-              "name": "nucleic_acid"
-            },
-            {
-              "name": "clearlabs_export"
+              "name": "file"
             },
             {
               "name": "taxon"
             },
             {
-              "name": "primer_file"
+              "name": "accession_id"
             },
             {
-              "name": "consensus_genomes"
+              "name": "accession_name"
             },
             {
-              "name": "contigs"
+              "name": "genomic_ranges"
+            },
+            {
+              "name": "sequencing_reads"
             },
             {
               "name": "entity_id"
@@ -7629,7 +7785,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "SequencingReadCountColumns",
+          "name": "ReferenceGenomeCountColumns",
           "possibleTypes": null
         },
         {
@@ -7662,7 +7818,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "OBJECT",
-                      "name": "ContigEdge",
+                      "name": "ConsensusGenomeEdge",
                       "ofType": null
                     }
                   }
@@ -7673,7 +7829,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ContigConnection",
+          "name": "ConsensusGenomeConnection",
           "possibleTypes": null
         },
         {
@@ -7700,7 +7856,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Contig",
+                  "name": "ConsensusGenome",
                   "ofType": null
                 }
               }
@@ -7709,7 +7865,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ContigEdge",
+          "name": "ConsensusGenomeEdge",
           "possibleTypes": null
         },
         {
@@ -7788,7 +7944,7 @@
                   }
                 }
               ],
-              "name": "sequencingRead",
+              "name": "sequenceRead",
               "type": {
                 "kind": "OBJECT",
                 "name": "SequencingRead",
@@ -7797,15 +7953,77 @@
             },
             {
               "args": [],
+              "name": "sequenceId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FileWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
               "name": "sequence",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
+                "kind": "OBJECT",
+                "name": "File",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MetricConsensusGenomeWhereClause",
+                    "ofType": null
+                  }
                 }
+              ],
+              "name": "metrics",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenome",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "intermediateOutputsId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "null",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FileWhereClause",
+                    "ofType": null
+                  }
+                }
+              ],
+              "name": "intermediateOutputs",
+              "type": {
+                "kind": "OBJECT",
+                "name": "File",
+                "ofType": null
               }
             }
           ],
@@ -7823,241 +8041,7 @@
             }
           ],
           "kind": "OBJECT",
-          "name": "Contig",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "aggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigAggregateFunctions",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ContigAggregate",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "sum",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "avg",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "stddev",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "variance",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ContigNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "false",
-                  "name": "distinct",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "columns",
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "ContigCountColumns",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "count",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ContigAggregateFunctions",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ContigNumericalColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "sequence",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ContigMinMaxColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "sequencing_read"
-            },
-            {
-              "name": "sequence"
-            },
-            {
-              "name": "entity_id"
-            },
-            {
-              "name": "id"
-            },
-            {
-              "name": "producing_run_id"
-            },
-            {
-              "name": "owner_user_id"
-            },
-            {
-              "name": "collection_id"
-            },
-            {
-              "name": "created_at"
-            },
-            {
-              "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "ContigCountColumns",
+          "name": "ConsensusGenome",
           "possibleTypes": null
         },
         {
@@ -8317,90 +8301,10 @@
           "fields": [
             {
               "args": [],
-              "name": "pageInfo",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PageInfo",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "edges",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "ReferenceGenomeEdge",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ReferenceGenomeConnection",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "cursor",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "node",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "ReferenceGenome",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "ReferenceGenomeEdge",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeAggregateFunctions",
+                "name": "ConsensusGenomeAggregateFunctions",
                 "ofType": null
               }
             }
@@ -8408,7 +8312,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ReferenceGenomeAggregate",
+          "name": "ConsensusGenomeAggregate",
           "possibleTypes": null
         },
         {
@@ -8419,7 +8323,7 @@
               "name": "sum",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeNumericalColumns",
+                "name": "ConsensusGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -8428,7 +8332,7 @@
               "name": "avg",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeNumericalColumns",
+                "name": "ConsensusGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -8437,7 +8341,7 @@
               "name": "min",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeMinMaxColumns",
+                "name": "ConsensusGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -8446,7 +8350,7 @@
               "name": "max",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeMinMaxColumns",
+                "name": "ConsensusGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -8455,7 +8359,7 @@
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeNumericalColumns",
+                "name": "ConsensusGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -8464,7 +8368,7 @@
               "name": "variance",
               "type": {
                 "kind": "OBJECT",
-                "name": "ReferenceGenomeNumericalColumns",
+                "name": "ConsensusGenomeNumericalColumns",
                 "ofType": null
               }
             },
@@ -8484,7 +8388,7 @@
                   "name": "columns",
                   "type": {
                     "kind": "ENUM",
-                    "name": "ReferenceGenomeCountColumns",
+                    "name": "ConsensusGenomeCountColumns",
                     "ofType": null
                   }
                 }
@@ -8500,7 +8404,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ReferenceGenomeAggregateFunctions",
+          "name": "ConsensusGenomeAggregateFunctions",
           "possibleTypes": null
         },
         {
@@ -8537,7 +8441,7 @@
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ReferenceGenomeNumericalColumns",
+          "name": "ConsensusGenomeNumericalColumns",
           "possibleTypes": null
         },
         {
@@ -8569,51 +8473,27 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            {
-              "args": [],
-              "name": "accessionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "accessionName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
             }
           ],
           "inputFields": null,
           "interfaces": [],
           "kind": "OBJECT",
-          "name": "ReferenceGenomeMinMaxColumns",
+          "name": "ConsensusGenomeMinMaxColumns",
           "possibleTypes": null
         },
         {
           "enumValues": [
             {
-              "name": "file"
+              "name": "sequence_read"
             },
             {
-              "name": "taxon"
+              "name": "sequence"
             },
             {
-              "name": "accession_id"
+              "name": "metrics"
             },
             {
-              "name": "accession_name"
-            },
-            {
-              "name": "consensus_genomes"
-            },
-            {
-              "name": "genomic_ranges"
+              "name": "intermediate_outputs"
             },
             {
               "name": "entity_id"
@@ -8644,399 +8524,7 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "ENUM",
-          "name": "ReferenceGenomeCountColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "pageInfo",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PageInfo",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "edges",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "SampleEdge",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SampleConnection",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "cursor",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "node",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Sample",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SampleEdge",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "aggregate",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleAggregateFunctions",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SampleAggregate",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "sum",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "avg",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "stddev",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "variance",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "false",
-                  "name": "distinct",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "columns",
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "SampleCountColumns",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "count",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SampleAggregateFunctions",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "railsSampleId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SampleNumericalColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "railsSampleId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "sampleType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionDate",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionLocation",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "SampleMinMaxColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "rails_sample_id"
-            },
-            {
-              "name": "name"
-            },
-            {
-              "name": "sample_type"
-            },
-            {
-              "name": "water_control"
-            },
-            {
-              "name": "collection_date"
-            },
-            {
-              "name": "collection_location"
-            },
-            {
-              "name": "description"
-            },
-            {
-              "name": "host_taxon"
-            },
-            {
-              "name": "sequencing_reads"
-            },
-            {
-              "name": "metadatas"
-            },
-            {
-              "name": "entity_id"
-            },
-            {
-              "name": "id"
-            },
-            {
-              "name": "producing_run_id"
-            },
-            {
-              "name": "owner_user_id"
-            },
-            {
-              "name": "collection_id"
-            },
-            {
-              "name": "created_at"
-            },
-            {
-              "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "SampleCountColumns",
+          "name": "ConsensusGenomeCountColumns",
           "possibleTypes": null
         },
         {
@@ -9490,234 +8978,6 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "MetadatumCountColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "_id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "GlobalID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "name",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "version",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "hostFilteringId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "hostFiltering",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "sequenceId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "sequence",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [
-            {
-              "kind": "INTERFACE",
-              "name": "EntityInterface",
-              "ofType": null
-            },
-            {
-              "kind": "INTERFACE",
-              "name": "Node",
-              "ofType": null
-            }
-          ],
-          "kind": "OBJECT",
-          "name": "HostOrganism",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "name",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "version",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "HostOrganismWhereClause",
           "possibleTypes": null
         },
         {
@@ -10541,6 +9801,9 @@
             },
             {
               "name": "sequence"
+            },
+            {
+              "name": "samples"
             },
             {
               "name": "entity_id"
@@ -13071,116 +12334,6 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ContigCreateInput",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "createContig",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Contig",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "ContigUpdateInput",
-                      "ofType": null
-                    }
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "name": "where",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "ContigWhereClauseMutations",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "updateContig",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "Contig",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "where",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "ContigWhereClauseMutations",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "deleteContig",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "Contig",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
                       "name": "PhylogeneticTreeCreateInput",
                       "ofType": null
                     }
@@ -13757,7 +12910,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "description",
+              "name": "notes",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -13766,7 +12919,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "hostTaxonId",
+              "name": "hostOrganismId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -13848,7 +13001,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "description",
+              "name": "notes",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -13857,7 +13010,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "hostTaxonId",
+              "name": "hostOrganismId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -13983,6 +13136,15 @@
             },
             {
               "defaultValue": "null",
+              "name": "medakaModel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "taxonId",
               "type": {
                 "kind": "SCALAR",
@@ -13993,6 +13155,15 @@
             {
               "defaultValue": "null",
               "name": "primerFileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "referenceSequenceId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -14083,6 +13254,15 @@
             },
             {
               "defaultValue": "null",
+              "name": "medakaModel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "taxonId",
               "type": {
                 "kind": "SCALAR",
@@ -14093,6 +13273,15 @@
             {
               "defaultValue": "null",
               "name": "primerFileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "referenceSequenceId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -14645,33 +13834,7 @@
             },
             {
               "defaultValue": null,
-              "name": "taxonId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "sequenceReadId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "referenceGenomeId",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -14730,25 +13893,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "taxonId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "sequenceReadId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "referenceGenomeId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -15498,107 +14643,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "UpstreamDatabaseWhereClauseMutations",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sequencingReadId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "sequence",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "ContigCreateInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sequencingReadId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sequence",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "ContigUpdateInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "ContigWhereClauseMutations",
           "possibleTypes": null
         },
         {

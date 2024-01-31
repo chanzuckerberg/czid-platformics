@@ -51,7 +51,6 @@ from api.types.upstream_database import (
     update_upstream_database,
     delete_upstream_database,
 )
-from api.types.contig import Contig, create_contig, update_contig, delete_contig
 from api.types.phylogenetic_tree import (
     PhylogeneticTree,
     create_phylogenetic_tree,
@@ -118,11 +117,6 @@ class Mutation:
     create_upstream_database: UpstreamDatabase = create_upstream_database
     update_upstream_database: Sequence[UpstreamDatabase] = update_upstream_database
     delete_upstream_database: Sequence[UpstreamDatabase] = delete_upstream_database
-
-    # Contig mutations
-    create_contig: Contig = create_contig
-    update_contig: Sequence[Contig] = update_contig
-    delete_contig: Sequence[Contig] = delete_contig
 
     # PhylogeneticTree mutations
     create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree

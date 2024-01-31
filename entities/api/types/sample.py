@@ -45,14 +45,14 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
+    from api.types.host_organism import HostOrganismWhereClause, HostOrganism
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
     from api.types.metadatum import MetadatumWhereClause, Metadatum
 
     pass
 else:
-    TaxonWhereClause = "TaxonWhereClause"
-    Taxon = "Taxon"
+    HostOrganismWhereClause = "HostOrganismWhereClause"
+    HostOrganism = "HostOrganism"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     MetadatumWhereClause = "MetadatumWhereClause"
@@ -69,15 +69,15 @@ These are batching functions for loading related objects to avoid N+1 queries.
 
 
 @strawberry.field
-async def load_taxon_rows(
+async def load_host_organism_rows(
     root: "Sample",
     info: Info,
-    where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
-) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
+    where: Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")] | None = None,
+) -> Optional[Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
-    relationship = mapper.relationships["host_taxon"]
-    return await dataloader.loader_for(relationship, where).load(root.host_taxon_id)  # type:ignore
+    relationship = mapper.relationships["host_organism"]
+    return await dataloader.loader_for(relationship, where).load(root.host_organism_id)  # type:ignore
 
 
 @relay.connection(
@@ -176,8 +176,8 @@ class SampleWhereClause(TypedDict):
     water_control: Optional[BoolComparators] | None
     collection_date: Optional[DatetimeComparators] | None
     collection_location: Optional[StrComparators] | None
-    description: Optional[StrComparators] | None
-    host_taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
+    notes: Optional[StrComparators] | None
+    host_organism: Optional[Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")]] | None
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
@@ -201,8 +201,10 @@ class Sample(EntityInterface):
     water_control: bool
     collection_date: datetime.datetime
     collection_location: str
-    description: Optional[str] = None
-    host_taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
+    notes: Optional[str] = None
+    host_organism: Optional[
+        Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]
+    ] = load_host_organism_rows  # type:ignore
     sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
@@ -259,7 +261,7 @@ class SampleMinMaxColumns:
     sample_type: Optional[str] = None
     collection_date: Optional[datetime.datetime] = None
     collection_location: Optional[str] = None
-    description: Optional[str] = None
+    notes: Optional[str] = None
 
 
 """
@@ -275,8 +277,8 @@ class SampleCountColumns(enum.Enum):
     water_control = "water_control"
     collection_date = "collection_date"
     collection_location = "collection_location"
-    description = "description"
-    host_taxon = "host_taxon"
+    notes = "notes"
+    host_organism = "host_organism"
     sequencing_reads = "sequencing_reads"
     metadatas = "metadatas"
     entity_id = "entity_id"
@@ -336,8 +338,8 @@ class SampleCreateInput:
     water_control: bool
     collection_date: datetime.datetime
     collection_location: str
-    description: Optional[str] = None
-    host_taxon_id: Optional[strawberry.ID] = None
+    notes: Optional[str] = None
+    host_organism_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
@@ -349,8 +351,8 @@ class SampleUpdateInput:
     water_control: Optional[bool] = None
     collection_date: Optional[datetime.datetime] = None
     collection_location: Optional[str] = None
-    description: Optional[str] = None
-    host_taxon_id: Optional[strawberry.ID] = None
+    notes: Optional[str] = None
+    host_organism_id: Optional[strawberry.ID] = None
 
 
 """

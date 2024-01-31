@@ -16,8 +16,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.file import File
+    from database.models.sample import Sample
 else:
     File = "File"
+    Sample = "Sample"
 
 
 class HostOrganism(Entity):
@@ -29,4 +31,7 @@ class HostOrganism(Entity):
     host_filtering: Mapped["File"] = relationship("File", foreign_keys=host_filtering_id)
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
+    samples: Mapped[list[Sample]] = relationship(
+        "Sample", back_populates="host_organism", uselist=True, foreign_keys="Sample.host_organism_id"
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

@@ -17,7 +17,6 @@ from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
-from api.types.contig import ContigAggregate, format_contig_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -27,6 +26,7 @@ from platformics.api.core.gql_to_sql import (
     aggregator_map,
     EnumComparators,
     IntComparators,
+    StrComparators,
     UUIDComparators,
     BoolComparators,
 )
@@ -48,8 +48,8 @@ if TYPE_CHECKING:
     from api.types.sample import SampleWhereClause, Sample
     from api.types.taxon import TaxonWhereClause, Taxon
     from api.types.genomic_range import GenomicRangeWhereClause, GenomicRange
+    from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
-    from api.types.contig import ContigWhereClause, Contig
 
     pass
 else:
@@ -59,10 +59,10 @@ else:
     Taxon = "Taxon"
     GenomicRangeWhereClause = "GenomicRangeWhereClause"
     GenomicRange = "GenomicRange"
+    ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
+    ReferenceGenome = "ReferenceGenome"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
-    ContigWhereClause = "ContigWhereClause"
-    Contig = "Contig"
     pass
 
 
@@ -110,6 +110,18 @@ async def load_genomic_range_rows(
     return await dataloader.loader_for(relationship, where).load(root.primer_file_id)  # type:ignore
 
 
+@strawberry.field
+async def load_reference_genome_rows(
+    root: "SequencingRead",
+    info: Info,
+    where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
+) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.SequencingRead)
+    relationship = mapper.relationships["reference_sequence"]
+    return await dataloader.loader_for(relationship, where).load(root.reference_sequence_id)  # type:ignore
+
+
 @relay.connection(
     relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
 )
@@ -139,37 +151,6 @@ async def load_consensus_genome_aggregate_rows(
     result = rows[0] if rows else None
     aggregate_output = format_consensus_genome_aggregate_output(result)
     return ConsensusGenomeAggregate(aggregate=aggregate_output)
-
-
-@relay.connection(
-    relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contig")]]  # type:ignore
-)
-async def load_contig_rows(
-    root: "SequencingRead",
-    info: Info,
-    where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")] | None = None,
-) -> Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["contigs"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_contig_aggregate_rows(
-    root: "SequencingRead",
-    info: Info,
-    where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")] | None = None,
-) -> Optional[Annotated["ContigAggregate", strawberry.lazy("api.types.contig")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["contigs"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_contig_aggregate_output(result)
-    return ContigAggregate(aggregate=aggregate_output)
 
 
 """
@@ -230,12 +211,15 @@ class SequencingReadWhereClause(TypedDict):
     technology: Optional[EnumComparators[SequencingTechnology]] | None
     nucleic_acid: Optional[EnumComparators[NucleicAcid]] | None
     clearlabs_export: Optional[BoolComparators] | None
+    medaka_model: Optional[StrComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     primer_file: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
+    reference_sequence: Optional[
+        Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
+    ] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
-    contigs: Optional[Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")]] | None
 
 
 """
@@ -258,20 +242,20 @@ class SequencingRead(EntityInterface):
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
     clearlabs_export: bool
+    medaka_model: Optional[str] = None
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     primer_file: Optional[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
     ] = load_genomic_range_rows  # type:ignore
+    reference_sequence: Optional[
+        Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
+    ] = load_reference_genome_rows  # type:ignore
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
-    contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
-    contigs_aggregate: Optional[
-        Annotated["ContigAggregate", strawberry.lazy("api.types.contig")]
-    ] = load_contig_aggregate_rows  # type:ignore
 
 
 """
@@ -310,6 +294,7 @@ class SequencingReadMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    medaka_model: Optional[str] = None
 
 
 """
@@ -326,10 +311,11 @@ class SequencingReadCountColumns(enum.Enum):
     technology = "technology"
     nucleic_acid = "nucleic_acid"
     clearlabs_export = "clearlabs_export"
+    medaka_model = "medaka_model"
     taxon = "taxon"
     primer_file = "primer_file"
+    reference_sequence = "reference_sequence"
     consensus_genomes = "consensus_genomes"
-    contigs = "contigs"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -390,8 +376,10 @@ class SequencingReadCreateInput:
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
     clearlabs_export: bool
+    medaka_model: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
+    reference_sequence_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
@@ -404,8 +392,10 @@ class SequencingReadUpdateInput:
     technology: Optional[SequencingTechnology] = None
     nucleic_acid: Optional[NucleicAcid] = None
     clearlabs_export: Optional[bool] = None
+    medaka_model: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
+    reference_sequence_id: Optional[strawberry.ID] = None
 
 
 """

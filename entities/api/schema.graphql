@@ -109,9 +109,7 @@ type ConsensusGenome implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  taxon(where: TaxonWhereClause = null): Taxon
   sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
-  referenceGenome(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
   metrics(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenome
@@ -143,9 +141,7 @@ type ConsensusGenomeConnection {
 }
 
 enum ConsensusGenomeCountColumns {
-  taxon
   sequence_read
-  reference_genome
   sequence
   metrics
   intermediate_outputs
@@ -161,9 +157,7 @@ enum ConsensusGenomeCountColumns {
 
 input ConsensusGenomeCreateInput {
   collectionId: Int!
-  taxonId: ID!
   sequenceReadId: ID!
-  referenceGenomeId: ID!
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -192,9 +186,7 @@ type ConsensusGenomeNumericalColumns {
 
 input ConsensusGenomeUpdateInput {
   collectionId: Int = null
-  taxonId: ID = null
   sequenceReadId: ID = null
-  referenceGenomeId: ID = null
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -205,107 +197,11 @@ input ConsensusGenomeWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
-  referenceGenome: ReferenceGenomeWhereClause
   metrics: MetricConsensusGenomeWhereClause
 }
 
 input ConsensusGenomeWhereClauseMutations {
-  id: UUIDComparators
-}
-
-type Contig implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  sequencingRead(where: SequencingReadWhereClause = null): SequencingRead
-  sequence: String!
-}
-
-type ContigAggregate {
-  aggregate: ContigAggregateFunctions
-}
-
-type ContigAggregateFunctions {
-  sum: ContigNumericalColumns
-  avg: ContigNumericalColumns
-  min: ContigMinMaxColumns
-  max: ContigMinMaxColumns
-  stddev: ContigNumericalColumns
-  variance: ContigNumericalColumns
-  count(distinct: Boolean = false, columns: ContigCountColumns = null): Int
-}
-
-"""A connection to a list of items."""
-type ContigConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ContigEdge!]!
-}
-
-enum ContigCountColumns {
-  sequencing_read
-  sequence
-  entity_id
-  id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
-}
-
-input ContigCreateInput {
-  collectionId: Int!
-  sequencingReadId: ID = null
-  sequence: String!
-}
-
-"""An edge in a connection."""
-type ContigEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: Contig!
-}
-
-type ContigMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-  sequence: String
-}
-
-type ContigNumericalColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-}
-
-input ContigUpdateInput {
-  collectionId: Int = null
-  sequencingReadId: ID = null
-  sequence: String = null
-}
-
-input ContigWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  sequencingRead: SequencingReadWhereClause
-  sequence: StrComparators
-}
-
-input ContigWhereClauseMutations {
   id: UUIDComparators
 }
 
@@ -552,6 +448,22 @@ type HostOrganism implements EntityInterface & Node {
   hostFiltering(where: FileWhereClause = null): File
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
+  samples(
+    where: SampleWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SampleConnection!
+  samplesAggregate(where: SampleWhereClause = null): SampleAggregate
 }
 
 type HostOrganismAggregate {
@@ -573,6 +485,7 @@ enum HostOrganismCountColumns {
   version
   host_filtering
   sequence
+  samples
   entity_id
   id
   producing_run_id
@@ -620,6 +533,7 @@ input HostOrganismWhereClause {
   collectionId: IntComparators
   name: StrComparators
   version: StrComparators
+  samples: SampleWhereClause
 }
 
 input HostOrganismWhereClauseMutations {
@@ -965,9 +879,6 @@ type Mutation {
   createUpstreamDatabase(input: UpstreamDatabaseCreateInput!): UpstreamDatabase!
   updateUpstreamDatabase(input: UpstreamDatabaseUpdateInput!, where: UpstreamDatabaseWhereClauseMutations!): [UpstreamDatabase!]!
   deleteUpstreamDatabase(where: UpstreamDatabaseWhereClauseMutations!): [UpstreamDatabase!]!
-  createContig(input: ContigCreateInput!): Contig!
-  updateContig(input: ContigUpdateInput!, where: ContigWhereClauseMutations!): [Contig!]!
-  deleteContig(where: ContigWhereClauseMutations!): [Contig!]!
   createPhylogeneticTree(input: PhylogeneticTreeCreateInput!): PhylogeneticTree!
   updatePhylogeneticTree(input: PhylogeneticTreeUpdateInput!, where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
   deletePhylogeneticTree(where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
@@ -1127,7 +1038,6 @@ type Query {
   metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
   taxa(where: TaxonWhereClause = null): [Taxon!]!
   upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
-  contigs(where: ContigWhereClause = null): [Contig!]!
   phylogeneticTrees(where: PhylogeneticTreeWhereClause = null): [PhylogeneticTree!]!
   bulkDownloads(where: BulkDownloadWhereClause = null): [BulkDownload!]!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
@@ -1140,7 +1050,6 @@ type Query {
   metricsConsensusGenomesAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate!
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate!
   upstreamDatabasesAggregate(where: UpstreamDatabaseWhereClause = null): UpstreamDatabaseAggregate!
-  contigsAggregate(where: ContigWhereClause = null): ContigAggregate!
   phylogeneticTreesAggregate(where: PhylogeneticTreeWhereClause = null): PhylogeneticTreeAggregate!
   bulkDownloadsAggregate(where: BulkDownloadWhereClause = null): BulkDownloadAggregate!
 }
@@ -1157,22 +1066,6 @@ type ReferenceGenome implements EntityInterface & Node {
   taxon(where: TaxonWhereClause = null): Taxon
   accessionId: String
   accessionName: String
-  consensusGenomes(
-    where: ConsensusGenomeWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): ConsensusGenomeConnection!
-  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   genomicRanges(
     where: GenomicRangeWhereClause = null
 
@@ -1189,6 +1082,22 @@ type ReferenceGenome implements EntityInterface & Node {
     last: Int = null
   ): GenomicRangeConnection!
   genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate
+  sequencingReads(
+    where: SequencingReadWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): SequencingReadConnection!
+  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
 }
 
 type ReferenceGenomeAggregate {
@@ -1219,8 +1128,8 @@ enum ReferenceGenomeCountColumns {
   taxon
   accession_id
   accession_name
-  consensus_genomes
   genomic_ranges
+  sequencing_reads
   entity_id
   id
   producing_run_id
@@ -1278,8 +1187,8 @@ input ReferenceGenomeWhereClause {
   taxon: TaxonWhereClause
   accessionId: StrComparators
   accessionName: StrComparators
-  consensusGenomes: ConsensusGenomeWhereClause
   genomicRanges: GenomicRangeWhereClause
+  sequencingReads: SequencingReadWhereClause
 }
 
 input ReferenceGenomeWhereClauseMutations {
@@ -1299,8 +1208,8 @@ type Sample implements EntityInterface & Node {
   waterControl: Boolean!
   collectionDate: DateTime!
   collectionLocation: String!
-  description: String
-  hostTaxon(where: TaxonWhereClause = null): Taxon
+  notes: String
+  hostOrganism(where: HostOrganismWhereClause = null): HostOrganism
   sequencingReads(
     where: SequencingReadWhereClause = null
 
@@ -1365,8 +1274,8 @@ enum SampleCountColumns {
   water_control
   collection_date
   collection_location
-  description
-  host_taxon
+  notes
+  host_organism
   sequencing_reads
   metadatas
   entity_id
@@ -1387,8 +1296,8 @@ input SampleCreateInput {
   waterControl: Boolean!
   collectionDate: DateTime!
   collectionLocation: String!
-  description: String = null
-  hostTaxonId: ID = null
+  notes: String = null
+  hostOrganismId: ID = null
 }
 
 """An edge in a connection."""
@@ -1409,7 +1318,7 @@ type SampleMinMaxColumns {
   sampleType: String
   collectionDate: DateTime
   collectionLocation: String
-  description: String
+  notes: String
 }
 
 type SampleNumericalColumns {
@@ -1427,8 +1336,8 @@ input SampleUpdateInput {
   waterControl: Boolean = null
   collectionDate: DateTime = null
   collectionLocation: String = null
-  description: String = null
-  hostTaxonId: ID = null
+  notes: String = null
+  hostOrganismId: ID = null
 }
 
 input SampleWhereClause {
@@ -1442,8 +1351,8 @@ input SampleWhereClause {
   waterControl: BoolComparators
   collectionDate: DatetimeComparators
   collectionLocation: StrComparators
-  description: StrComparators
-  hostTaxon: TaxonWhereClause
+  notes: StrComparators
+  hostOrganism: HostOrganismWhereClause
   sequencingReads: SequencingReadWhereClause
   metadatas: MetadatumWhereClause
 }
@@ -1495,8 +1404,10 @@ type SequencingRead implements EntityInterface & Node {
   technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
   clearlabsExport: Boolean!
+  medakaModel: String
   taxon(where: TaxonWhereClause = null): Taxon
   primerFile(where: GenomicRangeWhereClause = null): GenomicRange
+  referenceSequence(where: ReferenceGenomeWhereClause = null): ReferenceGenome
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
 
@@ -1513,22 +1424,6 @@ type SequencingRead implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  contigs(
-    where: ContigWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): ContigConnection!
-  contigsAggregate(where: ContigWhereClause = null): ContigAggregate
 }
 
 type SequencingReadAggregate {
@@ -1562,10 +1457,11 @@ enum SequencingReadCountColumns {
   technology
   nucleic_acid
   clearlabs_export
+  medaka_model
   taxon
   primer_file
+  reference_sequence
   consensus_genomes
-  contigs
   entity_id
   id
   producing_run_id
@@ -1585,8 +1481,10 @@ input SequencingReadCreateInput {
   technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
   clearlabsExport: Boolean!
+  medakaModel: String = null
   taxonId: ID = null
   primerFileId: ID = null
+  referenceSequenceId: ID = null
 }
 
 """An edge in a connection."""
@@ -1602,6 +1500,7 @@ type SequencingReadMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  medakaModel: String
 }
 
 type SequencingReadNumericalColumns {
@@ -1619,8 +1518,10 @@ input SequencingReadUpdateInput {
   technology: SequencingTechnology = null
   nucleicAcid: NucleicAcid = null
   clearlabsExport: Boolean = null
+  medakaModel: String = null
   taxonId: ID = null
   primerFileId: ID = null
+  referenceSequenceId: ID = null
 }
 
 input SequencingReadWhereClause {
@@ -1633,10 +1534,11 @@ input SequencingReadWhereClause {
   technology: SequencingTechnologyEnumComparators
   nucleicAcid: NucleicAcidEnumComparators
   clearlabsExport: BoolComparators
+  medakaModel: StrComparators
   taxon: TaxonWhereClause
   primerFile: GenomicRangeWhereClause
+  referenceSequence: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
-  contigs: ContigWhereClause
 }
 
 input SequencingReadWhereClauseMutations {
@@ -1703,22 +1605,6 @@ type Taxon implements EntityInterface & Node {
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
-  consensusGenomes(
-    where: ConsensusGenomeWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): ConsensusGenomeConnection!
-  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   referenceGenomes(
     where: ReferenceGenomeWhereClause = null
 
@@ -1751,22 +1637,6 @@ type Taxon implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
-  samples(
-    where: SampleWhereClause = null
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): SampleConnection!
-  samplesAggregate(where: SampleWhereClause = null): SampleAggregate
 }
 
 type TaxonAggregate {
@@ -1811,10 +1681,8 @@ enum TaxonCountColumns {
   tax_phylum
   tax_kingdom
   tax_superkingdom
-  consensus_genomes
   reference_genomes
   sequencing_reads
-  samples
   entity_id
   id
   producing_run_id
@@ -1912,10 +1780,8 @@ input TaxonWhereClause {
   upstreamDatabase: UpstreamDatabaseWhereClause
   upstreamDatabaseIdentifier: StrComparators
   level: TaxonLevelEnumComparators
-  consensusGenomes: ConsensusGenomeWhereClause
   referenceGenomes: ReferenceGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
-  samples: SampleWhereClause
 }
 
 input TaxonWhereClauseMutations {

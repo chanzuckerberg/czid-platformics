@@ -16,6 +16,7 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
+from api.types.sample import SampleAggregate, format_sample_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -32,6 +33,7 @@ from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -40,8 +42,12 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
+    from api.types.sample import SampleWhereClause, Sample
+
     pass
 else:
+    SampleWhereClause = "SampleWhereClause"
+    Sample = "Sample"
     pass
 
 
@@ -51,6 +57,39 @@ Dataloaders
 ------------------------------------------------------------------------------
 These are batching functions for loading related objects to avoid N+1 queries.
 """
+
+
+@relay.connection(
+    relay.ListConnection[Annotated["Sample", strawberry.lazy("api.types.sample")]]  # type:ignore
+)
+async def load_sample_rows(
+    root: "HostOrganism",
+    info: Info,
+    where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
+) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.HostOrganism)
+    relationship = mapper.relationships["samples"]
+    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_sample_aggregate_rows(
+    root: "HostOrganism",
+    info: Info,
+    where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
+) -> Optional[Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.HostOrganism)
+    relationship = mapper.relationships["samples"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_sample_aggregate_output(result)
+    return SampleAggregate(aggregate=aggregate_output)
+
+
 """
 ------------------------------------------------------------------------------
 Dataloader for File object
@@ -106,6 +145,7 @@ class HostOrganismWhereClause(TypedDict):
     collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
+    samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
 
 
 """
@@ -125,6 +165,10 @@ class HostOrganism(EntityInterface):
     host_filtering: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("host_filtering")  # type: ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
+    samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
+    samples_aggregate: Optional[
+        Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
+    ] = load_sample_aggregate_rows  # type:ignore
 
 
 """
@@ -178,6 +222,7 @@ class HostOrganismCountColumns(enum.Enum):
     version = "version"
     host_filtering = "host_filtering"
     sequence = "sequence"
+    samples = "samples"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"

@@ -29,7 +29,7 @@ Sample {
     boolean water_control  
     date collection_date  
     string collection_location  
-    string description  
+    string notes  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -44,6 +44,7 @@ SequencingRead {
     SequencingTechnology technology  
     NucleicAcid nucleic_acid  
     boolean clearlabs_export  
+    string medaka_model  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -162,17 +163,6 @@ UpstreamDatabase {
     date updated_at  
     date deleted_at  
 }
-Contig {
-    string sequence  
-    uuid entity_id  
-    uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
-    date created_at  
-    date updated_at  
-    date deleted_at  
-}
 PhylogeneticTree {
     PhylogeneticTreeFormat format  
     uuid entity_id  
@@ -200,7 +190,7 @@ EntityMixin {
 }
 
 File ||--|| Entity : "entity"
-Sample ||--|o Taxon : "host_taxon"
+Sample ||--|o HostOrganism : "host_organism"
 Sample ||--}o SequencingRead : "sequencing_reads"
 Sample ||--}o Metadatum : "metadatas"
 SequencingRead ||--|o Sample : "sample"
@@ -208,21 +198,20 @@ SequencingRead ||--|o File : "r1_file"
 SequencingRead ||--|o File : "r2_file"
 SequencingRead ||--|o Taxon : "taxon"
 SequencingRead ||--|o GenomicRange : "primer_file"
+SequencingRead ||--|o ReferenceGenome : "reference_sequence"
 SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
-SequencingRead ||--}o Contig : "contigs"
 GenomicRange ||--|o ReferenceGenome : "reference_genome"
 GenomicRange ||--|o File : "file"
 GenomicRange ||--}o SequencingRead : "sequencing_reads"
 ReferenceGenome ||--|o File : "file"
 ReferenceGenome ||--|| Taxon : "taxon"
-ReferenceGenome ||--}o ConsensusGenome : "consensus_genomes"
 ReferenceGenome ||--}o GenomicRange : "genomic_ranges"
+ReferenceGenome ||--}o SequencingRead : "sequencing_reads"
 HostOrganism ||--|o File : "host_filtering"
 HostOrganism ||--|o File : "sequence"
+HostOrganism ||--}o Sample : "samples"
 Metadatum ||--|| Sample : "sample"
-ConsensusGenome ||--|| Taxon : "taxon"
 ConsensusGenome ||--|| SequencingRead : "sequence_read"
-ConsensusGenome ||--|| ReferenceGenome : "reference_genome"
 ConsensusGenome ||--|o File : "sequence"
 ConsensusGenome ||--|o MetricConsensusGenome : "metrics"
 ConsensusGenome ||--|o File : "intermediate_outputs"
@@ -238,12 +227,9 @@ Taxon ||--|o Taxon : "tax_class"
 Taxon ||--|o Taxon : "tax_phylum"
 Taxon ||--|o Taxon : "tax_kingdom"
 Taxon ||--|o Taxon : "tax_superkingdom"
-Taxon ||--}o ConsensusGenome : "consensus_genomes"
 Taxon ||--}o ReferenceGenome : "reference_genomes"
 Taxon ||--}o SequencingRead : "sequencing_reads"
-Taxon ||--}o Sample : "samples"
 UpstreamDatabase ||--}o Taxon : "taxa"
-Contig ||--|o SequencingRead : "sequencing_read"
 PhylogeneticTree ||--|o File : "tree"
 BulkDownload ||--|o File : "file"
 
