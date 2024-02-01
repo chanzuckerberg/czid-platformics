@@ -290,11 +290,12 @@ static
 
 # End of https://www.toptal.com/developers/gitignore/api/flask,react,macos,node
 
-# Terraform files
-/.terraform.*/
-/.terraform.lock.hcl
-/terraform/variables.tf
-.terraform
+# Ignore Terraform state files
+**/terraform.tfstate
+**/terraform.tfstate.backup
+
+# Ignore Terraform lock files
+**/.terraform.lock.hcl
 
 # Jetbrains
 .idea
