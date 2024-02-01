@@ -11,6 +11,7 @@ import factory
 from database.models import ConsensusGenome
 from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
+from test_infra.factories.taxon import TaxonFactory
 from factory import Faker
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -31,6 +32,11 @@ class ConsensusGenomeFactory(CommonFactory):
 
     sequence_read = factory.SubFactory(
         SequencingReadFactory,
+        owner_user_id=factory.SelfAttribute("..owner_user_id"),
+        collection_id=factory.SelfAttribute("..collection_id"),
+    )
+    taxon = factory.SubFactory(
+        TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )

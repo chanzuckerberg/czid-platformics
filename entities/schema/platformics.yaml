@@ -103,6 +103,36 @@ enums:
     permissible_values:
       concatenate:
       zip:
+  HostOrganismCategory:
+    permissible_values:
+      human:
+      insect:
+      non_human_animal:
+      unknown:
+  IndexTypes:
+    permissible_values:
+      # NCBI indexes
+      nt:
+      nt_loc:
+      nt_info:
+      nr:
+      nr_loc:
+      lineage:
+      accession2taxid:
+      deuterostome:
+      taxon_blacklist:
+      minimap2_long:
+      minimap2_short:
+      diamond:
+      # HostGenome indexes
+      star:
+      bowtie2:
+      bowtie2_v2:
+      minimap2_dna:
+      minimap2_rna:
+      hisat2:
+      kallisto:
+      original_transcripts_gtf:
 
 classes:
   Entity:
@@ -238,7 +268,7 @@ classes:
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
-      # Wet lab protocol
+      # Wet lab protocol (used for SARS-CoV-2 CG where we ask the user for this in the UI)
       protocol:
         range: SequencingProtocol
       # Files containing sequencing reads (R1 and R2 refer to read pairs 1/2 in Illumina paired-end sequencing)
@@ -258,6 +288,7 @@ classes:
       clearlabs_export:
         range: boolean
         required: true
+      # Medaka is a tool for generating consensus sequences from Nanopore reads. Users choose which model to use in the UI.
       medaka_model:
         range: string
       # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline
@@ -308,10 +339,6 @@ classes:
       # FASTA reference genome
       file:
         range: File
-      taxon:
-        range: Taxon
-        required: true
-        inverse: Taxon.reference_genomes
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
@@ -340,20 +367,26 @@ classes:
       version:
         range: string
         required: true
-      # Host filtering information; output by index generation
-      host_filtering:
-        range: File
-      # Original FASTA file used in index generation; used for our record keeping
+      category:
+        range: HostOrganismCategory
+        required: true
+      # Extra info for host filtering
+      skip_deutero_filter:
+        range: boolean
+        required: true
+      # Indexes for this host for each tool we use
+      indexes:
+        range: IndexFile
+        multivalued: true
+        inverse: IndexFile.host_organism
+      # Original reference FASTA file used to generate indexes for this host; used for our record keeping
       sequence:
         range: File
-      # Samples that use this host organism
+      # Samples that obtained from this host organism
       samples:
         range: Sample
         inverse: Sample.host_organism
         multivalued: true
-      # TODO: Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
-      # background:
-      #   range: Background
     annotations:
       plural: HostOrganisms
 
@@ -386,13 +419,23 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # Which SequencingRead this ConsensusGenome was created from
       sequence_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
-      # Consensus Genome sequence
+      # Which Taxon this ConsensusGenome was created from. Could be a duplicate of SequencingRead.taxon, but needed for CG from mNGS:
+      # - CG: SequencingRead.taxon = ConsensusGenome.taxon = taxonId chosen at upload time
+      # - SARS-CoV-2 CG: SequencingRead.taxon = ConsensusGenome.taxon = sars-cov-2
+      # - CG from mNGS: SequencingRead.taxon = null BUT ConsensusGenome.taxon = taxonId chosen from UI
+      taxon:
+        range: Taxon
+        required: true
+        inverse: Taxon.consensus_genomes
+      # Consensus Genome sequence output by CG pipeline
       sequence:
         range: File
+      # Metrics output by CG pipeline
       metrics:
         range: MetricConsensusGenome
         inverse: MetricConsensusGenome.consensus_genome
@@ -400,7 +443,7 @@ classes:
         # class actually defines the relationship and this is just a virtual field. We're misusing the LinkML
         # "inlined" field property until we learn how to use LinkML better and find a better way to express this
         inlined: true
-      # Zip file containing intermediate outputs
+      # Zip file containing intermediate outputs file output by CG pipeline
       intermediate_outputs:
         range: File
     annotations:
@@ -498,9 +541,9 @@ classes:
         range: Taxon
       tax_superkingdom:
         range: Taxon
-      reference_genomes:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.taxon
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.taxon
         multivalued: true
       sequencing_reads:
         range: SequencingRead
@@ -521,8 +564,45 @@ classes:
         range: Taxon
         multivalued: true
         inverse: Taxon.upstream_database
+      # This is where NCBI indexes would live
+      indexes:
+        range: IndexFile
+        multivalued: true
+        inverse: IndexFile.upstream_database
     annotations:
       plural: UpstreamDatabases
+
+  # ----------------------------------------------------------------------------
+  # Indexes used by UpstreamDatabases and HostOrganisms
+  # ----------------------------------------------------------------------------
+  IndexFile:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      # Index type
+      name:
+        range: IndexTypes
+        required: true
+      # NCBI index: e.g. "2022-06-02"
+      # HostGenome index: e.g. 1, 2, 3, etc
+      version:
+        range: string
+        required: true
+      # S3 path to the index file
+      file:
+        range: File
+        required: true
+      # Links to either upstream database or host organism
+      upstream_database:
+        range: UpstreamDatabase
+        inverse: UpstreamDatabase.indexes
+      host_organism:
+        range: HostOrganism
+        inverse: HostOrganism.indexes
+    annotations:
+      plural: IndexFiles
+
 
   # ----------------------------------------------------------------------------
   # Phylogenetic tree

@@ -42,13 +42,10 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
 
     pass
 else:
-    TaxonWhereClause = "TaxonWhereClause"
-    Taxon = "Taxon"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     pass
@@ -60,18 +57,6 @@ Dataloaders
 ------------------------------------------------------------------------------
 These are batching functions for loading related objects to avoid N+1 queries.
 """
-
-
-@strawberry.field
-async def load_taxon_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
-) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["taxon"]
-    return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
 @relay.connection(
@@ -158,7 +143,6 @@ class ReferenceGenomeWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     accession_id: Optional[StrComparators] | None
     accession_name: Optional[StrComparators] | None
     sequencing_reads: Optional[
@@ -179,7 +163,6 @@ class ReferenceGenome(EntityInterface):
     collection_id: int
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
     sequencing_reads: Sequence[
@@ -238,7 +221,6 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class ReferenceGenomeCountColumns(enum.Enum):
     file = "file"
-    taxon = "taxon"
     accession_id = "accession_id"
     accession_name = "accession_name"
     sequencing_reads = "sequencing_reads"
@@ -296,7 +278,6 @@ Mutation types
 class ReferenceGenomeCreateInput:
     collection_id: int
     file_id: Optional[strawberry.ID] = None
-    taxon_id: strawberry.ID
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
 
@@ -305,7 +286,6 @@ class ReferenceGenomeCreateInput:
 class ReferenceGenomeUpdateInput:
     collection_id: Optional[int] = None
     file_id: Optional[strawberry.ID] = None
-    taxon_id: Optional[strawberry.ID] = None
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
 

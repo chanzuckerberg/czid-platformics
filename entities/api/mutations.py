@@ -51,6 +51,7 @@ from api.types.upstream_database import (
     update_upstream_database,
     delete_upstream_database,
 )
+from api.types.index_file import IndexFile, create_index_file, update_index_file, delete_index_file
 from api.types.phylogenetic_tree import (
     PhylogeneticTree,
     create_phylogenetic_tree,
@@ -117,6 +118,11 @@ class Mutation:
     create_upstream_database: UpstreamDatabase = create_upstream_database
     update_upstream_database: Sequence[UpstreamDatabase] = update_upstream_database
     delete_upstream_database: Sequence[UpstreamDatabase] = delete_upstream_database
+
+    # IndexFile mutations
+    create_index_file: IndexFile = create_index_file
+    update_index_file: Sequence[IndexFile] = update_index_file
+    delete_index_file: Sequence[IndexFile] = delete_index_file
 
     # PhylogeneticTree mutations
     create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree

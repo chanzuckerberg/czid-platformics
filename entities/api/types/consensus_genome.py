@@ -40,12 +40,15 @@ T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
+    from api.types.taxon import TaxonWhereClause, Taxon
     from api.types.metric_consensus_genome import MetricConsensusGenomeWhereClause, MetricConsensusGenome
 
     pass
 else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
+    TaxonWhereClause = "TaxonWhereClause"
+    Taxon = "Taxon"
     MetricConsensusGenomeWhereClause = "MetricConsensusGenomeWhereClause"
     MetricConsensusGenome = "MetricConsensusGenome"
     pass
@@ -69,6 +72,18 @@ async def load_sequencing_read_rows(
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["sequence_read"]
     return await dataloader.loader_for(relationship, where).load(root.sequence_read_id)  # type:ignore
+
+
+@strawberry.field
+async def load_taxon_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["taxon"]
+    return await dataloader.loader_for(relationship, where).load(root.taxon_id)  # type:ignore
 
 
 @strawberry.field
@@ -138,6 +153,7 @@ class ConsensusGenomeWhereClause(TypedDict):
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
     sequence_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     metrics: Optional[
         Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
@@ -157,6 +173,7 @@ class ConsensusGenome(EntityInterface):
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
+    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
     metrics: Optional[
@@ -212,6 +229,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class ConsensusGenomeCountColumns(enum.Enum):
     sequence_read = "sequence_read"
+    taxon = "taxon"
     sequence = "sequence"
     metrics = "metrics"
     intermediate_outputs = "intermediate_outputs"
@@ -269,6 +287,7 @@ Mutation types
 class ConsensusGenomeCreateInput:
     collection_id: int
     sequence_read_id: strawberry.ID
+    taxon_id: strawberry.ID
     sequence_id: Optional[strawberry.ID] = None
     metrics_id: Optional[strawberry.ID] = None
     intermediate_outputs_id: Optional[strawberry.ID] = None
@@ -278,6 +297,7 @@ class ConsensusGenomeCreateInput:
 class ConsensusGenomeUpdateInput:
     collection_id: Optional[int] = None
     sequence_read_id: Optional[strawberry.ID] = None
+    taxon_id: Optional[strawberry.ID] = None
     sequence_id: Optional[strawberry.ID] = None
     metrics_id: Optional[strawberry.ID] = None
     intermediate_outputs_id: Optional[strawberry.ID] = None

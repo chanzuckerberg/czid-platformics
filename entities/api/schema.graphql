@@ -110,6 +110,7 @@ type ConsensusGenome implements EntityInterface & Node {
   ownerUserId: Int!
   collectionId: Int!
   sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
+  taxon(where: TaxonWhereClause = null): Taxon
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
   metrics(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenome
@@ -142,6 +143,7 @@ type ConsensusGenomeConnection {
 
 enum ConsensusGenomeCountColumns {
   sequence_read
+  taxon
   sequence
   metrics
   intermediate_outputs
@@ -158,6 +160,7 @@ enum ConsensusGenomeCountColumns {
 input ConsensusGenomeCreateInput {
   collectionId: Int!
   sequenceReadId: ID!
+  taxonId: ID!
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -187,6 +190,7 @@ type ConsensusGenomeNumericalColumns {
 input ConsensusGenomeUpdateInput {
   collectionId: Int = null
   sequenceReadId: ID = null
+  taxonId: ID = null
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -198,6 +202,7 @@ input ConsensusGenomeWhereClause {
   ownerUserId: IntComparators
   collectionId: IntComparators
   sequenceRead: SequencingReadWhereClause
+  taxon: TaxonWhereClause
   metrics: MetricConsensusGenomeWhereClause
 }
 
@@ -421,8 +426,24 @@ type HostOrganism implements EntityInterface & Node {
   collectionId: Int!
   name: String!
   version: String!
-  hostFilteringId: ID
-  hostFiltering(where: FileWhereClause = null): File
+  category: HostOrganismCategory!
+  skipDeuteroFilter: Boolean!
+  indexes(
+    where: IndexFileWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): IndexFileConnection!
+  indexesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
   samples(
@@ -457,10 +478,31 @@ type HostOrganismAggregateFunctions {
   count(distinct: Boolean = false, columns: HostOrganismCountColumns = null): Int
 }
 
+enum HostOrganismCategory {
+  human
+  insect
+  non_human_animal
+  unknown
+}
+
+input HostOrganismCategoryEnumComparators {
+  _eq: HostOrganismCategory
+  _neq: HostOrganismCategory
+  _in: [HostOrganismCategory!]
+  _nin: [HostOrganismCategory!]
+  _gt: HostOrganismCategory
+  _gte: HostOrganismCategory
+  _lt: HostOrganismCategory
+  _lte: HostOrganismCategory
+  _is_null: HostOrganismCategory
+}
+
 enum HostOrganismCountColumns {
   name
   version
-  host_filtering
+  category
+  skip_deutero_filter
+  indexes
   sequence
   samples
   entity_id
@@ -477,7 +519,8 @@ input HostOrganismCreateInput {
   collectionId: Int!
   name: String!
   version: String!
-  hostFilteringId: ID = null
+  category: HostOrganismCategory!
+  skipDeuteroFilter: Boolean!
   sequenceId: ID = null
 }
 
@@ -499,7 +542,8 @@ input HostOrganismUpdateInput {
   collectionId: Int = null
   name: String = null
   version: String = null
-  hostFilteringId: ID = null
+  category: HostOrganismCategory = null
+  skipDeuteroFilter: Boolean = null
   sequenceId: ID = null
 }
 
@@ -510,11 +554,158 @@ input HostOrganismWhereClause {
   collectionId: IntComparators
   name: StrComparators
   version: StrComparators
+  category: HostOrganismCategoryEnumComparators
+  skipDeuteroFilter: BoolComparators
+  indexes: IndexFileWhereClause
   samples: SampleWhereClause
 }
 
 input HostOrganismWhereClauseMutations {
   id: UUIDComparators
+}
+
+type IndexFile implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  name: IndexTypes!
+  version: String!
+  fileId: ID
+  file(where: FileWhereClause = null): File
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
+  hostOrganism(where: HostOrganismWhereClause = null): HostOrganism
+}
+
+type IndexFileAggregate {
+  aggregate: IndexFileAggregateFunctions
+}
+
+type IndexFileAggregateFunctions {
+  sum: IndexFileNumericalColumns
+  avg: IndexFileNumericalColumns
+  min: IndexFileMinMaxColumns
+  max: IndexFileMinMaxColumns
+  stddev: IndexFileNumericalColumns
+  variance: IndexFileNumericalColumns
+  count(distinct: Boolean = false, columns: IndexFileCountColumns = null): Int
+}
+
+"""A connection to a list of items."""
+type IndexFileConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [IndexFileEdge!]!
+}
+
+enum IndexFileCountColumns {
+  name
+  version
+  file
+  upstream_database
+  host_organism
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
+  created_at
+  updated_at
+  deleted_at
+}
+
+input IndexFileCreateInput {
+  collectionId: Int!
+  name: IndexTypes!
+  version: String!
+  fileId: ID!
+  upstreamDatabaseId: ID = null
+  hostOrganismId: ID = null
+}
+
+"""An edge in a connection."""
+type IndexFileEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: IndexFile!
+}
+
+type IndexFileMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  version: String
+}
+
+type IndexFileNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+input IndexFileUpdateInput {
+  collectionId: Int = null
+  name: IndexTypes = null
+  version: String = null
+  fileId: ID = null
+  upstreamDatabaseId: ID = null
+  hostOrganismId: ID = null
+}
+
+input IndexFileWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  name: IndexTypesEnumComparators
+  version: StrComparators
+  upstreamDatabase: UpstreamDatabaseWhereClause
+  hostOrganism: HostOrganismWhereClause
+}
+
+input IndexFileWhereClauseMutations {
+  id: UUIDComparators
+}
+
+enum IndexTypes {
+  nt
+  nt_loc
+  nt_info
+  nr
+  nr_loc
+  lineage
+  accession2taxid
+  deuterostome
+  taxon_blacklist
+  minimap2_long
+  minimap2_short
+  diamond
+  star
+  bowtie2
+  bowtie2_v2
+  minimap2_dna
+  minimap2_rna
+  hisat2
+  kallisto
+  original_transcripts_gtf
+}
+
+input IndexTypesEnumComparators {
+  _eq: IndexTypes
+  _neq: IndexTypes
+  _in: [IndexTypes!]
+  _nin: [IndexTypes!]
+  _gt: IndexTypes
+  _gte: IndexTypes
+  _lt: IndexTypes
+  _lte: IndexTypes
+  _is_null: IndexTypes
 }
 
 input IntComparators {
@@ -856,6 +1047,9 @@ type Mutation {
   createUpstreamDatabase(input: UpstreamDatabaseCreateInput!): UpstreamDatabase!
   updateUpstreamDatabase(input: UpstreamDatabaseUpdateInput!, where: UpstreamDatabaseWhereClauseMutations!): [UpstreamDatabase!]!
   deleteUpstreamDatabase(where: UpstreamDatabaseWhereClauseMutations!): [UpstreamDatabase!]!
+  createIndexFile(input: IndexFileCreateInput!): IndexFile!
+  updateIndexFile(input: IndexFileUpdateInput!, where: IndexFileWhereClauseMutations!): [IndexFile!]!
+  deleteIndexFile(where: IndexFileWhereClauseMutations!): [IndexFile!]!
   createPhylogeneticTree(input: PhylogeneticTreeCreateInput!): PhylogeneticTree!
   updatePhylogeneticTree(input: PhylogeneticTreeUpdateInput!, where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
   deletePhylogeneticTree(where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
@@ -1015,6 +1209,7 @@ type Query {
   metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
   taxa(where: TaxonWhereClause = null): [Taxon!]!
   upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
+  indexFiles(where: IndexFileWhereClause = null): [IndexFile!]!
   phylogeneticTrees(where: PhylogeneticTreeWhereClause = null): [PhylogeneticTree!]!
   bulkDownloads(where: BulkDownloadWhereClause = null): [BulkDownload!]!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
@@ -1027,6 +1222,7 @@ type Query {
   metricsConsensusGenomesAggregate(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenomeAggregate!
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate!
   upstreamDatabasesAggregate(where: UpstreamDatabaseWhereClause = null): UpstreamDatabaseAggregate!
+  indexFilesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate!
   phylogeneticTreesAggregate(where: PhylogeneticTreeWhereClause = null): PhylogeneticTreeAggregate!
   bulkDownloadsAggregate(where: BulkDownloadWhereClause = null): BulkDownloadAggregate!
 }
@@ -1040,7 +1236,6 @@ type ReferenceGenome implements EntityInterface & Node {
   collectionId: Int!
   fileId: ID
   file(where: FileWhereClause = null): File
-  taxon(where: TaxonWhereClause = null): Taxon
   accessionId: String
   accessionName: String
   sequencingReads(
@@ -1075,18 +1270,8 @@ type ReferenceGenomeAggregateFunctions {
   count(distinct: Boolean = false, columns: ReferenceGenomeCountColumns = null): Int
 }
 
-"""A connection to a list of items."""
-type ReferenceGenomeConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ReferenceGenomeEdge!]!
-}
-
 enum ReferenceGenomeCountColumns {
   file
-  taxon
   accession_id
   accession_name
   sequencing_reads
@@ -1103,18 +1288,8 @@ enum ReferenceGenomeCountColumns {
 input ReferenceGenomeCreateInput {
   collectionId: Int!
   fileId: ID = null
-  taxonId: ID!
   accessionId: String = null
   accessionName: String = null
-}
-
-"""An edge in a connection."""
-type ReferenceGenomeEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: ReferenceGenome!
 }
 
 type ReferenceGenomeMinMaxColumns {
@@ -1134,7 +1309,6 @@ type ReferenceGenomeNumericalColumns {
 input ReferenceGenomeUpdateInput {
   collectionId: Int = null
   fileId: ID = null
-  taxonId: ID = null
   accessionId: String = null
   accessionName: String = null
 }
@@ -1144,7 +1318,6 @@ input ReferenceGenomeWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  taxon: TaxonWhereClause
   accessionId: StrComparators
   accessionName: StrComparators
   sequencingReads: SequencingReadWhereClause
@@ -1564,8 +1737,8 @@ type Taxon implements EntityInterface & Node {
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
-  referenceGenomes(
-    where: ReferenceGenomeWhereClause = null
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1578,8 +1751,8 @@ type Taxon implements EntityInterface & Node {
 
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
-  ): ReferenceGenomeConnection!
-  referenceGenomesAggregate(where: ReferenceGenomeWhereClause = null): ReferenceGenomeAggregate
+  ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   sequencingReads(
     where: SequencingReadWhereClause = null
 
@@ -1640,7 +1813,7 @@ enum TaxonCountColumns {
   tax_phylum
   tax_kingdom
   tax_superkingdom
-  reference_genomes
+  consensus_genomes
   sequencing_reads
   entity_id
   id
@@ -1739,7 +1912,7 @@ input TaxonWhereClause {
   upstreamDatabase: UpstreamDatabaseWhereClause
   upstreamDatabaseIdentifier: StrComparators
   level: TaxonLevelEnumComparators
-  referenceGenomes: ReferenceGenomeWhereClause
+  consensusGenomes: ConsensusGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
 }
 
@@ -1784,6 +1957,22 @@ type UpstreamDatabase implements EntityInterface & Node {
     last: Int = null
   ): TaxonConnection!
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate
+  indexes(
+    where: IndexFileWhereClause = null
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): IndexFileConnection!
+  indexesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate
 }
 
 type UpstreamDatabaseAggregate {
@@ -1803,6 +1992,7 @@ type UpstreamDatabaseAggregateFunctions {
 enum UpstreamDatabaseCountColumns {
   name
   taxa
+  indexes
   entity_id
   id
   producing_run_id
@@ -1843,6 +2033,7 @@ input UpstreamDatabaseWhereClause {
   collectionId: IntComparators
   name: StrComparators
   taxa: TaxonWhereClause
+  indexes: IndexFileWhereClause
 }
 
 input UpstreamDatabaseWhereClauseMutations {

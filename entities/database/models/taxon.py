@@ -18,12 +18,12 @@ from support.enums import TaxonLevel
 if TYPE_CHECKING:
     from database.models.file import File
     from database.models.upstream_database import UpstreamDatabase
-    from database.models.reference_genome import ReferenceGenome
+    from database.models.consensus_genome import ConsensusGenome
     from database.models.sequencing_read import SequencingRead
 else:
     File = "File"
     UpstreamDatabase = "UpstreamDatabase"
-    ReferenceGenome = "ReferenceGenome"
+    ConsensusGenome = "ConsensusGenome"
     SequencingRead = "SequencingRead"
 
 
@@ -63,8 +63,8 @@ class Taxon(Entity):
     tax_kingdom: Mapped["Taxon"] = relationship("Taxon", foreign_keys=tax_kingdom_id)
     tax_superkingdom_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     tax_superkingdom: Mapped["Taxon"] = relationship("Taxon", foreign_keys=tax_superkingdom_id)
-    reference_genomes: Mapped[list[ReferenceGenome]] = relationship(
-        "ReferenceGenome", back_populates="taxon", uselist=True, foreign_keys="ReferenceGenome.taxon_id"
+    consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
+        "ConsensusGenome", back_populates="taxon", uselist=True, foreign_keys="ConsensusGenome.taxon_id"
     )
     sequencing_reads: Mapped[list[SequencingRead]] = relationship(
         "SequencingRead", back_populates="taxon", uselist=True, foreign_keys="SequencingRead.taxon_id"

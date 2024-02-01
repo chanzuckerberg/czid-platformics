@@ -79,6 +79,8 @@ ReferenceGenome {
 HostOrganism {
     string name  
     string version  
+    HostOrganismCategory category  
+    boolean skip_deutero_filter  
     uuid entity_id  
     uuid id  
     int producing_run_id  
@@ -163,6 +165,18 @@ UpstreamDatabase {
     date updated_at  
     date deleted_at  
 }
+IndexFile {
+    IndexTypes name  
+    string version  
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
+}
 PhylogeneticTree {
     PhylogeneticTreeFormat format  
     uuid entity_id  
@@ -203,13 +217,13 @@ SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
 GenomicRange ||--|o File : "file"
 GenomicRange ||--}o SequencingRead : "sequencing_reads"
 ReferenceGenome ||--|o File : "file"
-ReferenceGenome ||--|| Taxon : "taxon"
 ReferenceGenome ||--}o SequencingRead : "sequencing_reads"
-HostOrganism ||--|o File : "host_filtering"
+HostOrganism ||--}o IndexFile : "indexes"
 HostOrganism ||--|o File : "sequence"
 HostOrganism ||--}o Sample : "samples"
 Metadatum ||--|| Sample : "sample"
 ConsensusGenome ||--|| SequencingRead : "sequence_read"
+ConsensusGenome ||--|| Taxon : "taxon"
 ConsensusGenome ||--|o File : "sequence"
 ConsensusGenome ||--|o MetricConsensusGenome : "metrics"
 ConsensusGenome ||--|o File : "intermediate_outputs"
@@ -225,9 +239,13 @@ Taxon ||--|o Taxon : "tax_class"
 Taxon ||--|o Taxon : "tax_phylum"
 Taxon ||--|o Taxon : "tax_kingdom"
 Taxon ||--|o Taxon : "tax_superkingdom"
-Taxon ||--}o ReferenceGenome : "reference_genomes"
+Taxon ||--}o ConsensusGenome : "consensus_genomes"
 Taxon ||--}o SequencingRead : "sequencing_reads"
 UpstreamDatabase ||--}o Taxon : "taxa"
+UpstreamDatabase ||--}o IndexFile : "indexes"
+IndexFile ||--|| File : "file"
+IndexFile ||--|o UpstreamDatabase : "upstream_database"
+IndexFile ||--|o HostOrganism : "host_organism"
 PhylogeneticTree ||--|o File : "tree"
 BulkDownload ||--|o File : "file"
 

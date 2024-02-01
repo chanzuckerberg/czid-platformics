@@ -10,15 +10,18 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from support.enums import HostOrganismCategory
 
 if TYPE_CHECKING:
     from database.models.file import File
+    from database.models.index_file import IndexFile
     from database.models.sample import Sample
 else:
     File = "File"
+    IndexFile = "IndexFile"
     Sample = "Sample"
 
 
@@ -27,8 +30,13 @@ class HostOrganism(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     name: Mapped[str] = mapped_column(String, nullable=False)
     version: Mapped[str] = mapped_column(String, nullable=False)
-    host_filtering_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    host_filtering: Mapped["File"] = relationship("File", foreign_keys=host_filtering_id)
+    category: Mapped[HostOrganismCategory] = mapped_column(
+        Enum(HostOrganismCategory, native_enum=False), nullable=False
+    )
+    skip_deutero_filter: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    indexes: Mapped[list[IndexFile]] = relationship(
+        "IndexFile", back_populates="host_organism", uselist=True, foreign_keys="IndexFile.host_organism_id"
+    )
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
     samples: Mapped[list[Sample]] = relationship(

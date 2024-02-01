@@ -30,12 +30,8 @@ class HostOrganismFactory(CommonFactory):
 
     name = fuzzy.FuzzyText()
     version = fuzzy.FuzzyText()
-    host_filtering = factory.RelatedFactory(
-        FileFactory,
-        factory_related_name="entity",
-        entity_field_name="host_filtering",
-        file_format="fastq",
-    )
+    category = fuzzy.FuzzyChoice(["human", "insect", "non_human_animal", "unknown"])
+    skip_deutero_filter = factory.Faker("boolean")
     sequence = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",

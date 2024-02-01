@@ -16,11 +16,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.file import File
-    from database.models.taxon import Taxon
     from database.models.sequencing_read import SequencingRead
 else:
     File = "File"
-    Taxon = "Taxon"
     SequencingRead = "SequencingRead"
 
 
@@ -29,8 +27,6 @@ class ReferenceGenome(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file: Mapped["File"] = relationship("File", foreign_keys=file_id)
-    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
-    taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="reference_genomes", foreign_keys=taxon_id)
     accession_id: Mapped[str] = mapped_column(String, nullable=True)
     accession_name: Mapped[str] = mapped_column(String, nullable=True)
     sequencing_reads: Mapped[list[SequencingRead]] = relationship(
