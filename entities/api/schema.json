@@ -4401,19 +4401,19 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceRead",
+              "name": "taxon",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "SequencingReadWhereClause",
+                "name": "TaxonWhereClause",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "taxon",
+              "name": "sequenceRead",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "TaxonWhereClause",
+                "name": "SequencingReadWhereClause",
                 "ofType": null
               }
             },
@@ -6255,15 +6255,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "SequencingReadWhereClause",
+                    "name": "TaxonWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "sequenceRead",
+              "name": "taxon",
               "type": {
                 "kind": "OBJECT",
-                "name": "SequencingRead",
+                "name": "Taxon",
                 "ofType": null
               }
             },
@@ -6274,15 +6274,15 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "TaxonWhereClause",
+                    "name": "SequencingReadWhereClause",
                     "ofType": null
                   }
                 }
               ],
-              "name": "taxon",
+              "name": "sequenceRead",
               "type": {
                 "kind": "OBJECT",
-                "name": "Taxon",
+                "name": "SequencingRead",
                 "ofType": null
               }
             },
@@ -7654,10 +7654,10 @@
         {
           "enumValues": [
             {
-              "name": "sequence_read"
+              "name": "taxon"
             },
             {
-              "name": "taxon"
+              "name": "sequence_read"
             },
             {
               "name": "sequence"
@@ -14797,7 +14797,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceReadId",
+              "name": "taxonId",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -14810,7 +14810,7 @@
             },
             {
               "defaultValue": null,
-              "name": "taxonId",
+              "name": "sequenceReadId",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -14869,7 +14869,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "sequenceReadId",
+              "name": "taxonId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -14878,7 +14878,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "taxonId",
+              "name": "sequenceReadId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",

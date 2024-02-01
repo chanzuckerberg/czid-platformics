@@ -16,25 +16,25 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.file import File
-    from database.models.sequencing_read import SequencingRead
     from database.models.taxon import Taxon
+    from database.models.sequencing_read import SequencingRead
     from database.models.metric_consensus_genome import MetricConsensusGenome
 else:
     File = "File"
-    SequencingRead = "SequencingRead"
     Taxon = "Taxon"
+    SequencingRead = "SequencingRead"
     MetricConsensusGenome = "MetricConsensusGenome"
 
 
 class ConsensusGenome(Entity):
     __tablename__ = "consensus_genome"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
+    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
+    taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="consensus_genomes", foreign_keys=taxon_id)
     sequence_read_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sequencing_read.entity_id"), nullable=False)
     sequence_read: Mapped["SequencingRead"] = relationship(
         "SequencingRead", back_populates="consensus_genomes", foreign_keys=sequence_read_id
     )
-    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
-    taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="consensus_genomes", foreign_keys=taxon_id)
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
     metrics: Mapped[MetricConsensusGenome] = relationship(

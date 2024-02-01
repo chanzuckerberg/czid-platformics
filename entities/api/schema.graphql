@@ -109,8 +109,8 @@ type ConsensusGenome implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
   taxon(where: TaxonWhereClause = null): Taxon
+  sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
   metrics(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenome
@@ -142,8 +142,8 @@ type ConsensusGenomeConnection {
 }
 
 enum ConsensusGenomeCountColumns {
-  sequence_read
   taxon
+  sequence_read
   sequence
   metrics
   intermediate_outputs
@@ -159,8 +159,8 @@ enum ConsensusGenomeCountColumns {
 
 input ConsensusGenomeCreateInput {
   collectionId: Int!
-  sequenceReadId: ID!
   taxonId: ID!
+  sequenceReadId: ID!
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -189,8 +189,8 @@ type ConsensusGenomeNumericalColumns {
 
 input ConsensusGenomeUpdateInput {
   collectionId: Int = null
-  sequenceReadId: ID = null
   taxonId: ID = null
+  sequenceReadId: ID = null
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -201,8 +201,8 @@ input ConsensusGenomeWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  sequenceRead: SequencingReadWhereClause
   taxon: TaxonWhereClause
+  sequenceRead: SequencingReadWhereClause
   metrics: MetricConsensusGenomeWhereClause
 }
 

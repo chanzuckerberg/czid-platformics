@@ -419,11 +419,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      # Which SequencingRead this ConsensusGenome was created from
-      sequence_read:
-        range: SequencingRead
-        required: true
-        inverse: SequencingRead.consensus_genomes
       # Which Taxon this ConsensusGenome was created from. Could be a duplicate of SequencingRead.taxon, but needed for CG from mNGS:
       # - CG: SequencingRead.taxon = ConsensusGenome.taxon = taxonId chosen at upload time
       # - SARS-CoV-2 CG: SequencingRead.taxon = ConsensusGenome.taxon = sars-cov-2
@@ -432,6 +427,11 @@ classes:
         range: Taxon
         required: true
         inverse: Taxon.consensus_genomes
+      # Which SequencingRead this ConsensusGenome was created from
+      sequence_read:
+        range: SequencingRead
+        required: true
+        inverse: SequencingRead.consensus_genomes
       # Consensus Genome sequence output by CG pipeline
       sequence:
         range: File

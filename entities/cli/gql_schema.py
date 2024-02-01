@@ -478,15 +478,15 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "collection_id",
-        "sequence_read_id",
         "taxon_id",
+        "sequence_read_id",
         "sequence_id",
         "metrics_id",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
     taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="taxonId")
+    sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     metrics_id = sgqlc.types.Field(ID, graphql_name="metricsId")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
@@ -496,15 +496,15 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "collection_id",
-        "sequence_read_id",
         "taxon_id",
+        "sequence_read_id",
         "sequence_id",
         "metrics_id",
         "intermediate_outputs_id",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
+    sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     metrics_id = sgqlc.types.Field(ID, graphql_name="metricsId")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
@@ -512,13 +512,13 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
 
 class ConsensusGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequence_read", "taxon", "metrics")
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "taxon", "sequence_read", "metrics")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
-    sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
+    sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
 
 
@@ -3299,8 +3299,8 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "sequence_read",
         "taxon",
+        "sequence_read",
         "sequence_id",
         "sequence",
         "metrics",
@@ -3311,17 +3311,17 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    taxon = sgqlc.types.Field(
+        "Taxon",
+        graphql_name="taxon",
+        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),)),
+    )
     sequence_read = sgqlc.types.Field(
         "SequencingRead",
         graphql_name="sequenceRead",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
         ),
-    )
-    taxon = sgqlc.types.Field(
-        "Taxon",
-        graphql_name="taxon",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(TaxonWhereClause, graphql_name="where", default=None)),)),
     )
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     sequence = sgqlc.types.Field(
