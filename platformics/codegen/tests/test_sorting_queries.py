@@ -116,6 +116,7 @@ async def test_sort_nested_objects_query(
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_2, nucleic_acid="DNA")
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_2, nucleic_acid="RNA")
 
+    # Fetch all samples, in descending order of collection location, and then in ascending order of the related sequencing read's nucleic acid
     query = """
         query MyQuery {
             samples(orderBy: {collectionLocation: desc}) {
@@ -160,7 +161,7 @@ async def test_order_by_related_field_query(
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_2, nucleic_acid="DNA")
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_2, nucleic_acid="RNA")
 
-    # Fetch all samples, in descending order of collection id and then ascending order of collection location
+    # Fetch all sequencing reads, in descending order of the related sample's collection location
     query = """
         query MyQuery {
             sequencingReads(orderBy: {sample: {collectionLocation: desc}}) {
