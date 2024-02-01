@@ -53,6 +53,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
+exclude = "terraform_test/.terraform/*"
 line-length = 120
 
 [tool.mypy]
@@ -60,12 +61,22 @@ explicit_package_bases = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
 implicit_reexport = true
-exclude = ['gql_schema\.py$', '^platformics/thirdparty', '^platformics/codegen', '^platformics/api/core/helpers.py'] # TODO: fix helper types and remove
+exclude = [
+    'gql_schema\.py$',
+    '^platformics/thirdparty',
+    '^platformics/codegen',
+    '^platformics/api/core/helpers.py',
+    "terraform_test/.terraform/",
+] # TODO: fix helper types and remove
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["E", "F"]
 ignore = []
+
+[tool.ariadne-codegen]
+schema_path = "../entities/api/schema.graphql"
+queries_path = "../entities/api/queries.graphql"
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [

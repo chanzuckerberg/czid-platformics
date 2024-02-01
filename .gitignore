@@ -297,6 +297,9 @@ static
 # Ignore Terraform lock files
 **/.terraform.lock.hcl
 
+# Ignore .terraform directory
+**/.terraform/
+
 # Jetbrains
 .idea
 
