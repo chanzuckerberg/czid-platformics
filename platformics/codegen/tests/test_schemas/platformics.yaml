@@ -198,6 +198,40 @@ classes:
     annotations:
       plural: Contigs
 
+  Taxon:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      upstream_database:
+        range: UpstreamDatabase
+        required: true
+        inverse: UpstreamDatabase.taxa
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.taxon
+        multivalued: true
+    annotations:
+      plural: Taxa
+
+  UpstreamDatabase:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.upstream_database
+    annotations:
+      plural: UpstreamDatabases
+
   EntityMixin:
     mixin: true
     attributes:
