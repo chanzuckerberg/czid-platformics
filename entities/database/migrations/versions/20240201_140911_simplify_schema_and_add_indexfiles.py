@@ -86,7 +86,7 @@ def upgrade() -> None:
             nullable=False,
         ),
     )
-    op.add_column("host_organism", sa.Column("skip_deutero_filter", sa.Boolean(), nullable=False))
+    op.add_column("host_organism", sa.Column("is_deuterostome", sa.Boolean(), nullable=False))
     op.drop_constraint("fk_host_organism_host_filtering_id_file", "host_organism", type_="foreignkey")
     op.drop_column("host_organism", "host_filtering_id")
     op.drop_index("metadatum_search", table_name="metadatum")
@@ -186,7 +186,7 @@ def downgrade() -> None:
     op.create_foreign_key(
         "fk_host_organism_host_filtering_id_file", "host_organism", "file", ["host_filtering_id"], ["id"]
     )
-    op.drop_column("host_organism", "skip_deutero_filter")
+    op.drop_column("host_organism", "is_deuterostome")
     op.drop_column("host_organism", "category")
     op.add_column("genomic_range", sa.Column("reference_genome_id", sa.UUID(), autoincrement=False, nullable=True))
     op.create_foreign_key(
