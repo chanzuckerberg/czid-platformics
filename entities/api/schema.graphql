@@ -234,112 +234,6 @@ input ConsensusGenomeWhereClauseMutations {
   id: UUIDComparators
 }
 
-type Contig implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
-  sequencingRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
-  sequence: String!
-}
-
-type ContigAggregate {
-  aggregate: ContigAggregateFunctions
-}
-
-type ContigAggregateFunctions {
-  sum: ContigNumericalColumns
-  avg: ContigNumericalColumns
-  min: ContigMinMaxColumns
-  max: ContigMinMaxColumns
-  stddev: ContigNumericalColumns
-  variance: ContigNumericalColumns
-  count(distinct: Boolean = false, columns: ContigCountColumns = null): Int
-}
-
-"""A connection to a list of items."""
-type ContigConnection {
-  """Pagination data for this connection"""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection"""
-  edges: [ContigEdge!]!
-}
-
-enum ContigCountColumns {
-  sequencing_read
-  sequence
-  entity_id
-  id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
-}
-
-input ContigCreateInput {
-  collectionId: Int!
-  sequencingReadId: ID = null
-  sequence: String!
-}
-
-"""An edge in a connection."""
-type ContigEdge {
-  """A cursor for use in pagination"""
-  cursor: String!
-
-  """The item at the end of the edge"""
-  node: Contig!
-}
-
-type ContigMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-  sequence: String
-}
-
-type ContigNumericalColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
-}
-
-input ContigOrderByClause {
-  sequencingRead: SequencingReadOrderByClause
-  sequence: orderBy
-  id: orderBy
-  producingRunId: orderBy
-  ownerUserId: orderBy
-  collectionId: orderBy
-  createdAt: orderBy
-  updatedAt: orderBy
-  deletedAt: orderBy
-}
-
-input ContigUpdateInput {
-  collectionId: Int = null
-  sequencingReadId: ID = null
-  sequence: String = null
-}
-
-input ContigWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  sequencingRead: SequencingReadWhereClause
-  sequence: StrComparators
-}
-
-input ContigWhereClauseMutations {
-  id: UUIDComparators
-}
-
 """Date with time (isoformat)"""
 scalar DateTime
 
@@ -568,7 +462,7 @@ type HostOrganism implements EntityInterface & Node {
   name: String!
   version: String!
   category: HostOrganismCategory!
-  skipDeuteroFilter: Boolean!
+  isDeuterostome: Boolean!
   indexes(
     where: IndexFileWhereClause = null
     orderBy: [IndexFileOrderByClause!] = []
@@ -644,7 +538,7 @@ enum HostOrganismCountColumns {
   name
   version
   category
-  skip_deutero_filter
+  is_deuterostome
   indexes
   sequence
   samples
@@ -663,7 +557,7 @@ input HostOrganismCreateInput {
   name: String!
   version: String!
   category: HostOrganismCategory!
-  skipDeuteroFilter: Boolean!
+  isDeuterostome: Boolean!
   sequenceId: ID = null
 }
 
@@ -685,7 +579,7 @@ input HostOrganismOrderByClause {
   name: orderBy
   version: orderBy
   category: orderBy
-  skipDeuteroFilter: orderBy
+  isDeuterostome: orderBy
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -700,7 +594,7 @@ input HostOrganismUpdateInput {
   name: String = null
   version: String = null
   category: HostOrganismCategory = null
-  skipDeuteroFilter: Boolean = null
+  isDeuterostome: Boolean = null
   sequenceId: ID = null
 }
 
@@ -712,7 +606,7 @@ input HostOrganismWhereClause {
   name: StrComparators
   version: StrComparators
   category: HostOrganismCategoryEnumComparators
-  skipDeuteroFilter: BoolComparators
+  isDeuterostome: BoolComparators
   indexes: IndexFileWhereClause
   samples: SampleWhereClause
 }
@@ -1266,9 +1160,6 @@ type Mutation {
   createBulkDownload(input: BulkDownloadCreateInput!): BulkDownload!
   updateBulkDownload(input: BulkDownloadUpdateInput!, where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
   deleteBulkDownload(where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
-  createContig(input: ContigCreateInput!): Contig!
-  updateContig(input: ContigUpdateInput!, where: ContigWhereClauseMutations!): [Contig!]!
-  deleteContig(where: ContigWhereClauseMutations!): [Contig!]!
 }
 
 """An object with a Globally Unique ID"""
@@ -1436,7 +1327,6 @@ type Query {
   indexFiles(where: IndexFileWhereClause = null, orderBy: [IndexFileOrderByClause!] = []): [IndexFile!]!
   phylogeneticTrees(where: PhylogeneticTreeWhereClause = null, orderBy: [PhylogeneticTreeOrderByClause!] = []): [PhylogeneticTree!]!
   bulkDownloads(where: BulkDownloadWhereClause = null, orderBy: [BulkDownloadOrderByClause!] = []): [BulkDownload!]!
-  contigs(where: ContigWhereClause = null, orderBy: [ContigOrderByClause!] = []): [Contig!]!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
   genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate!
@@ -1450,7 +1340,6 @@ type Query {
   indexFilesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate!
   phylogeneticTreesAggregate(where: PhylogeneticTreeWhereClause = null): PhylogeneticTreeAggregate!
   bulkDownloadsAggregate(where: BulkDownloadWhereClause = null): BulkDownloadAggregate!
-  contigsAggregate(where: ContigWhereClause = null): ContigAggregate!
 }
 
 type ReferenceGenome implements EntityInterface & Node {
@@ -1816,23 +1705,6 @@ type SequencingRead implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  contigs(
-    where: ContigWhereClause = null
-    orderBy: [ContigOrderByClause!] = []
-
-    """Returns the items in the list that come before the specified cursor."""
-    before: String = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    after: String = null
-
-    """Returns the first n items from the list."""
-    first: Int = null
-
-    """Returns the items in the list that come after the specified cursor."""
-    last: Int = null
-  ): ContigConnection!
-  contigsAggregate(where: ContigWhereClause = null): ContigAggregate
 }
 
 type SequencingReadAggregate {
@@ -1871,7 +1743,6 @@ enum SequencingReadCountColumns {
   primer_file
   reference_sequence
   consensus_genomes
-  contigs
   entity_id
   id
   producing_run_id
@@ -1968,7 +1839,6 @@ input SequencingReadWhereClause {
   primerFile: GenomicRangeWhereClause
   referenceSequence: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
-  contigs: ContigWhereClause
 }
 
 input SequencingReadWhereClauseMutations {

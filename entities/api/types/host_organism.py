@@ -189,7 +189,7 @@ class HostOrganismWhereClause(TypedDict):
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
     category: Optional[EnumComparators[HostOrganismCategory]] | None
-    skip_deutero_filter: Optional[BoolComparators] | None
+    is_deuterostome: Optional[BoolComparators] | None
     indexes: Optional[Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")]] | None
     samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
 
@@ -204,7 +204,7 @@ class HostOrganismOrderByClause(TypedDict):
     name: Optional[orderBy] | None
     version: Optional[orderBy] | None
     category: Optional[orderBy] | None
-    skip_deutero_filter: Optional[orderBy] | None
+    is_deuterostome: Optional[orderBy] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
@@ -228,7 +228,7 @@ class HostOrganism(EntityInterface):
     name: str
     version: str
     category: HostOrganismCategory
-    skip_deutero_filter: bool
+    is_deuterostome: bool
     indexes: Sequence[
         Annotated["IndexFile", strawberry.lazy("api.types.index_file")]
     ] = load_index_file_rows  # type:ignore
@@ -293,7 +293,7 @@ class HostOrganismCountColumns(enum.Enum):
     name = "name"
     version = "version"
     category = "category"
-    skip_deutero_filter = "skip_deutero_filter"
+    is_deuterostome = "is_deuterostome"
     indexes = "indexes"
     sequence = "sequence"
     samples = "samples"
@@ -353,7 +353,7 @@ class HostOrganismCreateInput:
     name: str
     version: str
     category: HostOrganismCategory
-    skip_deutero_filter: bool
+    is_deuterostome: bool
     sequence_id: Optional[strawberry.ID] = None
 
 
@@ -363,7 +363,7 @@ class HostOrganismUpdateInput:
     name: Optional[str] = None
     version: Optional[str] = None
     category: Optional[HostOrganismCategory] = None
-    skip_deutero_filter: Optional[bool] = None
+    is_deuterostome: Optional[bool] = None
     sequence_id: Optional[strawberry.ID] = None
 
 

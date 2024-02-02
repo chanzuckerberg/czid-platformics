@@ -308,11 +308,6 @@ classes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
         multivalued: true
-      # Contigs generated from these Sequencing Reads
-      contigs:
-        range: Contig
-        inverse: Contig.sequencing_read
-        multivalued: true
     annotations:
       plural: SequencingReads
 
@@ -376,7 +371,7 @@ classes:
         range: HostOrganismCategory
         required: true
       # Extra info for host filtering
-      skip_deutero_filter:
+      is_deuterostome:
         range: boolean
         required: true
       # Indexes for this host for each tool we use
@@ -642,23 +637,6 @@ classes:
     annotations:
       plural: BulkDownloads
 
-  # ----------------------------------------------------------------------------
-  # Contigs generated from SequencingReads
-  # ----------------------------------------------------------------------------
-
-  Contig:
-      is_a: Entity
-      mixins:
-        - EntityMixin
-      attributes:
-        sequencing_read:
-          range: SequencingRead
-          inverse: Sample.contigs
-        sequence:
-          range: string
-          required: true
-      annotations:
-        plural: Contigs
 
   # ============================================================================
   # Mixins

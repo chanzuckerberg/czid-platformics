@@ -172,10 +172,6 @@ classes:
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
-      contigs:
-        range: Contig
-        multivalued: true
-        inverse: Contig.sequencing_read
       clearlabs_export:
         range: boolean
         required: true
@@ -198,19 +194,6 @@ classes:
         multivalued: true
     annotations:
       plural: GenomicRanges
-
-  Contig:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      sequencing_read:
-        range: SequencingRead
-        inverse: SequencingRead.contigs
-      sequence:
-        required: true
-    annotations:
-      plural: Contigs
 
   Taxon:
     is_a: Entity

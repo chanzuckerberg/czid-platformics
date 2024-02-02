@@ -17,7 +17,6 @@ from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
-from api.types.contig import ContigAggregate, format_contig_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -52,7 +51,6 @@ if TYPE_CHECKING:
     from api.types.genomic_range import GenomicRangeOrderByClause, GenomicRangeWhereClause, GenomicRange
     from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
-    from api.types.contig import ContigOrderByClause, ContigWhereClause, Contig
 
     pass
 else:
@@ -71,9 +69,6 @@ else:
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
     ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
-    ContigWhereClause = "ContigWhereClause"
-    Contig = "Contig"
-    ContigOrderByClause = "ContigOrderByClause"
     pass
 
 
@@ -173,38 +168,6 @@ async def load_consensus_genome_aggregate_rows(
     return ConsensusGenomeAggregate(aggregate=aggregate_output)
 
 
-@relay.connection(
-    relay.ListConnection[Annotated["Contig", strawberry.lazy("api.types.contig")]]  # type:ignore
-)
-async def load_contig_rows(
-    root: "SequencingRead",
-    info: Info,
-    where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")] | None = None,
-    order_by: Optional[list[Annotated["ContigOrderByClause", strawberry.lazy("api.types.contig")]]] = [],
-) -> Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["contigs"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_contig_aggregate_rows(
-    root: "SequencingRead",
-    info: Info,
-    where: Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")] | None = None,
-) -> Optional[Annotated["ContigAggregate", strawberry.lazy("api.types.contig")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["contigs"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_contig_aggregate_output(result)
-    return ContigAggregate(aggregate=aggregate_output)
-
-
 """
 ------------------------------------------------------------------------------
 Dataloader for File object
@@ -272,7 +235,6 @@ class SequencingReadWhereClause(TypedDict):
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
-    contigs: Optional[Annotated["ContigWhereClause", strawberry.lazy("api.types.contig")]] | None
 
 
 """
@@ -336,10 +298,6 @@ class SequencingRead(EntityInterface):
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
-    contigs: Sequence[Annotated["Contig", strawberry.lazy("api.types.contig")]] = load_contig_rows  # type:ignore
-    contigs_aggregate: Optional[
-        Annotated["ContigAggregate", strawberry.lazy("api.types.contig")]
-    ] = load_contig_aggregate_rows  # type:ignore
 
 
 """
@@ -400,7 +358,6 @@ class SequencingReadCountColumns(enum.Enum):
     primer_file = "primer_file"
     reference_sequence = "reference_sequence"
     consensus_genomes = "consensus_genomes"
-    contigs = "contigs"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"

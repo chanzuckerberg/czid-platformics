@@ -57,22 +57,6 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
     )
 
 
-class ContigCountColumns(sgqlc.types.Enum):
-    __schema__ = gql_schema
-    __choices__ = (
-        "collection_id",
-        "created_at",
-        "deleted_at",
-        "entity_id",
-        "id",
-        "owner_user_id",
-        "producing_run_id",
-        "sequence",
-        "sequencing_read",
-        "updated_at",
-    )
-
-
 DateTime = sgqlc.types.datetime.DateTime
 
 
@@ -124,12 +108,12 @@ class HostOrganismCountColumns(sgqlc.types.Enum):
         "entity_id",
         "id",
         "indexes",
+        "is_deuterostome",
         "name",
         "owner_user_id",
         "producing_run_id",
         "samples",
         "sequence",
-        "skip_deutero_filter",
         "updated_at",
         "version",
     )
@@ -329,7 +313,6 @@ class SequencingReadCountColumns(sgqlc.types.Enum):
         "clearlabs_export",
         "collection_id",
         "consensus_genomes",
-        "contigs",
         "created_at",
         "deleted_at",
         "entity_id",
@@ -598,63 +581,6 @@ class ConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
-class ContigCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "sequencing_read_id", "sequence")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    sequencing_read_id = sgqlc.types.Field(ID, graphql_name="sequencingReadId")
-    sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
-
-
-class ContigOrderByClause(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "sequencing_read",
-        "sequence",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
-    sequencing_read = sgqlc.types.Field("SequencingReadOrderByClause", graphql_name="sequencingRead")
-    sequence = sgqlc.types.Field(orderBy, graphql_name="sequence")
-    id = sgqlc.types.Field(orderBy, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
-    created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
-    updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
-
-
-class ContigUpdateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("collection_id", "sequencing_read_id", "sequence")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    sequencing_read_id = sgqlc.types.Field(ID, graphql_name="sequencingReadId")
-    sequence = sgqlc.types.Field(String, graphql_name="sequence")
-
-
-class ContigWhereClause(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_read", "sequence")
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
-    sequencing_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingRead")
-    sequence = sgqlc.types.Field("StrComparators", graphql_name="sequence")
-
-
-class ContigWhereClauseMutations(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("id",)
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-
-
 class DatetimeComparators(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
@@ -818,12 +744,12 @@ class HostOrganismCategoryEnumComparators(sgqlc.types.Input):
 
 class HostOrganismCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "name", "version", "category", "skip_deutero_filter", "sequence_id")
+    __field_names__ = ("collection_id", "name", "version", "category", "is_deuterostome", "sequence_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="version")
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name="category")
-    skip_deutero_filter = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="skipDeuteroFilter")
+    is_deuterostome = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isDeuterostome")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
 
 
@@ -833,7 +759,7 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
         "name",
         "version",
         "category",
-        "skip_deutero_filter",
+        "is_deuterostome",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -845,7 +771,7 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     version = sgqlc.types.Field(orderBy, graphql_name="version")
     category = sgqlc.types.Field(orderBy, graphql_name="category")
-    skip_deutero_filter = sgqlc.types.Field(orderBy, graphql_name="skipDeuteroFilter")
+    is_deuterostome = sgqlc.types.Field(orderBy, graphql_name="isDeuterostome")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
@@ -857,12 +783,12 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
 
 class HostOrganismUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "name", "version", "category", "skip_deutero_filter", "sequence_id")
+    __field_names__ = ("collection_id", "name", "version", "category", "is_deuterostome", "sequence_id")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     name = sgqlc.types.Field(String, graphql_name="name")
     version = sgqlc.types.Field(String, graphql_name="version")
     category = sgqlc.types.Field(HostOrganismCategory, graphql_name="category")
-    skip_deutero_filter = sgqlc.types.Field(Boolean, graphql_name="skipDeuteroFilter")
+    is_deuterostome = sgqlc.types.Field(Boolean, graphql_name="isDeuterostome")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
 
 
@@ -876,7 +802,7 @@ class HostOrganismWhereClause(sgqlc.types.Input):
         "name",
         "version",
         "category",
-        "skip_deutero_filter",
+        "is_deuterostome",
         "indexes",
         "samples",
     )
@@ -887,7 +813,7 @@ class HostOrganismWhereClause(sgqlc.types.Input):
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     version = sgqlc.types.Field("StrComparators", graphql_name="version")
     category = sgqlc.types.Field(HostOrganismCategoryEnumComparators, graphql_name="category")
-    skip_deutero_filter = sgqlc.types.Field(BoolComparators, graphql_name="skipDeuteroFilter")
+    is_deuterostome = sgqlc.types.Field(BoolComparators, graphql_name="isDeuterostome")
     indexes = sgqlc.types.Field("IndexFileWhereClause", graphql_name="indexes")
     samples = sgqlc.types.Field("SampleWhereClause", graphql_name="samples")
 
@@ -1657,7 +1583,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "primer_file",
         "reference_sequence",
         "consensus_genomes",
-        "contigs",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
@@ -1673,7 +1598,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     primer_file = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="primerFile")
     reference_sequence = sgqlc.types.Field(ReferenceGenomeWhereClause, graphql_name="referenceSequence")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
-    contigs = sgqlc.types.Field(ContigWhereClause, graphql_name="contigs")
 
 
 class SequencingReadWhereClauseMutations(sgqlc.types.Input):
@@ -2073,66 +1997,6 @@ class ConsensusGenomeMinMaxColumns(sgqlc.types.Type):
 
 
 class ConsensusGenomeNumericalColumns(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-
-
-class ContigAggregate(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("aggregate",)
-    aggregate = sgqlc.types.Field("ContigAggregateFunctions", graphql_name="aggregate")
-
-
-class ContigAggregateFunctions(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
-    sum = sgqlc.types.Field("ContigNumericalColumns", graphql_name="sum")
-    avg = sgqlc.types.Field("ContigNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("ContigMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("ContigMinMaxColumns", graphql_name="max")
-    stddev = sgqlc.types.Field("ContigNumericalColumns", graphql_name="stddev")
-    variance = sgqlc.types.Field("ContigNumericalColumns", graphql_name="variance")
-    count = sgqlc.types.Field(
-        Int,
-        graphql_name="count",
-        args=sgqlc.types.ArgDict(
-            (
-                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
-                ("columns", sgqlc.types.Arg(ContigCountColumns, graphql_name="columns", default=None)),
-            )
-        ),
-    )
-
-
-class ContigConnection(sgqlc.types.relay.Connection):
-    __schema__ = gql_schema
-    __field_names__ = ("page_info", "edges")
-    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
-    edges = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("ContigEdge"))), graphql_name="edges"
-    )
-
-
-class ContigEdge(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("cursor", "node")
-    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
-    node = sgqlc.types.Field(sgqlc.types.non_null("Contig"), graphql_name="node")
-
-
-class ContigMinMaxColumns(sgqlc.types.Type):
-    __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "sequence")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    sequence = sgqlc.types.Field(String, graphql_name="sequence")
-
-
-class ContigNumericalColumns(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -2581,9 +2445,6 @@ class Mutation(sgqlc.types.Type):
         "create_bulk_download",
         "update_bulk_download",
         "delete_bulk_download",
-        "create_contig",
-        "update_contig",
-        "delete_contig",
     )
     create_file = sgqlc.types.Field(
         sgqlc.types.non_null(File),
@@ -3221,42 +3082,6 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    create_contig = sgqlc.types.Field(
-        sgqlc.types.non_null("Contig"),
-        graphql_name="createContig",
-        args=sgqlc.types.ArgDict(
-            (("input", sgqlc.types.Arg(sgqlc.types.non_null(ContigCreateInput), graphql_name="input", default=None)),)
-        ),
-    )
-    update_contig = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Contig"))),
-        graphql_name="updateContig",
-        args=sgqlc.types.ArgDict(
-            (
-                ("input", sgqlc.types.Arg(sgqlc.types.non_null(ContigUpdateInput), graphql_name="input", default=None)),
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(ContigWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
-    delete_contig = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Contig"))),
-        graphql_name="deleteContig",
-        args=sgqlc.types.ArgDict(
-            (
-                (
-                    "where",
-                    sgqlc.types.Arg(
-                        sgqlc.types.non_null(ContigWhereClauseMutations), graphql_name="where", default=None
-                    ),
-                ),
-            )
-        ),
-    )
 
 
 class PageInfo(sgqlc.types.Type):
@@ -3330,7 +3155,6 @@ class Query(sgqlc.types.Type):
         "index_files",
         "phylogenetic_trees",
         "bulk_downloads",
-        "contigs",
         "samples_aggregate",
         "sequencing_reads_aggregate",
         "genomic_ranges_aggregate",
@@ -3344,7 +3168,6 @@ class Query(sgqlc.types.Type):
         "index_files_aggregate",
         "phylogenetic_trees_aggregate",
         "bulk_downloads_aggregate",
-        "contigs_aggregate",
     )
     node = sgqlc.types.Field(
         sgqlc.types.non_null(Node),
@@ -3595,23 +3418,6 @@ class Query(sgqlc.types.Type):
             )
         ),
     )
-    contigs = sgqlc.types.Field(
-        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Contig"))),
-        graphql_name="contigs",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),
-                (
-                    "order_by",
-                    sgqlc.types.Arg(
-                        sgqlc.types.list_of(sgqlc.types.non_null(ContigOrderByClause)),
-                        graphql_name="orderBy",
-                        default=(),
-                    ),
-                ),
-            )
-        ),
-    )
     samples_aggregate = sgqlc.types.Field(
         sgqlc.types.non_null("SampleAggregate"),
         graphql_name="samplesAggregate",
@@ -3698,11 +3504,6 @@ class Query(sgqlc.types.Type):
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(BulkDownloadWhereClause, graphql_name="where", default=None)),)
         ),
-    )
-    contigs_aggregate = sgqlc.types.Field(
-        sgqlc.types.non_null(ContigAggregate),
-        graphql_name="contigsAggregate",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
     )
 
 
@@ -4114,33 +3915,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     )
 
 
-class Contig(sgqlc.types.Type, EntityInterface, Node):
-    __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_read", "sequence")
-    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
-    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-    sequencing_read = sgqlc.types.Field(
-        "SequencingRead",
-        graphql_name="sequencingRead",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
-                (
-                    "order_by",
-                    sgqlc.types.Arg(
-                        sgqlc.types.list_of(sgqlc.types.non_null(SequencingReadOrderByClause)),
-                        graphql_name="orderBy",
-                        default=(),
-                    ),
-                ),
-            )
-        ),
-    )
-    sequence = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sequence")
-
-
 class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
     __field_names__ = (
@@ -4203,7 +3977,7 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
         "name",
         "version",
         "category",
-        "skip_deutero_filter",
+        "is_deuterostome",
         "indexes",
         "indexes_aggregate",
         "sequence_id",
@@ -4218,7 +3992,7 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="version")
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name="category")
-    skip_deutero_filter = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="skipDeuteroFilter")
+    is_deuterostome = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isDeuterostome")
     indexes = sgqlc.types.Field(
         sgqlc.types.non_null(IndexFileConnection),
         graphql_name="indexes",
@@ -4636,8 +4410,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "reference_sequence",
         "consensus_genomes",
         "consensus_genomes_aggregate",
-        "contigs",
-        "contigs_aggregate",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -4755,32 +4527,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
         ),
-    )
-    contigs = sgqlc.types.Field(
-        sgqlc.types.non_null(ContigConnection),
-        graphql_name="contigs",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),
-                (
-                    "order_by",
-                    sgqlc.types.Arg(
-                        sgqlc.types.list_of(sgqlc.types.non_null(ContigOrderByClause)),
-                        graphql_name="orderBy",
-                        default=(),
-                    ),
-                ),
-                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
-                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
-                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
-                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
-            )
-        ),
-    )
-    contigs_aggregate = sgqlc.types.Field(
-        ContigAggregate,
-        graphql_name="contigsAggregate",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(ContigWhereClause, graphql_name="where", default=None)),)),
     )
 
 

@@ -59,7 +59,6 @@ from api.types.phylogenetic_tree import (
     delete_phylogenetic_tree,
 )
 from api.types.bulk_download import BulkDownload, create_bulk_download, update_bulk_download, delete_bulk_download
-from api.types.contig import Contig, create_contig, update_contig, delete_contig
 
 
 @strawberry.type
@@ -134,8 +133,3 @@ class Mutation:
     create_bulk_download: BulkDownload = create_bulk_download
     update_bulk_download: Sequence[BulkDownload] = update_bulk_download
     delete_bulk_download: Sequence[BulkDownload] = delete_bulk_download
-
-    # Contig mutations
-    create_contig: Contig = create_contig
-    update_contig: Sequence[Contig] = update_contig
-    delete_contig: Sequence[Contig] = delete_contig

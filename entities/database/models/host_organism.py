@@ -33,7 +33,7 @@ class HostOrganism(Entity):
     category: Mapped[HostOrganismCategory] = mapped_column(
         Enum(HostOrganismCategory, native_enum=False), nullable=False
     )
-    skip_deutero_filter: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    is_deuterostome: Mapped[bool] = mapped_column(Boolean, nullable=False)
     indexes: Mapped[list[IndexFile]] = relationship(
         "IndexFile", back_populates="host_organism", uselist=True, foreign_keys="IndexFile.host_organism_id"
     )
