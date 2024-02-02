@@ -145,10 +145,6 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
-      contigs:
-        range: Contig
-        multivalued: true
-        inverse: Contig.sequencing_read
     annotations:
       plural: Samples
 
@@ -176,6 +172,10 @@ classes:
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+      contigs:
+        range: Contig
+        multivalued: true
+        inverse: Contig.sequencing_read
       clearlabs_export:
         range: boolean
         required: true
@@ -206,7 +206,7 @@ classes:
     attributes:
       sequencing_read:
         range: SequencingRead
-        inverse: Sample.contigs
+        inverse: SequencingRead.contigs
       sequence:
         required: true
     annotations:
