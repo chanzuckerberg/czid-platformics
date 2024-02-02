@@ -50,7 +50,7 @@ class {{cls.name}}(Entity):
     {{attr.name}}: Mapped[uuid.UUID] = mapped_column({%- if attr.inverse %}ForeignKey("{{attr.inverse}}"){%- else %}UUID{%- endif %}, nullable={{ "False" if attr.required else "True"}}, primary_key={{ "True" if attr.identifier else "False"}})
         {%- elif attr.type == "string" %}
     {{attr.name}}: Mapped[str] = mapped_column(String, nullable={{ "False" if attr.required else "True"}})
-        {%- elif attr.type == "2dArrayInt" %}
+        {%- elif attr.type == "Array2dInt" %}
     {{attr.name}}: Mapped[JSONB] = mapped_column(JSONB, nullable={{ "False" if attr.required else "True"}})
         {%- elif attr.type == "int" %}
     {{attr.name}}: Mapped[int] = mapped_column(Integer, nullable={{ "False" if attr.required else "True"}})

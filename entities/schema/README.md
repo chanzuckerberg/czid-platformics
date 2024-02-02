@@ -127,7 +127,7 @@ MetricConsensusGenome {
     float coverage_breadth  
     float coverage_bin_size  
     int coverage_total_length  
-    2dArrayInt coverage_viz  
+    Array2dInt coverage_viz  
     uuid entity_id  
     uuid id  
     int producing_run_id  

@@ -248,7 +248,7 @@ class {{ cls.name }}(EntityInterface):
            {%- endif %}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getType("str", attr.required) }}
-        {%- elif attr.type == "2dArrayInt" %}
+        {%- elif attr.type == "Array2dInt" %}
     {{ attr.name }}: {{ getType("List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getType(attr.type, attr.required) }}
@@ -375,7 +375,7 @@ class {{ cls.name }}{{ action }}Input:
         {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
-        {%- elif attr.type == "2dArrayInt" %}
+        {%- elif attr.type == "Array2dInt" %}
     {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
