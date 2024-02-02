@@ -187,7 +187,7 @@ async def test_deeply_nested_query(
     gql_client: GQLTestClient,
 ) -> None:
     """
-    Test that we can sort by fields of a deeply nested object
+    Test that we can sort by fields of a very deeply nested object
     """
     user_id = 12345
     project_id = 123
@@ -195,10 +195,10 @@ async def test_deeply_nested_query(
     # Create mock data
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        upstream_db_1 = UpstreamDatabaseFactory(name="NCBI")
-        upstream_db_2 = UpstreamDatabaseFactory(name="GTDB")
-        taxon_1 = TaxonFactory(upstream_database=upstream_db_1)
-        taxon_2 = TaxonFactory(upstream_database=upstream_db_2)
+        upstream_db_1 = UpstreamDatabaseFactory(owner_user_id=user_id, collection_id=project_id, name="NCBI")
+        upstream_db_2 = UpstreamDatabaseFactory(owner_user_id=user_id, collection_id=project_id, name="GTDB")
+        taxon_1 = TaxonFactory(owner_user_id=user_id, collection_id=project_id, upstream_database=upstream_db_1)
+        taxon_2 = TaxonFactory(owner_user_id=user_id, collection_id=project_id, upstream_database=upstream_db_2)
         sequencing_read_1 = SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, taxon=taxon_1)
         sequencing_read_2 = SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, taxon=taxon_2)
         ContigFactory.create_batch(2, owner_user_id=user_id, collection_id=project_id, sequencing_read=sequencing_read_1)
@@ -206,19 +206,21 @@ async def test_deeply_nested_query(
 
     # Fetch all contigs, in descending order of the related sequencing read's taxon's upstream database's name
     query = """
-        contigs(orderBy: {sequencingRead: {taxon: {upstreamDatabase: {name: desc}}}}) {
-            sequencingRead {
-                taxon {
-                    upstreamDatabase {
-                        name
+        query MyQuery {
+            contigs(orderBy: {sequencingRead: {taxon: {upstreamDatabase: {name: desc}}}}) {
+                sequencingRead {
+                    taxon {
+                        upstreamDatabase {
+                                name
                         }
                     }
                 }
-            sequence
+                id
             }
         }
     """
 
     output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
+    print(output)
     upstream_database_names = [contig["sequencingRead"]["taxon"]["upstreamDatabase"]["name"] for contig in output["data"]["contigs"]]
-    assert upstream_database_names == ["GTDB", "GTDB", "NCBI", "NCBI"]
+    assert upstream_database_names == ["NCBI", "NCBI", "GTDB", "GTDB"]
