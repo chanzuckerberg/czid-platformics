@@ -67,6 +67,17 @@ type BulkDownloadNumericalColumns {
   collectionId: Int
 }
 
+input BulkDownloadOrderByClause {
+  downloadType: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 enum BulkDownloadType {
   concatenate
   zip
@@ -109,11 +120,11 @@ type ConsensusGenome implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  taxon(where: TaxonWhereClause = null): Taxon
-  sequenceRead(where: SequencingReadWhereClause = null): SequencingRead
+  taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
+  sequenceRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
-  metrics(where: MetricConsensusGenomeWhereClause = null): MetricConsensusGenome
+  metrics(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): MetricConsensusGenome
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
 }
@@ -187,6 +198,19 @@ type ConsensusGenomeNumericalColumns {
   collectionId: Int
 }
 
+input ConsensusGenomeOrderByClause {
+  taxon: TaxonOrderByClause
+  sequenceRead: SequencingReadOrderByClause
+  metrics: MetricConsensusGenomeOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input ConsensusGenomeUpdateInput {
   collectionId: Int = null
   taxonId: ID = null
@@ -207,6 +231,112 @@ input ConsensusGenomeWhereClause {
 }
 
 input ConsensusGenomeWhereClauseMutations {
+  id: UUIDComparators
+}
+
+type Contig implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  sequencingRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
+  sequence: String!
+}
+
+type ContigAggregate {
+  aggregate: ContigAggregateFunctions
+}
+
+type ContigAggregateFunctions {
+  sum: ContigNumericalColumns
+  avg: ContigNumericalColumns
+  min: ContigMinMaxColumns
+  max: ContigMinMaxColumns
+  stddev: ContigNumericalColumns
+  variance: ContigNumericalColumns
+  count(distinct: Boolean = false, columns: ContigCountColumns = null): Int
+}
+
+"""A connection to a list of items."""
+type ContigConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [ContigEdge!]!
+}
+
+enum ContigCountColumns {
+  sequencing_read
+  sequence
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
+  created_at
+  updated_at
+  deleted_at
+}
+
+input ContigCreateInput {
+  collectionId: Int!
+  sequencingReadId: ID = null
+  sequence: String!
+}
+
+"""An edge in a connection."""
+type ContigEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Contig!
+}
+
+type ContigMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  sequence: String
+}
+
+type ContigNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+input ContigOrderByClause {
+  sequencingRead: SequencingReadOrderByClause
+  sequence: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
+input ContigUpdateInput {
+  collectionId: Int = null
+  sequencingReadId: ID = null
+  sequence: String = null
+}
+
+input ContigWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  sequencingRead: SequencingReadWhereClause
+  sequence: StrComparators
+}
+
+input ContigWhereClauseMutations {
   id: UUIDComparators
 }
 
@@ -335,6 +465,7 @@ type GenomicRange implements EntityInterface & Node {
   file(where: FileWhereClause = null): File
   sequencingReads(
     where: SequencingReadWhereClause = null
+    orderBy: [SequencingReadOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -395,6 +526,16 @@ type GenomicRangeNumericalColumns {
   collectionId: Int
 }
 
+input GenomicRangeOrderByClause {
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input GenomicRangeUpdateInput {
   collectionId: Int = null
   fileId: ID = null
@@ -430,6 +571,7 @@ type HostOrganism implements EntityInterface & Node {
   skipDeuteroFilter: Boolean!
   indexes(
     where: IndexFileWhereClause = null
+    orderBy: [IndexFileOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -448,6 +590,7 @@ type HostOrganism implements EntityInterface & Node {
   sequence(where: FileWhereClause = null): File
   samples(
     where: SampleWhereClause = null
+    orderBy: [SampleOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -538,6 +681,20 @@ type HostOrganismNumericalColumns {
   collectionId: Int
 }
 
+input HostOrganismOrderByClause {
+  name: orderBy
+  version: orderBy
+  category: orderBy
+  skipDeuteroFilter: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input HostOrganismUpdateInput {
   collectionId: Int = null
   name: String = null
@@ -575,8 +732,8 @@ type IndexFile implements EntityInterface & Node {
   version: String!
   fileId: ID
   file(where: FileWhereClause = null): File
-  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
-  hostOrganism(where: HostOrganismWhereClause = null): HostOrganism
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
+  hostOrganism(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): HostOrganism
 }
 
 type IndexFileAggregate {
@@ -647,6 +804,20 @@ type IndexFileNumericalColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+}
+
+input IndexFileOrderByClause {
+  name: orderBy
+  version: orderBy
+  upstreamDatabase: UpstreamDatabaseOrderByClause
+  hostOrganism: HostOrganismOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
 }
 
 input IndexFileUpdateInput {
@@ -732,7 +903,7 @@ type Metadatum implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  sample(where: SampleWhereClause = null): Sample
+  sample(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): Sample
   fieldName: String!
   value: String!
 }
@@ -804,6 +975,19 @@ type MetadatumNumericalColumns {
   collectionId: Int
 }
 
+input MetadatumOrderByClause {
+  sample: SampleOrderByClause
+  fieldName: orderBy
+  value: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input MetadatumUpdateInput {
   collectionId: Int = null
   sampleId: ID = null
@@ -832,7 +1016,7 @@ type MetricConsensusGenome implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  consensusGenome(where: ConsensusGenomeWhereClause = null): ConsensusGenome
+  consensusGenome(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = []): ConsensusGenome
   referenceGenomeLength: Float
   percentGenomeCalled: Float
   percentIdentity: Float
@@ -951,6 +1135,32 @@ type MetricConsensusGenomeNumericalColumns {
   coverageTotalLength: Int
 }
 
+input MetricConsensusGenomeOrderByClause {
+  consensusGenome: ConsensusGenomeOrderByClause
+  referenceGenomeLength: orderBy
+  percentGenomeCalled: orderBy
+  percentIdentity: orderBy
+  gcPercent: orderBy
+  totalReads: orderBy
+  mappedReads: orderBy
+  refSnps: orderBy
+  nActg: orderBy
+  nMissing: orderBy
+  nAmbiguous: orderBy
+  coverageDepth: orderBy
+  coverageBreadth: orderBy
+  coverageBinSize: orderBy
+  coverageTotalLength: orderBy
+  coverageViz: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input MetricConsensusGenomeUpdateInput {
   collectionId: Int = null
   consensusGenomeId: ID = null
@@ -1056,6 +1266,9 @@ type Mutation {
   createBulkDownload(input: BulkDownloadCreateInput!): BulkDownload!
   updateBulkDownload(input: BulkDownloadUpdateInput!, where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
   deleteBulkDownload(where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
+  createContig(input: ContigCreateInput!): Contig!
+  updateContig(input: ContigUpdateInput!, where: ContigWhereClauseMutations!): [Contig!]!
+  deleteContig(where: ContigWhereClauseMutations!): [Contig!]!
 }
 
 """An object with a Globally Unique ID"""
@@ -1171,6 +1384,17 @@ type PhylogeneticTreeNumericalColumns {
   collectionId: Int
 }
 
+input PhylogeneticTreeOrderByClause {
+  format: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input PhylogeneticTreeUpdateInput {
   collectionId: Int = null
   treeId: ID = null
@@ -1199,19 +1423,20 @@ type Query {
     ids: [GlobalID!]!
   ): [Node!]!
   files(where: FileWhereClause = null): [File!]!
-  samples(where: SampleWhereClause = null): [Sample!]!
-  sequencingReads(where: SequencingReadWhereClause = null): [SequencingRead!]!
-  genomicRanges(where: GenomicRangeWhereClause = null): [GenomicRange!]!
-  referenceGenomes(where: ReferenceGenomeWhereClause = null): [ReferenceGenome!]!
-  hostOrganisms(where: HostOrganismWhereClause = null): [HostOrganism!]!
-  metadatas(where: MetadatumWhereClause = null): [Metadatum!]!
-  consensusGenomes(where: ConsensusGenomeWhereClause = null): [ConsensusGenome!]!
-  metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null): [MetricConsensusGenome!]!
-  taxa(where: TaxonWhereClause = null): [Taxon!]!
-  upstreamDatabases(where: UpstreamDatabaseWhereClause = null): [UpstreamDatabase!]!
-  indexFiles(where: IndexFileWhereClause = null): [IndexFile!]!
-  phylogeneticTrees(where: PhylogeneticTreeWhereClause = null): [PhylogeneticTree!]!
-  bulkDownloads(where: BulkDownloadWhereClause = null): [BulkDownload!]!
+  samples(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): [SequencingRead!]!
+  genomicRanges(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): [GenomicRange!]!
+  referenceGenomes(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): [ReferenceGenome!]!
+  hostOrganisms(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): [HostOrganism!]!
+  metadatas(where: MetadatumWhereClause = null, orderBy: [MetadatumOrderByClause!] = []): [Metadatum!]!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = []): [ConsensusGenome!]!
+  metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): [MetricConsensusGenome!]!
+  taxa(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): [Taxon!]!
+  upstreamDatabases(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): [UpstreamDatabase!]!
+  indexFiles(where: IndexFileWhereClause = null, orderBy: [IndexFileOrderByClause!] = []): [IndexFile!]!
+  phylogeneticTrees(where: PhylogeneticTreeWhereClause = null, orderBy: [PhylogeneticTreeOrderByClause!] = []): [PhylogeneticTree!]!
+  bulkDownloads(where: BulkDownloadWhereClause = null, orderBy: [BulkDownloadOrderByClause!] = []): [BulkDownload!]!
+  contigs(where: ContigWhereClause = null, orderBy: [ContigOrderByClause!] = []): [Contig!]!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
   genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate!
@@ -1225,6 +1450,7 @@ type Query {
   indexFilesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate!
   phylogeneticTreesAggregate(where: PhylogeneticTreeWhereClause = null): PhylogeneticTreeAggregate!
   bulkDownloadsAggregate(where: BulkDownloadWhereClause = null): BulkDownloadAggregate!
+  contigsAggregate(where: ContigWhereClause = null): ContigAggregate!
 }
 
 type ReferenceGenome implements EntityInterface & Node {
@@ -1240,6 +1466,7 @@ type ReferenceGenome implements EntityInterface & Node {
   accessionName: String
   sequencingReads(
     where: SequencingReadWhereClause = null
+    orderBy: [SequencingReadOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1306,6 +1533,18 @@ type ReferenceGenomeNumericalColumns {
   collectionId: Int
 }
 
+input ReferenceGenomeOrderByClause {
+  accessionId: orderBy
+  accessionName: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input ReferenceGenomeUpdateInput {
   collectionId: Int = null
   fileId: ID = null
@@ -1341,9 +1580,10 @@ type Sample implements EntityInterface & Node {
   collectionDate: DateTime!
   collectionLocation: String!
   notes: String
-  hostOrganism(where: HostOrganismWhereClause = null): HostOrganism
+  hostOrganism(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): HostOrganism
   sequencingReads(
     where: SequencingReadWhereClause = null
+    orderBy: [SequencingReadOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1360,6 +1600,7 @@ type Sample implements EntityInterface & Node {
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
   metadatas(
     where: MetadatumWhereClause = null
+    orderBy: [MetadatumOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1460,6 +1701,24 @@ type SampleNumericalColumns {
   railsSampleId: Int
 }
 
+input SampleOrderByClause {
+  railsSampleId: orderBy
+  name: orderBy
+  sampleType: orderBy
+  waterControl: orderBy
+  collectionDate: orderBy
+  collectionLocation: orderBy
+  notes: orderBy
+  hostOrganism: HostOrganismOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input SampleUpdateInput {
   collectionId: Int = null
   railsSampleId: Int = null
@@ -1527,7 +1786,7 @@ type SequencingRead implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  sample(where: SampleWhereClause = null): Sample
+  sample(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): Sample
   protocol: SequencingProtocol
   r1FileId: ID
   r1File(where: FileWhereClause = null): File
@@ -1537,11 +1796,12 @@ type SequencingRead implements EntityInterface & Node {
   nucleicAcid: NucleicAcid!
   clearlabsExport: Boolean!
   medakaModel: String
-  taxon(where: TaxonWhereClause = null): Taxon
-  primerFile(where: GenomicRangeWhereClause = null): GenomicRange
-  referenceSequence(where: ReferenceGenomeWhereClause = null): ReferenceGenome
+  taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
+  primerFile(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): GenomicRange
+  referenceSequence(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
+    orderBy: [ConsensusGenomeOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1556,6 +1816,23 @@ type SequencingRead implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
+  contigs(
+    where: ContigWhereClause = null
+    orderBy: [ContigOrderByClause!] = []
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ContigConnection!
+  contigsAggregate(where: ContigWhereClause = null): ContigAggregate
 }
 
 type SequencingReadAggregate {
@@ -1594,6 +1871,7 @@ enum SequencingReadCountColumns {
   primer_file
   reference_sequence
   consensus_genomes
+  contigs
   entity_id
   id
   producing_run_id
@@ -1641,6 +1919,25 @@ type SequencingReadNumericalColumns {
   collectionId: Int
 }
 
+input SequencingReadOrderByClause {
+  sample: SampleOrderByClause
+  protocol: orderBy
+  technology: orderBy
+  nucleicAcid: orderBy
+  clearlabsExport: orderBy
+  medakaModel: orderBy
+  taxon: TaxonOrderByClause
+  primerFile: GenomicRangeOrderByClause
+  referenceSequence: ReferenceGenomeOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input SequencingReadUpdateInput {
   collectionId: Int = null
   sampleId: ID = null
@@ -1671,6 +1968,7 @@ input SequencingReadWhereClause {
   primerFile: GenomicRangeWhereClause
   referenceSequence: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
+  contigs: ContigWhereClause
 }
 
 input SequencingReadWhereClauseMutations {
@@ -1734,11 +2032,12 @@ type Taxon implements EntityInterface & Node {
   commonName: String
   name: String!
   isPhage: Boolean!
-  upstreamDatabase(where: UpstreamDatabaseWhereClause = null): UpstreamDatabase
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
+    orderBy: [ConsensusGenomeOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1755,6 +2054,7 @@ type Taxon implements EntityInterface & Node {
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
   sequencingReads(
     where: SequencingReadWhereClause = null
+    orderBy: [SequencingReadOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1887,6 +2187,34 @@ type TaxonNumericalColumns {
   collectionId: Int
 }
 
+input TaxonOrderByClause {
+  wikipediaId: orderBy
+  description: orderBy
+  commonName: orderBy
+  name: orderBy
+  isPhage: orderBy
+  upstreamDatabase: UpstreamDatabaseOrderByClause
+  upstreamDatabaseIdentifier: orderBy
+  level: orderBy
+  taxParent: orderBy
+  taxSubspecies: orderBy
+  taxSpecies: orderBy
+  taxGenus: orderBy
+  taxFamily: orderBy
+  taxOrder: orderBy
+  taxClass: orderBy
+  taxPhylum: orderBy
+  taxKingdom: orderBy
+  taxSuperkingdom: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input TaxonUpdateInput {
   collectionId: Int = null
   wikipediaId: String = null
@@ -1943,6 +2271,7 @@ type UpstreamDatabase implements EntityInterface & Node {
   name: String!
   taxa(
     where: TaxonWhereClause = null
+    orderBy: [TaxonOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1959,6 +2288,7 @@ type UpstreamDatabase implements EntityInterface & Node {
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate
   indexes(
     where: IndexFileWhereClause = null
+    orderBy: [IndexFileOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -2021,6 +2351,17 @@ type UpstreamDatabaseNumericalColumns {
   collectionId: Int
 }
 
+input UpstreamDatabaseOrderByClause {
+  name: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input UpstreamDatabaseUpdateInput {
   collectionId: Int = null
   name: String = null
@@ -2038,4 +2379,13 @@ input UpstreamDatabaseWhereClause {
 
 input UpstreamDatabaseWhereClauseMutations {
   id: UUIDComparators
+}
+
+enum orderBy {
+  asc
+  asc_nulls_first
+  asc_nulls_last
+  desc
+  desc_nulls_first
+  desc_nulls_last
 }

@@ -23,6 +23,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     EnumComparators,
     IntComparators,
     StrComparators,
@@ -42,15 +43,17 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.upstream_database import UpstreamDatabaseWhereClause, UpstreamDatabase
-    from api.types.host_organism import HostOrganismWhereClause, HostOrganism
+    from api.types.upstream_database import UpstreamDatabaseOrderByClause, UpstreamDatabaseWhereClause, UpstreamDatabase
+    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism
 
     pass
 else:
     UpstreamDatabaseWhereClause = "UpstreamDatabaseWhereClause"
     UpstreamDatabase = "UpstreamDatabase"
+    UpstreamDatabaseOrderByClause = "UpstreamDatabaseOrderByClause"
     HostOrganismWhereClause = "HostOrganismWhereClause"
     HostOrganism = "HostOrganism"
+    HostOrganismOrderByClause = "HostOrganismOrderByClause"
     pass
 
 
@@ -67,11 +70,14 @@ async def load_upstream_database_rows(
     root: "IndexFile",
     info: Info,
     where: Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")] | None = None,
+    order_by: Optional[
+        list[Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]]
+    ] = [],
 ) -> Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.IndexFile)
     relationship = mapper.relationships["upstream_database"]
-    return await dataloader.loader_for(relationship, where).load(root.upstream_database_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.upstream_database_id)  # type:ignore
 
 
 @strawberry.field
@@ -79,11 +85,12 @@ async def load_host_organism_rows(
     root: "IndexFile",
     info: Info,
     where: Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")] | None = None,
+    order_by: Optional[list[Annotated["HostOrganismOrderByClause", strawberry.lazy("api.types.host_organism")]]] = [],
 ) -> Optional[Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.IndexFile)
     relationship = mapper.relationships["host_organism"]
-    return await dataloader.loader_for(relationship, where).load(root.host_organism_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.host_organism_id)  # type:ignore
 
 
 """
@@ -145,6 +152,28 @@ class IndexFileWhereClause(TypedDict):
         Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]
     ] | None
     host_organism: Optional[Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class IndexFileOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    version: Optional[orderBy] | None
+    upstream_database: Optional[
+        Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]
+    ] | None
+    host_organism: Optional[Annotated["HostOrganismOrderByClause", strawberry.lazy("api.types.host_organism")]] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -302,11 +331,12 @@ async def resolve_index_files(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[IndexFileWhereClause] = None,
+    order_by: Optional[list[IndexFileOrderByClause]] = [],
 ) -> typing.Sequence[IndexFile]:
     """
     Resolve IndexFile objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.IndexFile, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.IndexFile, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_index_file_aggregate_output(query_results: RowMapping) -> IndexFileAggregateFunctions:

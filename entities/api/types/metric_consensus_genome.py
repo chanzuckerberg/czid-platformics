@@ -22,6 +22,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     FloatComparators,
     UUIDComparators,
@@ -39,12 +40,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
+    from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
 
     pass
 else:
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
+    ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
     pass
 
 
@@ -61,11 +63,14 @@ async def load_consensus_genome_rows(
     root: "MetricConsensusGenome",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
+    order_by: Optional[
+        list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]
+    ] = [],
 ) -> Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetricConsensusGenome)
     relationship = mapper.relationships["consensus_genome"]
-    return await dataloader.loader_for(relationship, where).load(root.consensus_genome_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.consensus_genome_id)  # type:ignore
 
 
 """
@@ -113,6 +118,40 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     coverage_breadth: Optional[FloatComparators] | None
     coverage_bin_size: Optional[FloatComparators] | None
     coverage_total_length: Optional[IntComparators] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class MetricConsensusGenomeOrderByClause(TypedDict):
+    consensus_genome: Optional[
+        Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]
+    ] | None
+    reference_genome_length: Optional[orderBy] | None
+    percent_genome_called: Optional[orderBy] | None
+    percent_identity: Optional[orderBy] | None
+    gc_percent: Optional[orderBy] | None
+    total_reads: Optional[orderBy] | None
+    mapped_reads: Optional[orderBy] | None
+    ref_snps: Optional[orderBy] | None
+    n_actg: Optional[orderBy] | None
+    n_missing: Optional[orderBy] | None
+    n_ambiguous: Optional[orderBy] | None
+    coverage_depth: Optional[orderBy] | None
+    coverage_breadth: Optional[orderBy] | None
+    coverage_bin_size: Optional[orderBy] | None
+    coverage_total_length: Optional[orderBy] | None
+    coverage_viz: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -340,11 +379,12 @@ async def resolve_metrics_consensus_genomes(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[MetricConsensusGenomeWhereClause] = None,
+    order_by: Optional[list[MetricConsensusGenomeOrderByClause]] = [],
 ) -> typing.Sequence[MetricConsensusGenome]:
     """
     Resolve MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_metric_consensus_genome_aggregate_output(

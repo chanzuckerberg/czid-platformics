@@ -199,6 +199,17 @@ BulkDownload {
     date updated_at  
     date deleted_at  
 }
+Contig {
+    string sequence  
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
+}
 EntityMixin {
     uuid entity_id  
 }
@@ -214,6 +225,7 @@ SequencingRead ||--|o Taxon : "taxon"
 SequencingRead ||--|o GenomicRange : "primer_file"
 SequencingRead ||--|o ReferenceGenome : "reference_sequence"
 SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
+SequencingRead ||--}o Contig : "contigs"
 GenomicRange ||--|o File : "file"
 GenomicRange ||--}o SequencingRead : "sequencing_reads"
 ReferenceGenome ||--|o File : "file"
@@ -248,6 +260,7 @@ IndexFile ||--|o UpstreamDatabase : "upstream_database"
 IndexFile ||--|o HostOrganism : "host_organism"
 PhylogeneticTree ||--|o File : "tree"
 BulkDownload ||--|o File : "file"
+Contig ||--|o SequencingRead : "sequencing_read"
 
 ```
 

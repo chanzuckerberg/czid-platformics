@@ -67,6 +67,7 @@ from api.types.bulk_download import (
     BulkDownloadAggregate,
     resolve_bulk_downloads_aggregate,
 )
+from api.types.contig import Contig, resolve_contigs, ContigAggregate, resolve_contigs_aggregate
 
 
 @strawberry.type
@@ -91,6 +92,7 @@ class Query:
     index_files: Sequence[IndexFile] = resolve_index_files
     phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
     bulk_downloads: Sequence[BulkDownload] = resolve_bulk_downloads
+    contigs: Sequence[Contig] = resolve_contigs
 
     # Query entity aggregates
     samples_aggregate: SampleAggregate = resolve_samples_aggregate
@@ -106,3 +108,4 @@ class Query:
     index_files_aggregate: IndexFileAggregate = resolve_index_files_aggregate
     phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate
     bulk_downloads_aggregate: BulkDownloadAggregate = resolve_bulk_downloads_aggregate
+    contigs_aggregate: ContigAggregate = resolve_contigs_aggregate

@@ -25,6 +25,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     EnumComparators,
     IntComparators,
     StrComparators,
@@ -46,15 +47,17 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.index_file import IndexFileWhereClause, IndexFile
-    from api.types.sample import SampleWhereClause, Sample
+    from api.types.index_file import IndexFileOrderByClause, IndexFileWhereClause, IndexFile
+    from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample
 
     pass
 else:
     IndexFileWhereClause = "IndexFileWhereClause"
     IndexFile = "IndexFile"
+    IndexFileOrderByClause = "IndexFileOrderByClause"
     SampleWhereClause = "SampleWhereClause"
     Sample = "Sample"
+    SampleOrderByClause = "SampleOrderByClause"
     pass
 
 
@@ -73,11 +76,12 @@ async def load_index_file_rows(
     root: "HostOrganism",
     info: Info,
     where: Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")] | None = None,
+    order_by: Optional[list[Annotated["IndexFileOrderByClause", strawberry.lazy("api.types.index_file")]]] = [],
 ) -> Sequence[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.HostOrganism)
     relationship = mapper.relationships["indexes"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -104,11 +108,12 @@ async def load_sample_rows(
     root: "HostOrganism",
     info: Info,
     where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
+    order_by: Optional[list[Annotated["SampleOrderByClause", strawberry.lazy("api.types.sample")]]] = [],
 ) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.HostOrganism)
     relationship = mapper.relationships["samples"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -187,6 +192,26 @@ class HostOrganismWhereClause(TypedDict):
     skip_deutero_filter: Optional[BoolComparators] | None
     indexes: Optional[Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")]] | None
     samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class HostOrganismOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    version: Optional[orderBy] | None
+    category: Optional[orderBy] | None
+    skip_deutero_filter: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -355,11 +380,12 @@ async def resolve_host_organisms(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[HostOrganismWhereClause] = None,
+    order_by: Optional[list[HostOrganismOrderByClause]] = [],
 ) -> typing.Sequence[HostOrganism]:
     """
     Resolve HostOrganism objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_host_organism_aggregate_output(query_results: RowMapping) -> HostOrganismAggregateFunctions:

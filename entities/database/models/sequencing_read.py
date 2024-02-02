@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from database.models.genomic_range import GenomicRange
     from database.models.reference_genome import ReferenceGenome
     from database.models.consensus_genome import ConsensusGenome
+    from database.models.contig import Contig
 else:
     File = "File"
     Sample = "Sample"
@@ -29,6 +30,7 @@ else:
     GenomicRange = "GenomicRange"
     ReferenceGenome = "ReferenceGenome"
     ConsensusGenome = "ConsensusGenome"
+    Contig = "Contig"
 
 
 class SequencingRead(Entity):
@@ -61,5 +63,8 @@ class SequencingRead(Entity):
     )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome", back_populates="sequence_read", uselist=True, foreign_keys="ConsensusGenome.sequence_read_id"
+    )
+    contigs: Mapped[list[Contig]] = relationship(
+        "Contig", back_populates="sequencing_read", uselist=True, foreign_keys="Contig.sequencing_read_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

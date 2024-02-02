@@ -62,8 +62,6 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("entity_id", name=op.f("pk_index_file")),
     )
-    op.drop_index("contig_sequencing_read", table_name="contig")
-    op.drop_table("contig")
     op.drop_index("consensus_genome_intermediate_outputs", table_name="consensus_genome")
     op.drop_index("consensus_genome_reference_genome", table_name="consensus_genome")
     op.drop_index("consensus_genome_sequence", table_name="consensus_genome")
@@ -214,17 +212,5 @@ def downgrade() -> None:
     op.create_index(
         "consensus_genome_intermediate_outputs", "consensus_genome", ["intermediate_outputs_id"], unique=False
     )
-    op.create_table(
-        "contig",
-        sa.Column("sequencing_read_id", sa.UUID(), autoincrement=False, nullable=True),
-        sa.Column("sequence", sa.VARCHAR(), autoincrement=False, nullable=False),
-        sa.Column("entity_id", sa.UUID(), autoincrement=False, nullable=False),
-        sa.ForeignKeyConstraint(["entity_id"], ["entity.id"], name="fk_contig_entity_id_entity"),
-        sa.ForeignKeyConstraint(
-            ["sequencing_read_id"], ["sequencing_read.entity_id"], name="fk_contig_sequencing_read_id_sequencing_read"
-        ),
-        sa.PrimaryKeyConstraint("entity_id", name="pk_contig"),
-    )
-    op.create_index("contig_sequencing_read", "contig", ["sequencing_read_id"], unique=False)
     op.drop_table("index_file")
     # ### end Alembic commands ###
