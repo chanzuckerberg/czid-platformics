@@ -23,6 +23,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -41,12 +42,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
+    from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
 
     pass
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
+    TaxonOrderByClause = "TaxonOrderByClause"
     pass
 
 
@@ -65,11 +67,12 @@ async def load_taxon_rows(
     root: "UpstreamDatabase",
     info: Info,
     where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+    order_by: Optional[list[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]]] = [],
 ) -> Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.UpstreamDatabase)
     relationship = mapper.relationships["taxa"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -119,6 +122,23 @@ class UpstreamDatabaseWhereClause(TypedDict):
     collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     taxa: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class UpstreamDatabaseOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -262,11 +282,12 @@ async def resolve_upstream_databases(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[UpstreamDatabaseWhereClause] = None,
+    order_by: Optional[list[UpstreamDatabaseOrderByClause]] = [],
 ) -> typing.Sequence[UpstreamDatabase]:
     """
     Resolve UpstreamDatabase objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_upstream_database_aggregate_output(query_results: RowMapping) -> UpstreamDatabaseAggregateFunctions:

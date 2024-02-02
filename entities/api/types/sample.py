@@ -25,6 +25,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     DatetimeComparators,
     IntComparators,
     StrComparators,
@@ -45,18 +46,21 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
-    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
-    from api.types.metadatum import MetadatumWhereClause, Metadatum
+    from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
+    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
+    from api.types.metadatum import MetadatumOrderByClause, MetadatumWhereClause, Metadatum
 
     pass
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
+    TaxonOrderByClause = "TaxonOrderByClause"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
+    SequencingReadOrderByClause = "SequencingReadOrderByClause"
     MetadatumWhereClause = "MetadatumWhereClause"
     Metadatum = "Metadatum"
+    MetadatumOrderByClause = "MetadatumOrderByClause"
     pass
 
 
@@ -73,11 +77,12 @@ async def load_taxon_rows(
     root: "Sample",
     info: Info,
     where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+    order_by: Optional[list[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]]] = [],
 ) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["host_taxon"]
-    return await dataloader.loader_for(relationship, where).load(root.host_taxon_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.host_taxon_id)  # type:ignore
 
 
 @relay.connection(
@@ -87,11 +92,14 @@ async def load_sequencing_read_rows(
     root: "Sample",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
+    order_by: Optional[
+        list[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]]
+    ] = [],
 ) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["sequencing_reads"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -118,11 +126,12 @@ async def load_metadatum_rows(
     root: "Sample",
     info: Info,
     where: Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")] | None = None,
+    order_by: Optional[list[Annotated["MetadatumOrderByClause", strawberry.lazy("api.types.metadatum")]]] = [],
 ) -> Sequence[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Sample)
     relationship = mapper.relationships["metadatas"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -182,6 +191,30 @@ class SampleWhereClause(TypedDict):
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     metadatas: Optional[Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class SampleOrderByClause(TypedDict):
+    rails_sample_id: Optional[orderBy] | None
+    name: Optional[orderBy] | None
+    sample_type: Optional[orderBy] | None
+    water_control: Optional[orderBy] | None
+    collection_date: Optional[orderBy] | None
+    collection_location: Optional[orderBy] | None
+    description: Optional[orderBy] | None
+    host_taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -366,11 +399,12 @@ async def resolve_samples(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[SampleWhereClause] = None,
+    order_by: Optional[list[SampleOrderByClause]] = [],
 ) -> typing.Sequence[Sample]:
     """
     Resolve Sample objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.Sample, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.Sample, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_sample_aggregate_output(query_results: RowMapping) -> SampleAggregateFunctions:

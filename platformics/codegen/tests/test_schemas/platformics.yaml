@@ -51,6 +51,17 @@ enums:
     permissible_values:
       Illumina:
       Nanopore:
+  TaxonLevel:
+    permissible_values:
+      level_subspecies:
+      level_species:
+      level_genus:
+      level_family:
+      level_order:
+      level_class:
+      level_phylum:
+      level_kingdom:
+      level_superkingdom:
 
 classes:
   Entity:
@@ -168,6 +179,9 @@ classes:
       clearlabs_export:
         range: boolean
         required: true
+      taxon:
+        range: Taxon
+        inverse: Taxon.sequencing_reads
     annotations:
       plural: SequencingReads
 
@@ -197,6 +211,49 @@ classes:
         required: true
     annotations:
       plural: Contigs
+
+  Taxon:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      is_phage:
+        range: boolean
+        required: true
+      upstream_database:
+        range: UpstreamDatabase
+        required: true
+        inverse: UpstreamDatabase.taxa
+      upstream_database_identifier:
+        range: string
+        required: true
+      level:
+        range: TaxonLevel
+        required: true
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.taxon
+        multivalued: true
+    annotations:
+      plural: Taxa
+
+  UpstreamDatabase:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.upstream_database
+    annotations:
+      plural: UpstreamDatabases
 
   EntityMixin:
     mixin: true
