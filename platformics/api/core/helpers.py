@@ -23,7 +23,7 @@ from typing_extensions import TypedDict
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
-def apply_order_by(field, direction, query: Select):
+def apply_order_by(field: str, direction: orderBy, query: Select) -> Select:
     match direction.value:
         case "asc":
             query = query.order_by(getattr(query.selected_columns, field).asc())
@@ -42,6 +42,7 @@ def apply_order_by(field, direction, query: Select):
 class indexedOrderByClause(TypedDict):
     field: dict[str, orderBy] | dict[str, dict[str, Any]]
     index: int
+    sort: orderBy
 
 def convert_where_clauses_to_sql(
     principal: Principal,
@@ -71,17 +72,17 @@ def convert_where_clauses_to_sql(
 
     # Create a dictionary with the keys as the related field/field names
     # The values are dict of {order_by: {"field": ..., "index": ...}, where: {...}}
-    all_joins = defaultdict(dict)
+    all_joins = defaultdict(dict) # type: ignore
     for item in order_by:
         for col, v in item["field"].items():
-            if col in mapper.relationships:
+            if col in mapper.relationships: # type: ignore
                 if not all_joins[col].get("order_by"):
                     all_joins[col]["order_by"] = []
                 all_joins[col]["order_by"].append({"field": v, "index": item["index"]})
             else:
                 local_order_by.append({"field": col, "sort": v, "index": item["index"]})
     for col, v in whereClause.items():
-        if col in mapper.relationships:
+        if col in mapper.relationships: # type: ignore
             all_joins[col]["where"] = v
         else:
             local_where_clauses[col] = v
@@ -92,11 +93,9 @@ def convert_where_clauses_to_sql(
         related_cls = relationship.mapper.entity
         cerbos_query = get_resource_query(principal, cerbos_client, action, related_cls)
         # Get the subquery and nested order_by fields that need to be applied to the current query
-        subquery, subquery_order_by = convert_where_clauses_to_sql(
-            principal, cerbos_client, action, cerbos_query, related_cls, join_info.get("where"), join_info.get("order_by"), depth  # type: ignore
-        )
-        subquery = subquery.subquery()
-        query_alias = aliased(related_cls, subquery)
+        subquery, subquery_order_by = convert_where_clauses_to_sql(principal, cerbos_client, action, cerbos_query, related_cls, join_info.get("where"), join_info.get("order_by"), depth)  # type: ignore
+        subquery = subquery.subquery() # type: ignore
+        query_alias = aliased(related_cls, subquery) # type: ignore
         joincondition_a = [
             (getattr(sa_model, local.key) == getattr(query_alias, remote.key))
             for local, remote in relationship.local_remote_pairs
@@ -106,14 +105,14 @@ def convert_where_clauses_to_sql(
         aliased_field_num = 0
         for item in subquery_order_by:
             aliased_field_name = f"order_field_{aliased_field_num}"
-            field_to_match = getattr(subquery.c, item["field"])
+            field_to_match = getattr(subquery.c, item["field"]) # type: ignore
             aliased_field_num += 1
             query = query.add_columns(field_to_match.label(aliased_field_name))
             local_order_by.append({"field": aliased_field_name, "sort": item["sort"], "index": item["index"]})
 
     # Handle not-related fields
     for col, v in local_where_clauses.items():
-        for comparator, value in v.items():
+        for comparator, value in v.items(): # type: ignore
             sa_comparator = operator_map[comparator]
             if sa_comparator == "IS_NULL":
                 query = query.filter(getattr(sa_model, col).is_(None))
@@ -145,7 +144,7 @@ def get_db_query(
         raise Exception("Max filter depth exceeded")
     query = get_resource_query(principal, cerbos_client, action, model_cls)
     # Add indices to the order_by fields so that we can preserve the order of the fields
-    order_by = [indexedOrderByClause({"field": x, "index": i}) for i, x in enumerate(order_by)]
+    order_by = [indexedOrderByClause({"field": x, "index": i}) for i, x in enumerate(order_by)] # type: ignore
     query, order_by = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, order_by, depth  # type: ignore
     )

@@ -62,7 +62,7 @@ class EntityLoader:
         if not order_by:
             order_by = []
 
-        input_dict = {}
+        input_dict = {} # type: ignore
         input_dict.update(where)
         for item in order_by:
             input_dict.update(item)
