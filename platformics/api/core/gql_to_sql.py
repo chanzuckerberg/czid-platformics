@@ -16,6 +16,7 @@ from strawberry.arguments import StrawberryArgument
 from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
+import enum
 
 T = TypeVar("T")
 
@@ -50,6 +51,16 @@ aggregator_map = {
     "variance": func.variance,
 }
 
+@strawberry.enum
+class orderBy(enum.Enum):
+    # defaults to nulls last
+    asc = "asc"
+    asc_nulls_first = "asc_nulls_first"
+    asc_nulls_last = "asc_nulls_last"
+    # defaults to nulls first
+    desc = "desc"
+    desc_nulls_first = "desc_nulls_first"
+    desc_nulls_last = "desc_nulls_last"
 
 @strawberry.input()
 class EnumComparators(TypedDict, Generic[T]):

@@ -54,7 +54,7 @@ from api.types.upstream_database import (
     UpstreamDatabaseAggregate,
     resolve_upstream_databases_aggregate,
 )
-from api.types.contig import Contig, resolve_contigs, ContigAggregate, resolve_contigs_aggregate
+from api.types.index_file import IndexFile, resolve_index_files, IndexFileAggregate, resolve_index_files_aggregate
 from api.types.phylogenetic_tree import (
     PhylogeneticTree,
     resolve_phylogenetic_trees,
@@ -88,7 +88,7 @@ class Query:
     metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
     taxa: Sequence[Taxon] = resolve_taxa
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
-    contigs: Sequence[Contig] = resolve_contigs
+    index_files: Sequence[IndexFile] = resolve_index_files
     phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
     bulk_downloads: Sequence[BulkDownload] = resolve_bulk_downloads
 
@@ -103,6 +103,6 @@ class Query:
     metrics_consensus_genomes_aggregate: MetricConsensusGenomeAggregate = resolve_metrics_consensus_genomes_aggregate
     taxa_aggregate: TaxonAggregate = resolve_taxa_aggregate
     upstream_databases_aggregate: UpstreamDatabaseAggregate = resolve_upstream_databases_aggregate
-    contigs_aggregate: ContigAggregate = resolve_contigs_aggregate
+    index_files_aggregate: IndexFileAggregate = resolve_index_files_aggregate
     phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate
     bulk_downloads_aggregate: BulkDownloadAggregate = resolve_bulk_downloads_aggregate

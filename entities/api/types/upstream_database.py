@@ -16,6 +16,7 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
 from api.types.taxon import TaxonAggregate, format_taxon_aggregate_output
+from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -23,6 +24,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -41,12 +43,17 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonWhereClause, Taxon
+    from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
+    from api.types.index_file import IndexFileOrderByClause, IndexFileWhereClause, IndexFile
 
     pass
 else:
     TaxonWhereClause = "TaxonWhereClause"
     Taxon = "Taxon"
+    TaxonOrderByClause = "TaxonOrderByClause"
+    IndexFileWhereClause = "IndexFileWhereClause"
+    IndexFile = "IndexFile"
+    IndexFileOrderByClause = "IndexFileOrderByClause"
     pass
 
 
@@ -65,11 +72,12 @@ async def load_taxon_rows(
     root: "UpstreamDatabase",
     info: Info,
     where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
+    order_by: Optional[list[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]]] = [],
 ) -> Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.UpstreamDatabase)
     relationship = mapper.relationships["taxa"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -87,6 +95,38 @@ async def load_taxon_aggregate_rows(
     result = rows[0] if rows else None
     aggregate_output = format_taxon_aggregate_output(result)
     return TaxonAggregate(aggregate=aggregate_output)
+
+
+@relay.connection(
+    relay.ListConnection[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]]  # type:ignore
+)
+async def load_index_file_rows(
+    root: "UpstreamDatabase",
+    info: Info,
+    where: Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")] | None = None,
+    order_by: Optional[list[Annotated["IndexFileOrderByClause", strawberry.lazy("api.types.index_file")]]] = [],
+) -> Sequence[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.UpstreamDatabase)
+    relationship = mapper.relationships["indexes"]
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_index_file_aggregate_rows(
+    root: "UpstreamDatabase",
+    info: Info,
+    where: Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")] | None = None,
+) -> Optional[Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.UpstreamDatabase)
+    relationship = mapper.relationships["indexes"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_index_file_aggregate_output(result)
+    return IndexFileAggregate(aggregate=aggregate_output)
 
 
 """
@@ -119,6 +159,24 @@ class UpstreamDatabaseWhereClause(TypedDict):
     collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     taxa: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
+    indexes: Optional[Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class UpstreamDatabaseOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -137,6 +195,12 @@ class UpstreamDatabase(EntityInterface):
     taxa_aggregate: Optional[
         Annotated["TaxonAggregate", strawberry.lazy("api.types.taxon")]
     ] = load_taxon_aggregate_rows  # type:ignore
+    indexes: Sequence[
+        Annotated["IndexFile", strawberry.lazy("api.types.index_file")]
+    ] = load_index_file_rows  # type:ignore
+    indexes_aggregate: Optional[
+        Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]
+    ] = load_index_file_aggregate_rows  # type:ignore
 
 
 """
@@ -187,6 +251,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 class UpstreamDatabaseCountColumns(enum.Enum):
     name = "name"
     taxa = "taxa"
+    indexes = "indexes"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -262,11 +327,12 @@ async def resolve_upstream_databases(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[UpstreamDatabaseWhereClause] = None,
+    order_by: Optional[list[UpstreamDatabaseOrderByClause]] = [],
 ) -> typing.Sequence[UpstreamDatabase]:
     """
     Resolve UpstreamDatabase objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_upstream_database_aggregate_output(query_results: RowMapping) -> UpstreamDatabaseAggregateFunctions:

@@ -13,6 +13,7 @@ from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.sample import SampleFactory
 from test_infra.factories.taxon import TaxonFactory
 from test_infra.factories.genomic_range import GenomicRangeFactory
+from test_infra.factories.reference_genome import ReferenceGenomeFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -67,6 +68,7 @@ class SequencingReadFactory(CommonFactory):
     technology = fuzzy.FuzzyChoice(["Illumina", "Nanopore"])
     nucleic_acid = fuzzy.FuzzyChoice(["RNA", "DNA"])
     clearlabs_export = factory.Faker("boolean")
+    medaka_model = fuzzy.FuzzyText()
     taxon = factory.SubFactory(
         TaxonFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
@@ -74,6 +76,11 @@ class SequencingReadFactory(CommonFactory):
     )
     primer_file = factory.SubFactory(
         GenomicRangeFactory,
+        owner_user_id=factory.SelfAttribute("..owner_user_id"),
+        collection_id=factory.SelfAttribute("..collection_id"),
+    )
+    reference_sequence = factory.SubFactory(
+        ReferenceGenomeFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )

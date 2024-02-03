@@ -16,9 +16,7 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
-from api.types.reference_genome import ReferenceGenomeAggregate, format_reference_genome_aggregate_output
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
-from api.types.sample import SampleAggregate, format_sample_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -26,6 +24,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     EnumComparators,
     IntComparators,
     StrComparators,
@@ -47,24 +46,21 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.upstream_database import UpstreamDatabaseWhereClause, UpstreamDatabase
-    from api.types.consensus_genome import ConsensusGenomeWhereClause, ConsensusGenome
-    from api.types.reference_genome import ReferenceGenomeWhereClause, ReferenceGenome
-    from api.types.sequencing_read import SequencingReadWhereClause, SequencingRead
-    from api.types.sample import SampleWhereClause, Sample
+    from api.types.upstream_database import UpstreamDatabaseOrderByClause, UpstreamDatabaseWhereClause, UpstreamDatabase
+    from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
+    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
 
     pass
 else:
     UpstreamDatabaseWhereClause = "UpstreamDatabaseWhereClause"
     UpstreamDatabase = "UpstreamDatabase"
+    UpstreamDatabaseOrderByClause = "UpstreamDatabaseOrderByClause"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
-    ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
-    ReferenceGenome = "ReferenceGenome"
+    ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
-    SampleWhereClause = "SampleWhereClause"
-    Sample = "Sample"
+    SequencingReadOrderByClause = "SequencingReadOrderByClause"
     pass
 
 
@@ -81,11 +77,14 @@ async def load_upstream_database_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")] | None = None,
+    order_by: Optional[
+        list[Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]]
+    ] = [],
 ) -> Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["upstream_database"]
-    return await dataloader.loader_for(relationship, where).load(root.upstream_database_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.upstream_database_id)  # type:ignore
 
 
 @relay.connection(
@@ -95,11 +94,14 @@ async def load_consensus_genome_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
+    order_by: Optional[
+        list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]
+    ] = [],
 ) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["consensus_genomes"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -120,48 +122,20 @@ async def load_consensus_genome_aggregate_rows(
 
 
 @relay.connection(
-    relay.ListConnection[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]  # type:ignore
-)
-async def load_reference_genome_rows(
-    root: "Taxon",
-    info: Info,
-    where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
-) -> Sequence[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["reference_genomes"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_reference_genome_aggregate_rows(
-    root: "Taxon",
-    info: Info,
-    where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
-) -> Optional[Annotated["ReferenceGenomeAggregate", strawberry.lazy("api.types.reference_genome")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["reference_genomes"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_reference_genome_aggregate_output(result)
-    return ReferenceGenomeAggregate(aggregate=aggregate_output)
-
-
-@relay.connection(
     relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
 )
 async def load_sequencing_read_rows(
     root: "Taxon",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
+    order_by: Optional[
+        list[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]]
+    ] = [],
 ) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Taxon)
     relationship = mapper.relationships["sequencing_reads"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -179,37 +153,6 @@ async def load_sequencing_read_aggregate_rows(
     result = rows[0] if rows else None
     aggregate_output = format_sequencing_read_aggregate_output(result)
     return SequencingReadAggregate(aggregate=aggregate_output)
-
-
-@relay.connection(
-    relay.ListConnection[Annotated["Sample", strawberry.lazy("api.types.sample")]]  # type:ignore
-)
-async def load_sample_rows(
-    root: "Taxon",
-    info: Info,
-    where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
-) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["samples"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_sample_aggregate_rows(
-    root: "Taxon",
-    info: Info,
-    where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
-) -> Optional[Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.Taxon)
-    relationship = mapper.relationships["samples"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_sample_aggregate_output(result)
-    return SampleAggregate(aggregate=aggregate_output)
 
 
 """
@@ -253,13 +196,45 @@ class TaxonWhereClause(TypedDict):
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
-    reference_genomes: Optional[
-        Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
-    samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class TaxonOrderByClause(TypedDict):
+    wikipedia_id: Optional[orderBy] | None
+    description: Optional[orderBy] | None
+    common_name: Optional[orderBy] | None
+    name: Optional[orderBy] | None
+    is_phage: Optional[orderBy] | None
+    upstream_database: Optional[
+        Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]
+    ] | None
+    upstream_database_identifier: Optional[orderBy] | None
+    level: Optional[orderBy] | None
+    tax_parent: Optional[orderBy] | None
+    tax_subspecies: Optional[orderBy] | None
+    tax_species: Optional[orderBy] | None
+    tax_genus: Optional[orderBy] | None
+    tax_family: Optional[orderBy] | None
+    tax_order: Optional[orderBy] | None
+    tax_class: Optional[orderBy] | None
+    tax_phylum: Optional[orderBy] | None
+    tax_kingdom: Optional[orderBy] | None
+    tax_superkingdom: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -289,22 +264,12 @@ class Taxon(EntityInterface):
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
-    reference_genomes: Sequence[
-        Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows  # type:ignore
-    reference_genomes_aggregate: Optional[
-        Annotated["ReferenceGenomeAggregate", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_aggregate_rows  # type:ignore
     sequencing_reads: Sequence[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
     sequencing_reads_aggregate: Optional[
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
-    samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
-    samples_aggregate: Optional[
-        Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
-    ] = load_sample_aggregate_rows  # type:ignore
 
 
 """
@@ -376,9 +341,7 @@ class TaxonCountColumns(enum.Enum):
     tax_kingdom = "tax_kingdom"
     tax_superkingdom = "tax_superkingdom"
     consensus_genomes = "consensus_genomes"
-    reference_genomes = "reference_genomes"
     sequencing_reads = "sequencing_reads"
-    samples = "samples"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -466,11 +429,12 @@ async def resolve_taxa(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[TaxonWhereClause] = None,
+    order_by: Optional[list[TaxonOrderByClause]] = [],
 ) -> typing.Sequence[Taxon]:
     """
     Resolve Taxon objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.Taxon, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_taxon_aggregate_output(query_results: RowMapping) -> TaxonAggregateFunctions:

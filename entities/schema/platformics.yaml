@@ -20,7 +20,7 @@ types:
     base: str
     description: A UUID
 
-  2dArrayInt:
+  Array2dInt:
     uri: xsd:array
     base: int
     description: A 2D array of integers, e.g. [[1, 2, 3], [4, 5, 6]]
@@ -103,6 +103,36 @@ enums:
     permissible_values:
       concatenate:
       zip:
+  HostOrganismCategory:
+    permissible_values:
+      human:
+      insect:
+      non_human_animal:
+      unknown:
+  IndexTypes:
+    permissible_values:
+      # NCBI indexes
+      nt:
+      nt_loc:
+      nt_info:
+      nr:
+      nr_loc:
+      lineage:
+      accession2taxid:
+      deuterostome:
+      taxon_blacklist:
+      minimap2_long:
+      minimap2_short:
+      diamond:
+      # HostGenome indexes
+      star:
+      bowtie2:
+      bowtie2_v2:
+      minimap2_dna:
+      minimap2_rna:
+      hisat2:
+      kallisto:
+      original_transcripts_gtf:
 
 classes:
   Entity:
@@ -210,11 +240,11 @@ classes:
         required: true
         annotations:
           factory_type: city
-      description:
+      notes:
         range: string
-      host_taxon:
-        range: Taxon
-        inverse: Taxon.samples
+      host_organism:
+        range: HostOrganism
+        inverse: HostOrganism.samples
       sequencing_reads:
         range: SequencingRead
         multivalued: true
@@ -238,7 +268,7 @@ classes:
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
-      # Wet lab protocol
+      # Wet lab protocol (used for SARS-CoV-2 CG where we ask the user for this in the UI)
       protocol:
         range: SequencingProtocol
       # Files containing sequencing reads (R1 and R2 refer to read pairs 1/2 in Illumina paired-end sequencing)
@@ -258,23 +288,25 @@ classes:
       clearlabs_export:
         range: boolean
         required: true
-      # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline (optional)
+      # Medaka is a tool for generating consensus sequences from Nanopore reads. Users choose which model to use in the UI.
+      medaka_model:
+        range: string
+      # Can specify a taxon if it's known, e.g. for "Viral Consensus Genome" pipeline
       taxon:
         range: Taxon
         inverse: Taxon.sequencing_reads
-      # Can specify a primer BED file, used to trim primers, e.g. for "Viral Consensus Genome" pipeline (optional)
+      # Can specify a primer BED file, used to trim primers, e.g. for "Viral Consensus Genome" pipeline
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+      # Can specify a reference sequence for "Viral Consensus Genome" pipeline
+      reference_sequence:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.sequencing_reads
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
-        multivalued: true
-      # Contigs generated from these Sequencing Reads
-      contigs:
-        range: Contig
-        inverse: Contig.sequencing_read
         multivalued: true
     annotations:
       plural: SequencingReads
@@ -287,10 +319,6 @@ classes:
     mixins:
       - EntityMixin
     attributes:
-      # Genomic coordinates based on this reference sequence
-      reference_genome:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.genomic_ranges
       file:
         range: File
       sequencing_reads:
@@ -311,22 +339,14 @@ classes:
       # FASTA reference genome
       file:
         range: File
-      taxon:
-        range: Taxon
-        required: true
-        inverse: Taxon.reference_genomes
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
       accession_name:
         range: string
-      consensus_genomes:
-        range: ConsensusGenome
-        inverse: ConsensusGenome.reference_genome
-        multivalued: true
-      genomic_ranges:
-        range: GenomicRange
-        inverse: GenomicRange.reference_genome
+      sequencing_reads:
+        range: SequencingRead
+        inverse: SequencingRead.reference_sequence
         multivalued: true
     annotations:
       plural: ReferenceGenomes
@@ -347,15 +367,26 @@ classes:
       version:
         range: string
         required: true
-      # Host filtering information; output by index generation
-      host_filtering:
-        range: File
-      # Original FASTA file used in index generation; used for our record keeping
+      category:
+        range: HostOrganismCategory
+        required: true
+      # Extra info for host filtering
+      is_deuterostome:
+        range: boolean
+        required: true
+      # Indexes for this host for each tool we use
+      indexes:
+        range: IndexFile
+        multivalued: true
+        inverse: IndexFile.host_organism
+      # Original reference FASTA file used to generate indexes for this host; used for our record keeping
       sequence:
         range: File
-      # TODO: Stores host genome's background that we prepared. We currently have 2 backgrounds (26, 98) assigned to all host genomes.
-      # background:
-      #   range: Background
+      # Samples that obtained from this host organism
+      samples:
+        range: Sample
+        inverse: Sample.host_organism
+        multivalued: true
     annotations:
       plural: HostOrganisms
 
@@ -388,21 +419,23 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # Which Taxon this ConsensusGenome was created from. Could be a duplicate of SequencingRead.taxon, but needed for CG from mNGS:
+      # - CG: SequencingRead.taxon = ConsensusGenome.taxon = taxonId chosen at upload time
+      # - SARS-CoV-2 CG: SequencingRead.taxon = ConsensusGenome.taxon = sars-cov-2
+      # - CG from mNGS: SequencingRead.taxon = null BUT ConsensusGenome.taxon = taxonId chosen from UI
       taxon:
         range: Taxon
         required: true
         inverse: Taxon.consensus_genomes
+      # Which SequencingRead this ConsensusGenome was created from
       sequence_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
-      reference_genome:
-        range: ReferenceGenome
-        required: true
-        inverse: ReferenceGenome.consensus_genomes
-      # Consensus Genome sequence
+      # Consensus Genome sequence output by CG pipeline
       sequence:
         range: File
+      # Metrics output by CG pipeline
       metrics:
         range: MetricConsensusGenome
         inverse: MetricConsensusGenome.consensus_genome
@@ -410,7 +443,7 @@ classes:
         # class actually defines the relationship and this is just a virtual field. We're misusing the LinkML
         # "inlined" field property until we learn how to use LinkML better and find a better way to express this
         inlined: true
-      # Zip file containing intermediate outputs
+      # Zip file containing intermediate outputs file output by CG pipeline
       intermediate_outputs:
         range: File
     annotations:
@@ -454,7 +487,7 @@ classes:
       coverage_total_length:
         range: int
       coverage_viz:
-        range: 2dArrayInt
+        range: Array2dInt
     annotations:
       plural: MetricsConsensusGenomes
 
@@ -512,17 +545,9 @@ classes:
         range: ConsensusGenome
         inverse: ConsensusGenome.taxon
         multivalued: true
-      reference_genomes:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.taxon
-        multivalued: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.taxon
-        multivalued: true
-      samples:
-        range: Sample
-        inverse: Sample.host_taxon
         multivalued: true
     annotations:
       plural: Taxa
@@ -539,24 +564,45 @@ classes:
         range: Taxon
         multivalued: true
         inverse: Taxon.upstream_database
+      # This is where NCBI indexes would live
+      indexes:
+        range: IndexFile
+        multivalued: true
+        inverse: IndexFile.upstream_database
     annotations:
       plural: UpstreamDatabases
 
   # ----------------------------------------------------------------------------
-  # Contigs generated from SequencingReads
+  # Indexes used by UpstreamDatabases and HostOrganisms
   # ----------------------------------------------------------------------------
-  Contig:
+  IndexFile:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      sequencing_read:
-        range: SequencingRead
-        inverse: Sample.contigs
-      sequence:
+      # Index type
+      name:
+        range: IndexTypes
         required: true
+      # NCBI index: e.g. "2022-06-02"
+      # HostGenome index: e.g. 1, 2, 3, etc
+      version:
+        range: string
+        required: true
+      # S3 path to the index file
+      file:
+        range: File
+        required: true
+      # Links to either upstream database or host organism
+      upstream_database:
+        range: UpstreamDatabase
+        inverse: UpstreamDatabase.indexes
+      host_organism:
+        range: HostOrganism
+        inverse: HostOrganism.indexes
     annotations:
-      plural: Contigs
+      plural: IndexFiles
+
 
   # ----------------------------------------------------------------------------
   # Phylogenetic tree

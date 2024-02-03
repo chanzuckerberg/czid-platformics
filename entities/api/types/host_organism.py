@@ -16,6 +16,8 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
+from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
+from api.types.sample import SampleAggregate, format_sample_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -23,25 +25,39 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
+    EnumComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
+    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
+from support.enums import HostOrganismCategory
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
+    from api.types.index_file import IndexFileOrderByClause, IndexFileWhereClause, IndexFile
+    from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample
+
     pass
 else:
+    IndexFileWhereClause = "IndexFileWhereClause"
+    IndexFile = "IndexFile"
+    IndexFileOrderByClause = "IndexFileOrderByClause"
+    SampleWhereClause = "SampleWhereClause"
+    Sample = "Sample"
+    SampleOrderByClause = "SampleOrderByClause"
     pass
 
 
@@ -51,6 +67,72 @@ Dataloaders
 ------------------------------------------------------------------------------
 These are batching functions for loading related objects to avoid N+1 queries.
 """
+
+
+@relay.connection(
+    relay.ListConnection[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]]  # type:ignore
+)
+async def load_index_file_rows(
+    root: "HostOrganism",
+    info: Info,
+    where: Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")] | None = None,
+    order_by: Optional[list[Annotated["IndexFileOrderByClause", strawberry.lazy("api.types.index_file")]]] = [],
+) -> Sequence[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.HostOrganism)
+    relationship = mapper.relationships["indexes"]
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_index_file_aggregate_rows(
+    root: "HostOrganism",
+    info: Info,
+    where: Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")] | None = None,
+) -> Optional[Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.HostOrganism)
+    relationship = mapper.relationships["indexes"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_index_file_aggregate_output(result)
+    return IndexFileAggregate(aggregate=aggregate_output)
+
+
+@relay.connection(
+    relay.ListConnection[Annotated["Sample", strawberry.lazy("api.types.sample")]]  # type:ignore
+)
+async def load_sample_rows(
+    root: "HostOrganism",
+    info: Info,
+    where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
+    order_by: Optional[list[Annotated["SampleOrderByClause", strawberry.lazy("api.types.sample")]]] = [],
+) -> Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.HostOrganism)
+    relationship = mapper.relationships["samples"]
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
+
+
+@strawberry.field
+async def load_sample_aggregate_rows(
+    root: "HostOrganism",
+    info: Info,
+    where: Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")] | None = None,
+) -> Optional[Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]]:
+    selections = info.selected_fields[0].selections[0].selections
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.HostOrganism)
+    relationship = mapper.relationships["samples"]
+    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
+    # Aggregate queries always return a single row, so just grab the first one
+    result = rows[0] if rows else None
+    aggregate_output = format_sample_aggregate_output(result)
+    return SampleAggregate(aggregate=aggregate_output)
+
+
 """
 ------------------------------------------------------------------------------
 Dataloader for File object
@@ -106,6 +188,30 @@ class HostOrganismWhereClause(TypedDict):
     collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
+    category: Optional[EnumComparators[HostOrganismCategory]] | None
+    is_deuterostome: Optional[BoolComparators] | None
+    indexes: Optional[Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")]] | None
+    samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class HostOrganismOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    version: Optional[orderBy] | None
+    category: Optional[orderBy] | None
+    is_deuterostome: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -121,10 +227,20 @@ class HostOrganism(EntityInterface):
     collection_id: int
     name: str
     version: str
-    host_filtering_id: Optional[strawberry.ID]
-    host_filtering: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("host_filtering")  # type: ignore
+    category: HostOrganismCategory
+    is_deuterostome: bool
+    indexes: Sequence[
+        Annotated["IndexFile", strawberry.lazy("api.types.index_file")]
+    ] = load_index_file_rows  # type:ignore
+    indexes_aggregate: Optional[
+        Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]
+    ] = load_index_file_aggregate_rows  # type:ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
+    samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
+    samples_aggregate: Optional[
+        Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
+    ] = load_sample_aggregate_rows  # type:ignore
 
 
 """
@@ -176,8 +292,11 @@ Define enum of all columns to support count and count(distinct) aggregations
 class HostOrganismCountColumns(enum.Enum):
     name = "name"
     version = "version"
-    host_filtering = "host_filtering"
+    category = "category"
+    is_deuterostome = "is_deuterostome"
+    indexes = "indexes"
     sequence = "sequence"
+    samples = "samples"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -233,7 +352,8 @@ class HostOrganismCreateInput:
     collection_id: int
     name: str
     version: str
-    host_filtering_id: Optional[strawberry.ID] = None
+    category: HostOrganismCategory
+    is_deuterostome: bool
     sequence_id: Optional[strawberry.ID] = None
 
 
@@ -242,7 +362,8 @@ class HostOrganismUpdateInput:
     collection_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
-    host_filtering_id: Optional[strawberry.ID] = None
+    category: Optional[HostOrganismCategory] = None
+    is_deuterostome: Optional[bool] = None
     sequence_id: Optional[strawberry.ID] = None
 
 
@@ -259,11 +380,12 @@ async def resolve_host_organisms(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[HostOrganismWhereClause] = None,
+    order_by: Optional[list[HostOrganismOrderByClause]] = [],
 ) -> typing.Sequence[HostOrganism]:
     """
     Resolve HostOrganism objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_host_organism_aggregate_output(query_results: RowMapping) -> HostOrganismAggregateFunctions:

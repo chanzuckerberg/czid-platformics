@@ -16,14 +16,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.file import File
-    from database.models.taxon import Taxon
-    from database.models.consensus_genome import ConsensusGenome
-    from database.models.genomic_range import GenomicRange
+    from database.models.sequencing_read import SequencingRead
 else:
     File = "File"
-    Taxon = "Taxon"
-    ConsensusGenome = "ConsensusGenome"
-    GenomicRange = "GenomicRange"
+    SequencingRead = "SequencingRead"
 
 
 class ReferenceGenome(Entity):
@@ -31,17 +27,12 @@ class ReferenceGenome(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file: Mapped["File"] = relationship("File", foreign_keys=file_id)
-    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
-    taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="reference_genomes", foreign_keys=taxon_id)
     accession_id: Mapped[str] = mapped_column(String, nullable=True)
     accession_name: Mapped[str] = mapped_column(String, nullable=True)
-    consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
-        "ConsensusGenome",
-        back_populates="reference_genome",
+    sequencing_reads: Mapped[list[SequencingRead]] = relationship(
+        "SequencingRead",
+        back_populates="reference_sequence",
         uselist=True,
-        foreign_keys="ConsensusGenome.reference_genome_id",
-    )
-    genomic_ranges: Mapped[list[GenomicRange]] = relationship(
-        "GenomicRange", back_populates="reference_genome", uselist=True, foreign_keys="GenomicRange.reference_genome_id"
+        foreign_keys="SequencingRead.reference_sequence_id",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
