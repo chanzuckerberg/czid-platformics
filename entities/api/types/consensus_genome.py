@@ -10,17 +10,18 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import typing
 from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
-
 import database.models as db
 import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from api.files import File, FileWhereClause
+from api.files import File, FileWhereClause, UPLOADS_PREFIX
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
+from mypy_boto3_s3.client import S3Client
+from platformics.settings import APISettings
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_s3_client, get_db_session, require_auth_principal, get_settings
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
@@ -475,17 +476,56 @@ async def delete_consensus_genome(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    settings: APISettings = Depends(get_settings),
+    s3_client: S3Client = Depends(get_s3_client),
 ) -> Sequence[db.Entity]:
     """
     Delete ConsensusGenome objects. Used for mutations (see api/mutations.py).
     """
+
+    # FIXME: move this to a helper function + codegen
+
     # Fetch entities for deletion, if we have access to them
-    entities = await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
-    if len(entities) == 0:
+    entities_to_delete = await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
+    if len(entities_to_delete) == 0:
         raise PlatformicsException("Unauthorized: Cannot delete entities")
 
-    # Update DB
-    for entity in entities:
+    # Find related File objects to delete
+    whereFiles = {
+        "entity_id": {
+            "_in": [entity.id for entity in entities_to_delete]
+        }
+    }
+    files_to_delete = await get_db_rows(db.File, session, cerbos_client, principal, whereFiles, [], CerbosAction.DELETE)
+    files_field_names = [f.entity_field_name for f in files_to_delete]
+
+    # Unlink files from entities and delete entities
+    for entity in entities_to_delete:
+        # Unlink each type of file these Entities can have
+        for field_name in files_field_names:
+            setattr(entity, field_name, None)
+        # Then delete the entity
         await session.delete(entity)
+
+    # Delete file objects
+    for file in files_to_delete:
+        # Delete file on S3 only if it was uploaded through NextGen, AND if there are no other File objects with the same namespace/path
+        if file.upload_client and file.path.startswith(f"{settings.OUTPUT_S3_PREFIX}/{UPLOADS_PREFIX}/"):
+            # Get all other Files that reference the same path on S3
+            whereFiles = {
+                "id": { "_neq": file.id },
+                "protocol": { "_eq": file.protocol },
+                "namespace": { "_eq": file.namespace },
+                "path": { "_eq": file.path },
+            }
+            filesWithSamePath = await get_db_rows(db.File, session, cerbos_client, principal, whereFiles, [], CerbosAction.DELETE)
+            if len(filesWithSamePath) == 0:
+                response = s3_client.delete_object(Bucket=file.namespace, Key=file.path)
+                # TODO: if error: raise PlatformicsException("Failed to delete data") 
+
+        await session.delete(file)
+
+    # Commit all changes
     await session.commit()
-    return entities
+
+    return entities_to_delete

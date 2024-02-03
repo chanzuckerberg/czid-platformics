@@ -1,3 +1,4 @@
+# FIXME: annotate with cascade_delete
 id: https://czid.org/entities/schema/platformics
 title: CZID Platformics Bio-Entities Schema
 name: platformics
@@ -154,8 +155,6 @@ classes:
         required: true
       updated_at:
         range: date
-      deleted_at:
-        range: date
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -249,10 +248,14 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+        annotations:
+          cascade_delete: true
       metadatas:
         range: Metadatum
         inverse: Metadatum.sample
         multivalued: true
+        annotations:
+          cascade_delete: true
     annotations:
       plural: Samples
 
@@ -303,11 +306,15 @@ classes:
       reference_sequence:
         range: ReferenceGenome
         inverse: ReferenceGenome.sequencing_reads
+        annotations:
+          cascade_delete: true  
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
         inverse: ConsensusGenome.sequence_read
         multivalued: true
+        annotations:
+          cascade_delete: true
     annotations:
       plural: SequencingReads
 

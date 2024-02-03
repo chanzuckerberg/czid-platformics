@@ -42,6 +42,8 @@ class ConsensusGenome(Entity):
         back_populates="consensus_genome",
         uselist=True,
         foreign_keys="MetricConsensusGenome.consensus_genome_id",
+        # TODO: move to codegen
+        cascade="all, delete-orphan"
     )
     intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     intermediate_outputs: Mapped["File"] = relationship("File", foreign_keys=intermediate_outputs_id)
