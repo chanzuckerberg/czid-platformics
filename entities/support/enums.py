@@ -81,3 +81,35 @@ class PhylogeneticTreeFormat(enum.Enum):
 class BulkDownloadType(enum.Enum):
     concatenate = "concatenate"
     zip = "zip"
+
+
+@strawberry.enum
+class HostOrganismCategory(enum.Enum):
+    human = "human"
+    insect = "insect"
+    non_human_animal = "non_human_animal"
+    unknown = "unknown"
+
+
+@strawberry.enum
+class IndexTypes(enum.Enum):
+    nt = "nt"
+    nt_loc = "nt_loc"
+    nt_info = "nt_info"
+    nr = "nr"
+    nr_loc = "nr_loc"
+    lineage = "lineage"
+    accession2taxid = "accession2taxid"
+    deuterostome = "deuterostome"
+    taxon_blacklist = "taxon_blacklist"
+    minimap2_long = "minimap2_long"
+    minimap2_short = "minimap2_short"
+    diamond = "diamond"
+    star = "star"
+    bowtie2 = "bowtie2"
+    bowtie2_v2 = "bowtie2_v2"
+    minimap2_dna = "minimap2_dna"
+    minimap2_rna = "minimap2_rna"
+    hisat2 = "hisat2"
+    kallisto = "kallisto"
+    original_transcripts_gtf = "original_transcripts_gtf"

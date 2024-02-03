@@ -42,14 +42,10 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
 
     pass
 else:
-    ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
-    ReferenceGenome = "ReferenceGenome"
-    ReferenceGenomeOrderByClause = "ReferenceGenomeOrderByClause"
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     SequencingReadOrderByClause = "SequencingReadOrderByClause"
@@ -62,21 +58,6 @@ Dataloaders
 ------------------------------------------------------------------------------
 These are batching functions for loading related objects to avoid N+1 queries.
 """
-
-
-@strawberry.field
-async def load_reference_genome_rows(
-    root: "GenomicRange",
-    info: Info,
-    where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
-    order_by: Optional[
-        list[Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]]
-    ] = [],
-) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.GenomicRange)
-    relationship = mapper.relationships["reference_genome"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.reference_genome_id)  # type:ignore
 
 
 @relay.connection(
@@ -166,9 +147,6 @@ class GenomicRangeWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    reference_genome: Optional[
-        Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
@@ -181,9 +159,6 @@ Supported ORDER BY clause attributes
 
 @strawberry.input
 class GenomicRangeOrderByClause(TypedDict):
-    reference_genome: Optional[
-        Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
@@ -204,9 +179,6 @@ class GenomicRange(EntityInterface):
     producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
-    reference_genome: Optional[
-        Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows  # type:ignore
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
     sequencing_reads: Sequence[
@@ -262,7 +234,6 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class GenomicRangeCountColumns(enum.Enum):
-    reference_genome = "reference_genome"
     file = "file"
     sequencing_reads = "sequencing_reads"
     entity_id = "entity_id"
@@ -318,14 +289,12 @@ Mutation types
 @strawberry.input()
 class GenomicRangeCreateInput:
     collection_id: int
-    reference_genome_id: Optional[strawberry.ID] = None
     file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
 class GenomicRangeUpdateInput:
     collection_id: Optional[int] = None
-    reference_genome_id: Optional[strawberry.ID] = None
     file_id: Optional[strawberry.ID] = None
 
 

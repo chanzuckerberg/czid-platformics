@@ -16,8 +16,7 @@ import strawberry
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
-from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
-from api.types.genomic_range import GenomicRangeAggregate, format_genomic_range_aggregate_output
+from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
@@ -44,21 +43,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
-    from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
-    from api.types.genomic_range import GenomicRangeOrderByClause, GenomicRangeWhereClause, GenomicRange
+    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
 
     pass
 else:
-    TaxonWhereClause = "TaxonWhereClause"
-    Taxon = "Taxon"
-    TaxonOrderByClause = "TaxonOrderByClause"
-    ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
-    ConsensusGenome = "ConsensusGenome"
-    ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
-    GenomicRangeWhereClause = "GenomicRangeWhereClause"
-    GenomicRange = "GenomicRange"
-    GenomicRangeOrderByClause = "GenomicRangeOrderByClause"
+    SequencingReadWhereClause = "SequencingReadWhereClause"
+    SequencingRead = "SequencingRead"
+    SequencingReadOrderByClause = "SequencingReadOrderByClause"
     pass
 
 
@@ -70,83 +61,38 @@ These are batching functions for loading related objects to avoid N+1 queries.
 """
 
 
-@strawberry.field
-async def load_taxon_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")] | None = None,
-    order_by: Optional[list[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]]] = [],
-) -> Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["taxon"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.taxon_id)  # type:ignore
-
-
 @relay.connection(
-    relay.ListConnection[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]  # type:ignore
+    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
 )
-async def load_consensus_genome_rows(
+async def load_sequencing_read_rows(
     root: "ReferenceGenome",
     info: Info,
-    where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
+    where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
     order_by: Optional[
-        list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]
+        list[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]]
     ] = [],
-) -> Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
+) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["consensus_genomes"]
+    relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
-async def load_consensus_genome_aggregate_rows(
+async def load_sequencing_read_aggregate_rows(
     root: "ReferenceGenome",
     info: Info,
-    where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-) -> Optional[Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]]:
+    where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
+) -> Optional[Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]]:
     selections = info.selected_fields[0].selections[0].selections
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["consensus_genomes"]
+    relationship = mapper.relationships["sequencing_reads"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
     # Aggregate queries always return a single row, so just grab the first one
     result = rows[0] if rows else None
-    aggregate_output = format_consensus_genome_aggregate_output(result)
-    return ConsensusGenomeAggregate(aggregate=aggregate_output)
-
-
-@relay.connection(
-    relay.ListConnection[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]  # type:ignore
-)
-async def load_genomic_range_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
-    order_by: Optional[list[Annotated["GenomicRangeOrderByClause", strawberry.lazy("api.types.genomic_range")]]] = [],
-) -> Sequence[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["genomic_ranges"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
-
-
-@strawberry.field
-async def load_genomic_range_aggregate_rows(
-    root: "ReferenceGenome",
-    info: Info,
-    where: Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")] | None = None,
-) -> Optional[Annotated["GenomicRangeAggregate", strawberry.lazy("api.types.genomic_range")]]:
-    selections = info.selected_fields[0].selections[0].selections
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.ReferenceGenome)
-    relationship = mapper.relationships["genomic_ranges"]
-    rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_genomic_range_aggregate_output(result)
-    return GenomicRangeAggregate(aggregate=aggregate_output)
+    aggregate_output = format_sequencing_read_aggregate_output(result)
+    return SequencingReadAggregate(aggregate=aggregate_output)
 
 
 """
@@ -202,13 +148,11 @@ class ReferenceGenomeWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     accession_id: Optional[StrComparators] | None
     accession_name: Optional[StrComparators] | None
-    consensus_genomes: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
+    sequencing_reads: Optional[
+        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
-    genomic_ranges: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
 
 
 """
@@ -218,7 +162,6 @@ Supported ORDER BY clause attributes
 
 @strawberry.input
 class ReferenceGenomeOrderByClause(TypedDict):
-    taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
     accession_id: Optional[orderBy] | None
     accession_name: Optional[orderBy] | None
     id: Optional[orderBy] | None
@@ -243,21 +186,14 @@ class ReferenceGenome(EntityInterface):
     collection_id: int
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
-    consensus_genomes: Sequence[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
-    consensus_genomes_aggregate: Optional[
-        Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_aggregate_rows  # type:ignore
-    genomic_ranges: Sequence[
-        Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows  # type:ignore
-    genomic_ranges_aggregate: Optional[
-        Annotated["GenomicRangeAggregate", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_aggregate_rows  # type:ignore
+    sequencing_reads: Sequence[
+        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
+    ] = load_sequencing_read_rows  # type:ignore
+    sequencing_reads_aggregate: Optional[
+        Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
+    ] = load_sequencing_read_aggregate_rows  # type:ignore
 
 
 """
@@ -308,11 +244,9 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class ReferenceGenomeCountColumns(enum.Enum):
     file = "file"
-    taxon = "taxon"
     accession_id = "accession_id"
     accession_name = "accession_name"
-    consensus_genomes = "consensus_genomes"
-    genomic_ranges = "genomic_ranges"
+    sequencing_reads = "sequencing_reads"
     entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -367,7 +301,6 @@ Mutation types
 class ReferenceGenomeCreateInput:
     collection_id: int
     file_id: Optional[strawberry.ID] = None
-    taxon_id: strawberry.ID
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
 
@@ -376,7 +309,6 @@ class ReferenceGenomeCreateInput:
 class ReferenceGenomeUpdateInput:
     collection_id: Optional[int] = None
     file_id: Optional[strawberry.ID] = None
-    taxon_id: Optional[strawberry.ID] = None
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
 
