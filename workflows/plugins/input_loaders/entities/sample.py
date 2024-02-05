@@ -19,5 +19,6 @@ class SampleInputLoader(InputLoader):
         samples = op.samples(where=SampleWhereClause(id=UUIDComparators(_eq=sample.entity_id)))
         for output in requested_outputs:
             getattr(samples, output)()
-        sample = self._entities_gql(op)["data"][0]
+        resp = self._entities_gql(op)
+        sample = resp["data"]["samples"][0]
         return {output: sample[output] for output in requested_outputs}

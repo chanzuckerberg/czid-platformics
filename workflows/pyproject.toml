@@ -53,7 +53,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-exclude = "terraform_test/.terraform/*"
+exclude = '''terraform_test/\.terraform/.*'''
 line-length = 120
 
 [tool.mypy]
@@ -73,10 +73,6 @@ exclude = [
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["E", "F"]
 ignore = []
-
-[tool.ariadne-codegen]
-schema_path = "../entities/api/schema.graphql"
-queries_path = "../entities/api/queries.graphql"
 
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = [

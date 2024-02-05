@@ -151,9 +151,8 @@ async def run_workflow_version(
         )
         for k, v in input_loader_specifier.outputs.items():
             if k not in input_loader_outputs:
-                raise PlatformicsException(
-                    f"Input loader  {input_loader_specifier.name} ({input_loader_specifier.version}) did not produce output {k}"
-                )
+                loader_label = f"{input_loader_specifier.name} ({input_loader_specifier.version})"
+                raise PlatformicsException(f"Input loader  {loader_label}) did not produce output {k}")
 
             if v in entity_inputs:
                 raise PlatformicsException(f"Duplicate raw input {v}")
@@ -167,7 +166,7 @@ async def run_workflow_version(
             workflow_path=workflow_version.workflow_uri,
             inputs=raw_inputs_json,
         )
-    except:
+    except Exception:
         status = "FAILED"
 
     workflow_run = db.WorkflowRun(
@@ -177,6 +176,13 @@ async def run_workflow_version(
         status=status,
         execution_id=execution_id,
         raw_inputs_json=json.dumps(raw_inputs_json),
+        entity_inputs=[db.WorkflowRunEntityInput(
+            owner_user_id=int(principal.id),
+            collection_id=input.collection_id,
+            field_name=k,
+            input_entity_id=v.entity_id,
+            entity_type=v.entity_type,
+        ) for k, v in entity_inputs.items()],
     )
     session.add(workflow_run)
     await session.commit()

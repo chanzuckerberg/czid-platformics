@@ -19,7 +19,7 @@ from test_infra.factories.workflow_run import WorkflowRunFactory
 
 
 def import_manifest(session: Session) -> None:
-    manifest_file = "/workflows/manifest/test_manifests/sample_name.yaml"
+    manifest_file = "/workflows/manifest/test_manifests/simple.yaml"
     with open(manifest_file) as f:
         manifest_str = f.read()
     manifest = Manifest.from_yaml(manifest_str)
