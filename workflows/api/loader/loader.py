@@ -96,4 +96,6 @@ class LoaderDriver:
                         for entity_input in workflow_run.entity_inputs
                     }
                     await self.process_workflow_completed(workflow_version, workflow_run, entity_inputs, _event.outputs)
+                    workflow_run.status = WorkflowRunStatus.SUCCEEDED
+                    await self.session.commit()
             await asyncio.sleep(1)
