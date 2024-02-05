@@ -65,6 +65,7 @@ exclude = [
     'gql_schema\.py$',
     '^platformics/thirdparty',
     '^platformics/codegen',
+    '^platformics/client',
     '^platformics/api/core/helpers.py',
     "terraform_test/.terraform/",
 ] # TODO: fix helper types and remove

@@ -60,6 +60,7 @@ disallow_untyped_defs = true
 exclude = [
     'gql_schema\.py$',
     '^platformics/thirdparty',
+    '^platformics/client',
 ]
 
 [tool.ruff]
