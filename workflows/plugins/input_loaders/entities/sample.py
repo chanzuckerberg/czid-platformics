@@ -14,9 +14,9 @@ class SampleInputLoader(InputLoader):
         raw_inputs: dict[str, typing.Any],
         requested_outputs: list[str] = [],
     ) -> dict[str, str]:
-        sample = entity_inputs["sample"]
+        sample_input = entity_inputs["sample"]
         op = Operation(Query)
-        samples = op.samples(where=SampleWhereClause(id=UUIDComparators(_eq=sample.entity_id)))
+        samples = op.samples(where=SampleWhereClause(id=UUIDComparators(_eq=sample_input.entity_id)))
         for output in requested_outputs:
             getattr(samples, output)()
         resp = self._entities_gql(op)
