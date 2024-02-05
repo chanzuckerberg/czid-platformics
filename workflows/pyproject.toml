@@ -53,7 +53,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-exclude = '''terraform_test/\.terraform/.*'''
 line-length = 120
 
 [tool.mypy]

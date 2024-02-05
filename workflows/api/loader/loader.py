@@ -5,7 +5,6 @@ Loader functions
 import asyncio
 import json
 import sys
-from platformics.database.models.base import Entity
 
 
 from sqlalchemy import select
@@ -14,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.config import resolve_output_loader
 
 from plugins.plugin_types import EventBus, WorkflowStartedMessage, WorkflowSucceededMessage
-from database.models import WorkflowVersion, WorkflowRun, WorkflowRunEntityInput
+from database.models import WorkflowVersion, WorkflowRun
 from manifest.manifest import EntityInput, Manifest
 from support.enums import WorkflowRunStatus
 
@@ -31,7 +30,13 @@ class LoaderDriver:
         self.session = session
         self.bus = bus
 
-    async def process_workflow_completed(self, workflow_version: WorkflowVersion, workflow_run: WorkflowRun, entity_inputs: dict[str, EntityInput], outputs: dict[str, str]) -> None:
+    async def process_workflow_completed(
+        self,
+        workflow_version: WorkflowVersion,
+        workflow_run: WorkflowRun,
+        entity_inputs: dict[str, EntityInput],
+        outputs: dict[str, str],
+    ) -> None:
         """
         After workflow completes run output loaders
         """
@@ -75,22 +80,20 @@ class LoaderDriver:
                     result = await self.session.execute(
                         select(WorkflowRun)
                         .options(
-                            joinedload(WorkflowRun.workflow_version),  # Adjust based on your relationship attribute names
-                            selectinload(WorkflowRun.entity_inputs)    # Assuming WorkflowRun has a direct relationship to its inputs
+                            joinedload(WorkflowRun.workflow_version),
+                            selectinload(WorkflowRun.entity_inputs),
                         )
                         .where(WorkflowRun.execution_id == _event.runner_id)
                     )
                     workflow_run = result.scalar_one()
 
-                    # Assuming workflow_version is directly accessible via a relationship on workflow_run
                     workflow_version = workflow_run.workflow_version
 
-                    # Mapping entity inputs directly without an additional query
                     entity_inputs = {
                         entity_input.field_name: EntityInput(
                             entity_type=entity_input.type, entity_id=str(entity_input.input_entity_id)
                         )
-                        for entity_input in workflow_run.entity_inputs  # Assuming this is the correct relationship attribute
+                        for entity_input in workflow_run.entity_inputs
                     }
                     await self.process_workflow_completed(workflow_version, workflow_run, entity_inputs, _event.outputs)
             await asyncio.sleep(1)

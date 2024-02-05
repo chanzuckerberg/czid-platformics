@@ -176,13 +176,16 @@ async def run_workflow_version(
         status=status,
         execution_id=execution_id,
         raw_inputs_json=json.dumps(raw_inputs_json),
-        entity_inputs=[db.WorkflowRunEntityInput(
-            owner_user_id=int(principal.id),
-            collection_id=input.collection_id,
-            field_name=k,
-            input_entity_id=v.entity_id,
-            entity_type=v.entity_type,
-        ) for k, v in entity_inputs.items()],
+        entity_inputs=[
+            db.WorkflowRunEntityInput(
+                owner_user_id=int(principal.id),
+                collection_id=input.collection_id,
+                field_name=k,
+                input_entity_id=v.entity_id,
+                entity_type=v.entity_type,
+            )
+            for k, v in entity_inputs.items()
+        ],
     )
     session.add(workflow_run)
     await session.commit()

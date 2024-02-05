@@ -1,4 +1,3 @@
-import sys
 import typing
 from database.models.workflow_run import WorkflowRun
 from sgqlc.operation import Operation
@@ -16,13 +15,14 @@ class SequencingReadOutputLoader(OutputLoader):
         workflow_outputs: dict[str, str],
     ) -> None:
         op = Operation(Mutation)
-        sequencing_read = op.create_sequencing_read(input=SequencingReadCreateInput(
-            collection_id=workflow_run.collection_id,
-            sample_id=entity_inputs["sample"].entity_id,
-            nucleic_acid=NucleicAcid("DNA"),
-            technology=SequencingTechnology("Illumina"),
-            clearlabs_export=False,
-        ))
+        sequencing_read = op.create_sequencing_read(
+            input=SequencingReadCreateInput(
+                collection_id=workflow_run.collection_id,
+                sample_id=entity_inputs["sample"].entity_id,
+                nucleic_acid=NucleicAcid("DNA"),
+                technology=SequencingTechnology("Illumina"),
+                clearlabs_export=False,
+            )
+        )
         sequencing_read.id()
-        result = self._entities_gql(op)
-
+        self._entities_gql(op)
