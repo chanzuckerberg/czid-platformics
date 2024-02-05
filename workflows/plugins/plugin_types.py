@@ -90,7 +90,7 @@ class IOLoader:
     _entitties_endpoint: HTTPEndpoint
     _s3_client: S3Client
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")
 
     def _entities_gql(self, op: Operation) -> dict:
@@ -126,7 +126,7 @@ class OutputLoader(IOLoader):
         entity_inputs: dict[str, EntityInput],
         raw_inputs: dict[str, typing.Any],
         workflow_outputs: dict[str, str],
-    ):
+    ) -> None:
         """Processes workflow output specified by the type constraints
         in workflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities must be created

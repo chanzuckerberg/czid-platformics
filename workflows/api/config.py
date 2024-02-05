@@ -3,6 +3,7 @@ Functions that load installed plugins
 """
 
 from importlib.metadata import entry_points
+from typing import Tuple
 
 from packaging.specifiers import SpecifierSet
 from settings import APISettings
@@ -31,7 +32,7 @@ def load_event_bus(settings: APISettings) -> EventBus:
     raise Exception(f"Event bus plugin {settings.PLATFORMICS_EVENT_BUS_PLUGIN} not found")
 
 
-_input_loader_cache = {}
+_input_loader_cache: dict[Tuple[str, str], InputLoader | None] = {}
 
 
 def resolve_input_loader(name: str, specifier: SpecifierSet) -> InputLoader | None:
@@ -54,7 +55,7 @@ def resolve_input_loader(name: str, specifier: SpecifierSet) -> InputLoader | No
     return _input_loader_cache[(name, specifier)]
 
 
-_output_loader_cache = {}
+_output_loader_cache: dict[Tuple[str, str], OutputLoader | None] = {}
 
 
 def resolve_output_loader(name: str, specifier: SpecifierSet) -> OutputLoader | None:
