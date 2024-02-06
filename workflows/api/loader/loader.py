@@ -12,7 +12,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.config import resolve_output_loader
 
-from plugins.plugin_types import EventBus, WorkflowStartedMessage, WorkflowSucceededMessage
+from plugins.plugin_types import EventBus, WorkflowFailedMessage, WorkflowStartedMessage, WorkflowSucceededMessage
 from database.models import WorkflowVersion, WorkflowRun
 from manifest.manifest import EntityInput, Manifest
 from support.enums import WorkflowRunStatus
@@ -67,12 +67,12 @@ class LoaderDriver:
             for event in await self.bus.poll():
                 print("event", event, file=sys.stderr)
                 if isinstance(event, WorkflowStartedMessage):
-                    run = (
+                    workflow_run = (
                         await self.session.execute(
                             select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id)
                         )
                     ).scalar_one()
-                    run.status = WorkflowRunStatus.RUNNING
+                    workflow_run.status = WorkflowRunStatus.RUNNING
                     await self.session.commit()
 
                 if isinstance(event, WorkflowSucceededMessage):
@@ -97,5 +97,14 @@ class LoaderDriver:
                     }
                     await self.process_workflow_completed(workflow_version, workflow_run, entity_inputs, _event.outputs)
                     workflow_run.status = WorkflowRunStatus.SUCCEEDED
+                    await self.session.commit()
+
+                if isinstance(event, WorkflowFailedMessage):
+                    workflow_run = (
+                        await self.session.execute(
+                            select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id)
+                        )
+                    ).scalar_one()
+                    workflow_run.status = WorkflowRunStatus.FAILED
                     await self.session.commit()
             await asyncio.sleep(1)
