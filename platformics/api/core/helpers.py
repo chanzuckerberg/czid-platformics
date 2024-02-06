@@ -104,7 +104,7 @@ def convert_where_clauses_to_sql(
         # Add the subquery columns and subquery_order_by fields to the current query
         aliased_field_num = 0
         for item in subquery_order_by:
-            aliased_field_name = f"order_field_{aliased_field_num}"
+            aliased_field_name = f"{join_field}_order_field_{aliased_field_num}"
             field_to_match = getattr(subquery.c, item["field"]) # type: ignore
             aliased_field_num += 1
             query = query.add_columns(field_to_match.label(aliased_field_name))
