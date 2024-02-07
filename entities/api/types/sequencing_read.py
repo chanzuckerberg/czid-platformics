@@ -9,10 +9,11 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -26,17 +27,20 @@ from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
+    DatetimeComparators,
     IntComparators,
+    FloatComparators,
     StrComparators,
     UUIDComparators,
     BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction
+from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -271,10 +275,6 @@ Define SequencingRead type
 
 @strawberry.type
 class SequencingRead(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     sample: Optional[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     protocol: Optional[SequencingProtocol] = None
     r1_file_id: Optional[strawberry.ID]
@@ -298,6 +298,13 @@ class SequencingRead(EntityInterface):
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -333,10 +340,13 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class SequencingReadMinMaxColumns:
+    medaka_model: Optional[str] = None
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    medaka_model: Optional[str] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -410,11 +420,8 @@ Mutation types
 
 @strawberry.input()
 class SequencingReadCreateInput:
-    collection_id: int
     sample_id: Optional[strawberry.ID] = None
     protocol: Optional[SequencingProtocol] = None
-    r1_file_id: Optional[strawberry.ID] = None
-    r2_file_id: Optional[strawberry.ID] = None
     technology: SequencingTechnology
     nucleic_acid: NucleicAcid
     clearlabs_export: bool
@@ -422,22 +429,15 @@ class SequencingReadCreateInput:
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
     reference_sequence_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[int] = None
+    collection_id: Optional[int] = None
 
 
 @strawberry.input()
 class SequencingReadUpdateInput:
-    collection_id: Optional[int] = None
-    sample_id: Optional[strawberry.ID] = None
-    protocol: Optional[SequencingProtocol] = None
-    r1_file_id: Optional[strawberry.ID] = None
-    r2_file_id: Optional[strawberry.ID] = None
-    technology: Optional[SequencingTechnology] = None
     nucleic_acid: Optional[NucleicAcid] = None
     clearlabs_export: Optional[bool] = None
     medaka_model: Optional[str] = None
-    taxon_id: Optional[strawberry.ID] = None
-    primer_file_id: Optional[strawberry.ID] = None
-    reference_sequence_id: Optional[strawberry.ID] = None
 
 
 """
@@ -515,11 +515,8 @@ async def create_sequencing_read(
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
-    resource = Resource(id="NEW_ID", kind=db.SequencingRead.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("create", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -547,17 +544,13 @@ async def update_sequencing_read(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.SequencingRead.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

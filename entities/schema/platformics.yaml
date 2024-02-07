@@ -140,22 +140,32 @@ classes:
       id:
         identifier: true
         range: uuid
+        readonly: true # The API handles generating the values for these fields
       producing_run_id:
         range: int
         minimum_value: 0
+        annotations:
+          mutable: false  # This field can't be modified by an `Update` mutation
+          system_writable: True
       owner_user_id:
         range: int
         minimum_value: 0
+        readonly: true
       collection_id:
         range: int
         minimum_value: 0
+        annotations:
+          mutable: false
       created_at:
         range: date
         required: true
+        readonly: true
       updated_at:
         range: date
+        readonly: true
       deleted_at:
         range: date
+        readonly: true
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -220,6 +230,9 @@ classes:
       # If this Sample is a copy of what's in the Rails DB, store its ID here
       rails_sample_id:
         range: int
+        annotations:
+          mutable: false  # This field can't be modified by an `Update` mutation
+          system_writable: True
       name:
         range: string
         required: true
@@ -268,18 +281,26 @@ classes:
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
+        annotations:
+          mutable: false
       # Wet lab protocol (used for SARS-CoV-2 CG where we ask the user for this in the UI)
       protocol:
         range: SequencingProtocol
+        annotations:
+          mutable: false
       # Files containing sequencing reads (R1 and R2 refer to read pairs 1/2 in Illumina paired-end sequencing)
       r1_file:
         range: File
+        readonly: true
       r2_file:
         range: File
+        readonly: true
       # Which sequencing technology / instrument was used?
       technology:
         range: SequencingTechnology
         required: true
+        annotations:
+          mutable: false
       # Did we sequence DNA or RNA?
       nucleic_acid:
         range: NucleicAcid
@@ -295,14 +316,20 @@ classes:
       taxon:
         range: Taxon
         inverse: Taxon.sequencing_reads
+        annotations:
+          mutable: false
       # Can specify a primer BED file, used to trim primers, e.g. for "Viral Consensus Genome" pipeline
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+        annotations:
+          mutable: false
       # Can specify a reference sequence for "Viral Consensus Genome" pipeline
       reference_sequence:
         range: ReferenceGenome
         inverse: ReferenceGenome.sequencing_reads
+        annotations:
+          mutable: false
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
@@ -321,6 +348,7 @@ classes:
     attributes:
       file:
         range: File
+        readonly: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.primer_file
@@ -339,9 +367,12 @@ classes:
       # FASTA reference genome
       file:
         range: File
+        readonly: true
       # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
       accession_id:
         range: string
+        annotations:
+          mutable: false
       accession_name:
         range: string
       sequencing_reads:
@@ -382,6 +413,7 @@ classes:
       # Original reference FASTA file used to generate indexes for this host; used for our record keeping
       sequence:
         range: File
+        readonly: true
       # Samples that obtained from this host organism
       samples:
         range: Sample
@@ -402,9 +434,13 @@ classes:
         range: Sample
         inverse: Sample.metadatas
         required: true
+        annotations:
+          mutable: false
       field_name:
         range: string
         required: true
+        annotations:
+          mutable: false
       value:
         range: string
         required: true
@@ -427,13 +463,18 @@ classes:
         range: Taxon
         required: true
         inverse: Taxon.consensus_genomes
+        annotations:
+          mutable: false
       # Which SequencingRead this ConsensusGenome was created from
       sequence_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
+        annotations:
+          mutable: false
       # Consensus Genome sequence output by CG pipeline
       sequence:
+        readonly: true
         range: File
       # Metrics output by CG pipeline
       metrics:
@@ -446,6 +487,7 @@ classes:
       # Zip file containing intermediate outputs file output by CG pipeline
       intermediate_outputs:
         range: File
+        readonly: true
     annotations:
       plural: ConsensusGenomes
 
@@ -458,36 +500,68 @@ classes:
         range: ConsensusGenome
         inverse: ConsensusGenome.metrics
         required: true
+        annotations:
+          mutable: false
       reference_genome_length:
         range: float
+        annotations:
+          mutable: false
       percent_genome_called:
         range: float
+        annotations:
+          mutable: false
       percent_identity:
         range: float
+        annotations:
+          mutable: false
       gc_percent:
         range: float
+        annotations:
+          mutable: false
       total_reads:
         range: int
+        annotations:
+          mutable: false
       mapped_reads:
         range: int
+        annotations:
+          mutable: false
       ref_snps:
         range: int
+        annotations:
+          mutable: false
       n_actg:
         range: int
+        annotations:
+          mutable: false
       n_missing:
         range: int
+        annotations:
+          mutable: false
       n_ambiguous:
         range: int
+        annotations:
+          mutable: false
       coverage_depth:
         range: float
+        annotations:
+          mutable: false
       coverage_breadth:
         range: float
+        annotations:
+          mutable: false
       coverage_bin_size:
         range: float
+        annotations:
+          mutable: false
       coverage_total_length:
         range: int
+        annotations:
+          mutable: false
       coverage_viz:
         range: Array2dInt
+        annotations:
+          mutable: false
     annotations:
       plural: MetricsConsensusGenomes
 
@@ -508,6 +582,8 @@ classes:
       name:
         range: string
         required: true
+        annotations:
+          mutable: false
       is_phage:
         range: boolean
         required: true
@@ -518,6 +594,8 @@ classes:
       upstream_database_identifier:
         range: string
         required: true
+        annotations:
+          mutable: false
       level:
         range: TaxonLevel
         required: true
@@ -593,13 +671,18 @@ classes:
       file:
         range: File
         required: true
+        readonly: true
       # Links to either upstream database or host organism
       upstream_database:
         range: UpstreamDatabase
         inverse: UpstreamDatabase.indexes
+        annotations:
+          mutable: false
       host_organism:
         range: HostOrganism
         inverse: HostOrganism.indexes
+        annotations:
+          mutable: false
     annotations:
       plural: IndexFiles
 
@@ -614,6 +697,7 @@ classes:
     attributes:
       tree:
         range: File
+        readonly: true
       format:
         range: PhylogeneticTreeFormat
         required: true
@@ -632,8 +716,11 @@ classes:
       download_type:
         range: BulkDownloadType
         required: true
+        annotations:
+          mutable: false
       file:
         range: File
+        readonly: true
     annotations:
       plural: BulkDownloads
 

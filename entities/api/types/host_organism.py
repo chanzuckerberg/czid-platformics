@@ -9,10 +9,11 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -27,17 +28,20 @@ from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
+    DatetimeComparators,
     IntComparators,
+    FloatComparators,
     StrComparators,
     UUIDComparators,
     BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction
+from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -221,10 +225,6 @@ Define HostOrganism type
 
 @strawberry.type
 class HostOrganism(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     name: str
     version: str
     category: HostOrganismCategory
@@ -241,6 +241,13 @@ class HostOrganism(EntityInterface):
     samples_aggregate: Optional[
         Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
     ] = load_sample_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -276,11 +283,14 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class HostOrganismMinMaxColumns:
+    name: Optional[str] = None
+    version: Optional[str] = None
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    name: Optional[str] = None
-    version: Optional[str] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -349,22 +359,20 @@ Mutation types
 
 @strawberry.input()
 class HostOrganismCreateInput:
-    collection_id: int
     name: str
     version: str
     category: HostOrganismCategory
     is_deuterostome: bool
-    sequence_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[int] = None
+    collection_id: Optional[int] = None
 
 
 @strawberry.input()
 class HostOrganismUpdateInput:
-    collection_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
     category: Optional[HostOrganismCategory] = None
     is_deuterostome: Optional[bool] = None
-    sequence_id: Optional[strawberry.ID] = None
 
 
 """
@@ -442,11 +450,8 @@ async def create_host_organism(
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
-    resource = Resource(id="NEW_ID", kind=db.HostOrganism.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("create", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -474,17 +479,13 @@ async def update_host_organism(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.HostOrganism.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

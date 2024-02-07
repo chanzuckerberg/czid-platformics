@@ -50,9 +50,10 @@ enum BulkDownloadCountColumns {
 }
 
 input BulkDownloadCreateInput {
-  collectionId: Int!
   downloadType: BulkDownloadType!
-  fileId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 type BulkDownloadMinMaxColumns {
@@ -96,9 +97,7 @@ input BulkDownloadTypeEnumComparators {
 }
 
 input BulkDownloadUpdateInput {
-  collectionId: Int = null
-  downloadType: BulkDownloadType = null
-  fileId: ID = null
+  ownerUserId: Int = null
 }
 
 input BulkDownloadWhereClause {
@@ -169,12 +168,12 @@ enum ConsensusGenomeCountColumns {
 }
 
 input ConsensusGenomeCreateInput {
-  collectionId: Int!
   taxonId: ID!
   sequenceReadId: ID!
-  sequenceId: ID = null
   metricsId: ID = null
-  intermediateOutputsId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -212,12 +211,8 @@ input ConsensusGenomeOrderByClause {
 }
 
 input ConsensusGenomeUpdateInput {
-  collectionId: Int = null
-  taxonId: ID = null
-  sequenceReadId: ID = null
-  sequenceId: ID = null
   metricsId: ID = null
-  intermediateOutputsId: ID = null
+  ownerUserId: Int = null
 }
 
 input ConsensusGenomeWhereClause {
@@ -404,8 +399,9 @@ enum GenomicRangeCountColumns {
 }
 
 input GenomicRangeCreateInput {
-  collectionId: Int!
-  fileId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 type GenomicRangeMinMaxColumns {
@@ -431,8 +427,7 @@ input GenomicRangeOrderByClause {
 }
 
 input GenomicRangeUpdateInput {
-  collectionId: Int = null
-  fileId: ID = null
+  ownerUserId: Int = null
 }
 
 input GenomicRangeWhereClause {
@@ -553,12 +548,13 @@ enum HostOrganismCountColumns {
 }
 
 input HostOrganismCreateInput {
-  collectionId: Int!
   name: String!
   version: String!
   category: HostOrganismCategory!
   isDeuterostome: Boolean!
-  sequenceId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 type HostOrganismMinMaxColumns {
@@ -590,12 +586,11 @@ input HostOrganismOrderByClause {
 }
 
 input HostOrganismUpdateInput {
-  collectionId: Int = null
   name: String = null
   version: String = null
   category: HostOrganismCategory = null
   isDeuterostome: Boolean = null
-  sequenceId: ID = null
+  ownerUserId: Int = null
 }
 
 input HostOrganismWhereClause {
@@ -670,12 +665,11 @@ enum IndexFileCountColumns {
 }
 
 input IndexFileCreateInput {
-  collectionId: Int!
   name: IndexTypes!
   version: String!
-  fileId: ID!
-  upstreamDatabaseId: ID = null
-  hostOrganismId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -715,12 +709,9 @@ input IndexFileOrderByClause {
 }
 
 input IndexFileUpdateInput {
-  collectionId: Int = null
   name: IndexTypes = null
   version: String = null
-  fileId: ID = null
-  upstreamDatabaseId: ID = null
-  hostOrganismId: ID = null
+  ownerUserId: Int = null
 }
 
 input IndexFileWhereClause {
@@ -840,10 +831,12 @@ enum MetadatumCountColumns {
 }
 
 input MetadatumCreateInput {
-  collectionId: Int!
   sampleId: ID!
   fieldName: String!
   value: String!
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -883,10 +876,8 @@ input MetadatumOrderByClause {
 }
 
 input MetadatumUpdateInput {
-  collectionId: Int = null
-  sampleId: ID = null
-  fieldName: String = null
   value: String = null
+  ownerUserId: Int = null
 }
 
 input MetadatumWhereClause {
@@ -970,7 +961,6 @@ enum MetricConsensusGenomeCountColumns {
 }
 
 input MetricConsensusGenomeCreateInput {
-  collectionId: Int!
   consensusGenomeId: ID!
   referenceGenomeLength: Float = null
   percentGenomeCalled: Float = null
@@ -987,6 +977,9 @@ input MetricConsensusGenomeCreateInput {
   coverageBinSize: Float = null
   coverageTotalLength: Int = null
   coverageViz: [[Int!]!] = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 type MetricConsensusGenomeMinMaxColumns {
@@ -1056,23 +1049,7 @@ input MetricConsensusGenomeOrderByClause {
 }
 
 input MetricConsensusGenomeUpdateInput {
-  collectionId: Int = null
-  consensusGenomeId: ID = null
-  referenceGenomeLength: Float = null
-  percentGenomeCalled: Float = null
-  percentIdentity: Float = null
-  gcPercent: Float = null
-  totalReads: Int = null
-  mappedReads: Int = null
-  refSnps: Int = null
-  nActg: Int = null
-  nMissing: Int = null
-  nAmbiguous: Int = null
-  coverageDepth: Float = null
-  coverageBreadth: Float = null
-  coverageBinSize: Float = null
-  coverageTotalLength: Int = null
-  coverageViz: [[Int!]!] = null
+  ownerUserId: Int = null
 }
 
 input MetricConsensusGenomeWhereClause {
@@ -1240,9 +1217,10 @@ enum PhylogeneticTreeCountColumns {
 }
 
 input PhylogeneticTreeCreateInput {
-  collectionId: Int!
-  treeId: ID = null
   format: PhylogeneticTreeFormat!
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 enum PhylogeneticTreeFormat {
@@ -1287,9 +1265,8 @@ input PhylogeneticTreeOrderByClause {
 }
 
 input PhylogeneticTreeUpdateInput {
-  collectionId: Int = null
-  treeId: ID = null
   format: PhylogeneticTreeFormat = null
+  ownerUserId: Int = null
 }
 
 input PhylogeneticTreeWhereClause {
@@ -1402,10 +1379,11 @@ enum ReferenceGenomeCountColumns {
 }
 
 input ReferenceGenomeCreateInput {
-  collectionId: Int!
-  fileId: ID = null
   accessionId: String = null
   accessionName: String = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 type ReferenceGenomeMinMaxColumns {
@@ -1435,10 +1413,8 @@ input ReferenceGenomeOrderByClause {
 }
 
 input ReferenceGenomeUpdateInput {
-  collectionId: Int = null
-  fileId: ID = null
-  accessionId: String = null
   accessionName: String = null
+  ownerUserId: Int = null
 }
 
 input ReferenceGenomeWhereClause {
@@ -1551,8 +1527,6 @@ enum SampleCountColumns {
 }
 
 input SampleCreateInput {
-  collectionId: Int!
-  railsSampleId: Int = null
   name: String!
   sampleType: String!
   waterControl: Boolean!
@@ -1560,6 +1534,9 @@ input SampleCreateInput {
   collectionLocation: String!
   notes: String = null
   hostOrganismId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -1609,8 +1586,6 @@ input SampleOrderByClause {
 }
 
 input SampleUpdateInput {
-  collectionId: Int = null
-  railsSampleId: Int = null
   name: String = null
   sampleType: String = null
   waterControl: Boolean = null
@@ -1618,6 +1593,7 @@ input SampleUpdateInput {
   collectionLocation: String = null
   notes: String = null
   hostOrganismId: ID = null
+  ownerUserId: Int = null
 }
 
 input SampleWhereClause {
@@ -1754,11 +1730,8 @@ enum SequencingReadCountColumns {
 }
 
 input SequencingReadCreateInput {
-  collectionId: Int!
   sampleId: ID = null
   protocol: SequencingProtocol = null
-  r1FileId: ID = null
-  r2FileId: ID = null
   technology: SequencingTechnology!
   nucleicAcid: NucleicAcid!
   clearlabsExport: Boolean!
@@ -1766,6 +1739,9 @@ input SequencingReadCreateInput {
   taxonId: ID = null
   primerFileId: ID = null
   referenceSequenceId: ID = null
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -1810,18 +1786,10 @@ input SequencingReadOrderByClause {
 }
 
 input SequencingReadUpdateInput {
-  collectionId: Int = null
-  sampleId: ID = null
-  protocol: SequencingProtocol = null
-  r1FileId: ID = null
-  r2FileId: ID = null
-  technology: SequencingTechnology = null
   nucleicAcid: NucleicAcid = null
   clearlabsExport: Boolean = null
   medakaModel: String = null
-  taxonId: ID = null
-  primerFileId: ID = null
-  referenceSequenceId: ID = null
+  ownerUserId: Int = null
 }
 
 input SequencingReadWhereClause {
@@ -1996,15 +1964,15 @@ enum TaxonCountColumns {
 }
 
 input TaxonCreateInput {
-  collectionId: Int!
   wikipediaId: String = null
   description: String = null
   commonName: String = null
-  name: String!
   isPhage: Boolean!
   upstreamDatabaseId: ID!
-  upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -2086,15 +2054,13 @@ input TaxonOrderByClause {
 }
 
 input TaxonUpdateInput {
-  collectionId: Int = null
   wikipediaId: String = null
   description: String = null
   commonName: String = null
-  name: String = null
   isPhage: Boolean = null
   upstreamDatabaseId: ID = null
-  upstreamDatabaseIdentifier: String = null
   level: TaxonLevel = null
+  ownerUserId: Int = null
 }
 
 input TaxonWhereClause {
@@ -2204,8 +2170,10 @@ enum UpstreamDatabaseCountColumns {
 }
 
 input UpstreamDatabaseCreateInput {
-  collectionId: Int!
   name: String!
+  producingRunId: Int = null
+  ownerUserId: Int = null
+  collectionId: Int = null
 }
 
 type UpstreamDatabaseMinMaxColumns {
@@ -2233,8 +2201,8 @@ input UpstreamDatabaseOrderByClause {
 }
 
 input UpstreamDatabaseUpdateInput {
-  collectionId: Int = null
   name: String = null
+  ownerUserId: Int = null
 }
 
 input UpstreamDatabaseWhereClause {

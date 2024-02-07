@@ -107,10 +107,10 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
         {%- else %}
-	        {%- if related_field.is_virtual_relationship %}
+            {%- if related_field.is_virtual_relationship %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
-	        {%- else %}
+            {%- else %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.{{ related_field.name }}_id) # type:ignore
             {%- endif %}
@@ -215,7 +215,7 @@ Supported ORDER BY clause attributes
 """
 @strawberry.input
 class {{ cls.name }}OrderByClause(TypedDict):
-    {%- for attr in cls.all_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type != "File" and attr.name != "entity_id" and not attr.multivalued %}
             {%- if attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}OrderByClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
@@ -237,11 +237,7 @@ Define {{ cls.name }} type
 """
 @strawberry.type
 class {{ cls.name }}(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "uuid" %}
            {%- if attr.name != "entity_id" %}
     {{ attr.name }}: {{ getType("strawberry.ID", attr.required) }}
@@ -290,10 +286,7 @@ Define columns that support numerical aggregations
 """
 @strawberry.type
 class {{ cls.name }}NumericalColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "int" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
@@ -306,10 +299,7 @@ Define columns that support min/max aggregations
 """
 @strawberry.type
 class {{ cls.name }}MinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "int" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
@@ -326,7 +316,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 """
 @strawberry.enum
 class {{ cls.name }}CountColumns(enum.Enum):
-    {%- for attr in cls.all_fields %}
+    {%- for attr in cls.visible_fields %}
     {{ attr.name }} = "{{ attr.name }}"
     {%- endfor %}
 
@@ -370,9 +360,9 @@ Mutation types
 {%- for action in ["Create", "Update"] %}
 @strawberry.input()
 class {{ cls.name }}{{ action }}Input:
-    collection_id: {{ getTypeMutation(action, "int", true) }}
-    {%- for attr in cls.owned_fields %}
-        {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
+    {%- for attr in cls.visible_fields %}
+        {%- if attr.readonly %} {# Don't allow setting readonly fields, ever #}
+        {%- elif action == "Update" and (not attr.mutable) %} {# Don't allow updating mutable fields #}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
         {%- elif attr.type == "Array2dInt" %}
@@ -468,11 +458,19 @@ async def create_{{ cls.snake_name }}(
     """
     params = input.__dict__
 
+    {%- for field in self.visible_fields %}
+        {%- if field.name == "collection_id" and (not field.readonly) %}
     # Validate that user can create entity in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+        {%- endif %}
+    {%- endfor %}
+
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -500,17 +498,24 @@ async def update_{{ cls.snake_name }}(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
 
+    {%- for field in self.mutable_fields %}
+        {%- if field.name == "collection_id" %}
     # Validate that the user has access to the new collection ID
     if input.collection_id:
         attr = {"collection_id": input.collection_id}
         resource = Resource(id="SOME_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
         if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
             raise PlatformicsException("Unauthorized: Cannot access new collection")
+        {%- endif %}
+    {%- endfor %}
 
     # Update DB
     for entity in entities:

@@ -11,8 +11,8 @@ import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Integer, Boolean, DateTime
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey, String, Float, Integer, Enum, Boolean, DateTime
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:

@@ -16036,28 +16036,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "railsSampleId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "name",
               "type": {
                 "kind": "NON_NULL",
@@ -16138,6 +16116,33 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -16149,24 +16154,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "railsSampleId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": "null",
               "name": "name",
@@ -16229,6 +16216,15 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -16260,19 +16256,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "sampleId",
               "type": {
@@ -16287,24 +16270,6 @@
               "type": {
                 "kind": "ENUM",
                 "name": "SequencingProtocol",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "r1FileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "r2FileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
                 "ofType": null
               }
             },
@@ -16382,6 +16347,33 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -16393,60 +16385,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sampleId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "protocol",
-              "type": {
-                "kind": "ENUM",
-                "name": "SequencingProtocol",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "r1FileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "r2FileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "technology",
-              "type": {
-                "kind": "ENUM",
-                "name": "SequencingTechnology",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": "null",
               "name": "nucleicAcid",
@@ -16476,28 +16414,10 @@
             },
             {
               "defaultValue": "null",
-              "name": "taxonId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "primerFileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "referenceSequenceId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -16531,24 +16451,29 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
+              "defaultValue": "null",
+              "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
               }
             },
             {
               "defaultValue": "null",
-              "name": "fileId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -16564,19 +16489,10 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "fileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
                 "ofType": null
               }
             }
@@ -16610,28 +16526,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "fileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "accessionId",
               "type": {
@@ -16646,6 +16540,33 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -16661,37 +16582,19 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "fileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "accessionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "accessionName",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -16724,19 +16627,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
             {
               "defaultValue": null,
               "name": "name",
@@ -16791,10 +16681,28 @@
             },
             {
               "defaultValue": "null",
-              "name": "sequenceId",
+              "name": "producingRunId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -16808,15 +16716,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": "null",
               "name": "name",
@@ -16855,10 +16754,10 @@
             },
             {
               "defaultValue": "null",
-              "name": "sequenceId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -16893,19 +16792,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "sampleId",
               "type": {
                 "kind": "NON_NULL",
@@ -16942,6 +16828,33 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -16955,37 +16868,19 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sampleId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "fieldName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "value",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -17020,19 +16915,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "taxonId",
               "type": {
                 "kind": "NON_NULL",
@@ -17059,15 +16941,6 @@
             },
             {
               "defaultValue": "null",
-              "name": "sequenceId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "metricsId",
               "type": {
                 "kind": "SCALAR",
@@ -17077,10 +16950,28 @@
             },
             {
               "defaultValue": "null",
-              "name": "intermediateOutputsId",
+              "name": "producingRunId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -17096,42 +16987,6 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "taxonId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sequenceReadId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sequenceId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "metricsId",
               "type": {
                 "kind": "SCALAR",
@@ -17141,10 +16996,10 @@
             },
             {
               "defaultValue": "null",
-              "name": "intermediateOutputsId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -17179,19 +17034,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "consensusGenomeId",
               "type": {
                 "kind": "NON_NULL",
@@ -17353,6 +17195,33 @@
                   }
                 }
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -17366,171 +17235,11 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
                 "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "consensusGenomeId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "referenceGenomeLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "percentGenomeCalled",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "percentIdentity",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "gcPercent",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "totalReads",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "mappedReads",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "refSnps",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "nActg",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "nMissing",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "nAmbiguous",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageDepth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageBreadth",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageBinSize",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageTotalLength",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "coverageViz",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "Int",
-                        "ofType": null
-                      }
-                    }
-                  }
-                }
               }
             }
           ],
@@ -17563,19 +17272,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "wikipediaId",
               "type": {
@@ -17600,19 +17296,6 @@
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "name",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
               }
             },
             {
@@ -17643,19 +17326,6 @@
             },
             {
               "defaultValue": null,
-              "name": "upstreamDatabaseIdentifier",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "level",
               "type": {
                 "kind": "NON_NULL",
@@ -17665,6 +17335,33 @@
                   "name": "TaxonLevel",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
               }
             }
           ],
@@ -17677,15 +17374,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": "null",
               "name": "wikipediaId",
@@ -17715,15 +17403,6 @@
             },
             {
               "defaultValue": "null",
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "isPhage",
               "type": {
                 "kind": "SCALAR",
@@ -17742,19 +17421,19 @@
             },
             {
               "defaultValue": "null",
-              "name": "upstreamDatabaseIdentifier",
+              "name": "level",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "TaxonLevel",
                 "ofType": null
               }
             },
             {
               "defaultValue": "null",
-              "name": "level",
+              "name": "ownerUserId",
               "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -17789,19 +17468,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "name",
               "type": {
                 "kind": "NON_NULL",
@@ -17811,6 +17477,33 @@
                   "name": "String",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
               }
             }
           ],
@@ -17825,19 +17518,19 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
+              "name": "name",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
                 "ofType": null
               }
             },
             {
               "defaultValue": "null",
-              "name": "name",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -17872,19 +17565,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "name",
               "type": {
                 "kind": "NON_NULL",
@@ -17910,33 +17590,29 @@
               }
             },
             {
-              "defaultValue": null,
-              "name": "fileId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
-              "name": "upstreamDatabaseId",
+              "name": "producingRunId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
                 "ofType": null
               }
             },
             {
               "defaultValue": "null",
-              "name": "hostOrganismId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -17950,15 +17626,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": "null",
               "name": "name",
@@ -17979,28 +17646,10 @@
             },
             {
               "defaultValue": "null",
-              "name": "fileId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "upstreamDatabaseId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "hostOrganismId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -18035,28 +17684,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "treeId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "format",
               "type": {
                 "kind": "NON_NULL",
@@ -18066,6 +17693,33 @@
                   "name": "PhylogeneticTreeFormat",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
               }
             }
           ],
@@ -18080,28 +17734,19 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "treeId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "format",
               "type": {
                 "kind": "ENUM",
                 "name": "PhylogeneticTreeFormat",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -18136,19 +17781,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "downloadType",
               "type": {
                 "kind": "NON_NULL",
@@ -18162,10 +17794,28 @@
             },
             {
               "defaultValue": "null",
-              "name": "fileId",
+              "name": "producingRunId",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -18181,28 +17831,10 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
+              "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "downloadType",
-              "type": {
-                "kind": "ENUM",
-                "name": "BulkDownloadType",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "fileId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
                 "ofType": null
               }
             }

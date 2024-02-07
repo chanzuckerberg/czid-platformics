@@ -8,32 +8,31 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+
+
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
-from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
+from api.types.sequencing_read import (SequencingReadAggregate, format_sequencing_read_aggregate_output)
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import (
-    aggregator_map,
-    orderBy,
-    IntComparators,
-    UUIDComparators,
-)
+from platformics.api.core.gql_to_sql import aggregator_map, orderBy, EnumComparators, DatetimeComparators, IntComparators, FloatComparators, StrComparators, UUIDComparators, BoolComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction
+from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -42,8 +41,7 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
-
+    from api.types.sequencing_read import (SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead)
     pass
 else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
@@ -58,25 +56,19 @@ Dataloaders
 ------------------------------------------------------------------------------
 These are batching functions for loading related objects to avoid N+1 queries.
 """
-
-
 @relay.connection(
-    relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
+        relay.ListConnection[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]  # type:ignore
 )
 async def load_sequencing_read_rows(
     root: "GenomicRange",
     info: Info,
     where: Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")] | None = None,
-    order_by: Optional[
-        list[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]]
-    ] = [],
+    order_by: Optional[list[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]]] = [],
 ) -> Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.GenomicRange)
     relationship = mapper.relationships["sequencing_reads"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
-
-
 @strawberry.field
 async def load_sequencing_read_aggregate_rows(
     root: "GenomicRange",
@@ -92,14 +84,11 @@ async def load_sequencing_read_aggregate_rows(
     result = rows[0] if rows else None
     aggregate_output = format_sequencing_read_aggregate_output(result)
     return SequencingReadAggregate(aggregate=aggregate_output)
-
-
 """
 ------------------------------------------------------------------------------
 Dataloader for File object
 ------------------------------------------------------------------------------
 """
-
 
 def load_files_from(attr_name: str) -> Callable:
     @strawberry.field
@@ -118,7 +107,6 @@ def load_files_from(attr_name: str) -> Callable:
 
     return load_files
 
-
 """
 ------------------------------------------------------------------------------
 Define Strawberry GQL types
@@ -129,8 +117,6 @@ Define Strawberry GQL types
 Only let users specify IDs in WHERE clause when mutating data (for safety).
 We can extend that list as we gather more use cases from the FE team.
 """
-
-
 @strawberry.input
 class GenomicRangeWhereClauseMutations(TypedDict):
     id: UUIDComparators | None
@@ -139,24 +125,17 @@ class GenomicRangeWhereClauseMutations(TypedDict):
 """
 Supported WHERE clause attributes
 """
-
-
 @strawberry.input
 class GenomicRangeWhereClause(TypedDict):
     id: UUIDComparators | None
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    sequencing_reads: Optional[
-        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
-    ] | None
-
+    sequencing_reads: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
 
 """
 Supported ORDER BY clause attributes
 """
-
-
 @strawberry.input
 class GenomicRangeOrderByClause(TypedDict):
     id: Optional[orderBy] | None
@@ -168,26 +147,24 @@ class GenomicRangeOrderByClause(TypedDict):
     deleted_at: Optional[orderBy] | None
 
 
+
+
 """
 Define GenomicRange type
 """
-
-
 @strawberry.type
 class GenomicRange(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    sequencing_reads: Sequence[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows  # type:ignore
-    sequencing_reads_aggregate: Optional[
-        Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_aggregate_rows  # type:ignore
-
+    sequencing_reads: Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = load_sequencing_read_rows  # type:ignore
+    sequencing_reads_aggregate : Optional[Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]] = load_sequencing_read_aggregate_rows  # type:ignore
+    id:  strawberry.ID
+    producing_run_id:  Optional[int] = None
+    owner_user_id:  Optional[int] = None
+    collection_id:  Optional[int] = None
+    created_at:  datetime.datetime
+    updated_at:  Optional[datetime.datetime] = None
+    deleted_at:  Optional[datetime.datetime] = None
 
 """
 We need to add this to each Queryable type so that strawberry will accept either our
@@ -206,32 +183,27 @@ Aggregation types
 """
 Define columns that support numerical aggregations
 """
-
-
 @strawberry.type
 class GenomicRangeNumericalColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-
+    producing_run_id:  Optional[int] = None
+    owner_user_id:  Optional[int] = None
+    collection_id:  Optional[int] = None
 
 """
 Define columns that support min/max aggregations
 """
-
-
 @strawberry.type
 class GenomicRangeMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-
+    producing_run_id:  Optional[int] = None
+    owner_user_id:  Optional[int] = None
+    collection_id:  Optional[int] = None
+    created_at:  Optional[datetime.datetime] = None
+    updated_at:  Optional[datetime.datetime] = None
+    deleted_at:  Optional[datetime.datetime] = None
 
 """
 Define enum of all columns to support count and count(distinct) aggregations
 """
-
-
 @strawberry.enum
 class GenomicRangeCountColumns(enum.Enum):
     file = "file"
@@ -245,22 +217,16 @@ class GenomicRangeCountColumns(enum.Enum):
     updated_at = "updated_at"
     deleted_at = "deleted_at"
 
-
 """
 All supported aggregation functions
 """
-
-
 @strawberry.type
 class GenomicRangeAggregateFunctions:
     # This is a hack to accept "distinct" and "columns" as arguments to "count"
     @strawberry.field
-    def count(
-        self, distinct: Optional[bool] = False, columns: Optional[GenomicRangeCountColumns] = None
-    ) -> Optional[int]:
+    def count(self, distinct: Optional[bool] = False, columns: Optional[GenomicRangeCountColumns] = None) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
-        return self.count  # type: ignore
-
+        return self.count # type: ignore
     sum: Optional[GenomicRangeNumericalColumns] = None
     avg: Optional[GenomicRangeNumericalColumns] = None
     min: Optional[GenomicRangeMinMaxColumns] = None
@@ -268,16 +234,12 @@ class GenomicRangeAggregateFunctions:
     stddev: Optional[GenomicRangeNumericalColumns] = None
     variance: Optional[GenomicRangeNumericalColumns] = None
 
-
 """
 Wrapper around GenomicRangeAggregateFunctions
 """
-
-
 @strawberry.type
 class GenomicRangeAggregate:
     aggregate: Optional[GenomicRangeAggregateFunctions] = None
-
 
 """
 ------------------------------------------------------------------------------
@@ -286,16 +248,14 @@ Mutation types
 """
 
 
-@strawberry.input()
-class GenomicRangeCreateInput:
-    collection_id: int
-    file_id: Optional[strawberry.ID] = None
 
 
 @strawberry.input()
-class GenomicRangeUpdateInput:
-    collection_id: Optional[int] = None
-    file_id: Optional[strawberry.ID] = None
+class GenomicRangeCreateInput:   
+    producing_run_id:  Optional[int] = None 
+    collection_id:  Optional[int] = None   
+@strawberry.input()
+class GenomicRangeUpdateInput:         
 
 
 """
@@ -303,7 +263,6 @@ class GenomicRangeUpdateInput:
 Utilities
 ------------------------------------------------------------------------------
 """
-
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_genomic_ranges(
@@ -340,7 +299,6 @@ def format_genomic_range_aggregate_output(query_results: RowMapping) -> GenomicR
                 setattr(getattr(output, aggregator_fn), col_name, value)
     return output
 
-
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_genomic_ranges_aggregate(
     info: Info,
@@ -360,7 +318,6 @@ async def resolve_genomic_ranges_aggregate(
     aggregate_output = format_genomic_range_aggregate_output(rows)
     return GenomicRangeAggregate(aggregate=aggregate_output)
 
-
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_genomic_range(
     input: GenomicRangeCreateInput,
@@ -373,11 +330,9 @@ async def create_genomic_range(
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
-    resource = Resource(id="NEW_ID", kind=db.GenomicRange.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("create", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -399,23 +354,19 @@ async def update_genomic_range(
     Update GenomicRange objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
-
+    
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.GenomicRange, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.GenomicRange.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

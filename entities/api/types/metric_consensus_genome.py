@@ -8,30 +8,30 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+
+
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, List
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
-from platformics.api.core.gql_to_sql import (
-    aggregator_map,
-    orderBy,
-    IntComparators,
-    FloatComparators,
-    UUIDComparators,
-)
+from platformics.api.core.gql_to_sql import aggregator_map, orderBy, EnumComparators, DatetimeComparators, IntComparators, FloatComparators, StrComparators, UUIDComparators, BoolComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction
+from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -40,8 +40,7 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
-
+    from api.types.consensus_genome import (ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome)
     pass
 else:
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
@@ -56,22 +55,17 @@ Dataloaders
 ------------------------------------------------------------------------------
 These are batching functions for loading related objects to avoid N+1 queries.
 """
-
-
 @strawberry.field
 async def load_consensus_genome_rows(
     root: "MetricConsensusGenome",
     info: Info,
     where: Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")] | None = None,
-    order_by: Optional[
-        list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]
-    ] = [],
+    order_by: Optional[list[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]]] = [],
 ) -> Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.MetricConsensusGenome)
     relationship = mapper.relationships["consensus_genome"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.consensus_genome_id)  # type:ignore
-
+    return await dataloader.loader_for(relationship, where, order_by).load(root.consensus_genome_id) # type:ignore
 
 """
 ------------------------------------------------------------------------------
@@ -83,8 +77,6 @@ Define Strawberry GQL types
 Only let users specify IDs in WHERE clause when mutating data (for safety).
 We can extend that list as we gather more use cases from the FE team.
 """
-
-
 @strawberry.input
 class MetricConsensusGenomeWhereClauseMutations(TypedDict):
     id: UUIDComparators | None
@@ -93,17 +85,13 @@ class MetricConsensusGenomeWhereClauseMutations(TypedDict):
 """
 Supported WHERE clause attributes
 """
-
-
 @strawberry.input
 class MetricConsensusGenomeWhereClause(TypedDict):
     id: UUIDComparators | None
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
-    consensus_genome: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    consensus_genome: Optional[Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]] | None
     reference_genome_length: Optional[FloatComparators] | None
     percent_genome_called: Optional[FloatComparators] | None
     percent_identity: Optional[FloatComparators] | None
@@ -119,17 +107,12 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     coverage_bin_size: Optional[FloatComparators] | None
     coverage_total_length: Optional[IntComparators] | None
 
-
 """
 Supported ORDER BY clause attributes
 """
-
-
 @strawberry.input
 class MetricConsensusGenomeOrderByClause(TypedDict):
-    consensus_genome: Optional[
-        Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    consensus_genome: Optional[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]] | None
     reference_genome_length: Optional[orderBy] | None
     percent_genome_called: Optional[orderBy] | None
     percent_identity: Optional[orderBy] | None
@@ -154,36 +137,36 @@ class MetricConsensusGenomeOrderByClause(TypedDict):
     deleted_at: Optional[orderBy] | None
 
 
+
+
 """
 Define MetricConsensusGenome type
 """
-
-
 @strawberry.type
 class MetricConsensusGenome(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
-    consensus_genome: Optional[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[int] = None
-    mapped_reads: Optional[int] = None
-    ref_snps: Optional[int] = None
-    n_actg: Optional[int] = None
-    n_missing: Optional[int] = None
-    n_ambiguous: Optional[int] = None
-    coverage_depth: Optional[float] = None
-    coverage_breadth: Optional[float] = None
-    coverage_bin_size: Optional[float] = None
-    coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[List[List[int]]] = None
-
+    consensus_genome: Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]] = load_consensus_genome_rows  # type:ignore
+    reference_genome_length:  Optional[float] = None
+    percent_genome_called:  Optional[float] = None
+    percent_identity:  Optional[float] = None
+    gc_percent:  Optional[float] = None
+    total_reads:  Optional[int] = None
+    mapped_reads:  Optional[int] = None
+    ref_snps:  Optional[int] = None
+    n_actg:  Optional[int] = None
+    n_missing:  Optional[int] = None
+    n_ambiguous:  Optional[int] = None
+    coverage_depth:  Optional[float] = None
+    coverage_breadth:  Optional[float] = None
+    coverage_bin_size:  Optional[float] = None
+    coverage_total_length:  Optional[int] = None
+    coverage_viz:  Optional[List[List[int]]] = None
+    id:  strawberry.ID
+    producing_run_id:  Optional[int] = None
+    owner_user_id:  Optional[int] = None
+    collection_id:  Optional[int] = None
+    created_at:  datetime.datetime
+    updated_at:  Optional[datetime.datetime] = None
+    deleted_at:  Optional[datetime.datetime] = None
 
 """
 We need to add this to each Queryable type so that strawberry will accept either our
@@ -202,60 +185,55 @@ Aggregation types
 """
 Define columns that support numerical aggregations
 """
-
-
 @strawberry.type
 class MetricConsensusGenomeNumericalColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[int] = None
-    mapped_reads: Optional[int] = None
-    ref_snps: Optional[int] = None
-    n_actg: Optional[int] = None
-    n_missing: Optional[int] = None
-    n_ambiguous: Optional[int] = None
-    coverage_depth: Optional[float] = None
-    coverage_breadth: Optional[float] = None
-    coverage_bin_size: Optional[float] = None
-    coverage_total_length: Optional[int] = None
-
+    reference_genome_length:  Optional[float] = None
+    percent_genome_called:  Optional[float] = None
+    percent_identity:  Optional[float] = None
+    gc_percent:  Optional[float] = None
+    total_reads:  Optional[int] = None
+    mapped_reads:  Optional[int] = None
+    ref_snps:  Optional[int] = None
+    n_actg:  Optional[int] = None
+    n_missing:  Optional[int] = None
+    n_ambiguous:  Optional[int] = None
+    coverage_depth:  Optional[float] = None
+    coverage_breadth:  Optional[float] = None
+    coverage_bin_size:  Optional[float] = None
+    coverage_total_length:  Optional[int] = None
+    producing_run_id:  Optional[int] = None
+    owner_user_id:  Optional[int] = None
+    collection_id:  Optional[int] = None
 
 """
 Define columns that support min/max aggregations
 """
-
-
 @strawberry.type
 class MetricConsensusGenomeMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[int] = None
-    mapped_reads: Optional[int] = None
-    ref_snps: Optional[int] = None
-    n_actg: Optional[int] = None
-    n_missing: Optional[int] = None
-    n_ambiguous: Optional[int] = None
-    coverage_depth: Optional[float] = None
-    coverage_breadth: Optional[float] = None
-    coverage_bin_size: Optional[float] = None
-    coverage_total_length: Optional[int] = None
-
+    reference_genome_length:  Optional[float] = None
+    percent_genome_called:  Optional[float] = None
+    percent_identity:  Optional[float] = None
+    gc_percent:  Optional[float] = None
+    total_reads:  Optional[int] = None
+    mapped_reads:  Optional[int] = None
+    ref_snps:  Optional[int] = None
+    n_actg:  Optional[int] = None
+    n_missing:  Optional[int] = None
+    n_ambiguous:  Optional[int] = None
+    coverage_depth:  Optional[float] = None
+    coverage_breadth:  Optional[float] = None
+    coverage_bin_size:  Optional[float] = None
+    coverage_total_length:  Optional[int] = None
+    producing_run_id:  Optional[int] = None
+    owner_user_id:  Optional[int] = None
+    collection_id:  Optional[int] = None
+    created_at:  Optional[datetime.datetime] = None
+    updated_at:  Optional[datetime.datetime] = None
+    deleted_at:  Optional[datetime.datetime] = None
 
 """
 Define enum of all columns to support count and count(distinct) aggregations
 """
-
-
 @strawberry.enum
 class MetricConsensusGenomeCountColumns(enum.Enum):
     consensus_genome = "consensus_genome"
@@ -283,22 +261,16 @@ class MetricConsensusGenomeCountColumns(enum.Enum):
     updated_at = "updated_at"
     deleted_at = "deleted_at"
 
-
 """
 All supported aggregation functions
 """
-
-
 @strawberry.type
 class MetricConsensusGenomeAggregateFunctions:
     # This is a hack to accept "distinct" and "columns" as arguments to "count"
     @strawberry.field
-    def count(
-        self, distinct: Optional[bool] = False, columns: Optional[MetricConsensusGenomeCountColumns] = None
-    ) -> Optional[int]:
+    def count(self, distinct: Optional[bool] = False, columns: Optional[MetricConsensusGenomeCountColumns] = None) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
-        return self.count  # type: ignore
-
+        return self.count # type: ignore
     sum: Optional[MetricConsensusGenomeNumericalColumns] = None
     avg: Optional[MetricConsensusGenomeNumericalColumns] = None
     min: Optional[MetricConsensusGenomeMinMaxColumns] = None
@@ -306,16 +278,12 @@ class MetricConsensusGenomeAggregateFunctions:
     stddev: Optional[MetricConsensusGenomeNumericalColumns] = None
     variance: Optional[MetricConsensusGenomeNumericalColumns] = None
 
-
 """
 Wrapper around MetricConsensusGenomeAggregateFunctions
 """
-
-
 @strawberry.type
 class MetricConsensusGenomeAggregate:
     aggregate: Optional[MetricConsensusGenomeAggregateFunctions] = None
-
 
 """
 ------------------------------------------------------------------------------
@@ -324,46 +292,30 @@ Mutation types
 """
 
 
-@strawberry.input()
-class MetricConsensusGenomeCreateInput:
-    collection_id: int
-    consensus_genome_id: strawberry.ID
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[int] = None
-    mapped_reads: Optional[int] = None
-    ref_snps: Optional[int] = None
-    n_actg: Optional[int] = None
-    n_missing: Optional[int] = None
-    n_ambiguous: Optional[int] = None
-    coverage_depth: Optional[float] = None
-    coverage_breadth: Optional[float] = None
-    coverage_bin_size: Optional[float] = None
-    coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[List[List[int]]] = None
 
 
 @strawberry.input()
-class MetricConsensusGenomeUpdateInput:
-    collection_id: Optional[int] = None
-    consensus_genome_id: Optional[strawberry.ID] = None
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[int] = None
-    mapped_reads: Optional[int] = None
-    ref_snps: Optional[int] = None
-    n_actg: Optional[int] = None
-    n_missing: Optional[int] = None
-    n_ambiguous: Optional[int] = None
-    coverage_depth: Optional[float] = None
-    coverage_breadth: Optional[float] = None
-    coverage_bin_size: Optional[float] = None
-    coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[List[List[int]]] = None
+class MetricConsensusGenomeCreateInput: 
+    consensus_genome_id:  strawberry.ID
+    reference_genome_length:  Optional[float] = None
+    percent_genome_called:  Optional[float] = None
+    percent_identity:  Optional[float] = None
+    gc_percent:  Optional[float] = None
+    total_reads:  Optional[int] = None
+    mapped_reads:  Optional[int] = None
+    ref_snps:  Optional[int] = None
+    n_actg:  Optional[int] = None
+    n_missing:  Optional[int] = None
+    n_ambiguous:  Optional[int] = None
+    coverage_depth:  Optional[float] = None
+    coverage_breadth:  Optional[float] = None
+    coverage_bin_size:  Optional[float] = None
+    coverage_total_length:  Optional[int] = None
+    coverage_viz:  Optional[List[List[int]]] = None  
+    producing_run_id:  Optional[int] = None 
+    collection_id:  Optional[int] = None   
+@strawberry.input()
+class MetricConsensusGenomeUpdateInput:                        
 
 
 """
@@ -371,7 +323,6 @@ class MetricConsensusGenomeUpdateInput:
 Utilities
 ------------------------------------------------------------------------------
 """
-
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_metrics_consensus_genomes(
@@ -387,9 +338,7 @@ async def resolve_metrics_consensus_genomes(
     return await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_metric_consensus_genome_aggregate_output(
-    query_results: RowMapping,
-) -> MetricConsensusGenomeAggregateFunctions:
+def format_metric_consensus_genome_aggregate_output(query_results: RowMapping) -> MetricConsensusGenomeAggregateFunctions:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
@@ -410,7 +359,6 @@ def format_metric_consensus_genome_aggregate_output(
                 setattr(getattr(output, aggregator_fn), col_name, value)
     return output
 
-
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_metrics_consensus_genomes_aggregate(
     info: Info,
@@ -430,7 +378,6 @@ async def resolve_metrics_consensus_genomes_aggregate(
     aggregate_output = format_metric_consensus_genome_aggregate_output(rows)
     return MetricConsensusGenomeAggregate(aggregate=aggregate_output)
 
-
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_metric_consensus_genome(
     input: MetricConsensusGenomeCreateInput,
@@ -443,11 +390,9 @@ async def create_metric_consensus_genome(
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
-    resource = Resource(id="NEW_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("create", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -469,25 +414,19 @@ async def update_metric_consensus_genome(
     Update MetricConsensusGenome objects. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
-
+    
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
-    entities = await get_db_rows(
-        db.MetricConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE
-    )
+    entities = await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:
@@ -509,9 +448,7 @@ async def delete_metric_consensus_genome(
     Delete MetricConsensusGenome objects. Used for mutations (see api/mutations.py).
     """
     # Fetch entities for deletion, if we have access to them
-    entities = await get_db_rows(
-        db.MetricConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.DELETE
-    )
+    entities = await get_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.DELETE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot delete entities")
 

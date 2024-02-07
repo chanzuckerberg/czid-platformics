@@ -7,11 +7,12 @@ Make changes to the template codegen/templates/database/models/class_name.py.j2 
 
 
 import uuid
+import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Enum, Boolean
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import ForeignKey, String, Float, Integer, Enum, Boolean, DateTime
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import TaxonLevel
 

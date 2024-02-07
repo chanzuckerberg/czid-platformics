@@ -9,11 +9,13 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
@@ -26,17 +28,20 @@ from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
+    DatetimeComparators,
     IntComparators,
+    FloatComparators,
     StrComparators,
     UUIDComparators,
     BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction
+from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -244,10 +249,6 @@ Define Taxon type
 
 @strawberry.type
 class Taxon(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
@@ -270,6 +271,13 @@ class Taxon(EntityInterface):
     sequencing_reads_aggregate: Optional[
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -305,14 +313,17 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class TaxonMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
     name: Optional[str] = None
     upstream_database_identifier: Optional[str] = None
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -392,7 +403,6 @@ Mutation types
 
 @strawberry.input()
 class TaxonCreateInput:
-    collection_id: int
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
@@ -401,18 +411,17 @@ class TaxonCreateInput:
     upstream_database_id: strawberry.ID
     upstream_database_identifier: str
     level: TaxonLevel
+    producing_run_id: Optional[int] = None
+    collection_id: Optional[int] = None
 
 
 @strawberry.input()
 class TaxonUpdateInput:
-    collection_id: Optional[int] = None
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
-    name: Optional[str] = None
     is_phage: Optional[bool] = None
     upstream_database_id: Optional[strawberry.ID] = None
-    upstream_database_identifier: Optional[str] = None
     level: Optional[TaxonLevel] = None
 
 
@@ -491,11 +500,8 @@ async def create_taxon(
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
-    resource = Resource(id="NEW_ID", kind=db.Taxon.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("create", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -523,17 +529,13 @@ async def update_taxon(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.Taxon.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

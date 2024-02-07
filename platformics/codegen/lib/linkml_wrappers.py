@@ -44,6 +44,37 @@ class FieldWrapper:
     def required(self) -> str:
         return self.wrapped_field.required
 
+    # Whether these fields should be exposed in the GQL API
+    @cached_property
+    def hidden(self) -> bool:
+        if "hidden" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["hidden"].value
+        return False
+
+    # Whether these fields can only be written by the API internals
+    # All fields are writable by default
+    @cached_property
+    def readonly(self) -> bool:
+        is_readonly = self.wrapped_field.readonly
+        if is_readonly:
+            return True
+        return False
+
+    # Whether these fields should be available to change via an `Update` mutation
+    # All fields are mutable by default, so long as they're not marked as readonly
+    @cached_property
+    def mutable(self) -> bool:
+        if "mutable" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["mutable"].value
+        return True
+
+    # Whether these fields can only be modified by a system user
+    @cached_property
+    def system_writable(self) -> bool:
+        if "system_writable" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["system_writable"].value
+        return True
+
     @cached_property
     def type(self) -> str:
         return self.wrapped_field.range
@@ -88,11 +119,9 @@ class FieldWrapper:
 
     @property
     def factory_type(self) -> str:
-        return (
-            self.wrapped_field.annotations["factory_type"].value
-            if self.wrapped_field.annotations and self.wrapped_field.annotations["factory_type"]
-            else None
-        )
+        if "factory_type" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["factory_type"].value
+        return None
 
     @cached_property
     def is_virtual_relationship(self) -> bool | None:
@@ -172,12 +201,32 @@ class EntityWrapper:
         raise Exception("No identifier found")
 
     @cached_property
+    def mutable_fields(self) -> list[FieldWrapper]:
+        fields = []
+        for item in self.view.class_induced_slots(self.name):
+            wrapped_field = FieldWrapper(self.view, item)
+            if not wrapped_field.mutable:
+                continue
+            fields.append(wrapped_field)
+        return fields
+
+    @cached_property
     def readable_fields(self) -> list[FieldWrapper]:
         return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name)]
 
     @cached_property
     def all_fields(self) -> list[FieldWrapper]:
         return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name)]
+
+    @cached_property
+    def visible_fields(self) -> list[FieldWrapper]:
+        fields = []
+        for item in self.view.class_induced_slots(self.name):
+            wrapped_field = FieldWrapper(self.view, item)
+            if wrapped_field.hidden:
+                continue
+            fields.append(wrapped_field)
+        return fields
 
     @cached_property
     def owned_fields(self) -> list[FieldWrapper]:

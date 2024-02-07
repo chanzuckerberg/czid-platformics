@@ -9,10 +9,11 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -24,14 +25,21 @@ from platformics.api.core.deps import get_cerbos_client, get_db_session, require
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
+    EnumComparators,
+    DatetimeComparators,
     IntComparators,
+    FloatComparators,
+    StrComparators,
     UUIDComparators,
+    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction
+from platformics.security.authorization import CerbosAction, get_resource_query
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from strawberry import relay
+from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -204,10 +212,6 @@ Define ConsensusGenome type
 
 @strawberry.type
 class ConsensusGenome(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
@@ -219,6 +223,13 @@ class ConsensusGenome(EntityInterface):
     ] = load_metric_consensus_genome_rows  # type:ignore
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
+    id: strawberry.ID
+    producing_run_id: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -257,6 +268,9 @@ class ConsensusGenomeMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -323,22 +337,16 @@ Mutation types
 
 @strawberry.input()
 class ConsensusGenomeCreateInput:
-    collection_id: int
     taxon_id: strawberry.ID
     sequence_read_id: strawberry.ID
-    sequence_id: Optional[strawberry.ID] = None
     metrics_id: Optional[strawberry.ID] = None
-    intermediate_outputs_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[int] = None
+    collection_id: Optional[int] = None
 
 
 @strawberry.input()
 class ConsensusGenomeUpdateInput:
-    collection_id: Optional[int] = None
-    taxon_id: Optional[strawberry.ID] = None
-    sequence_read_id: Optional[strawberry.ID] = None
-    sequence_id: Optional[strawberry.ID] = None
     metrics_id: Optional[strawberry.ID] = None
-    intermediate_outputs_id: Optional[strawberry.ID] = None
 
 
 """
@@ -416,11 +424,8 @@ async def create_consensus_genome(
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
-    resource = Resource(id="NEW_ID", kind=db.ConsensusGenome.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("create", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -448,17 +453,13 @@ async def update_consensus_genome(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.ConsensusGenome.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

@@ -7,9 +7,10 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 
 # ruff: noqa: E501 Line too long
 
+import random
 import factory
 from database.models import Sample
-from test_infra.factories.main import CommonFactory
+from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.host_organism import HostOrganismFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq

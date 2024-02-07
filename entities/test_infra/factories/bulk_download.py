@@ -7,6 +7,7 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 
 # ruff: noqa: E501 Line too long
 
+import random
 import factory
 from database.models import BulkDownload
 from test_infra.factories.main import CommonFactory, FileFactory
