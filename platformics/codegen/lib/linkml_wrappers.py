@@ -211,21 +211,25 @@ class EntityWrapper:
         return fields
 
     @cached_property
-    def readable_fields(self) -> list[FieldWrapper]:
-        return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name)]
-
-    @cached_property
     def all_fields(self) -> list[FieldWrapper]:
         return [FieldWrapper(self.view, item) for item in self.view.class_induced_slots(self.name)]
 
     @cached_property
     def visible_fields(self) -> list[FieldWrapper]:
         fields = []
-        for item in self.view.class_induced_slots(self.name):
-            wrapped_field = FieldWrapper(self.view, item)
-            if wrapped_field.hidden:
+        for field in self.all_fields:
+            if field.hidden:
                 continue
-            fields.append(wrapped_field)
+            fields.append(field)
+        return fields
+
+    @cached_property
+    def system_fields(self) -> list[FieldWrapper]:
+        fields = []
+        for field in self.visible_fields:
+            if not field.system_writable:
+                continue
+            fields.append(field)
         return fields
 
     @cached_property
