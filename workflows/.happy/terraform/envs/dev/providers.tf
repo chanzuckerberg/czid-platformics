@@ -5,6 +5,22 @@ provider "aws" {
   assume_role {
     role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.aws_role}"
   }
+  default_tags {
+    tags = {
+      TFC_RUN_ID                               = coalesce(var.TFC_RUN_ID, "unknown")
+      TFC_WORKSPACE_NAME                       = coalesce(var.TFC_WORKSPACE_NAME, "unknown")
+      TFC_WORKSPACE_SLUG                       = coalesce(var.TFC_WORKSPACE_SLUG, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_BRANCH     = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_BRANCH, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_TAG        = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_TAG, "unknown")
+      TFC_PROJECT_NAME                         = coalesce(var.TFC_PROJECT_NAME, "unknown")
+      project                                  = coalesce(var.project, "unknown")
+      env                                      = coalesce(var.env, "unknown")
+      service                                  = coalesce(var.service, "unknown")
+      owner                                    = coalesce(var.owner, "unknown")
+      managedBy                                = "terraform"
+    }
+  }
   allowed_account_ids = ["${var.aws_account_id}"]
 }
 provider "aws" {
@@ -12,6 +28,22 @@ provider "aws" {
   region = "us-west-2"
   assume_role {
     role_arn = "arn:aws:iam::626314663667:role/tfe-si"
+  }
+  default_tags {
+    tags = {
+      TFC_RUN_ID                               = coalesce(var.TFC_RUN_ID, "unknown")
+      TFC_WORKSPACE_NAME                       = coalesce(var.TFC_WORKSPACE_NAME, "unknown")
+      TFC_WORKSPACE_SLUG                       = coalesce(var.TFC_WORKSPACE_SLUG, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_BRANCH     = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_BRANCH, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_COMMIT_SHA, "unknown")
+      TFC_CONFIGURATION_VERSION_GIT_TAG        = coalesce(var.TFC_CONFIGURATION_VERSION_GIT_TAG, "unknown")
+      TFC_PROJECT_NAME                         = coalesce(var.TFC_PROJECT_NAME, "unknown")
+      project                                  = coalesce(var.project, "unknown")
+      env                                      = coalesce(var.env, "unknown")
+      service                                  = coalesce(var.service, "unknown")
+      owner                                    = coalesce(var.owner, "unknown")
+      managedBy                                = "terraform"
+    }
   }
   allowed_account_ids = ["626314663667"]
 }

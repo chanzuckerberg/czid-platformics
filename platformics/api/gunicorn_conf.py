@@ -12,7 +12,7 @@ logging.basicConfig(
 
 # Gunicorn config variables
 loglevel = os.getenv("LOG_LEVEL", "info")
-workers = os.getenv("WORKERS", 4)
+workers = os.getenv("WORKERS", 2)
 bind = "unix:///var/run/fastapi.sock"
 errorlog = "-"
 worker_tmp_dir = "/dev/shm"

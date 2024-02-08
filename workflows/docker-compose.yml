@@ -15,7 +15,7 @@ x-db-variables: &db-variables
   ? PLATFORMICS_DATABASE_NAME=workflows
 
 x-webservice-variables: &webservice-variables
-  ? WORKERS=2
+  ? WORKERS=1
 
 x-redis-variables: &redis-variables
   ? PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL=redis://redis.czidnet:6378
@@ -102,9 +102,9 @@ services:
   wf-cerbos:
     image: ghcr.io/cerbos/cerbos:0.29.0
     volumes:
-      - ./cerbos:/workflows
+      - ./cerbos:/var/policies/cerbos/
     command:
-      ["server", "--config", "/workflows/config/config.yaml"]
+      ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
 networks:
   default:
     name: czidnet
