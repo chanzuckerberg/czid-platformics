@@ -64,16 +64,18 @@ class FieldWrapper:
     # All fields are mutable by default, so long as they're not marked as readonly
     @cached_property
     def mutable(self) -> bool:
+        if self.readonly:
+            return False
         if "mutable" in self.wrapped_field.annotations:
             return self.wrapped_field.annotations["mutable"].value
         return True
 
     # Whether these fields can only be modified by a system user
     @cached_property
-    def system_writable(self) -> bool:
-        if "system_writable" in self.wrapped_field.annotations:
-            return self.wrapped_field.annotations["system_writable"].value
-        return True
+    def system_writable_only(self) -> bool:
+        if "system_writable_only" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["system_writable_only"].value
+        return False
 
     @cached_property
     def type(self) -> str:
@@ -201,14 +203,12 @@ class EntityWrapper:
         raise Exception("No identifier found")
 
     @cached_property
+    def create_fields(self) -> list[FieldWrapper]:
+        return [field for field in self.all_fields if not field.readonly and not field.hidden and not field.is_virtual_relationship]
+
+    @cached_property
     def mutable_fields(self) -> list[FieldWrapper]:
-        fields = []
-        for item in self.view.class_induced_slots(self.name):
-            wrapped_field = FieldWrapper(self.view, item)
-            if not wrapped_field.mutable:
-                continue
-            fields.append(wrapped_field)
-        return fields
+        return [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
 
     @cached_property
     def all_fields(self) -> list[FieldWrapper]:
@@ -216,21 +216,15 @@ class EntityWrapper:
 
     @cached_property
     def visible_fields(self) -> list[FieldWrapper]:
-        fields = []
-        for field in self.all_fields:
-            if field.hidden:
-                continue
-            fields.append(field)
-        return fields
+        return [field for field in self.all_fields if not field.hidden]
 
     @cached_property
-    def system_fields(self) -> list[FieldWrapper]:
-        fields = []
-        for field in self.visible_fields:
-            if not field.system_writable:
-                continue
-            fields.append(field)
-        return fields
+    def system_only_create(self) -> list[FieldWrapper]:
+        return [field for field in self.create_fields if field.system_writable_only ]
+
+    @cached_property
+    def system_only_mutable(self) -> list[FieldWrapper]:
+        return [field for field in self.mutable_fields if field.system_writable_only ]
 
     @cached_property
     def owned_fields(self) -> list[FieldWrapper]:

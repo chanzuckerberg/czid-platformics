@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -19,28 +19,25 @@ from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource
+from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
-    DatetimeComparators,
     IntComparators,
-    FloatComparators,
     StrComparators,
     UUIDComparators,
     BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction, get_resource_query
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
-from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -239,6 +236,7 @@ class SequencingReadWhereClause(TypedDict):
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
+    entity_id: Optional[UUIDComparators] | None
 
 
 """
@@ -368,7 +366,6 @@ class SequencingReadCountColumns(enum.Enum):
     primer_file = "primer_file"
     reference_sequence = "reference_sequence"
     consensus_genomes = "consensus_genomes"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
@@ -422,9 +419,9 @@ Mutation types
 class SequencingReadCreateInput:
     sample_id: Optional[strawberry.ID] = None
     protocol: Optional[SequencingProtocol] = None
-    technology: SequencingTechnology
-    nucleic_acid: NucleicAcid
-    clearlabs_export: bool
+    technology: Optional[SequencingTechnology] = None
+    nucleic_acid: Optional[NucleicAcid] = None
+    clearlabs_export: Optional[bool] = None
     medaka_model: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
@@ -509,6 +506,7 @@ async def create_sequencing_read(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new SequencingRead object. Used for mutations (see api/mutations.py).
@@ -516,7 +514,51 @@ async def create_sequencing_read(
     params = input.__dict__
 
     # Validate that the user can read all of the entities they're linking to.
+    # Check that sample relationship is accessible.
+    if input.sample_id:
+        sample = get_db_rows(
+            db.Sample, session, cerbos_client, principal, {"id": {"_eq": input.sample_id}}, [], CerbosAction.VIEW
+        )
+        if not sample:
+            raise PlatformicsException("Unauthorized: sample does not exist")
+    # Check that taxon relationship is accessible.
+    if input.taxon_id:
+        taxon = get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.taxon_id}}, [], CerbosAction.VIEW
+        )
+        if not taxon:
+            raise PlatformicsException("Unauthorized: taxon does not exist")
+    # Check that primer_file relationship is accessible.
+    if input.primer_file_id:
+        primer_file = get_db_rows(
+            db.GenomicRange,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": input.primer_file_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not primer_file:
+            raise PlatformicsException("Unauthorized: primer_file does not exist")
+    # Check that reference_sequence relationship is accessible.
+    if input.reference_sequence_id:
+        reference_sequence = get_db_rows(
+            db.ReferenceGenome,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": input.reference_sequence_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not reference_sequence:
+            raise PlatformicsException("Unauthorized: reference_sequence does not exist")
+
+    # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        input.producing_run_id = None
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -533,6 +575,7 @@ async def update_sequencing_read(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update SequencingRead objects. Used for mutations (see api/mutations.py).
@@ -545,7 +588,6 @@ async def update_sequencing_read(
         raise PlatformicsException("No fields to update")
 
     # Validate that the user can read all of the entities they're linking to.
-    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)

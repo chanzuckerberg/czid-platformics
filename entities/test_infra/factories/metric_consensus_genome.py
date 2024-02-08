@@ -10,7 +10,7 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 import random
 import factory
 from database.models import MetricConsensusGenome
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from test_infra.factories.consensus_genome import ConsensusGenomeFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq

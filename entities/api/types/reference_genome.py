@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable, List
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -19,28 +19,23 @@ from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal, Resource
+from cerbos.sdk.model import Principal
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
-    EnumComparators,
-    DatetimeComparators,
     IntComparators,
-    FloatComparators,
     StrComparators,
     UUIDComparators,
-    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.security.authorization import CerbosAction, get_resource_query
+from platformics.security.authorization import CerbosAction
 from sqlalchemy import inspect
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
-from strawberry.field import StrawberryField
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
@@ -159,6 +154,7 @@ class ReferenceGenomeWhereClause(TypedDict):
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
+    entity_id: Optional[UUIDComparators] | None
 
 
 """
@@ -259,7 +255,6 @@ class ReferenceGenomeCountColumns(enum.Enum):
     accession_id = "accession_id"
     accession_name = "accession_name"
     sequencing_reads = "sequencing_reads"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
@@ -391,6 +386,7 @@ async def create_reference_genome(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new ReferenceGenome object. Used for mutations (see api/mutations.py).
@@ -398,7 +394,11 @@ async def create_reference_genome(
     params = input.__dict__
 
     # Validate that the user can read all of the entities they're linking to.
+
+    # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        input.producing_run_id = None
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -415,6 +415,7 @@ async def update_reference_genome(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update ReferenceGenome objects. Used for mutations (see api/mutations.py).
@@ -427,7 +428,6 @@ async def update_reference_genome(
         raise PlatformicsException("No fields to update")
 
     # Validate that the user can read all of the entities they're linking to.
-    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.ReferenceGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)

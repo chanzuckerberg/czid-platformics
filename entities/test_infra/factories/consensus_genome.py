@@ -7,14 +7,12 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 
 # ruff: noqa: E501 Line too long
 
-import random
 import factory
 from database.models import ConsensusGenome
 from test_infra.factories.main import CommonFactory, FileFactory
 from test_infra.factories.taxon import TaxonFactory
 from test_infra.factories.sequencing_read import SequencingReadFactory
-from test_infra.factories.metric_consensus_genome import MetricConsensusGenomeFactory
-from factory import Faker, fuzzy
+from factory import Faker
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
 from faker_enum import EnumProvider

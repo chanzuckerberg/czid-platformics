@@ -146,7 +146,7 @@ classes:
         minimum_value: 0
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
-          system_writable: True
+          system_writable_only: True
       owner_user_id:
         range: int
         minimum_value: 0
@@ -232,7 +232,7 @@ classes:
         range: int
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
-          system_writable: True
+          system_writable_only: True
       name:
         range: string
         required: true
@@ -738,3 +738,5 @@ classes:
         range: uuid
         identifier: true
         inverse: entity.id
+        annotations:
+          hidden: true
