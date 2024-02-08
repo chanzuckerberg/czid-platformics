@@ -14,6 +14,17 @@
             "terraform_directory": ".happy/terraform/envs/dev",
             "task_launch_type": "k8s"
         },
+        "sandbox": {
+            "aws_profile": "idseq-dev",
+            "aws_region": "us-west-2",
+            "k8s": {
+                "namespace": "czid-dev-happy-happy-env",
+                "cluster_id": "czid-sandbox-eks",
+                "auth_method": "eks"
+            },
+            "terraform_directory": ".happy/terraform/envs/sandbox",
+            "task_launch_type": "k8s" 
+        },
         "staging": {
             "aws_profile": "idseq-dev",
             "aws_region": "us-west-2",

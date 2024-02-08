@@ -35,7 +35,7 @@ def import_manifest(session: Session) -> None:
         session.commit()
 
     workflow_version = WorkflowVersion(
-        owner_user_id="1", collection_id="1", graph_json="{}", workflow=workflow, manifest=manifest_str
+        owner_user_id="111", collection_id="444", graph_json="{}", workflow=workflow, manifest=manifest_str
     )  # TODO: fill in
     session.add(workflow_version)
     session.commit()
