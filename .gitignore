@@ -312,3 +312,5 @@ static
 workflows/codegen/tests/output/
 entities/codegen/tests/output/
 platformics/codegen/tests/output/
+
+.volume/

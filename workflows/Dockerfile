@@ -26,10 +26,6 @@ RUN poetry install
 COPY workflows/ .
 COPY platformics ./platformics
 
-RUN if [ "$ENVIRONMENT" = "TEST" ]; then \
-        for plugin in plugins/*/*; do pip install -e "$plugin"; done \
-    else \
-        for plugin in plugins/*/*; do pip install "$plugin"; done \
-    fi
+RUN for plugin in plugins/*/*; do pip install "$plugin"; done
 
 CMD ["/usr/local/bin/supervisord", "-c", "/workflows/etc/supervisord.conf"]
