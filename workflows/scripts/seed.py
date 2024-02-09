@@ -18,7 +18,14 @@ from test_infra.factories.workflow_version import WorkflowVersionFactory
 from test_infra.factories.workflow_run import WorkflowRunFactory
 
 
+TEST_USER_ID = "111"
+TEST_COLLECTION_ID = "444"
+
+
 def import_manifest(session: Session) -> None:
+    boto_endpoint_url = os.getenv("BOTO_ENDPOINT_URL")
+    assert boto_endpoint_url is not None, "seed must be run with local AWS infrastructure"
+
     manifest_file = "/workflows/manifest/test_manifests/simple.yaml"
     with open(manifest_file) as f:
         manifest_str = f.read()
@@ -33,8 +40,8 @@ def import_manifest(session: Session) -> None:
 
     if workflow is None:
         workflow = Workflow(
-            owner_user_id="1",  # TODO: WHO SHOULD OWN THESE?
-            collection_id="1",  #
+            owner_user_id=TEST_USER_ID,
+            collection_id=TEST_COLLECTION_ID,
             name=manifest.workflow_name,
             default_version="1.0.0",
             minimum_supported_version=str("1.0.0"),
@@ -43,8 +50,8 @@ def import_manifest(session: Session) -> None:
         session.commit()
 
     workflow_version = WorkflowVersion(
-        owner_user_id="111",
-        collection_id="444",
+        owner_user_id=TEST_USER_ID,
+        collection_id=TEST_COLLECTION_ID,
         graph_json="{}",
         workflow=workflow,
         manifest=manifest_str,
