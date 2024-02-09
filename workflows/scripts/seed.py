@@ -37,9 +37,9 @@ def import_manifest(session: Session) -> None:
     try:
         s3.create_bucket(Bucket="local-bucket")
     except ClientError as e:
-        if e.response['Error']['Code'] == 'BucketAlreadyOwnedByYou':
+        if e.response["Error"]["Code"] == "BucketAlreadyOwnedByYou":
             pass
-        elif e.response['Error']['Code'] == 'BucketAlreadyExists':
+        elif e.response["Error"]["Code"] == "BucketAlreadyExists":
             pass
         else:
             raise e
