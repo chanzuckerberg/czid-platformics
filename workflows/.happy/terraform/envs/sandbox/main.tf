@@ -8,7 +8,7 @@ module "stack" {
   image_tags       = jsondecode(var.image_tags)
   stack_prefix     = "/${var.stack_name}"
   app_name         = var.app
-  deployment_stage = "dev"
+  deployment_stage = "sandbox"
   services = {
     workflows = {
       name                  = "workflows"
@@ -38,13 +38,13 @@ module "stack" {
       }
     }
   }
-  additional_env_vars = {
+    additional_env_vars = {
     AWS_REGION                                      = "us-west-2"
     BOTO_ENDPOINT_URL                               = "http://motoserver.czidnet:4000"
     CERBOS_URL                                      = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET                           = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL                         = "s3"
-    ENTITY_SERVICE_URL                              = "http://ryan-test-entities:8080"
+    ENTITY_SERVICE_URL                              = "http://entities-entities:8080"
     ENTITY_SERVICE_AUTH_TOKEN                       = "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6IkNFSUZ5SmhHX09FRFpOYV9GN0NveFFMTWRnSy1vaW5wRVMxZmFQNHk5cC13ZU51c1JKVm9yMXJZbU5JdXh6ekgiLCJ5IjoicnRPM1FRYS1xRFR2VTNIa3IyUVQ5eE1kanpydzd0Y0xyVl9oSE4zVDdjRUVoQy00czg4ZE5mNU42SkxyM3YyeSJ9LCJraWQiOiItQmx2bF9wVk5LU2JRQ2N5dGV4UzNfMk5MaHBia2J6LVk5VFFjbkY5S1drIiwidHlwIjoiSldFIn0..9K7pNxXmTBf5fzX_H_Uqbw.87heaMhVrIb-ZO6jrbWtcR3c8kt8Otokten2nA6iX8LTOzDx2vqXaMd_8qoJd5UsbV409RTi67_hZ-cZKhL3wXxD_DkURU_y_qXl_alnyZBAdCMEy0LB_Uts4y88RFSh0Ke_RrFYg0MhH0AsMTPoBNQjCbbYaF-uFyW23pdOBzK2qFRpRy1BCLYBxBaVBU5wy05h58BY3Hzn1bDVMOXHbMgHniT3vKD-iM6ZsNiGbmC9GT59VSDLn0emzPBx3_xlk2cYk3ZwptGNXwaSH9Ez6z0gQTNtfDmE0aZzVypD7ZF_0tf5JBs30B5wk4xJdwmyXy_qazFJoOfIyT5rPvVuDbfXatD1fQ1UXDrB-_FU7asC58JNxkemgJ7onWrKs3CZk38HWkO0b7wBhSuGy8KnkLqQWv5y9NlIOaLQv2EpaeIRI22WTfxpwOhcDrw6RnB6DEdsogvpacLbWxohaOudfQl73rk-PfgN_VpPOXlFVHViMTGr83lLgXfCC_E-Q4GpOe_McCK1BQ-Qn0SBF32ofkAk6w5e348cHFUNc9VJ5QPqqzoZvYQJVcFD_FpPaETR.lWx9pYq25tJEory9WJMQTCtoEMwodVYNQA9O5qqQV6A"
     JWK_PRIVATE_KEY_FILE                            = "/workflows/test_infra/fixtures/private_key.pem"
     JWK_PUBLIC_KEY_FILE                             = "/workflows/test_infra/fixtures/public_key.pem"
@@ -58,7 +58,6 @@ module "stack" {
     PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL         = "redis://redis.czidnet:6378"
     PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME        = "workflow-events"
   }
-  
   create_dashboard = false
   emptydir_volumes = [{
     name = "policies"
