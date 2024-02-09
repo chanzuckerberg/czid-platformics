@@ -1,3 +1,135 @@
+type Accession implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  producingRunId: Int
+  ownerUserId: Int!
+  collectionId: Int!
+  accessionId: String!
+  accessionName: String!
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+    orderBy: [ConsensusGenomeOrderByClause!] = []
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
+}
+
+type AccessionAggregate {
+  aggregate: AccessionAggregateFunctions
+}
+
+type AccessionAggregateFunctions {
+  sum: AccessionNumericalColumns
+  avg: AccessionNumericalColumns
+  min: AccessionMinMaxColumns
+  max: AccessionMinMaxColumns
+  stddev: AccessionNumericalColumns
+  variance: AccessionNumericalColumns
+  count(distinct: Boolean = false, columns: AccessionCountColumns = null): Int
+}
+
+"""A connection to a list of items."""
+type AccessionConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [AccessionEdge!]!
+}
+
+enum AccessionCountColumns {
+  accession_id
+  accession_name
+  upstream_database
+  consensus_genomes
+  entity_id
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
+  created_at
+  updated_at
+  deleted_at
+}
+
+input AccessionCreateInput {
+  collectionId: Int!
+  accessionId: String!
+  accessionName: String!
+  upstreamDatabaseId: ID!
+}
+
+"""An edge in a connection."""
+type AccessionEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Accession!
+}
+
+type AccessionMinMaxColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+  accessionId: String
+  accessionName: String
+}
+
+type AccessionNumericalColumns {
+  producingRunId: Int
+  ownerUserId: Int
+  collectionId: Int
+}
+
+input AccessionOrderByClause {
+  accessionId: orderBy
+  accessionName: orderBy
+  upstreamDatabase: UpstreamDatabaseOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
+input AccessionUpdateInput {
+  collectionId: Int = null
+  accessionId: String = null
+  accessionName: String = null
+  upstreamDatabaseId: ID = null
+}
+
+input AccessionWhereClause {
+  id: UUIDComparators
+  producingRunId: IntComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  accessionId: StrComparators
+  accessionName: StrComparators
+  upstreamDatabase: UpstreamDatabaseWhereClause
+  consensusGenomes: ConsensusGenomeWhereClause
+}
+
+input AccessionWhereClauseMutations {
+  id: UUIDComparators
+}
+
 input BoolComparators {
   _eq: Int
   _neq: Int
@@ -122,6 +254,8 @@ type ConsensusGenome implements EntityInterface & Node {
   collectionId: Int!
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
   sequenceRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
+  referenceGenome(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
+  accession(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): Accession
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
   metrics(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): MetricConsensusGenome
@@ -155,6 +289,8 @@ type ConsensusGenomeConnection {
 enum ConsensusGenomeCountColumns {
   taxon
   sequence_read
+  reference_genome
+  accession
   sequence
   metrics
   intermediate_outputs
@@ -172,6 +308,8 @@ input ConsensusGenomeCreateInput {
   collectionId: Int!
   taxonId: ID!
   sequenceReadId: ID!
+  referenceGenomeId: ID = null
+  accessionId: ID = null
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -201,6 +339,8 @@ type ConsensusGenomeNumericalColumns {
 input ConsensusGenomeOrderByClause {
   taxon: TaxonOrderByClause
   sequenceRead: SequencingReadOrderByClause
+  referenceGenome: ReferenceGenomeOrderByClause
+  accession: AccessionOrderByClause
   metrics: MetricConsensusGenomeOrderByClause
   id: orderBy
   producingRunId: orderBy
@@ -215,6 +355,8 @@ input ConsensusGenomeUpdateInput {
   collectionId: Int = null
   taxonId: ID = null
   sequenceReadId: ID = null
+  referenceGenomeId: ID = null
+  accessionId: ID = null
   sequenceId: ID = null
   metricsId: ID = null
   intermediateOutputsId: ID = null
@@ -227,6 +369,8 @@ input ConsensusGenomeWhereClause {
   collectionId: IntComparators
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
+  referenceGenome: ReferenceGenomeWhereClause
+  accession: AccessionWhereClause
   metrics: MetricConsensusGenomeWhereClause
 }
 
@@ -1133,6 +1277,9 @@ type Mutation {
   createReferenceGenome(input: ReferenceGenomeCreateInput!): ReferenceGenome!
   updateReferenceGenome(input: ReferenceGenomeUpdateInput!, where: ReferenceGenomeWhereClauseMutations!): [ReferenceGenome!]!
   deleteReferenceGenome(where: ReferenceGenomeWhereClauseMutations!): [ReferenceGenome!]!
+  createAccession(input: AccessionCreateInput!): Accession!
+  updateAccession(input: AccessionUpdateInput!, where: AccessionWhereClauseMutations!): [Accession!]!
+  deleteAccession(where: AccessionWhereClauseMutations!): [Accession!]!
   createHostOrganism(input: HostOrganismCreateInput!): HostOrganism!
   updateHostOrganism(input: HostOrganismUpdateInput!, where: HostOrganismWhereClauseMutations!): [HostOrganism!]!
   deleteHostOrganism(where: HostOrganismWhereClauseMutations!): [HostOrganism!]!
@@ -1318,6 +1465,7 @@ type Query {
   sequencingReads(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): [SequencingRead!]!
   genomicRanges(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): [GenomicRange!]!
   referenceGenomes(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): [ReferenceGenome!]!
+  accessions(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): [Accession!]!
   hostOrganisms(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): [HostOrganism!]!
   metadatas(where: MetadatumWhereClause = null, orderBy: [MetadatumOrderByClause!] = []): [Metadatum!]!
   consensusGenomes(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = []): [ConsensusGenome!]!
@@ -1331,6 +1479,7 @@ type Query {
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
   genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate!
   referenceGenomesAggregate(where: ReferenceGenomeWhereClause = null): ReferenceGenomeAggregate!
+  accessionsAggregate(where: AccessionWhereClause = null): AccessionAggregate!
   hostOrganismsAggregate(where: HostOrganismWhereClause = null): HostOrganismAggregate!
   metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate!
@@ -1351,11 +1500,10 @@ type ReferenceGenome implements EntityInterface & Node {
   collectionId: Int!
   fileId: ID
   file(where: FileWhereClause = null): File
-  accessionId: String
-  accessionName: String
-  sequencingReads(
-    where: SequencingReadWhereClause = null
-    orderBy: [SequencingReadOrderByClause!] = []
+  name: String!
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+    orderBy: [ConsensusGenomeOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1368,8 +1516,8 @@ type ReferenceGenome implements EntityInterface & Node {
 
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
-  ): SequencingReadConnection!
-  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
+  ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
 }
 
 type ReferenceGenomeAggregate {
@@ -1388,9 +1536,8 @@ type ReferenceGenomeAggregateFunctions {
 
 enum ReferenceGenomeCountColumns {
   file
-  accession_id
-  accession_name
-  sequencing_reads
+  name
+  consensus_genomes
   entity_id
   id
   producing_run_id
@@ -1404,16 +1551,14 @@ enum ReferenceGenomeCountColumns {
 input ReferenceGenomeCreateInput {
   collectionId: Int!
   fileId: ID = null
-  accessionId: String = null
-  accessionName: String = null
+  name: String!
 }
 
 type ReferenceGenomeMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
-  accessionId: String
-  accessionName: String
+  name: String
 }
 
 type ReferenceGenomeNumericalColumns {
@@ -1423,8 +1568,7 @@ type ReferenceGenomeNumericalColumns {
 }
 
 input ReferenceGenomeOrderByClause {
-  accessionId: orderBy
-  accessionName: orderBy
+  name: orderBy
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -1437,8 +1581,7 @@ input ReferenceGenomeOrderByClause {
 input ReferenceGenomeUpdateInput {
   collectionId: Int = null
   fileId: ID = null
-  accessionId: String = null
-  accessionName: String = null
+  name: String = null
 }
 
 input ReferenceGenomeWhereClause {
@@ -1446,9 +1589,8 @@ input ReferenceGenomeWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  accessionId: StrComparators
-  accessionName: StrComparators
-  sequencingReads: SequencingReadWhereClause
+  name: StrComparators
+  consensusGenomes: ConsensusGenomeWhereClause
 }
 
 input ReferenceGenomeWhereClauseMutations {
@@ -1687,7 +1829,6 @@ type SequencingRead implements EntityInterface & Node {
   medakaModel: String
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
   primerFile(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): GenomicRange
-  referenceSequence(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
     orderBy: [ConsensusGenomeOrderByClause!] = []
@@ -1741,7 +1882,6 @@ enum SequencingReadCountColumns {
   medaka_model
   taxon
   primer_file
-  reference_sequence
   consensus_genomes
   entity_id
   id
@@ -1765,7 +1905,6 @@ input SequencingReadCreateInput {
   medakaModel: String = null
   taxonId: ID = null
   primerFileId: ID = null
-  referenceSequenceId: ID = null
 }
 
 """An edge in a connection."""
@@ -1799,7 +1938,6 @@ input SequencingReadOrderByClause {
   medakaModel: orderBy
   taxon: TaxonOrderByClause
   primerFile: GenomicRangeOrderByClause
-  referenceSequence: ReferenceGenomeOrderByClause
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -1821,7 +1959,6 @@ input SequencingReadUpdateInput {
   medakaModel: String = null
   taxonId: ID = null
   primerFileId: ID = null
-  referenceSequenceId: ID = null
 }
 
 input SequencingReadWhereClause {
@@ -1837,7 +1974,6 @@ input SequencingReadWhereClause {
   medakaModel: StrComparators
   taxon: TaxonWhereClause
   primerFile: GenomicRangeWhereClause
-  referenceSequence: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
 }
 
@@ -2173,6 +2309,23 @@ type UpstreamDatabase implements EntityInterface & Node {
     last: Int = null
   ): IndexFileConnection!
   indexesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate
+  accessions(
+    where: AccessionWhereClause = null
+    orderBy: [AccessionOrderByClause!] = []
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): AccessionConnection!
+  accessionsAggregate(where: AccessionWhereClause = null): AccessionAggregate
 }
 
 type UpstreamDatabaseAggregate {
@@ -2193,6 +2346,7 @@ enum UpstreamDatabaseCountColumns {
   name
   taxa
   indexes
+  accessions
   entity_id
   id
   producing_run_id
@@ -2245,6 +2399,7 @@ input UpstreamDatabaseWhereClause {
   name: StrComparators
   taxa: TaxonWhereClause
   indexes: IndexFileWhereClause
+  accessions: AccessionWhereClause
 }
 
 input UpstreamDatabaseWhereClauseMutations {

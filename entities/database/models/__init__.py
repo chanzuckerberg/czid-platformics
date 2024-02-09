@@ -14,6 +14,7 @@ from database.models.sample import Sample  # noqa: F401
 from database.models.sequencing_read import SequencingRead  # noqa: F401
 from database.models.genomic_range import GenomicRange  # noqa: F401
 from database.models.reference_genome import ReferenceGenome  # noqa: F401
+from database.models.accession import Accession  # noqa: F401
 from database.models.host_organism import HostOrganism  # noqa: F401
 from database.models.metadatum import Metadatum  # noqa: F401
 from database.models.consensus_genome import ConsensusGenome  # noqa: F401
