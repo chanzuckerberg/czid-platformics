@@ -20,14 +20,12 @@ if TYPE_CHECKING:
     from database.models.sample import Sample
     from database.models.taxon import Taxon
     from database.models.genomic_range import GenomicRange
-    from database.models.reference_genome import ReferenceGenome
     from database.models.consensus_genome import ConsensusGenome
 else:
     File = "File"
     Sample = "Sample"
     Taxon = "Taxon"
     GenomicRange = "GenomicRange"
-    ReferenceGenome = "ReferenceGenome"
     ConsensusGenome = "ConsensusGenome"
 
 
@@ -52,12 +50,6 @@ class SequencingRead(Entity):
     primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("genomic_range.entity_id"), nullable=True)
     primer_file: Mapped["GenomicRange"] = relationship(
         "GenomicRange", back_populates="sequencing_reads", foreign_keys=primer_file_id
-    )
-    reference_sequence_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("reference_genome.entity_id"), nullable=True
-    )
-    reference_sequence: Mapped["ReferenceGenome"] = relationship(
-        "ReferenceGenome", back_populates="sequencing_reads", foreign_keys=reference_sequence_id
     )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome", back_populates="sequence_read", uselist=True, foreign_keys="ConsensusGenome.sequence_read_id"

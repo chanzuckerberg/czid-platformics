@@ -50,7 +50,6 @@ if TYPE_CHECKING:
     from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
     from api.types.genomic_range import GenomicRangeOrderByClause, GenomicRangeWhereClause, GenomicRange
-    from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
 
     pass
@@ -64,9 +63,6 @@ else:
     GenomicRangeWhereClause = "GenomicRangeWhereClause"
     GenomicRange = "GenomicRange"
     GenomicRangeOrderByClause = "GenomicRangeOrderByClause"
-    ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
-    ReferenceGenome = "ReferenceGenome"
-    ReferenceGenomeOrderByClause = "ReferenceGenomeOrderByClause"
     ConsensusGenomeWhereClause = "ConsensusGenomeWhereClause"
     ConsensusGenome = "ConsensusGenome"
     ConsensusGenomeOrderByClause = "ConsensusGenomeOrderByClause"
@@ -118,21 +114,6 @@ async def load_genomic_range_rows(
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["primer_file"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.primer_file_id)  # type:ignore
-
-
-@strawberry.field
-async def load_reference_genome_rows(
-    root: "SequencingRead",
-    info: Info,
-    where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
-    order_by: Optional[
-        list[Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]]
-    ] = [],
-) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
-    dataloader = info.context["sqlalchemy_loader"]
-    mapper = inspect(db.SequencingRead)
-    relationship = mapper.relationships["reference_sequence"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.reference_sequence_id)  # type:ignore
 
 
 @relay.connection(
@@ -230,9 +211,6 @@ class SequencingReadWhereClause(TypedDict):
     medaka_model: Optional[StrComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     primer_file: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
-    reference_sequence: Optional[
-        Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
@@ -254,9 +232,6 @@ class SequencingReadOrderByClause(TypedDict):
     medaka_model: Optional[orderBy] | None
     taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
     primer_file: Optional[Annotated["GenomicRangeOrderByClause", strawberry.lazy("api.types.genomic_range")]] | None
-    reference_sequence: Optional[
-        Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
@@ -287,9 +262,6 @@ class SequencingRead(EntityInterface):
     primer_file: Optional[
         Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
     ] = load_genomic_range_rows  # type:ignore
-    reference_sequence: Optional[
-        Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows  # type:ignore
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -364,7 +336,6 @@ class SequencingReadCountColumns(enum.Enum):
     medaka_model = "medaka_model"
     taxon = "taxon"
     primer_file = "primer_file"
-    reference_sequence = "reference_sequence"
     consensus_genomes = "consensus_genomes"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -425,7 +396,6 @@ class SequencingReadCreateInput:
     medaka_model: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
-    reference_sequence_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -541,19 +511,6 @@ async def create_sequencing_read(
         )
         if not primer_file:
             raise PlatformicsException("Unauthorized: primer_file does not exist")
-    # Check that reference_sequence relationship is accessible.
-    if input.reference_sequence_id:
-        reference_sequence = get_db_rows(
-            db.ReferenceGenome,
-            session,
-            cerbos_client,
-            principal,
-            {"id": {"_eq": input.reference_sequence_id}},
-            [],
-            CerbosAction.VIEW,
-        )
-        if not reference_sequence:
-            raise PlatformicsException("Unauthorized: reference_sequence does not exist")
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user

@@ -417,7 +417,6 @@ class TaxonUpdateInput:
     description: Optional[str] = None
     common_name: Optional[str] = None
     is_phage: Optional[bool] = None
-    upstream_database_id: Optional[strawberry.ID] = None
     level: Optional[TaxonLevel] = None
 
 
@@ -621,19 +620,6 @@ async def update_taxon(
         raise PlatformicsException("No fields to update")
 
     # Validate that the user can read all of the entities they're linking to.
-    # Check that upstream_database relationship is accessible.
-    if input.upstream_database_id:
-        upstream_database = get_db_rows(
-            db.UpstreamDatabase,
-            session,
-            cerbos_client,
-            principal,
-            {"id": {"_eq": input.upstream_database_id}},
-            [],
-            CerbosAction.VIEW,
-        )
-        if not upstream_database:
-            raise PlatformicsException("Unauthorized: upstream_database does not exist")
     # Check that tax_parent relationship is accessible.
     if input.tax_parent_id:
         tax_parent = get_db_rows(

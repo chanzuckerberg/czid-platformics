@@ -258,6 +258,8 @@ classes:
       host_organism:
         range: HostOrganism
         inverse: HostOrganism.samples
+        annotations:
+          mutable: false
       sequencing_reads:
         range: SequencingRead
         multivalued: true
@@ -324,12 +326,6 @@ classes:
         inverse: GenomicRange.sequencing_reads
         annotations:
           mutable: false
-      # Can specify a reference sequence for "Viral Consensus Genome" pipeline
-      reference_sequence:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.sequencing_reads
-        annotations:
-          mutable: false
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
@@ -357,7 +353,7 @@ classes:
       plural: GenomicRanges
 
   # ----------------------------------------------------------------------------
-  # Reference genomes 
+  # Reference genomes
   # ----------------------------------------------------------------------------
   ReferenceGenome:
     is_a: Entity
@@ -368,19 +364,44 @@ classes:
       file:
         range: File
         readonly: true
-      # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
+      name:
+        range: string
+        required: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.reference_genome
+        multivalued: true
+    annotations:
+      plural: ReferenceGenomes
+
+  # ----------------------------------------------------------------------------
+  # Reference genomes
+  # ----------------------------------------------------------------------------
+  Accession:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
       accession_id:
         range: string
+        required: true
         annotations:
           mutable: false
       accession_name:
         range: string
-      sequencing_reads:
-        range: SequencingRead
-        inverse: SequencingRead.reference_sequence
+        required: true
+      upstream_database:
+        range: UpstreamDatabase
+        required: true
+        inverse: UpstreamDatabase.accessions
+        annotations:
+          mutable: false
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.accession
         multivalued: true
     annotations:
-      plural: ReferenceGenomes
+      plural: Accessions
 
   # ----------------------------------------------------------------------------
   # Host organisms / host filtering information
@@ -408,8 +429,8 @@ classes:
       # Indexes for this host for each tool we use
       indexes:
         range: IndexFile
-        multivalued: true
         inverse: IndexFile.host_organism
+        multivalued: true
       # Original reference FASTA file used to generate indexes for this host; used for our record keeping
       sequence:
         range: File
@@ -470,6 +491,17 @@ classes:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
+        annotations:
+          mutable: false
+      # Must specify a reference sequence or accession for a CG run
+      reference_genome:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.consensus_genomes
+        annotations:
+          mutable: false
+      accession:
+        range: Accession
+        inverse: Accession.consensus_genomes
         annotations:
           mutable: false
       # Consensus Genome sequence output by CG pipeline
@@ -589,8 +621,10 @@ classes:
         required: true
       upstream_database:
         range: UpstreamDatabase
-        required: true
         inverse: UpstreamDatabase.taxa
+        required: true
+        annotations:
+          mutable: false
       upstream_database_identifier:
         range: string
         required: true
@@ -640,13 +674,17 @@ classes:
         required: true
       taxa:
         range: Taxon
-        multivalued: true
         inverse: Taxon.upstream_database
+        multivalued: true
       # This is where NCBI indexes would live
       indexes:
         range: IndexFile
-        multivalued: true
         inverse: IndexFile.upstream_database
+        multivalued: true
+      accessions:
+        range: Accession
+        inverse: Accession.upstream_database
+        multivalued: true
     annotations:
       plural: UpstreamDatabases
 

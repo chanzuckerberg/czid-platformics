@@ -390,7 +390,6 @@ class SampleUpdateInput:
     collection_date: Optional[datetime.datetime] = None
     collection_location: Optional[str] = None
     notes: Optional[str] = None
-    host_organism_id: Optional[strawberry.ID] = None
 
 
 """
@@ -518,19 +517,6 @@ async def update_sample(
         raise PlatformicsException("No fields to update")
 
     # Validate that the user can read all of the entities they're linking to.
-    # Check that host_organism relationship is accessible.
-    if input.host_organism_id:
-        host_organism = get_db_rows(
-            db.HostOrganism,
-            session,
-            cerbos_client,
-            principal,
-            {"id": {"_eq": input.host_organism_id}},
-            [],
-            CerbosAction.VIEW,
-        )
-        if not host_organism:
-            raise PlatformicsException("Unauthorized: host_organism does not exist")
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Sample, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
