@@ -69,22 +69,37 @@ classes:
       id:
         identifier: true
         range: uuid
+        readonly: true # The API handles generating the values for these fields
       producing_run_id:
         range: int
         minimum_value: 0
+        annotations:
+          mutable: false  # This field can't be modified by an `Update` mutation
+          system_writable_only: True
       owner_user_id:
         range: int
         minimum_value: 0
+        readonly: true
       collection_id:
         range: int
         minimum_value: 0
+        annotations:
+          mutable: false
       created_at:
         range: date
         required: true
+        readonly: true
       updated_at:
         range: date
+        readonly: true
       deleted_at:
         range: date
+        readonly: true
+    # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
+    # we're using an annotation here to tack on the extra functionality that we need. We do this because
+    # English pluralization is hard, and we don't want to have to write a custom pluralization function.
+    # This basically means we now have our own "dialect" of LinkML to worry about. We may want to see if
+    # pluralization can be added to the core spec in the future.
     annotations:
       plural: Entities
  
@@ -188,6 +203,7 @@ classes:
     attributes:
       file:
         range: File
+        readonly: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.primer_file
@@ -247,3 +263,5 @@ classes:
         range: uuid
         identifier: true
         inverse: entity.id
+        annotations:
+          hidden: true
