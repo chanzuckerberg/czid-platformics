@@ -193,7 +193,7 @@ class Accession(EntityInterface):
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -222,7 +222,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class AccessionNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -236,7 +235,6 @@ Define columns that support min/max aggregations
 class AccessionMinMaxColumns:
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -307,7 +305,7 @@ class AccessionCreateInput:
     accession_id: Optional[str] = None
     accession_name: Optional[str] = None
     upstream_database_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -395,7 +393,7 @@ async def create_accession(
     # Validate that the user can read all of the entities they're linking to.
     # Check that upstream_database relationship is accessible.
     if input.upstream_database_id:
-        upstream_database = get_db_rows(
+        upstream_database = await get_db_rows(
             db.UpstreamDatabase,
             session,
             cerbos_client,

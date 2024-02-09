@@ -244,7 +244,7 @@ class UpstreamDatabase(EntityInterface):
         Annotated["AccessionAggregate", strawberry.lazy("api.types.accession")]
     ] = load_accession_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -273,7 +273,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class UpstreamDatabaseNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -286,7 +285,6 @@ Define columns that support min/max aggregations
 @strawberry.type
 class UpstreamDatabaseMinMaxColumns:
     name: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -357,7 +355,7 @@ Mutation types
 @strawberry.input()
 class UpstreamDatabaseCreateInput:
     name: Optional[str] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 

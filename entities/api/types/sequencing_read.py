@@ -269,7 +269,7 @@ class SequencingRead(EntityInterface):
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -298,7 +298,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class SequencingReadNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -311,7 +310,6 @@ Define columns that support min/max aggregations
 @strawberry.type
 class SequencingReadMinMaxColumns:
     medaka_model: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -396,7 +394,7 @@ class SequencingReadCreateInput:
     medaka_model: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -486,21 +484,21 @@ async def create_sequencing_read(
     # Validate that the user can read all of the entities they're linking to.
     # Check that sample relationship is accessible.
     if input.sample_id:
-        sample = get_db_rows(
+        sample = await get_db_rows(
             db.Sample, session, cerbos_client, principal, {"id": {"_eq": input.sample_id}}, [], CerbosAction.VIEW
         )
         if not sample:
             raise PlatformicsException("Unauthorized: sample does not exist")
     # Check that taxon relationship is accessible.
     if input.taxon_id:
-        taxon = get_db_rows(
+        taxon = await get_db_rows(
             db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.taxon_id}}, [], CerbosAction.VIEW
         )
         if not taxon:
             raise PlatformicsException("Unauthorized: taxon does not exist")
     # Check that primer_file relationship is accessible.
     if input.primer_file_id:
-        primer_file = get_db_rows(
+        primer_file = await get_db_rows(
             db.GenomicRange,
             session,
             cerbos_client,

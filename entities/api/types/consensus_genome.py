@@ -268,7 +268,7 @@ class ConsensusGenome(EntityInterface):
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -297,7 +297,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class ConsensusGenomeNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -309,7 +308,6 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class ConsensusGenomeMinMaxColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -386,7 +384,7 @@ class ConsensusGenomeCreateInput:
     sequence_read_id: Optional[strawberry.ID] = None
     reference_genome_id: Optional[strawberry.ID] = None
     accession_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -469,14 +467,14 @@ async def create_consensus_genome(
     # Validate that the user can read all of the entities they're linking to.
     # Check that taxon relationship is accessible.
     if input.taxon_id:
-        taxon = get_db_rows(
+        taxon = await get_db_rows(
             db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.taxon_id}}, [], CerbosAction.VIEW
         )
         if not taxon:
             raise PlatformicsException("Unauthorized: taxon does not exist")
     # Check that sequence_read relationship is accessible.
     if input.sequence_read_id:
-        sequence_read = get_db_rows(
+        sequence_read = await get_db_rows(
             db.SequencingRead,
             session,
             cerbos_client,
@@ -489,7 +487,7 @@ async def create_consensus_genome(
             raise PlatformicsException("Unauthorized: sequence_read does not exist")
     # Check that reference_genome relationship is accessible.
     if input.reference_genome_id:
-        reference_genome = get_db_rows(
+        reference_genome = await get_db_rows(
             db.ReferenceGenome,
             session,
             cerbos_client,
@@ -502,7 +500,7 @@ async def create_consensus_genome(
             raise PlatformicsException("Unauthorized: reference_genome does not exist")
     # Check that accession relationship is accessible.
     if input.accession_id:
-        accession = get_db_rows(
+        accession = await get_db_rows(
             db.Accession, session, cerbos_client, principal, {"id": {"_eq": input.accession_id}}, [], CerbosAction.VIEW
         )
         if not accession:

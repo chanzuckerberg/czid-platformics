@@ -240,7 +240,7 @@ class HostOrganism(EntityInterface):
         Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
     ] = load_sample_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -269,7 +269,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class HostOrganismNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -283,7 +282,6 @@ Define columns that support min/max aggregations
 class HostOrganismMinMaxColumns:
     name: Optional[str] = None
     version: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -360,7 +358,7 @@ class HostOrganismCreateInput:
     version: Optional[str] = None
     category: Optional[HostOrganismCategory] = None
     is_deuterostome: Optional[bool] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 

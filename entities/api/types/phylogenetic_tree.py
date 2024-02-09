@@ -139,7 +139,7 @@ class PhylogeneticTree(EntityInterface):
     tree: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("tree")  # type: ignore
     format: PhylogeneticTreeFormat
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -168,7 +168,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class PhylogeneticTreeNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -180,7 +179,6 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class PhylogeneticTreeMinMaxColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -249,7 +247,7 @@ Mutation types
 @strawberry.input()
 class PhylogeneticTreeCreateInput:
     format: Optional[PhylogeneticTreeFormat] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 

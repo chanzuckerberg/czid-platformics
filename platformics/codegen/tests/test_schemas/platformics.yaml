@@ -71,7 +71,7 @@ classes:
         range: uuid
         readonly: true # The API handles generating the values for these fields
       producing_run_id:
-        range: int
+        range: uuid
         minimum_value: 0
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation

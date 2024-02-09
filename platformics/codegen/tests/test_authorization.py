@@ -2,10 +2,16 @@
 Authorization spot-checks
 """
 
+import json
+import uuid
+
 import pytest
-from platformics.database.connect import SyncDB
 from platformics.codegen.conftest import GQLTestClient, SessionStorage
-from platformics.codegen.tests.output.test_infra.factories.sample import SampleFactory
+from platformics.codegen.tests.output.test_infra.factories.sample import \
+    SampleFactory
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import \
+    SequencingReadFactory
+from platformics.database.connect import SyncDB
 
 
 @pytest.mark.asyncio
@@ -45,3 +51,135 @@ async def test_collection_authorization(
     output = await gql_client.query(query, user_id=user_id, member_projects=project_ids)
     assert len(output["data"]["samples"]) == num_results
     assert {sample["collectionLocation"] for sample in output["data"]["samples"]} == set(cities)
+
+
+@pytest.mark.asyncio
+async def test_system_fields_only_writable_by_system(
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Make sure users can only see samples in collections they have access to.
+    """
+    user_id = 12345
+    project_ids = [333]
+    producing_run_id = str(uuid.uuid4())
+
+    # Fetch all samples
+    query = f"""
+        mutation MyMutation {{
+          createGenomicRange(input: {{collectionId: {project_ids[0]}, producingRunId: "{producing_run_id}" }}) {{
+            collectionId
+            producingRunId
+          }}
+        }}
+    """
+    output = await gql_client.query(query, user_id=user_id, member_projects=project_ids, service_identity="workflows")
+    assert output["data"]["createGenomicRange"]["collectionId"] == 333
+    # Our mutation should have been saved because we are a system user.
+    assert output["data"]["createGenomicRange"]["producingRunId"] == producing_run_id
+
+    output = await gql_client.query(query, user_id=user_id, member_projects=project_ids)
+    assert output["data"]["createGenomicRange"]["collectionId"] == 333
+    # Our mutation should have wiped this out because we're not a system user.
+    assert output["data"]["createGenomicRange"]["producingRunId"] is None
+
+
+@pytest.mark.asyncio
+async def test_create_wont_associate_inaccessible_relationships(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Make sure users can only see samples in collections they have access to.
+    """
+    owner_user_id = 333
+    user_id = 12345
+
+    # Create mock data
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        test_sample0 = SampleFactory.create(collection_location="City1", owner_user_id=999, collection_id=444)
+        test_sample1 = SampleFactory.create(collection_location="City2", owner_user_id=999, collection_id=444)
+        test_sample2 = SampleFactory.create(collection_location="City3", owner_user_id=999, collection_id=444)
+        test_sample3 = SampleFactory.create(collection_location="City4", owner_user_id=999, collection_id=444)
+        test_sequencing_read = SequencingReadFactory.create(
+            sample=test_sample0, owner_user_id=owner_user_id, collection_id=111
+        )
+
+    def gen_query(test_sample):
+        # Fetch all samples
+        query = f"""
+            mutation MyMutation {{
+              updateSequencingRead(
+                where: {{id: {{_eq: "{test_sequencing_read.id}"}} }},
+                input: {{
+                  sampleId: "{test_sample.id}"
+                }}
+              ) {{ 
+                id
+                sample {{ 
+                  id 
+                }}
+              }}
+            }}
+        """
+        print(query)
+        return query
+
+    # We are a member of 444 so this should work.
+    output = await gql_client.query(gen_query(test_sample1), user_id=user_id, member_projects=[111, 444])
+    assert output["data"]["updateSequencingRead"]["sample"]["id"] == test_sample1
+
+    # We are NOT a member of 444 so this should break.
+    output = await gql_client.query(gen_query(test_sample2), user_id=user_id, member_projects=[111, 555])
+    assert "Unauthorized" in output["errors"][0]["message"]
+
+    # Project 444 is public so this should work
+    output = await gql_client.query(
+        gen_query(test_sample3), user_id=user_id, member_projects=[111, 555], viewer_projects=[444]
+    )
+    assert output["data"]["updateSequencingRead"]["sample"]["id"] == test_sample3
+
+
+@pytest.mark.asyncio
+async def test_update_wont_associate_inaccessible_relationships(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Make sure users can only see samples in collections they have access to.
+    """
+    owner_user_id = 333
+    user_id = 12345
+
+    # Create mock data
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        test_sample = SampleFactory.create(collection_location="City2", owner_user_id=owner_user_id, collection_id=444)
+
+    # Fetch all samples
+    query = f"""
+        mutation MyMutation {{
+          createSequencingRead(
+            input: {{
+              collectionId: 111,
+              sampleId: "{test_sample.id}",
+              protocol: artic_v4,
+              technology: Illumina,
+              nucleicAcid: RNA,
+              clearlabsExport: false
+            }}
+          ) {{ id }}
+        }}
+    """
+    # We are a member of 444 so this should work.
+    output = await gql_client.query(query, user_id=user_id, member_projects=[111, 444])
+    assert output["data"]["createSequencingRead"]["id"]
+
+    # We are NOT a member of 444 so this should break.
+    output = await gql_client.query(query, user_id=user_id, member_projects=[111, 555])
+    assert "Unauthorized" in output["errors"][0]["message"]
+
+    # Project 444 is public so this should work
+    output = await gql_client.query(query, user_id=user_id, member_projects=[111, 555], viewer_projects=[444])
+    assert output["data"]["createSequencingRead"]["id"]

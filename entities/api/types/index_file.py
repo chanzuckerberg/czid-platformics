@@ -196,7 +196,7 @@ class IndexFile(EntityInterface):
         Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]
     ] = load_host_organism_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -225,7 +225,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class IndexFileNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -238,7 +237,6 @@ Define columns that support min/max aggregations
 @strawberry.type
 class IndexFileMinMaxColumns:
     version: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -311,7 +309,7 @@ class IndexFileCreateInput:
     version: Optional[str] = None
     upstream_database_id: Optional[strawberry.ID] = None
     host_organism_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -400,7 +398,7 @@ async def create_index_file(
     # Validate that the user can read all of the entities they're linking to.
     # Check that upstream_database relationship is accessible.
     if input.upstream_database_id:
-        upstream_database = get_db_rows(
+        upstream_database = await get_db_rows(
             db.UpstreamDatabase,
             session,
             cerbos_client,
@@ -413,7 +411,7 @@ async def create_index_file(
             raise PlatformicsException("Unauthorized: upstream_database does not exist")
     # Check that host_organism relationship is accessible.
     if input.host_organism_id:
-        host_organism = get_db_rows(
+        host_organism = await get_db_rows(
             db.HostOrganism,
             session,
             cerbos_client,

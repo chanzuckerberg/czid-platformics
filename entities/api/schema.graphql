@@ -22,7 +22,7 @@ type Accession implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -71,7 +71,7 @@ input AccessionCreateInput {
   accessionId: String = null
   accessionName: String = null
   upstreamDatabaseId: ID = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -87,7 +87,6 @@ type AccessionEdge {
 type AccessionMinMaxColumns {
   accessionId: String
   accessionName: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -96,7 +95,6 @@ type AccessionMinMaxColumns {
 }
 
 type AccessionNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -153,7 +151,7 @@ type BulkDownload implements EntityInterface & Node {
   downloadType: BulkDownloadType!
   fileId: ID
   file(where: FileWhereClause = null): File
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -189,12 +187,11 @@ enum BulkDownloadCountColumns {
 
 input BulkDownloadCreateInput {
   downloadType: BulkDownloadType = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
 type BulkDownloadMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -203,7 +200,6 @@ type BulkDownloadMinMaxColumns {
 }
 
 type BulkDownloadNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -262,7 +258,7 @@ type ConsensusGenome implements EntityInterface & Node {
   metrics(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): MetricConsensusGenome
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -315,7 +311,7 @@ input ConsensusGenomeCreateInput {
   sequenceReadId: ID = null
   referenceGenomeId: ID = null
   accessionId: ID = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -329,7 +325,6 @@ type ConsensusGenomeEdge {
 }
 
 type ConsensusGenomeMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -338,7 +333,6 @@ type ConsensusGenomeMinMaxColumns {
 }
 
 type ConsensusGenomeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -512,7 +506,7 @@ type GenomicRange implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -547,12 +541,11 @@ enum GenomicRangeCountColumns {
 }
 
 input GenomicRangeCreateInput {
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
 type GenomicRangeMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -561,7 +554,6 @@ type GenomicRangeMinMaxColumns {
 }
 
 type GenomicRangeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -638,7 +630,7 @@ type HostOrganism implements EntityInterface & Node {
     last: Int = null
   ): SampleConnection!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -701,14 +693,13 @@ input HostOrganismCreateInput {
   version: String = null
   category: HostOrganismCategory = null
   isDeuterostome: Boolean = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
 type HostOrganismMinMaxColumns {
   name: String
   version: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -717,7 +708,6 @@ type HostOrganismMinMaxColumns {
 }
 
 type HostOrganismNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -771,7 +761,7 @@ type IndexFile implements EntityInterface & Node {
   file(where: FileWhereClause = null): File
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
   hostOrganism(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): HostOrganism
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -822,7 +812,7 @@ input IndexFileCreateInput {
   version: String = null
   upstreamDatabaseId: ID = null
   hostOrganismId: ID = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -837,7 +827,6 @@ type IndexFileEdge {
 
 type IndexFileMinMaxColumns {
   version: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -846,7 +835,6 @@ type IndexFileMinMaxColumns {
 }
 
 type IndexFileNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -945,7 +933,7 @@ type Metadatum implements EntityInterface & Node {
   sample(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): Sample
   fieldName: String!
   value: String!
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -993,7 +981,7 @@ input MetadatumCreateInput {
   sampleId: ID = null
   fieldName: String = null
   value: String = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -1009,7 +997,6 @@ type MetadatumEdge {
 type MetadatumMinMaxColumns {
   fieldName: String
   value: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1018,7 +1005,6 @@ type MetadatumMinMaxColumns {
 }
 
 type MetadatumNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1075,7 +1061,7 @@ type MetricConsensusGenome implements EntityInterface & Node {
   coverageBinSize: Float
   coverageTotalLength: Int
   coverageViz: [[Int!]!]
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -1140,7 +1126,7 @@ input MetricConsensusGenomeCreateInput {
   coverageBinSize: Float = null
   coverageTotalLength: Int = null
   coverageViz: [[Int!]!] = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -1159,7 +1145,6 @@ type MetricConsensusGenomeMinMaxColumns {
   coverageBreadth: Float
   coverageBinSize: Float
   coverageTotalLength: Int
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1182,7 +1167,6 @@ type MetricConsensusGenomeNumericalColumns {
   coverageBreadth: Float
   coverageBinSize: Float
   coverageTotalLength: Int
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1345,7 +1329,7 @@ type PhylogeneticTree implements EntityInterface & Node {
   treeId: ID
   tree(where: FileWhereClause = null): File
   format: PhylogeneticTreeFormat!
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -1381,7 +1365,7 @@ enum PhylogeneticTreeCountColumns {
 
 input PhylogeneticTreeCreateInput {
   format: PhylogeneticTreeFormat = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -1404,7 +1388,6 @@ input PhylogeneticTreeFormatEnumComparators {
 }
 
 type PhylogeneticTreeMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1413,7 +1396,6 @@ type PhylogeneticTreeMinMaxColumns {
 }
 
 type PhylogeneticTreeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1510,7 +1492,7 @@ type ReferenceGenome implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -1547,13 +1529,12 @@ enum ReferenceGenomeCountColumns {
 
 input ReferenceGenomeCreateInput {
   name: String = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
 type ReferenceGenomeMinMaxColumns {
   name: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1562,7 +1543,6 @@ type ReferenceGenomeMinMaxColumns {
 }
 
 type ReferenceGenomeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1642,7 +1622,7 @@ type Sample implements EntityInterface & Node {
     last: Int = null
   ): MetadatumConnection!
   metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -1702,7 +1682,7 @@ input SampleCreateInput {
   collectionLocation: String = null
   notes: String = null
   hostOrganismId: ID = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -1722,7 +1702,6 @@ type SampleMinMaxColumns {
   collectionDate: DateTime
   collectionLocation: String
   notes: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1732,7 +1711,6 @@ type SampleMinMaxColumns {
 
 type SampleNumericalColumns {
   railsSampleId: Int
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1846,7 +1824,7 @@ type SequencingRead implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -1907,7 +1885,7 @@ input SequencingReadCreateInput {
   medakaModel: String = null
   taxonId: ID = null
   primerFileId: ID = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -1922,7 +1900,6 @@ type SequencingReadEdge {
 
 type SequencingReadMinMaxColumns {
   medakaModel: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1931,7 +1908,6 @@ type SequencingReadMinMaxColumns {
 }
 
 type SequencingReadNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -2072,7 +2048,7 @@ type Taxon implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -2142,7 +2118,7 @@ input TaxonCreateInput {
   upstreamDatabaseId: ID = null
   upstreamDatabaseIdentifier: String = null
   level: TaxonLevel = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
@@ -2185,7 +2161,6 @@ type TaxonMinMaxColumns {
   commonName: String
   name: String
   upstreamDatabaseIdentifier: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -2194,7 +2169,6 @@ type TaxonMinMaxColumns {
 }
 
 type TaxonNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -2326,7 +2300,7 @@ type UpstreamDatabase implements EntityInterface & Node {
     last: Int = null
   ): AccessionConnection!
   accessionsAggregate(where: AccessionWhereClause = null): AccessionAggregate
-  producingRunId: Int
+  producingRunId: ID
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime!
@@ -2364,13 +2338,12 @@ enum UpstreamDatabaseCountColumns {
 
 input UpstreamDatabaseCreateInput {
   name: String = null
-  producingRunId: Int = null
+  producingRunId: ID = null
   collectionId: Int = null
 }
 
 type UpstreamDatabaseMinMaxColumns {
   name: String
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -2379,7 +2352,6 @@ type UpstreamDatabaseMinMaxColumns {
 }
 
 type UpstreamDatabaseNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }

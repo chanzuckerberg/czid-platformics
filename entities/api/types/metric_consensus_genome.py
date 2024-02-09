@@ -182,7 +182,7 @@ class MetricConsensusGenome(EntityInterface):
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -225,7 +225,6 @@ class MetricConsensusGenomeNumericalColumns:
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -251,7 +250,6 @@ class MetricConsensusGenomeMinMaxColumns:
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -349,7 +347,7 @@ class MetricConsensusGenomeCreateInput:
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -434,7 +432,7 @@ async def create_metric_consensus_genome(
     # Validate that the user can read all of the entities they're linking to.
     # Check that consensus_genome relationship is accessible.
     if input.consensus_genome_id:
-        consensus_genome = get_db_rows(
+        consensus_genome = await get_db_rows(
             db.ConsensusGenome,
             session,
             cerbos_client,

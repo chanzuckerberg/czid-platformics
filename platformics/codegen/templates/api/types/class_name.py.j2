@@ -356,6 +356,8 @@ Mutation types
     {%- for attr in fields %}
         {%- if attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
+        {%- elif attr.type == "uuid" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
         {%- elif attr.type == "Array2dInt" %}
     {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
@@ -478,7 +480,7 @@ async def create_{{ cls.snake_name }}(
         {%- if field.is_entity and not field.is_virtual_relationship %}
     # Check that {{field.name}} relationship is accessible.
     if input.{{field.name}}_id:
-        {{field.name}} = get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
+        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
         {%- endif %}
@@ -527,7 +529,7 @@ async def update_{{ cls.snake_name }}(
         {%- if field.is_entity and not field.is_virtual_relationship %}
     # Check that {{field.name}} relationship is accessible.
     if input.{{field.name}}_id:
-        {{field.name}} = get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
+        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
         {%- endif %}

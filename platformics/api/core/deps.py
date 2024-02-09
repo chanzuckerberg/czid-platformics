@@ -74,6 +74,7 @@ def get_auth_principal(request: Request, settings: APISettings = Depends(get_set
             "user_id": int(claims["sub"]),
             "admin_projects": role_map.get("admin", []),
             "member_projects": role_map.get("member", []),
+            "viewer_projects": role_map.get("viewer", []),
             "service_identity": claims["service_identity"],
         },
     )

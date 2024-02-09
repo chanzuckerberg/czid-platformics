@@ -248,7 +248,7 @@ class Sample(EntityInterface):
         Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_aggregate_rows  # type:ignore
     id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -278,7 +278,6 @@ Define columns that support numerical aggregations
 @strawberry.type
 class SampleNumericalColumns:
     rails_sample_id: Optional[int] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -296,7 +295,6 @@ class SampleMinMaxColumns:
     collection_date: Optional[datetime.datetime] = None
     collection_location: Optional[str] = None
     notes: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -378,7 +376,7 @@ class SampleCreateInput:
     collection_location: Optional[str] = None
     notes: Optional[str] = None
     host_organism_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -471,7 +469,7 @@ async def create_sample(
     # Validate that the user can read all of the entities they're linking to.
     # Check that host_organism relationship is accessible.
     if input.host_organism_id:
-        host_organism = get_db_rows(
+        host_organism = await get_db_rows(
             db.HostOrganism,
             session,
             cerbos_client,

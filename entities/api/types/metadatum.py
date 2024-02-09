@@ -136,7 +136,7 @@ class Metadatum(EntityInterface):
     field_name: str
     value: str
     id: strawberry.ID
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: datetime.datetime
@@ -165,7 +165,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class MetadatumNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -179,7 +178,6 @@ Define columns that support min/max aggregations
 class MetadatumMinMaxColumns:
     field_name: Optional[str] = None
     value: Optional[str] = None
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -249,7 +247,7 @@ class MetadatumCreateInput:
     sample_id: Optional[strawberry.ID] = None
     field_name: Optional[str] = None
     value: Optional[str] = None
-    producing_run_id: Optional[int] = None
+    producing_run_id: Optional[strawberry.ID] = None
     collection_id: Optional[int] = None
 
 
@@ -337,7 +335,7 @@ async def create_metadatum(
     # Validate that the user can read all of the entities they're linking to.
     # Check that sample relationship is accessible.
     if input.sample_id:
-        sample = get_db_rows(
+        sample = await get_db_rows(
             db.Sample, session, cerbos_client, principal, {"id": {"_eq": input.sample_id}}, [], CerbosAction.VIEW
         )
         if not sample:
