@@ -6,6 +6,7 @@ Imports manifests
 import os
 
 import boto3
+from botocore.exceptions import ClientError
 import factory.random
 from sqlalchemy.orm import Session
 from settings import APISettings
@@ -33,7 +34,15 @@ def import_manifest(session: Session) -> None:
 
     wdl_file = "/workflows/test_workflows/sample_name.wdl"
     s3 = boto3.client("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
-    s3.create_bucket(Bucket="local-bucket")
+    try:
+        s3.create_bucket(Bucket="local-bucket")
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'BucketAlreadyOwnedByYou':
+            pass
+        elif e.response['Error']['Code'] == 'BucketAlreadyExists':
+            pass
+        else:
+            raise e
     s3.upload_file(wdl_file, "local-bucket", "sample_name.wdl")
 
     workflow = session.query(Workflow).filter(Workflow.name == manifest.workflow_name).first()
