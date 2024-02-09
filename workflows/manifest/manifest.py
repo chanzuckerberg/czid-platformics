@@ -50,17 +50,9 @@ PrimitiveTypeName = Literal["str", "int", "float", "bool"]
 Primitive = str | int | float | bool
 
 
-class _Input(BaseModel):
-    name: str
-
-
-class EntityInput(_Input):
+class EntityInput(BaseModel):
     entity_type: str
     entity_id: str
-
-
-class RawInput(_Input):
-    value: typing.Any
 
 
 @dataclass
@@ -171,7 +163,7 @@ class RawInputArgument(BaseInputArgument):
             self.required = False
         return self
 
-    def validate_input(self, raw_input: RawInput) -> _InputValidationErrors:
+    def validate_input(self, raw_input: typing.Any) -> _InputValidationErrors:
         if self.options and raw_input.value not in self.options:
             yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
         if type(raw_input.value).__name__ != self.type:
@@ -283,19 +275,21 @@ class Manifest(BaseModel):
             )
         return self
 
-    def validate_inputs(self, entity_inputs: list[EntityInput], raw_inputs: list[RawInput]) -> _InputValidationErrors:
+    def validate_inputs(
+        self, entity_inputs: dict[str, EntityInput], raw_inputs: dict[str, typing.Any]
+    ) -> _InputValidationErrors:
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),
             ("raw", raw_inputs, self.raw_inputs),
         ]:
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}  # type: ignore
-            for input in inputs:  # type: ignore
-                input_argument = input_arguments.get(input.name)  # type: ignore
+            for name, input in inputs.items():  # type: ignore
+                input_argument = input_arguments.get(name)  # type: ignore
                 if not input_argument:
-                    yield InputNotSupported(input.name, entity_or_raw)  # type: ignore
+                    yield InputNotSupported(name, entity_or_raw)  # type: ignore
                     continue
-                if input.name in required_inputs:
-                    required_inputs[input.name] = True
+                if name in required_inputs:
+                    required_inputs[name] = True
                 for error in input_argument.validate_input(input):
                     yield error
             for required_input in [k for k, v in required_inputs.items() if not v]:

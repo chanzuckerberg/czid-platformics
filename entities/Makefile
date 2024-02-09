@@ -78,6 +78,7 @@ codegen:  ## Update the GQL types used by the CLI
 	$(docker_compose_run) entities strawberry export-schema api.main:schema > api/schema.graphql
 	$(docker_compose) exec entities python3 -m sgqlc.introspection --exclude-deprecated --exclude-description http://localhost:8008/graphql api/schema.json
 	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json cli/gql_schema.py
+	$(docker_compose) exec entities sgqlc-codegen schema api/schema.json platformics/client/entities_schema.py
 	$(docker_compose_run) $(FOLDER) black $(DIR_LINT_GRAPHQL)
 	$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_GRAPHQL)
 
