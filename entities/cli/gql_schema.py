@@ -14,6 +14,24 @@ gql_schema -= sgqlc.types.relay.PageInfo
 ########################################################################
 # Scalars and Enumerations
 ########################################################################
+class AccessionCountColumns(sgqlc.types.Enum):
+    __schema__ = gql_schema
+    __choices__ = (
+        "accession_id",
+        "accession_name",
+        "collection_id",
+        "consensus_genomes",
+        "created_at",
+        "deleted_at",
+        "entity_id",
+        "id",
+        "owner_user_id",
+        "producing_run_id",
+        "updated_at",
+        "upstream_database",
+    )
+
+
 Boolean = sgqlc.types.Boolean
 
 
@@ -41,6 +59,7 @@ class BulkDownloadType(sgqlc.types.Enum):
 class ConsensusGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
+        "accession",
         "collection_id",
         "created_at",
         "deleted_at",
@@ -50,6 +69,7 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
         "metrics",
         "owner_user_id",
         "producing_run_id",
+        "reference_genome",
         "sequence",
         "sequence_read",
         "taxon",
@@ -250,17 +270,16 @@ class PhylogeneticTreeFormat(sgqlc.types.Enum):
 class ReferenceGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "accession_id",
-        "accession_name",
         "collection_id",
+        "consensus_genomes",
         "created_at",
         "deleted_at",
         "entity_id",
         "file",
         "id",
+        "name",
         "owner_user_id",
         "producing_run_id",
-        "sequencing_reads",
         "updated_at",
     )
 
@@ -325,7 +344,6 @@ class SequencingReadCountColumns(sgqlc.types.Enum):
         "protocol",
         "r1_file",
         "r2_file",
-        "reference_sequence",
         "sample",
         "taxon",
         "technology",
@@ -397,6 +415,7 @@ class UUID(sgqlc.types.Scalar):
 class UpstreamDatabaseCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
+        "accessions",
         "collection_id",
         "created_at",
         "deleted_at",
@@ -419,6 +438,78 @@ class orderBy(sgqlc.types.Enum):
 ########################################################################
 # Input Objects
 ########################################################################
+class AccessionCreateInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("collection_id", "accession_id", "accession_name", "upstream_database_id")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionName")
+    upstream_database_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="upstreamDatabaseId")
+
+
+class AccessionOrderByClause(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "accession_id",
+        "accession_name",
+        "upstream_database",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+    accession_id = sgqlc.types.Field(orderBy, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(orderBy, graphql_name="accessionName")
+    upstream_database = sgqlc.types.Field("UpstreamDatabaseOrderByClause", graphql_name="upstreamDatabase")
+    id = sgqlc.types.Field(orderBy, graphql_name="id")
+    producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
+
+
+class AccessionUpdateInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("collection_id", "accession_id", "accession_name", "upstream_database_id")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
+    upstream_database_id = sgqlc.types.Field(ID, graphql_name="upstreamDatabaseId")
+
+
+class AccessionWhereClause(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "accession_id",
+        "accession_name",
+        "upstream_database",
+        "consensus_genomes",
+    )
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+    accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
+    accession_name = sgqlc.types.Field("StrComparators", graphql_name="accessionName")
+    upstream_database = sgqlc.types.Field("UpstreamDatabaseWhereClause", graphql_name="upstreamDatabase")
+    consensus_genomes = sgqlc.types.Field("ConsensusGenomeWhereClause", graphql_name="consensusGenomes")
+
+
+class AccessionWhereClauseMutations(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("id",)
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+
+
 class BoolComparators(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
@@ -507,6 +598,8 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
         "collection_id",
         "taxon_id",
         "sequence_read_id",
+        "reference_genome_id",
+        "accession_id",
         "sequence_id",
         "metrics_id",
         "intermediate_outputs_id",
@@ -514,6 +607,8 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="taxonId")
     sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
+    reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
+    accession_id = sgqlc.types.Field(ID, graphql_name="accessionId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     metrics_id = sgqlc.types.Field(ID, graphql_name="metricsId")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
@@ -524,6 +619,8 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
     __field_names__ = (
         "taxon",
         "sequence_read",
+        "reference_genome",
+        "accession",
         "metrics",
         "id",
         "producing_run_id",
@@ -535,6 +632,8 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
     )
     taxon = sgqlc.types.Field("TaxonOrderByClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadOrderByClause", graphql_name="sequenceRead")
+    reference_genome = sgqlc.types.Field("ReferenceGenomeOrderByClause", graphql_name="referenceGenome")
+    accession = sgqlc.types.Field(AccessionOrderByClause, graphql_name="accession")
     metrics = sgqlc.types.Field("MetricConsensusGenomeOrderByClause", graphql_name="metrics")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -551,6 +650,8 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
         "collection_id",
         "taxon_id",
         "sequence_read_id",
+        "reference_genome_id",
+        "accession_id",
         "sequence_id",
         "metrics_id",
         "intermediate_outputs_id",
@@ -558,6 +659,8 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     sequence_read_id = sgqlc.types.Field(ID, graphql_name="sequenceReadId")
+    reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
+    accession_id = sgqlc.types.Field(ID, graphql_name="accessionId")
     sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
     metrics_id = sgqlc.types.Field(ID, graphql_name="metricsId")
     intermediate_outputs_id = sgqlc.types.Field(ID, graphql_name="intermediateOutputsId")
@@ -565,13 +668,25 @@ class ConsensusGenomeUpdateInput(sgqlc.types.Input):
 
 class ConsensusGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "taxon", "sequence_read", "metrics")
+    __field_names__ = (
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "taxon",
+        "sequence_read",
+        "reference_genome",
+        "accession",
+        "metrics",
+    )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
+    reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
+    accession = sgqlc.types.Field(AccessionWhereClause, graphql_name="accession")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
 
 
@@ -1264,18 +1379,16 @@ class PhylogeneticTreeWhereClauseMutations(sgqlc.types.Input):
 
 class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "file_id", "accession_id", "accession_name")
+    __field_names__ = ("collection_id", "file_id", "name")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
-    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
-    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
 
 
 class ReferenceGenomeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "accession_id",
-        "accession_name",
+        "name",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -1284,8 +1397,7 @@ class ReferenceGenomeOrderByClause(sgqlc.types.Input):
         "updated_at",
         "deleted_at",
     )
-    accession_id = sgqlc.types.Field(orderBy, graphql_name="accessionId")
-    accession_name = sgqlc.types.Field(orderBy, graphql_name="accessionName")
+    name = sgqlc.types.Field(orderBy, graphql_name="name")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
@@ -1297,31 +1409,21 @@ class ReferenceGenomeOrderByClause(sgqlc.types.Input):
 
 class ReferenceGenomeUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "file_id", "accession_id", "accession_name")
+    __field_names__ = ("collection_id", "file_id", "name")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
-    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
-    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
+    name = sgqlc.types.Field(String, graphql_name="name")
 
 
 class ReferenceGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "accession_id",
-        "accession_name",
-        "sequencing_reads",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "name", "consensus_genomes")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
-    accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
-    accession_name = sgqlc.types.Field("StrComparators", graphql_name="accessionName")
-    sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
+    name = sgqlc.types.Field("StrComparators", graphql_name="name")
+    consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
 
 
 class ReferenceGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -1482,7 +1584,6 @@ class SequencingReadCreateInput(sgqlc.types.Input):
         "medaka_model",
         "taxon_id",
         "primer_file_id",
-        "reference_sequence_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
@@ -1495,7 +1596,6 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
-    reference_sequence_id = sgqlc.types.Field(ID, graphql_name="referenceSequenceId")
 
 
 class SequencingReadOrderByClause(sgqlc.types.Input):
@@ -1509,7 +1609,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
         "medaka_model",
         "taxon",
         "primer_file",
-        "reference_sequence",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -1526,7 +1625,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
     medaka_model = sgqlc.types.Field(orderBy, graphql_name="medakaModel")
     taxon = sgqlc.types.Field("TaxonOrderByClause", graphql_name="taxon")
     primer_file = sgqlc.types.Field(GenomicRangeOrderByClause, graphql_name="primerFile")
-    reference_sequence = sgqlc.types.Field(ReferenceGenomeOrderByClause, graphql_name="referenceSequence")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
@@ -1550,7 +1648,6 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
         "medaka_model",
         "taxon_id",
         "primer_file_id",
-        "reference_sequence_id",
     )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
@@ -1563,7 +1660,6 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
-    reference_sequence_id = sgqlc.types.Field(ID, graphql_name="referenceSequenceId")
 
 
 class SequencingReadWhereClause(sgqlc.types.Input):
@@ -1581,7 +1677,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "medaka_model",
         "taxon",
         "primer_file",
-        "reference_sequence",
         "consensus_genomes",
     )
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -1596,7 +1691,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     medaka_model = sgqlc.types.Field("StrComparators", graphql_name="medakaModel")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     primer_file = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="primerFile")
-    reference_sequence = sgqlc.types.Field(ReferenceGenomeWhereClause, graphql_name="referenceSequence")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
 
 
@@ -1871,7 +1965,16 @@ class UpstreamDatabaseUpdateInput(sgqlc.types.Input):
 
 class UpstreamDatabaseWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "name", "taxa", "indexes")
+    __field_names__ = (
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "name",
+        "taxa",
+        "indexes",
+        "accessions",
+    )
     id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
     producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
@@ -1879,6 +1982,7 @@ class UpstreamDatabaseWhereClause(sgqlc.types.Input):
     name = sgqlc.types.Field(StrComparators, graphql_name="name")
     taxa = sgqlc.types.Field(TaxonWhereClause, graphql_name="taxa")
     indexes = sgqlc.types.Field(IndexFileWhereClause, graphql_name="indexes")
+    accessions = sgqlc.types.Field(AccessionWhereClause, graphql_name="accessions")
 
 
 class UpstreamDatabaseWhereClauseMutations(sgqlc.types.Input):
@@ -1900,6 +2004,67 @@ class EntityInterface(sgqlc.types.Interface):
     __schema__ = gql_schema
     __field_names__ = ("_id",)
     _id = sgqlc.types.Field(sgqlc.types.non_null(GlobalID), graphql_name="_id")
+
+
+class AccessionAggregate(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("aggregate",)
+    aggregate = sgqlc.types.Field("AccessionAggregateFunctions", graphql_name="aggregate")
+
+
+class AccessionAggregateFunctions(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    sum = sgqlc.types.Field("AccessionNumericalColumns", graphql_name="sum")
+    avg = sgqlc.types.Field("AccessionNumericalColumns", graphql_name="avg")
+    min = sgqlc.types.Field("AccessionMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("AccessionMinMaxColumns", graphql_name="max")
+    stddev = sgqlc.types.Field("AccessionNumericalColumns", graphql_name="stddev")
+    variance = sgqlc.types.Field("AccessionNumericalColumns", graphql_name="variance")
+    count = sgqlc.types.Field(
+        Int,
+        graphql_name="count",
+        args=sgqlc.types.ArgDict(
+            (
+                ("distinct", sgqlc.types.Arg(Boolean, graphql_name="distinct", default=False)),
+                ("columns", sgqlc.types.Arg(AccessionCountColumns, graphql_name="columns", default=None)),
+            )
+        ),
+    )
+
+
+class AccessionConnection(sgqlc.types.relay.Connection):
+    __schema__ = gql_schema
+    __field_names__ = ("page_info", "edges")
+    page_info = sgqlc.types.Field(sgqlc.types.non_null("PageInfo"), graphql_name="pageInfo")
+    edges = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("AccessionEdge"))), graphql_name="edges"
+    )
+
+
+class AccessionEdge(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("cursor", "node")
+    cursor = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="cursor")
+    node = sgqlc.types.Field(sgqlc.types.non_null("Accession"), graphql_name="node")
+
+
+class AccessionMinMaxColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "accession_id", "accession_name")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
+
+
+class AccessionNumericalColumns(sgqlc.types.Type):
+    __schema__ = gql_schema
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
 
 
 class BulkDownloadAggregate(sgqlc.types.Type):
@@ -2418,6 +2583,9 @@ class Mutation(sgqlc.types.Type):
         "create_reference_genome",
         "update_reference_genome",
         "delete_reference_genome",
+        "create_accession",
+        "update_accession",
+        "delete_accession",
         "create_host_organism",
         "update_host_organism",
         "delete_host_organism",
@@ -2669,6 +2837,50 @@ class Mutation(sgqlc.types.Type):
                     "where",
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(ReferenceGenomeWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    create_accession = sgqlc.types.Field(
+        sgqlc.types.non_null("Accession"),
+        graphql_name="createAccession",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(sgqlc.types.non_null(AccessionCreateInput), graphql_name="input", default=None),
+                ),
+            )
+        ),
+    )
+    update_accession = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Accession"))),
+        graphql_name="updateAccession",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(sgqlc.types.non_null(AccessionUpdateInput), graphql_name="input", default=None),
+                ),
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(AccessionWhereClauseMutations), graphql_name="where", default=None
+                    ),
+                ),
+            )
+        ),
+    )
+    delete_accession = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Accession"))),
+        graphql_name="deleteAccession",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "where",
+                    sgqlc.types.Arg(
+                        sgqlc.types.non_null(AccessionWhereClauseMutations), graphql_name="where", default=None
                     ),
                 ),
             )
@@ -3146,6 +3358,7 @@ class Query(sgqlc.types.Type):
         "sequencing_reads",
         "genomic_ranges",
         "reference_genomes",
+        "accessions",
         "host_organisms",
         "metadatas",
         "consensus_genomes",
@@ -3159,6 +3372,7 @@ class Query(sgqlc.types.Type):
         "sequencing_reads_aggregate",
         "genomic_ranges_aggregate",
         "reference_genomes_aggregate",
+        "accessions_aggregate",
         "host_organisms_aggregate",
         "metadatas_aggregate",
         "consensus_genomes_aggregate",
@@ -3258,6 +3472,23 @@ class Query(sgqlc.types.Type):
                     "order_by",
                     sgqlc.types.Arg(
                         sgqlc.types.list_of(sgqlc.types.non_null(ReferenceGenomeOrderByClause)),
+                        graphql_name="orderBy",
+                        default=(),
+                    ),
+                ),
+            )
+        ),
+    )
+    accessions = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("Accession"))),
+        graphql_name="accessions",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(AccessionWhereClause, graphql_name="where", default=None)),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(AccessionOrderByClause)),
                         graphql_name="orderBy",
                         default=(),
                     ),
@@ -3444,6 +3675,13 @@ class Query(sgqlc.types.Type):
             (("where", sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name="where", default=None)),)
         ),
     )
+    accessions_aggregate = sgqlc.types.Field(
+        sgqlc.types.non_null(AccessionAggregate),
+        graphql_name="accessionsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(AccessionWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
     host_organisms_aggregate = sgqlc.types.Field(
         sgqlc.types.non_null(HostOrganismAggregate),
         graphql_name="hostOrganismsAggregate",
@@ -3536,12 +3774,11 @@ class ReferenceGenomeAggregateFunctions(sgqlc.types.Type):
 
 class ReferenceGenomeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "accession_id", "accession_name")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "name")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
-    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
-    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
+    name = sgqlc.types.Field(String, graphql_name="name")
 
 
 class ReferenceGenomeNumericalColumns(sgqlc.types.Type):
@@ -3815,6 +4052,72 @@ class UpstreamDatabaseNumericalColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
 
 
+class Accession(sgqlc.types.Type, EntityInterface, Node):
+    __schema__ = gql_schema
+    __field_names__ = (
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "accession_id",
+        "accession_name",
+        "upstream_database",
+        "consensus_genomes",
+        "consensus_genomes_aggregate",
+    )
+    id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
+    accession_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionName")
+    upstream_database = sgqlc.types.Field(
+        "UpstreamDatabase",
+        graphql_name="upstreamDatabase",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(UpstreamDatabaseWhereClause, graphql_name="where", default=None)),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(UpstreamDatabaseOrderByClause)),
+                        graphql_name="orderBy",
+                        default=(),
+                    ),
+                ),
+            )
+        ),
+    )
+    consensus_genomes = sgqlc.types.Field(
+        sgqlc.types.non_null(ConsensusGenomeConnection),
+        graphql_name="consensusGenomes",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenomeOrderByClause)),
+                        graphql_name="orderBy",
+                        default=(),
+                    ),
+                ),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
+    )
+    consensus_genomes_aggregate = sgqlc.types.Field(
+        ConsensusGenomeAggregate,
+        graphql_name="consensusGenomesAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
+
+
 class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
     __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "download_type", "file_id", "file")
@@ -3840,6 +4143,8 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "taxon",
         "sequence_read",
+        "reference_genome",
+        "accession",
         "sequence_id",
         "sequence",
         "metrics",
@@ -3877,6 +4182,40 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
                     "order_by",
                     sgqlc.types.Arg(
                         sgqlc.types.list_of(sgqlc.types.non_null(SequencingReadOrderByClause)),
+                        graphql_name="orderBy",
+                        default=(),
+                    ),
+                ),
+            )
+        ),
+    )
+    reference_genome = sgqlc.types.Field(
+        "ReferenceGenome",
+        graphql_name="referenceGenome",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name="where", default=None)),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(ReferenceGenomeOrderByClause)),
+                        graphql_name="orderBy",
+                        default=(),
+                    ),
+                ),
+            )
+        ),
+    )
+    accession = sgqlc.types.Field(
+        Accession,
+        graphql_name="accession",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(AccessionWhereClause, graphql_name="where", default=None)),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(AccessionOrderByClause)),
                         graphql_name="orderBy",
                         default=(),
                     ),
@@ -4235,10 +4574,9 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "file_id",
         "file",
-        "accession_id",
-        "accession_name",
-        "sequencing_reads",
-        "sequencing_reads_aggregate",
+        "name",
+        "consensus_genomes",
+        "consensus_genomes_aggregate",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -4250,18 +4588,17 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="file",
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
-    accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
-    accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
-    sequencing_reads = sgqlc.types.Field(
-        sgqlc.types.non_null(SequencingReadConnection),
-        graphql_name="sequencingReads",
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    consensus_genomes = sgqlc.types.Field(
+        sgqlc.types.non_null(ConsensusGenomeConnection),
+        graphql_name="consensusGenomes",
         args=sgqlc.types.ArgDict(
             (
-                ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
+                ("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),
                 (
                     "order_by",
                     sgqlc.types.Arg(
-                        sgqlc.types.list_of(sgqlc.types.non_null(SequencingReadOrderByClause)),
+                        sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenomeOrderByClause)),
                         graphql_name="orderBy",
                         default=(),
                     ),
@@ -4273,11 +4610,11 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    sequencing_reads_aggregate = sgqlc.types.Field(
-        SequencingReadAggregate,
-        graphql_name="sequencingReadsAggregate",
+    consensus_genomes_aggregate = sgqlc.types.Field(
+        ConsensusGenomeAggregate,
+        graphql_name="consensusGenomesAggregate",
         args=sgqlc.types.ArgDict(
-            (("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),)
+            (("where", sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name="where", default=None)),)
         ),
     )
 
@@ -4407,7 +4744,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "medaka_model",
         "taxon",
         "primer_file",
-        "reference_sequence",
         "consensus_genomes",
         "consensus_genomes_aggregate",
     )
@@ -4476,23 +4812,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
                     "order_by",
                     sgqlc.types.Arg(
                         sgqlc.types.list_of(sgqlc.types.non_null(GenomicRangeOrderByClause)),
-                        graphql_name="orderBy",
-                        default=(),
-                    ),
-                ),
-            )
-        ),
-    )
-    reference_sequence = sgqlc.types.Field(
-        ReferenceGenome,
-        graphql_name="referenceSequence",
-        args=sgqlc.types.ArgDict(
-            (
-                ("where", sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name="where", default=None)),
-                (
-                    "order_by",
-                    sgqlc.types.Arg(
-                        sgqlc.types.list_of(sgqlc.types.non_null(ReferenceGenomeOrderByClause)),
                         graphql_name="orderBy",
                         default=(),
                     ),
@@ -4650,6 +4969,8 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
         "taxa_aggregate",
         "indexes",
         "indexes_aggregate",
+        "accessions",
+        "accessions_aggregate",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
@@ -4708,6 +5029,34 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
         graphql_name="indexesAggregate",
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(IndexFileWhereClause, graphql_name="where", default=None)),)
+        ),
+    )
+    accessions = sgqlc.types.Field(
+        sgqlc.types.non_null(AccessionConnection),
+        graphql_name="accessions",
+        args=sgqlc.types.ArgDict(
+            (
+                ("where", sgqlc.types.Arg(AccessionWhereClause, graphql_name="where", default=None)),
+                (
+                    "order_by",
+                    sgqlc.types.Arg(
+                        sgqlc.types.list_of(sgqlc.types.non_null(AccessionOrderByClause)),
+                        graphql_name="orderBy",
+                        default=(),
+                    ),
+                ),
+                ("before", sgqlc.types.Arg(String, graphql_name="before", default=None)),
+                ("after", sgqlc.types.Arg(String, graphql_name="after", default=None)),
+                ("first", sgqlc.types.Arg(Int, graphql_name="first", default=None)),
+                ("last", sgqlc.types.Arg(Int, graphql_name="last", default=None)),
+            )
+        ),
+    )
+    accessions_aggregate = sgqlc.types.Field(
+        AccessionAggregate,
+        graphql_name="accessionsAggregate",
+        args=sgqlc.types.ArgDict(
+            (("where", sgqlc.types.Arg(AccessionWhereClause, graphql_name="where", default=None)),)
         ),
     )
 

@@ -30,6 +30,7 @@ from api.types.reference_genome import (
     update_reference_genome,
     delete_reference_genome,
 )
+from api.types.accession import Accession, create_accession, update_accession, delete_accession
 from api.types.host_organism import HostOrganism, create_host_organism, update_host_organism, delete_host_organism
 from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
 from api.types.consensus_genome import (
@@ -88,6 +89,11 @@ class Mutation:
     create_reference_genome: ReferenceGenome = create_reference_genome
     update_reference_genome: Sequence[ReferenceGenome] = update_reference_genome
     delete_reference_genome: Sequence[ReferenceGenome] = delete_reference_genome
+
+    # Accession mutations
+    create_accession: Accession = create_accession
+    update_accession: Sequence[Accession] = update_accession
+    delete_accession: Sequence[Accession] = delete_accession
 
     # HostOrganism mutations
     create_host_organism: HostOrganism = create_host_organism

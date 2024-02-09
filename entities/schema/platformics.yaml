@@ -299,10 +299,6 @@ classes:
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
-      # Can specify a reference sequence for "Viral Consensus Genome" pipeline
-      reference_sequence:
-        range: ReferenceGenome
-        inverse: ReferenceGenome.sequencing_reads
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
@@ -329,7 +325,7 @@ classes:
       plural: GenomicRanges
 
   # ----------------------------------------------------------------------------
-  # Reference genomes 
+  # Reference genomes
   # ----------------------------------------------------------------------------
   ReferenceGenome:
     is_a: Entity
@@ -339,17 +335,40 @@ classes:
       # FASTA reference genome
       file:
         range: File
-      # Optional metadata: when do viral consensus genome, we try to parse accession ID from the FASTA header.
-      accession_id:
+      name:
         range: string
-      accession_name:
-        range: string
-      sequencing_reads:
-        range: SequencingRead
-        inverse: SequencingRead.reference_sequence
+        required: true
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.reference_genome
         multivalued: true
     annotations:
       plural: ReferenceGenomes
+
+  # ----------------------------------------------------------------------------
+  # Reference genomes
+  # ----------------------------------------------------------------------------
+  Accession:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      accession_id:
+        range: string
+        required: true
+      accession_name:
+        range: string
+        required: true
+      upstream_database:
+        range: UpstreamDatabase
+        required: true
+        inverse: UpstreamDatabase.accessions
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.accession
+        multivalued: true
+    annotations:
+      plural: Accessions
 
   # ----------------------------------------------------------------------------
   # Host organisms / host filtering information
@@ -432,6 +451,13 @@ classes:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
+      # Must specify a reference sequence or accession for a CG run
+      reference_genome:
+        range: ReferenceGenome
+        inverse: ReferenceGenome.consensus_genomes
+      accession:
+        range: Accession
+        inverse: Accession.consensus_genomes
       # Consensus Genome sequence output by CG pipeline
       sequence:
         range: File
@@ -569,6 +595,10 @@ classes:
         range: IndexFile
         multivalued: true
         inverse: IndexFile.upstream_database
+      accessions:
+        range: Accession
+        inverse: Accession.upstream_database
+        multivalued: true
     annotations:
       plural: UpstreamDatabases
 

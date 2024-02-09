@@ -65,6 +65,17 @@ GenomicRange {
     date deleted_at  
 }
 ReferenceGenome {
+    string name  
+    uuid entity_id  
+    uuid id  
+    int producing_run_id  
+    int owner_user_id  
+    int collection_id  
+    date created_at  
+    date updated_at  
+    date deleted_at  
+}
+Accession {
     string accession_id  
     string accession_name  
     uuid entity_id  
@@ -212,18 +223,21 @@ SequencingRead ||--|o File : "r1_file"
 SequencingRead ||--|o File : "r2_file"
 SequencingRead ||--|o Taxon : "taxon"
 SequencingRead ||--|o GenomicRange : "primer_file"
-SequencingRead ||--|o ReferenceGenome : "reference_sequence"
 SequencingRead ||--}o ConsensusGenome : "consensus_genomes"
 GenomicRange ||--|o File : "file"
 GenomicRange ||--}o SequencingRead : "sequencing_reads"
 ReferenceGenome ||--|o File : "file"
-ReferenceGenome ||--}o SequencingRead : "sequencing_reads"
+ReferenceGenome ||--}o ConsensusGenome : "consensus_genomes"
+Accession ||--|| UpstreamDatabase : "upstream_database"
+Accession ||--}o ConsensusGenome : "consensus_genomes"
 HostOrganism ||--}o IndexFile : "indexes"
 HostOrganism ||--|o File : "sequence"
 HostOrganism ||--}o Sample : "samples"
 Metadatum ||--|| Sample : "sample"
 ConsensusGenome ||--|| Taxon : "taxon"
 ConsensusGenome ||--|| SequencingRead : "sequence_read"
+ConsensusGenome ||--|o ReferenceGenome : "reference_genome"
+ConsensusGenome ||--|o Accession : "accession"
 ConsensusGenome ||--|o File : "sequence"
 ConsensusGenome ||--|o MetricConsensusGenome : "metrics"
 ConsensusGenome ||--|o File : "intermediate_outputs"
@@ -243,6 +257,7 @@ Taxon ||--}o ConsensusGenome : "consensus_genomes"
 Taxon ||--}o SequencingRead : "sequencing_reads"
 UpstreamDatabase ||--}o Taxon : "taxa"
 UpstreamDatabase ||--}o IndexFile : "indexes"
+UpstreamDatabase ||--}o Accession : "accessions"
 IndexFile ||--|| File : "file"
 IndexFile ||--|o UpstreamDatabase : "upstream_database"
 IndexFile ||--|o HostOrganism : "host_organism"
