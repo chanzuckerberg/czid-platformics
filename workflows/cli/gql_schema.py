@@ -84,6 +84,7 @@ class WorkflowRunEntityInputCountColumns(sgqlc.types.Enum):
         "created_at",
         "deleted_at",
         "entity_id",
+        "entity_type",
         "field_name",
         "id",
         "input_entity_id",
@@ -159,6 +160,14 @@ class DatetimeComparators(sgqlc.types.Input):
     _is_null = sgqlc.types.Field(DateTime, graphql_name="_is_null")
 
 
+class EntityInputType(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("name", "entity_id", "entity_type")
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
+    entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="entityId")
+    entity_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="entityType")
+
+
 class IntComparators(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
@@ -171,6 +180,17 @@ class IntComparators(sgqlc.types.Input):
     _lt = sgqlc.types.Field(Int, graphql_name="_lt")
     _lte = sgqlc.types.Field(Int, graphql_name="_lte")
     _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
+
+
+class RunWorkflowVersionInput(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("collection_id", "workflow_version_id", "entity_inputs", "raw_input_json")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    workflow_version_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="workflowVersionId")
+    entity_inputs = sgqlc.types.Field(
+        sgqlc.types.list_of(sgqlc.types.non_null(EntityInputType)), graphql_name="entityInputs"
+    )
+    raw_input_json = sgqlc.types.Field(String, graphql_name="rawInputJson")
 
 
 class StrComparators(sgqlc.types.Input):
@@ -261,17 +281,19 @@ class WorkflowRunCreateInput(sgqlc.types.Input):
 
 class WorkflowRunEntityInputCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "field_name", "workflow_run_id")
+    __field_names__ = ("collection_id", "field_name", "entity_type", "workflow_run_id")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
+    entity_type = sgqlc.types.Field(String, graphql_name="entityType")
     workflow_run_id = sgqlc.types.Field(ID, graphql_name="workflowRunId")
 
 
 class WorkflowRunEntityInputUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "field_name", "workflow_run_id")
+    __field_names__ = ("collection_id", "field_name", "entity_type", "workflow_run_id")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
+    entity_type = sgqlc.types.Field(String, graphql_name="entityType")
     workflow_run_id = sgqlc.types.Field(ID, graphql_name="workflowRunId")
 
 
@@ -284,6 +306,7 @@ class WorkflowRunEntityInputWhereClause(sgqlc.types.Input):
         "collection_id",
         "input_entity_id",
         "field_name",
+        "entity_type",
         "workflow_run",
     )
     id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
@@ -292,6 +315,7 @@ class WorkflowRunEntityInputWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     input_entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(StrComparators, graphql_name="fieldName")
+    entity_type = sgqlc.types.Field(StrComparators, graphql_name="entityType")
     workflow_run = sgqlc.types.Field("WorkflowRunWhereClause", graphql_name="workflowRun")
 
 
@@ -565,6 +589,7 @@ class Mutation(sgqlc.types.Type):
         "create_workflow_version",
         "update_workflow_version",
         "delete_workflow_version",
+        "run_workflow",
     )
     create_workflow_run = sgqlc.types.Field(
         sgqlc.types.non_null("WorkflowRun"),
@@ -793,6 +818,18 @@ class Mutation(sgqlc.types.Type):
                     sgqlc.types.Arg(
                         sgqlc.types.non_null(WorkflowVersionWhereClauseMutations), graphql_name="where", default=None
                     ),
+                ),
+            )
+        ),
+    )
+    run_workflow = sgqlc.types.Field(
+        sgqlc.types.non_null("WorkflowRun"),
+        graphql_name="RunWorkflow",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "input",
+                    sgqlc.types.Arg(sgqlc.types.non_null(RunWorkflowVersionInput), graphql_name="input", default=None),
                 ),
             )
         ),
@@ -1061,11 +1098,12 @@ class WorkflowRunEntityInputEdge(sgqlc.types.Type):
 
 class WorkflowRunEntityInputMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "field_name")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "field_name", "entity_type")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
+    entity_type = sgqlc.types.Field(String, graphql_name="entityType")
 
 
 class WorkflowRunEntityInputNumericalColumns(sgqlc.types.Type):
@@ -1371,6 +1409,7 @@ class WorkflowRunEntityInput(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "input_entity_id",
         "field_name",
+        "entity_type",
         "workflow_run",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
@@ -1379,6 +1418,7 @@ class WorkflowRunEntityInput(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     input_entity_id = sgqlc.types.Field(ID, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
+    entity_type = sgqlc.types.Field(String, graphql_name="entityType")
     workflow_run = sgqlc.types.Field(
         WorkflowRun,
         graphql_name="workflowRun",

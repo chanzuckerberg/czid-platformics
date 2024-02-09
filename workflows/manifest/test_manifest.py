@@ -3,7 +3,7 @@ import os
 import pytest
 from pydantic import ValidationError
 
-from manifest.manifest import Manifest, EntityInput, RawInput
+from manifest.manifest import Manifest, EntityInput
 
 
 def test_valid_parse() -> None:
@@ -102,19 +102,19 @@ def test_validate_input() -> None:
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
 
-    entity_inputs = [
+    entity_inputs = {
         # Entity input with the wrong type
-        EntityInput(name="sample", entity_type="sequencing_read", entity_id="123"),
+        "sample": EntityInput(entity_type="sequencing_read", entity_id="123"),
         # Entity input that isn't expected
-        EntityInput(name="missing", entity_type="sample", entity_id="123"),
-    ]
+        "missing": EntityInput(entity_type="sample", entity_id="123"),
+    }
 
-    raw_inputs = [
+    raw_inputs = {
         # Raw input with a value not in options
-        RawInput(name="mood", value="exstatic"),
+        "mood": "exstatic",
         # Raw input with incorrect type
-        RawInput(name="ranking", value=1.2),
-    ]
+        "ranking": 1.2,
+    }
 
     errors = [error.message() for error in manifest.validate_inputs(entity_inputs, raw_inputs)]
     assert errors == [

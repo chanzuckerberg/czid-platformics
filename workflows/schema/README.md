@@ -55,6 +55,7 @@ WorkflowRunStep {
 WorkflowRunEntityInput {
     uuid input_entity_id  
     string field_name  
+    string entity_type  
     uuid entity_id  
     uuid id  
     int producing_run_id  
