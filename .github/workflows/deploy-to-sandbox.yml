@@ -1,5 +1,8 @@
 name: Deploy to Sandbox
 on:
+  push: 
+    branches:
+      - rlim/deploy-to-sandbox-job
   workflow_dispatch:
     service: 
       type: choice
