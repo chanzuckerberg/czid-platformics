@@ -62,6 +62,20 @@ enums:
       level_phylum:
       level_kingdom:
       level_superkingdom:
+  FileAccessProtocol:
+    permissible_values:
+      s3:
+        description: This file is accessible via the (AWS) S3 protocol
+  FileUploadClient:
+    permissible_values:
+      browser:
+        description: File uploaded from the user's browser
+      cli:
+        description: File uploaded from the CLI
+      s3:
+        description: File uploaded from S3
+      basespace:
+        description: File uploaded from Illumina Basespace Cloud
 
 classes:
   Entity:
@@ -71,7 +85,7 @@ classes:
         range: uuid
         readonly: true # The API handles generating the values for these fields
       producing_run_id:
-        range: uuid
+        range: int
         minimum_value: 0
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation

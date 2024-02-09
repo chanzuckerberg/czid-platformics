@@ -56,6 +56,46 @@ services:
     volumes:
       - ./:/czid-platformics/entities
       - ../platformics:/czid-platformics/entities/platformics
+  codegen-cerbos:
+    image: ghcr.io/cerbos/cerbos:0.29.0
+    profiles: ["codegen-tests"]
+    volumes:
+      - ./platformics/codegen/tests/output/cerbos:/var/policies/cerbos/
+    command:
+      ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
+  codegen-tests:
+    image: "platformics-entities"
+    profiles: ["codegen-tests"]
+    build:
+      context: ".."
+      dockerfile: "entities/Dockerfile"
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    restart: no
+    stdin_open: true # Helps with pdb
+    tty: true # Helps with pdb
+    environment:
+      - CERBOS_URL=http://codegen-cerbos:3592
+      - SERVICE_NAME="Codegen Tests"
+      - PLATFORMICS_DATABASE_HOST=entities-db.czidnet
+      - PLATFORMICS_DATABASE_PORT=5432
+      - PLATFORMICS_DATABASE_USER=postgres
+      - PLATFORMICS_DATABASE_PASSWORD=password_postgres
+      - PLATFORMICS_DATABASE_NAME=entities
+      - DEFAULT_UPLOAD_BUCKET=local-bucket
+      - DEFAULT_UPLOAD_PROTOCOL=s3
+      - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
+      - WORKERS=2
+      - AWS_REGION=us-west-2
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      # TODO - these are keypairs for testing only! Do not use in prod!!
+      - JWK_PUBLIC_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/public_key.pem
+      - JWK_PRIVATE_KEY_FILE=/czid-platformics/entities/test_infra/fixtures/private_key.pem
+    volumes:
+      - ../platformics/codegen/tests/output:/czid-platformics/entities
+      - ../platformics:/czid-platformics/entities/platformics
+    command: ["/bin/true"]
 networks:
   default:
     name: czidnet

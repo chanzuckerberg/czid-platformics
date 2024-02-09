@@ -136,7 +136,7 @@ async def api(async_db: AsyncDB) -> FastAPI:
     """
     Create an API instance using the real schema.
     """
-    api = get_app(use_test_schema=False)
+    api = get_app()
     overwrite_api(api, async_db)
     return api
 
