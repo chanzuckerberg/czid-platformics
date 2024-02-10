@@ -204,10 +204,15 @@ class EntityWrapper:
 
     @cached_property
     def create_fields(self) -> list[FieldWrapper]:
-        return [field for field in self.all_fields if not field.readonly and not field.hidden and not field.is_virtual_relationship]
+        return [
+            field
+            for field in self.all_fields
+            if not field.readonly and not field.hidden and not field.is_virtual_relationship
+        ]
 
     @cached_property
     def mutable_fields(self) -> list[FieldWrapper]:
+        fields = [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
         return [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
 
     @cached_property
@@ -220,11 +225,11 @@ class EntityWrapper:
 
     @cached_property
     def system_only_create(self) -> list[FieldWrapper]:
-        return [field for field in self.create_fields if field.system_writable_only ]
+        return [field for field in self.create_fields if field.system_writable_only]
 
     @cached_property
     def system_only_mutable(self) -> list[FieldWrapper]:
-        return [field for field in self.mutable_fields if field.system_writable_only ]
+        return [field for field in self.mutable_fields if field.system_writable_only]
 
     @cached_property
     def owned_fields(self) -> list[FieldWrapper]:

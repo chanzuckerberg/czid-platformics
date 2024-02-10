@@ -532,6 +532,8 @@ async def update_{{ cls.snake_name }}(
         {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
+        params["{{field.name}}"] = {{field.name}}[0]
+        del params["{{field.name}}_id"]
         {%- endif %}
     {%- endfor %}
 
@@ -540,7 +542,7 @@ async def update_{{ cls.snake_name }}(
     if not is_system_user:
     {%- endif %}
     {%- for field in cls.system_only_mutable %}
-        input.{{field.name}} = None
+        del params["{{field.name}}"]
     {%- endfor %}
 
     # Fetch entities for update, if we have access to them
