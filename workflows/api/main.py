@@ -5,35 +5,30 @@ import json
 import typing
 
 import database.models as db
-from api.types import workflow_run
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
-from api.config import load_event_bus, load_workflow_runner, resolve_input_loader
 from fastapi import APIRouter, Depends, FastAPI, Request
 from manifest.manifest import EntityInput, Manifest
-from platformics.api.core.deps import (
-    get_auth_principal,
-    get_cerbos_client,
-    get_db_session,
-    get_engine,
-    require_auth_principal,
-)
+from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
+                                       get_db_session, get_engine,
+                                       require_auth_principal)
 from platformics.api.core.errors import PlatformicsException
-from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
+from plugins.plugin_types import EventBus, WorkflowRunner
+from settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 from strawberry.schema.config import StrawberryConfig
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 
-from api.queries import Query
-from api.mutations import Mutation as CodegenMutation
-
+from api.config import (load_event_bus, load_workflow_runner,
+                        resolve_input_loader)
 from api.core.gql_loaders import WorkflowLoader
-from plugins.plugin_types import EventBus, WorkflowRunner
+from api.mutations import Mutation as CodegenMutation
+from api.queries import Query
+from api.types import workflow_run
 
 ###########
 # Plugins #
@@ -52,8 +47,6 @@ def get_workflow_runner(request: Request) -> WorkflowRunner:
 ######################
 # Strawberry-GraphQL #
 ######################
-
-strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry.input
@@ -210,12 +203,6 @@ def get_app() -> FastAPI:
     event_bus = load_event_bus(settings)
     workflow_runner = load_workflow_runner(settings)
 
-    # call finalize() before using the schema:
-    # (note that models that are related to models that are in the schema
-    # are automatically mapped at this stage
-    strawberry_sqlalchemy_mapper.finalize()
-    # only needed if you have polymorphic types
-    list(strawberry_sqlalchemy_mapper.mapped_types.values())
     # strawberry graphql schema
     # start server with strawberry server app
     _app = FastAPI()
