@@ -130,7 +130,7 @@ async def test_update_fields(
     ]
     fields = [field["name"] for field in create_type["inputFields"]]
     # We have a limited subset of mutable fields on SequencingRead
-    assert set(fields) == set(["nucleicAcid", "clearlabsExport", "technology"])
+    assert set(fields) == set(["nucleicAcid", "clearlabsExport", "technology", "sampleId"])
 
 
 # Make sure we only allow certain fields to be set at entity creation time.

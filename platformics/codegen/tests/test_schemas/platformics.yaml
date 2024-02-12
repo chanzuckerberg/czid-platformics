@@ -192,8 +192,6 @@ classes:
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
-        annotations:
-          mutable: false
       protocol:
         range: SequencingProtocol
         required: true
