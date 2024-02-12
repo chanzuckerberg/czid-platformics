@@ -212,7 +212,6 @@ class EntityWrapper:
 
     @cached_property
     def mutable_fields(self) -> list[FieldWrapper]:
-        fields = [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
         return [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
 
     @cached_property
