@@ -3,13 +3,9 @@ Test basic queries and mutations
 """
 
 import datetime
-import json
 
 import pytest
-from platformics.codegen.conftest import GQLTestClient, SessionStorage
-from platformics.codegen.tests.output.test_infra.factories.sample import \
-    SampleFactory
-from platformics.database.connect import SyncDB
+from platformics.codegen.conftest import GQLTestClient
 
 date_now = datetime.datetime.now()
 

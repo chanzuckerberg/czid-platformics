@@ -2,7 +2,6 @@
 Authorization spot-checks
 """
 
-import json
 import uuid
 
 import pytest
