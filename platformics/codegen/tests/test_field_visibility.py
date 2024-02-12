@@ -83,6 +83,58 @@ async def test_hidden_mutations(
 
 # Make sure we only allow certain fields to be set at entity creation time.
 @pytest.mark.asyncio
+async def test_update_fields(
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Test that we don't show immutable fields in update mutations.
+    """
+    user_id = 12345
+    project_id = 123
+
+    # Introspect the Mutations fields
+    query = """
+        fragment FullType on __Type {
+          kind
+          name
+          inputFields {
+            ...InputValue
+          }
+        }
+        fragment InputValue on __InputValue {
+          name
+          type {
+            ...TypeRef
+          }
+          defaultValue
+        }
+        fragment TypeRef on __Type {
+          kind
+          name
+          ofType {
+            kind
+            name
+          }
+        }
+        query IntrospectionQuery {
+          __schema {
+            types {
+              ...FullType
+            }
+          }
+       }
+    """
+    output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
+    create_type = [item for item in output["data"]["__schema"]["types"] if item["name"] == "SequencingReadUpdateInput"][
+        0
+    ]
+    fields = [field["name"] for field in create_type["inputFields"]]
+    # We have a limited subset of mutable fields on SequencingRead
+    assert set(fields) == set(["nucleicAcid", "clearlabsExport"])
+
+
+# Make sure we only allow certain fields to be set at entity creation time.
+@pytest.mark.asyncio
 async def test_creation_fields(
     gql_client: GQLTestClient,
 ) -> None:

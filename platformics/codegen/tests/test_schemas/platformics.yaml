@@ -189,28 +189,40 @@ classes:
       sample:
         range: Sample
         inverse: Sample.sequencing_reads
+        annotations:
+          mutable: false
       protocol:
         range: SequencingProtocol
         required: true
+        annotations:
+          mutable: false
       r1_file:
         range: File
+        readonly: true
       r2_file:
         range: File
+        readonly: true
       technology:
         range: SequencingTechnology
         required: true
+        annotations:
+          mutable: false
       nucleic_acid:
         range: NucleicAcid
         required: true
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+        annotations:
+          mutable: false
       clearlabs_export:
         range: boolean
         required: true
       taxon:
         range: Taxon
         inverse: Taxon.sequencing_reads
+        annotations:
+          mutable: false
     annotations:
       plural: SequencingReads
 
