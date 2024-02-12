@@ -13,6 +13,12 @@ input DatetimeComparators {
   _is_null: DateTime
 }
 
+input EntityInputType {
+  name: String!
+  entityId: ID!
+  entityType: String!
+}
+
 interface EntityInterface implements Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
@@ -51,6 +57,7 @@ type Mutation {
   createWorkflowVersion(input: WorkflowVersionCreateInput!): WorkflowVersion!
   updateWorkflowVersion(input: WorkflowVersionUpdateInput!, where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
   deleteWorkflowVersion(where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
+  RunWorkflow(input: RunWorkflowVersionInput!): WorkflowRun!
 }
 
 """An object with a Globally Unique ID"""
@@ -93,6 +100,13 @@ type Query {
   workflowRunStepsAggregate(where: WorkflowRunStepWhereClause = null): WorkflowRunStepAggregate!
   workflowRunEntityInputsAggregate(where: WorkflowRunEntityInputWhereClause = null): WorkflowRunEntityInputAggregate!
   workflowVersionsAggregate(where: WorkflowVersionWhereClause = null): WorkflowVersionAggregate!
+}
+
+input RunWorkflowVersionInput {
+  collectionId: Int!
+  workflowVersionId: ID!
+  entityInputs: [EntityInputType!]
+  rawInputJson: String
 }
 
 input StrComparators {
@@ -331,6 +345,7 @@ type WorkflowRunEntityInput implements EntityInterface & Node {
   collectionId: Int!
   inputEntityId: ID
   fieldName: String
+  entityType: String
   workflowRun(where: WorkflowRunWhereClause = null): WorkflowRun
 }
 
@@ -360,6 +375,7 @@ type WorkflowRunEntityInputConnection {
 enum WorkflowRunEntityInputCountColumns {
   input_entity_id
   field_name
+  entity_type
   workflow_run
   entity_id
   id
@@ -374,6 +390,7 @@ enum WorkflowRunEntityInputCountColumns {
 input WorkflowRunEntityInputCreateInput {
   collectionId: Int!
   fieldName: String = null
+  entityType: String = null
   workflowRunId: ID = null
 }
 
@@ -391,6 +408,7 @@ type WorkflowRunEntityInputMinMaxColumns {
   ownerUserId: Int
   collectionId: Int
   fieldName: String
+  entityType: String
 }
 
 type WorkflowRunEntityInputNumericalColumns {
@@ -402,6 +420,7 @@ type WorkflowRunEntityInputNumericalColumns {
 input WorkflowRunEntityInputUpdateInput {
   collectionId: Int = null
   fieldName: String = null
+  entityType: String = null
   workflowRunId: ID = null
 }
 
@@ -412,6 +431,7 @@ input WorkflowRunEntityInputWhereClause {
   collectionId: IntComparators
   inputEntityId: UUIDComparators
   fieldName: StrComparators
+  entityType: StrComparators
   workflowRun: WorkflowRunWhereClause
 }
 

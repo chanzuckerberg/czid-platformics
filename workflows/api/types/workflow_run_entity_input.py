@@ -98,6 +98,7 @@ class WorkflowRunEntityInputWhereClause(TypedDict):
     collection_id: IntComparators | None
     input_entity_id: Optional[UUIDComparators] | None
     field_name: Optional[StrComparators] | None
+    entity_type: Optional[StrComparators] | None
     workflow_run: Optional[Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")]] | None
 
 
@@ -114,6 +115,7 @@ class WorkflowRunEntityInput(EntityInterface):
     collection_id: int
     input_entity_id: Optional[strawberry.ID] = None
     field_name: Optional[str] = None
+    entity_type: Optional[str] = None
     workflow_run: Optional[
         Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
     ] = load_workflow_run_rows  # type:ignore
@@ -156,6 +158,7 @@ class WorkflowRunEntityInputMinMaxColumns:
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     field_name: Optional[str] = None
+    entity_type: Optional[str] = None
 
 
 """
@@ -167,6 +170,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 class WorkflowRunEntityInputCountColumns(enum.Enum):
     input_entity_id = "input_entity_id"
     field_name = "field_name"
+    entity_type = "entity_type"
     workflow_run = "workflow_run"
     entity_id = "entity_id"
     id = "id"
@@ -222,6 +226,7 @@ Mutation types
 class WorkflowRunEntityInputCreateInput:
     collection_id: int
     field_name: Optional[str] = None
+    entity_type: Optional[str] = None
     workflow_run_id: Optional[strawberry.ID] = None
 
 
@@ -229,6 +234,7 @@ class WorkflowRunEntityInputCreateInput:
 class WorkflowRunEntityInputUpdateInput:
     collection_id: Optional[int] = None
     field_name: Optional[str] = None
+    entity_type: Optional[str] = None
     workflow_run_id: Optional[strawberry.ID] = None
 
 

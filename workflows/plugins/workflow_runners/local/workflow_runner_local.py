@@ -5,14 +5,18 @@ Plugin that runs a workflow locally using miniwdl
 import asyncio
 import json
 import os
+from os.path import basename
 import subprocess
 import sys
 import tempfile
 import threading
 from typing import List
+from urllib.parse import urlparse
 from uuid import uuid4
 from pathlib import Path
 import re
+
+import boto3
 
 from plugins.plugin_types import (
     EventBus,
@@ -80,8 +84,18 @@ allow_networks = ["czidnet"]"""
         runner_id: str,
     ) -> None:
         """Run miniwdl workflows locally"""
+        # sleep to simulate time before the workflow starts running
+        await asyncio.sleep(1)
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
+            # download workflow path from s3
+            s3 = boto3.client("s3", endpoint_url=self.s3_endpoint_url)
+
+            parsed_workflow_path = urlparse(workflow_path)
+            bucket, key = parsed_workflow_path.netloc, parsed_workflow_path.path.lstrip("/")
+            local_workflow_path = os.path.join(tmpdir, basename(key))
+            s3.download_file(bucket, key, local_workflow_path)
+
             config_path = self.config_file(tmpdir)
             cmd = [
                 "miniwdl",
@@ -95,7 +109,7 @@ allow_networks = ["czidnet"]"""
                     "--cfg",
                     config_path,
                 ]
-            cmd += [os.path.abspath(workflow_path)]
+            cmd += [os.path.abspath(local_workflow_path)]
             cmd += [f"{k}={v}" for k, v in inputs.items()]
             try:
                 p = subprocess.Popen(
@@ -141,7 +155,11 @@ allow_networks = ["czidnet"]"""
     ) -> str:
         """Creates runner id and runs workflow asynchronously"""
         runner_id = str(uuid4())
-        # run workflow in a thread
+        # run workflow in a thread, we are doing something a bit weird where we want to run the workflow
+        #   asynchronously and not wait for the result. Instead the listener will be informed that it
+        #   has terminated through the event bus. However, the event bus API is async so we need to call
+        #   it from an async function. This is why we spawn a thread to run a synchronous wrapper around
+        #   an async function.
         thread = threading.Thread(
             target=self._run_workflow_sync,
             args=(event_bus, workflow_path, inputs, runner_id),

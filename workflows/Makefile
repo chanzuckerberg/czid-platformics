@@ -78,7 +78,7 @@ local-swipe-plugin-start: .env.localdev ## Force restart containers
 	$(docker_compose) up --force-recreate -d 
 
 .PHONY: local-swipe-plugin-deploy-mock
-local-swipe-plugin-deploy-mock: local-swipe-plugin-start local-swipe-plugin-clean ## Deploy SWIPE onto mock AWS infrastucture
+local-swipe-plugin-deploy-mock: local-swipe-plugin-clean ## Deploy SWIPE onto mock AWS infrastucture
 	- source environment.test && \
 	aws ssm put-parameter --name /mock-aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id \
 	--value ami-12345678 --type String --endpoint-url $(MOTO_ENDPOINT_URL) --no-cli-pager && \

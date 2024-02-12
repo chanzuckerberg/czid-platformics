@@ -30,6 +30,7 @@ class WorkflowRunEntityInputFactory(CommonFactory):
         sqlalchemy_get_or_create = ("entity_id",)
 
     field_name = fuzzy.FuzzyText()
+    entity_type = fuzzy.FuzzyText()
     workflow_run = factory.SubFactory(
         WorkflowRunFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

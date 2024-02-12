@@ -28,6 +28,7 @@ from api.types.reference_genome import (
     ReferenceGenomeAggregate,
     resolve_reference_genomes_aggregate,
 )
+from api.types.accession import Accession, resolve_accessions, AccessionAggregate, resolve_accessions_aggregate
 from api.types.host_organism import (
     HostOrganism,
     resolve_host_organisms,
@@ -82,6 +83,7 @@ class Query:
     sequencing_reads: Sequence[SequencingRead] = resolve_sequencing_reads
     genomic_ranges: Sequence[GenomicRange] = resolve_genomic_ranges
     reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
+    accessions: Sequence[Accession] = resolve_accessions
     host_organisms: Sequence[HostOrganism] = resolve_host_organisms
     metadatas: Sequence[Metadatum] = resolve_metadatas
     consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
@@ -97,6 +99,7 @@ class Query:
     sequencing_reads_aggregate: SequencingReadAggregate = resolve_sequencing_reads_aggregate
     genomic_ranges_aggregate: GenomicRangeAggregate = resolve_genomic_ranges_aggregate
     reference_genomes_aggregate: ReferenceGenomeAggregate = resolve_reference_genomes_aggregate
+    accessions_aggregate: AccessionAggregate = resolve_accessions_aggregate
     host_organisms_aggregate: HostOrganismAggregate = resolve_host_organisms_aggregate
     metadatas_aggregate: MetadatumAggregate = resolve_metadatas_aggregate
     consensus_genomes_aggregate: ConsensusGenomeAggregate = resolve_consensus_genomes_aggregate
