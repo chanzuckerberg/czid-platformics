@@ -123,6 +123,63 @@ async def test_system_fields_only_mutable_by_system(
 
 
 @pytest.mark.asyncio
+async def test_system_types_only_mutable_by_system(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Make sure only system users can mutate system fields
+    """
+    user_id = 12345
+    project_ids = [333]
+
+    # Fetch all samples
+    def get_update_query(id: str, input_value: str) -> str:
+        return f"""
+            mutation MyMutation {{
+              updateSystemWritableOnlyType(
+                  where: {{id: {{_eq: "{id}" }} }},
+                  input: {{name: "{input_value}"}}) {{
+                id
+                name
+              }}
+            }}
+        """
+
+    # Fetch all samples
+    create_query = f"""
+        mutation MyMutation {{
+          createSystemWritableOnlyType(
+            input: {{
+              collectionId: 333,
+              name: "row name here"
+            }}
+          ) {{ id, name }}
+        }}
+    """
+
+    # Our mutation should have been saved because we are a system user.
+    output = await gql_client.query(
+        create_query, user_id=user_id, member_projects=project_ids, service_identity="workflows"
+    )
+    assert output["data"]["createSystemWritableOnlyType"]["name"] == "row name here"
+    item_id = output["data"]["createSystemWritableOnlyType"]["id"]
+
+    # Our mutation should have failed with an authorization error because we are not a system user
+    output = await gql_client.query(create_query, user_id=user_id, member_projects=project_ids)
+    assert "Unauthorized" in output["errors"][0]["message"]
+    assert "not creatable" in output["errors"][0]["message"]
+
+    # This field should have been ignored because we're not a system user
+    output = await gql_client.query(get_update_query(item_id, "new_name"), user_id=user_id, member_projects=project_ids)
+    assert "Unauthorized" in output["errors"][0]["message"]
+    assert "not mutable" in output["errors"][0]["message"]
+
+    # This field should have been ignored because we're not a system user
+    output = await gql_client.query(get_update_query(item_id, "new_name"), user_id=user_id, member_projects=project_ids, service_identity="workflows")
+    assert output["data"]["updateSystemWritableOnlyType"][0]["name"] == "new_name"
+
+@pytest.mark.asyncio
 async def test_update_wont_associate_inaccessible_relationships(
     sync_db: SyncDB,
     gql_client: GQLTestClient,

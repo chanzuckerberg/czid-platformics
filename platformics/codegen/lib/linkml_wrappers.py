@@ -212,7 +212,21 @@ class EntityWrapper:
 
     @cached_property
     def mutable_fields(self) -> list[FieldWrapper]:
+        if not self.is_mutable:
+            return []
         return [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
+
+    @cached_property
+    def is_mutable(self) -> bool:
+        if "mutable" in self.wrapped_class.annotations:
+            return self.wrapped_class.annotations["mutable"].value
+        return True
+
+    @cached_property
+    def is_system_only_mutable(self) -> bool:
+        if "system_writable_only" in self.wrapped_class.annotations:
+            return self.wrapped_class.annotations["system_writable_only"].value
+        return False
 
     @cached_property
     def all_fields(self) -> list[FieldWrapper]:
@@ -223,11 +237,27 @@ class EntityWrapper:
         return [field for field in self.all_fields if not field.hidden]
 
     @cached_property
-    def system_only_create(self) -> list[FieldWrapper]:
+    def user_create_fields(self) -> list[FieldWrapper]:
+        if self.is_system_only_mutable:
+            return []
+        return [field for field in self.create_fields if not field.system_writable_only]
+
+    @cached_property
+    def system_only_create_fields(self) -> list[FieldWrapper]:
+        if self.is_system_only_mutable:
+            return [field for field in self.create_fields]
         return [field for field in self.create_fields if field.system_writable_only]
 
     @cached_property
-    def system_only_mutable(self) -> list[FieldWrapper]:
+    def user_mutable_fields(self) -> list[FieldWrapper]:
+        if self.is_system_only_mutable:
+            return []
+        return [field for field in self.mutable_fields if not field.system_writable_only]
+
+    @cached_property
+    def system_only_mutable_fields(self) -> list[FieldWrapper]:
+        if self.is_system_only_mutable:
+            return [field for field in self.mutable_fields]
         return [field for field in self.mutable_fields if field.system_writable_only]
 
     @cached_property

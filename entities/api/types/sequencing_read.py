@@ -480,6 +480,11 @@ async def create_sequencing_read(
     Create a new SequencingRead object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        input.producing_run_id = None
     # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.SequencingRead.__tablename__, attr=attr)
@@ -514,11 +519,6 @@ async def create_sequencing_read(
         )
         if not primer_file:
             raise PlatformicsException("Unauthorized: primer_file does not exist")
-
-    # Validate that the user can read all of the entities they're linking to.
-    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
-    if not is_system_user:
-        input.producing_run_id = None
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)

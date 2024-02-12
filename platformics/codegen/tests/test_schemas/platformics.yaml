@@ -268,6 +268,30 @@ classes:
     annotations:
       plural: Taxa
 
+  SystemWritableOnlyType:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+    annotations:
+      system_writable_only: true
+      plural: SystemWritableOnlyTypes
+
+  ImmutableType:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+    annotations:
+      mutable: false
+      plural: ImmutableTypes
+
   UpstreamDatabase:
     is_a: Entity
     mixins:

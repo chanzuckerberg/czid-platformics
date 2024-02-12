@@ -428,6 +428,11 @@ async def create_metric_consensus_genome(
     Create a new MetricConsensusGenome object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        input.producing_run_id = None
     # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
@@ -448,11 +453,6 @@ async def create_metric_consensus_genome(
         )
         if not consensus_genome:
             raise PlatformicsException("Unauthorized: consensus_genome does not exist")
-
-    # Validate that the user can read all of the entities they're linking to.
-    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
-    if not is_system_user:
-        input.producing_run_id = None
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)

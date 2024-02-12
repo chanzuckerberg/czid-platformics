@@ -465,6 +465,20 @@ async def create_{{ cls.snake_name }}(
     """
     params = input.__dict__
 
+    # Validate that the user can read all of the entities they're linking to.
+    {%- if cls.system_only_create_fields %}
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        {%- if not cls.user_create_fields %}
+        raise PlatformicsException("Unauthorized: {{cls.name}} is not creatable")
+        {%- else %}
+            {%- for field in cls.system_only_create_fields %}
+        input.{{field.name}} = None
+            {%- endfor %}
+        {%- endif %}
+    {%- endif %}
+
+
     {%- for field in cls.create_fields %}
         {%- if field.name == "collection_id" %}
     # Validate that the user can create entities in this collection
@@ -484,15 +498,6 @@ async def create_{{ cls.snake_name }}(
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
         {%- endif %}
-    {%- endfor %}
-
-    # Validate that the user can read all of the entities they're linking to.
-    {%- if cls.system_only_create %}
-    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
-    if not is_system_user:
-    {%- endif %}
-    {%- for field in cls.system_only_create %}
-        input.{{field.name}} = None
     {%- endfor %}
 
     # Save to DB
@@ -537,13 +542,17 @@ async def update_{{ cls.snake_name }}(
         {%- endif %}
     {%- endfor %}
 
-    {%- if cls.system_only_mutable %}
+    {%- if cls.system_only_mutable_fields %}
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-    {%- endif %}
-    {%- for field in cls.system_only_mutable %}
+        {%- if not cls.user_mutable_fields %}
+        raise PlatformicsException("Unauthorized: {{cls.name}} is not mutable")
+        {%- else %}
+            {%- for field in cls.system_only_mutable_fields %}
         del params["{{field.name}}"]
-    {%- endfor %}
+            {%- endfor %}
+        {%- endif %}
+    {%- endif %}
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)

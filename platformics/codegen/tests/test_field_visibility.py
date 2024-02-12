@@ -80,6 +80,12 @@ async def test_hidden_mutations(
     # However we *can* create a genomic range.
     assert "createGenomicRange" in mutations
 
+    # ImmutableType has `mutable: false` set on the entire table so it shouldn't have a mutation
+    assert "updateImmutableType" not in mutations
+
+    # ImmutableType still allows creation.
+    assert "createImmutableType" in mutations
+
 
 # Make sure we only allow certain fields to be set at entity creation time.
 @pytest.mark.asyncio

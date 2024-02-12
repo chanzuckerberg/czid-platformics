@@ -20,9 +20,10 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     EnumComparators,
     DatetimeComparators,
     IntComparators,
@@ -42,12 +43,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.workflow_run import WorkflowRunWhereClause, WorkflowRun
+    from api.types.workflow_run import WorkflowRunOrderByClause, WorkflowRunWhereClause, WorkflowRun
 
     pass
 else:
     WorkflowRunWhereClause = "WorkflowRunWhereClause"
     WorkflowRun = "WorkflowRun"
+    WorkflowRunOrderByClause = "WorkflowRunOrderByClause"
     pass
 
 
@@ -64,11 +66,12 @@ async def load_workflow_run_rows(
     root: "WorkflowRunStep",
     info: Info,
     where: Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")] | None = None,
+    order_by: Optional[list[Annotated["WorkflowRunOrderByClause", strawberry.lazy("api.types.workflow_run")]]] = [],
 ) -> Optional[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowRunStep)
     relationship = mapper.relationships["workflow_run"]
-    return await dataloader.loader_for(relationship, where).load(root.workflow_run_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.workflow_run_id)  # type:ignore
 
 
 """
@@ -103,6 +106,26 @@ class WorkflowRunStepWhereClause(TypedDict):
     started_at: Optional[DatetimeComparators] | None
     ended_at: Optional[DatetimeComparators] | None
     status: Optional[EnumComparators[WorkflowRunStepStatus]] | None
+    entity_id: Optional[UUIDComparators] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class WorkflowRunStepOrderByClause(TypedDict):
+    workflow_run: Optional[Annotated["WorkflowRunOrderByClause", strawberry.lazy("api.types.workflow_run")]] | None
+    started_at: Optional[orderBy] | None
+    ended_at: Optional[orderBy] | None
+    status: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -112,16 +135,18 @@ Define WorkflowRunStep type
 
 @strawberry.type
 class WorkflowRunStep(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     workflow_run: Optional[
         Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
     ] = load_workflow_run_rows  # type:ignore
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     status: Optional[WorkflowRunStepStatus] = None
+    id: strawberry.ID
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -145,7 +170,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class WorkflowRunStepNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -157,11 +181,13 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class WorkflowRunStepMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -175,9 +201,7 @@ class WorkflowRunStepCountColumns(enum.Enum):
     started_at = "started_at"
     ended_at = "ended_at"
     status = "status"
-    entity_id = "entity_id"
     id = "id"
-    producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
     created_at = "created_at"
@@ -227,18 +251,14 @@ Mutation types
 
 @strawberry.input()
 class WorkflowRunStepCreateInput:
-    collection_id: int
     workflow_run_id: Optional[strawberry.ID] = None
-    started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     status: Optional[WorkflowRunStepStatus] = None
+    collection_id: Optional[int] = None
 
 
 @strawberry.input()
 class WorkflowRunStepUpdateInput:
-    collection_id: Optional[int] = None
-    workflow_run_id: Optional[strawberry.ID] = None
-    started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     status: Optional[WorkflowRunStepStatus] = None
 
@@ -256,11 +276,12 @@ async def resolve_workflow_run_steps(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowRunStepWhereClause] = None,
+    order_by: Optional[list[WorkflowRunStepOrderByClause]] = [],
 ) -> typing.Sequence[WorkflowRunStep]:
     """
     Resolve WorkflowRunStep objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.WorkflowRunStep, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.WorkflowRunStep, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_workflow_run_step_aggregate_output(query_results: RowMapping) -> WorkflowRunStepAggregateFunctions:
@@ -311,17 +332,34 @@ async def create_workflow_run_step(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new WorkflowRunStep object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
+    # Validate that the user can read all of the entities they're linking to.
+    # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRunStep.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # Check that workflow_run relationship is accessible.
+    if input.workflow_run_id:
+        workflow_run = await get_db_rows(
+            db.WorkflowRun,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": input.workflow_run_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not workflow_run:
+            raise PlatformicsException("Unauthorized: workflow_run does not exist")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -338,6 +376,7 @@ async def update_workflow_run_step(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update WorkflowRunStep objects. Used for mutations (see api/mutations.py).
@@ -349,17 +388,12 @@ async def update_workflow_run_step(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.WorkflowRunStep, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.WorkflowRunStep.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

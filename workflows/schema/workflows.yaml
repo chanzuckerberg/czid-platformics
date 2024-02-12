@@ -50,20 +50,17 @@ classes:
       id:
         identifier: true
         range: uuid
-      producing_run_id:
-        range: uuid
-        minimum_value: 0
-        annotations:
-          mutable: false  # This field can't be modified by an `Update` mutation
-          system_writable_only: True
+        readonly: true # The API handles generating the values for these fields
+        required: true
       owner_user_id:
         range: int
         minimum_value: 0
-        annotations:
-          mutable: false
+        readonly: true # The API handles generating the values for these fields
+        required: true
       collection_id:
         range: int
         minimum_value: 0
+        required: true
         annotations:
           mutable: false
       created_at:
@@ -83,6 +80,7 @@ classes:
     # pluralization can be added to the core spec in the future.
     annotations:
       plural: Entities
+
   WorkflowRun:
     is_a: Entity
     mixins:
@@ -90,19 +88,32 @@ classes:
     attributes:
       started_at:
         range: date
+        readonly: true
       ended_at:
         range: date
+        annotations:
+          system_writable_only: true
       execution_id:
         range: string
+        annotations:
+          system_writable_only: true
       outputs_json:
         range: string
+        annotations:
+          system_writable_only: true
       workflow_runner_inputs_json: 
         range: string
+        annotations:
+          system_writable_only: true
       status: 
         range: WorkflowRunStatus 
+        annotations:
+          system_writable_only: true
       workflow_version:
         range: WorkflowVersion
         inverse: WorkflowVersion.runs
+        annotations:
+          mutable: false
       steps:
         range: WorkflowRunStep
         multivalued: true
@@ -113,6 +124,8 @@ classes:
         inverse: RunEntityInput.workflow_run
       raw_inputs_json:
         range: string
+        annotations:
+          mutable: false
       # If a workflow is re-run the new run id is stored here. The presence a run here indicates that
       # the run id deprecated and maintains a history of previous runs that are considered re-runs of
       # each other.
@@ -138,6 +151,7 @@ classes:
         inverse: WorkflowVersion.workflow
     annotations:
       plural: Workflows
+      system_writable_only: true
 
   WorkflowRunStep:
     is_a: Entity
@@ -147,12 +161,19 @@ classes:
       workflow_run:
         range: WorkflowRun
         inverse: WorkflowRun.steps
+        annotations:
+          mutable: false
       started_at:
         range: date 
+        readonly: true
       ended_at:
         range: date
+        annotations:
+          system_writable_only:: true
       status: 
         range: WorkflowRunStepStatus
+        annotations:
+          system_writable_only:: true
     annotations:
       plural: WorkflowRunSteps
 
@@ -172,6 +193,7 @@ classes:
         inverse: WorkflowRun.entity_inputs
     annotations:
       plural: WorkflowRunEntityInputs
+      mutable: false
 
   WorkflowVersion:
     is_a: Entity
@@ -195,6 +217,8 @@ classes:
         inverse: WorkflowRun.workflow_version
     annotations:
       plural: WorkflowVersions
+      mutable: false
+      system_writable_only: true
 
   EntityMixin:
     mixin: true
