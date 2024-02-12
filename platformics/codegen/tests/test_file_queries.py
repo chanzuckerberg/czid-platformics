@@ -3,9 +3,13 @@ Test file queries
 """
 
 import pytest
+import sqlalchemy as sa
+from database.models.file import File
+from platformics.codegen.conftest import (FileFactory, GQLTestClient,
+                                          SessionStorage)
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import \
+    SequencingReadFactory
 from platformics.database.connect import SyncDB
-from platformics.codegen.conftest import SessionStorage, FileFactory, GQLTestClient
-from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
 
 @pytest.mark.asyncio
@@ -46,12 +50,11 @@ async def test_file_query(
       }
     """
     output = await gql_client.query(query, member_projects=[project1_id])
-    # Each SequencingRead results in 5 files:
+    # Each SequencingRead results in 3 files:
     # r1_file, r2_file
     # primer_file -> GenomicRange file
-    # GenomicRange produces ReferenceGenome -> file
-    # so we expect 8 * 4 = 32 files.
-    assert len(output["data"]["files"]) == 32
+    # so we expect 8 * 3 = 24 files.
+    assert len(output["data"]["files"]) == 24
     for file in output["data"]["files"]:
         assert file["path"] is not None
         assert file["entity"]["collectionId"] == project1_id

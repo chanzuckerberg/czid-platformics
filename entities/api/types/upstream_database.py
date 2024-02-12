@@ -20,7 +20,7 @@ from api.types.taxon import TaxonAggregate, format_taxon_aggregate_output
 from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
 from api.types.accession import AccessionAggregate, format_accession_aggregate_output
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
@@ -439,6 +439,11 @@ async def create_upstream_database(
     Create a new UpstreamDatabase object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    # Validate that the user can create entities in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.UpstreamDatabase.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
 

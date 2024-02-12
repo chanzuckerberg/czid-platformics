@@ -141,18 +141,22 @@ classes:
         identifier: true
         range: uuid
         readonly: true # The API handles generating the values for these fields
+        required: true
       producing_run_id:
         range: uuid
+        required: true
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
       owner_user_id:
         range: int
         minimum_value: 0
+        required: true
         readonly: true
       collection_id:
         range: int
         minimum_value: 0
+        required: true
         annotations:
           mutable: false
       created_at:
@@ -178,6 +182,7 @@ classes:
       id:
         identifier: true
         range: uuid
+        required: true
       # This file's ID is stored in the entity column <entity_field_name>_id
       entity_field_name:
         range: string
@@ -232,10 +237,10 @@ classes:
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
+      # Metadata provided by user
       name:
         range: string
         required: true
-      # Metadata provided by user
       sample_type:
         range: string
         required: true

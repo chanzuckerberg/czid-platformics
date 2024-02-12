@@ -22,9 +22,9 @@ type Accession implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -151,9 +151,9 @@ type BulkDownload implements EntityInterface & Node {
   downloadType: BulkDownloadType!
   fileId: ID
   file(where: FileWhereClause = null): File
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -258,9 +258,9 @@ type ConsensusGenome implements EntityInterface & Node {
   metrics(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): MetricConsensusGenome
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -506,9 +506,9 @@ type GenomicRange implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -630,9 +630,9 @@ type HostOrganism implements EntityInterface & Node {
     last: Int = null
   ): SampleConnection!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -761,9 +761,9 @@ type IndexFile implements EntityInterface & Node {
   file(where: FileWhereClause = null): File
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
   hostOrganism(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): HostOrganism
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -933,9 +933,9 @@ type Metadatum implements EntityInterface & Node {
   sample(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): Sample
   fieldName: String!
   value: String!
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -1061,9 +1061,9 @@ type MetricConsensusGenome implements EntityInterface & Node {
   coverageBinSize: Float
   coverageTotalLength: Int
   coverageViz: [[Int!]!]
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -1329,9 +1329,9 @@ type PhylogeneticTree implements EntityInterface & Node {
   treeId: ID
   tree(where: FileWhereClause = null): File
   format: PhylogeneticTreeFormat!
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -1492,9 +1492,9 @@ type ReferenceGenome implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -1579,7 +1579,7 @@ input ReferenceGenomeWhereClauseMutations {
 type Sample implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
-  id: ID
+  id: ID!
   railsSampleId: Int
   name: String!
   sampleType: String!
@@ -1622,9 +1622,9 @@ type Sample implements EntityInterface & Node {
     last: Int = null
   ): MetadatumConnection!
   metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -1824,9 +1824,9 @@ type SequencingRead implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -2048,9 +2048,9 @@ type Taxon implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -2118,6 +2118,16 @@ input TaxonCreateInput {
   upstreamDatabaseId: ID = null
   upstreamDatabaseIdentifier: String = null
   level: TaxonLevel = null
+  taxParentId: ID = null
+  taxSubspeciesId: ID = null
+  taxSpeciesId: ID = null
+  taxGenusId: ID = null
+  taxFamilyId: ID = null
+  taxOrderId: ID = null
+  taxClassId: ID = null
+  taxPhylumId: ID = null
+  taxKingdomId: ID = null
+  taxSuperkingdomId: ID = null
   producingRunId: ID = null
   collectionId: Int = null
 }
@@ -2207,6 +2217,16 @@ input TaxonUpdateInput {
   commonName: String = null
   isPhage: Boolean = null
   level: TaxonLevel = null
+  taxParentId: ID = null
+  taxSubspeciesId: ID = null
+  taxSpeciesId: ID = null
+  taxGenusId: ID = null
+  taxFamilyId: ID = null
+  taxOrderId: ID = null
+  taxClassId: ID = null
+  taxPhylumId: ID = null
+  taxKingdomId: ID = null
+  taxSuperkingdomId: ID = null
 }
 
 input TaxonWhereClause {
@@ -2300,9 +2320,9 @@ type UpstreamDatabase implements EntityInterface & Node {
     last: Int = null
   ): AccessionConnection!
   accessionsAggregate(where: AccessionWhereClause = null): AccessionAggregate
-  producingRunId: ID
-  ownerUserId: Int
-  collectionId: Int
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime

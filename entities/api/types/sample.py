@@ -19,7 +19,7 @@ from api.types.entities import EntityInterface
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
 from api.types.metadatum import MetadatumAggregate, format_metadatum_aggregate_output
 from cerbos.sdk.client import CerbosClient
-from cerbos.sdk.model import Principal
+from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
@@ -465,6 +465,11 @@ async def create_sample(
     Create a new Sample object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
+    # Validate that the user can create entities in this collection
+    attr = {"collection_id": input.collection_id}
+    resource = Resource(id="NEW_ID", kind=db.Sample.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("create", principal, resource):
+        raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that host_organism relationship is accessible.

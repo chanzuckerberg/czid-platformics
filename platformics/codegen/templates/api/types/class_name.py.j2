@@ -465,9 +465,9 @@ async def create_{{ cls.snake_name }}(
     """
     params = input.__dict__
 
-    {%- for field in self.create_fields %}
-        {%- if field.name == "collection_id" and (not field.readonly) %}
-    # Validate that user can create entity in this collection
+    {%- for field in cls.create_fields %}
+        {%- if field.name == "collection_id" %}
+    # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):

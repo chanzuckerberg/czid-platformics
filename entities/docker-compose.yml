@@ -76,7 +76,7 @@ services:
     tty: true # Helps with pdb
     environment:
       - CERBOS_URL=http://codegen-cerbos:3592
-      - SERVICE_NAME="Codegen Tests"
+      - SERVICE_NAME=Codegen Tests
       - PLATFORMICS_DATABASE_HOST=entities-db.czidnet
       - PLATFORMICS_DATABASE_PORT=5432
       - PLATFORMICS_DATABASE_USER=postgres

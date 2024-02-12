@@ -208,8 +208,6 @@ classes:
       technology:
         range: SequencingTechnology
         required: true
-        annotations:
-          mutable: false
       nucleic_acid:
         range: NucleicAcid
         required: true
