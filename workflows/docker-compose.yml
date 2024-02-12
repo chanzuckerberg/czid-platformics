@@ -36,6 +36,7 @@ x-workflow-variables: &workflow-variables
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX=s3://local-bucket/nextgen/
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN=arn:aws:states:us-east-1:123456789012:stateMachine:swipe-test-default-wdl
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__SFN_ENDPOINT=http://stepfunctions.czidnet:8083
+  ? SERVICE_NAME=workflows
 
 x-cerbos-variables: &cerbos-variables
   ? CERBOS_URL=http://wf-cerbos:3592
@@ -70,6 +71,7 @@ services:
       args:
         - BUILDKIT_INLINE_CACHE=1
     image: "platformics-workflows"
+    platform: linux/arm64
     restart: always
     volumes:
       - .:/workflows
@@ -102,9 +104,9 @@ services:
   wf-cerbos:
     image: ghcr.io/cerbos/cerbos:0.29.0
     volumes:
-      - ./cerbos:/workflows
+      - ./cerbos:/var/policies/cerbos/
     command:
-      ["server", "--config", "/workflows/config/config.yaml"]
+      ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
 networks:
   default:
     name: czidnet

@@ -46,6 +46,9 @@ local-init: .env.localdev ## initialize service containers
 	$(MAKE) local-seed
 	$(MAKE) local-editable-plugins
 	
+.PHONY: local-seed
+local-seed: 
+	$(docker_compose) exec $(FOLDER) python3 scripts/seed.py --use-moto
 .PHONY: local-start
 local-start: .env.localdev ## Start a local dev environment that's been stopped.
 	$(docker_compose) up -d 
