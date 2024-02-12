@@ -13,7 +13,6 @@ setup(
     py_modules=["consensus_gneome"],
     python_requires=">=3.6",
     setup_requires=[],
-    install_requires=["miniwdl"],
     reentry_register=True,
     entry_points={
         "czid.plugin.input_loader": [

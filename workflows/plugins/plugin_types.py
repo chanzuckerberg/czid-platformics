@@ -6,7 +6,7 @@ import os
 from abc import ABC, abstractmethod
 import typing
 from pydantic import BaseModel
-from typing import Dict, List, Literal
+from typing import Any, Dict, List, Literal
 
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
@@ -89,6 +89,16 @@ class WorkflowRunner(ABC):
 class IOLoader:
     _entitties_endpoint: HTTPEndpoint
     _s3_client: S3Client
+
+    def _fetch_file(self, gql_file: Any) -> None:
+        gql_file.protocol()
+        gql_file.namespace()
+        gql_file.path()
+
+    def _uri_file(self, file_result: Any):
+        if not file_result:
+            return None
+        return f"{file_result['protocol']}://{file_result['namespace']}/{file_result['path']}"
 
     def __init__(self) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")

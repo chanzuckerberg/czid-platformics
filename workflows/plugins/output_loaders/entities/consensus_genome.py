@@ -17,10 +17,10 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         raw_inputs: dict[str, typing.Any],
         workflow_outputs: dict[str, str],
     ) -> None:
-        print("AAAAAAAAAAAAA", workflow_outputs, file=sys.stderr)
         op = Operation(Mutation)
         consensus_genome = op.create_sequencing_read(
             input=ConsensusGenomeCreateInput(
+                owner_user_id=workflow_run.owner_user_id,
                 collection_id=workflow_run.collection_id,
                 # inputs
                 taxon_id=entity_inputs["taxon"].entity_id,

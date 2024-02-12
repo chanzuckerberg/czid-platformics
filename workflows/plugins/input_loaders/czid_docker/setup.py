@@ -2,24 +2,22 @@
 from setuptools import setup
 
 setup(
-    name="entity-input-loaders",
+    name="czid-docker",
     version="0.0.1",
-    description="Input loaders for czid entities",
+    description="Input loaders for czid docker image naming convention",
     url="",
     project_urls={"Documentation": "", "Source Code": "", "Issue Tracker": ""},
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
-    py_modules=["sample"],
+    py_modules=["czid_docker"],
     python_requires=">=3.6",
     setup_requires=[],
-    install_requires=["sgqlc"],
+    install_requires=["boto3"],
     reentry_register=True,
     entry_points={
         "czid.plugin.input_loader": [
-            "sample = entities:SampleInputLoader",
-            "sequencing_read = entities:SequencingReadInputLoader",
-            "index_file = entities:IndexFileInputLoader",
+            "czid_docker = czid_docker:CZIDDockerInputLoader",
         ],
     },
 )
