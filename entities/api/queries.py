@@ -28,6 +28,7 @@ from api.types.reference_genome import (
     ReferenceGenomeAggregate,
     resolve_reference_genomes_aggregate,
 )
+from api.types.accession import Accession, resolve_accessions, AccessionAggregate, resolve_accessions_aggregate
 from api.types.host_organism import (
     HostOrganism,
     resolve_host_organisms,
@@ -54,7 +55,7 @@ from api.types.upstream_database import (
     UpstreamDatabaseAggregate,
     resolve_upstream_databases_aggregate,
 )
-from api.types.contig import Contig, resolve_contigs, ContigAggregate, resolve_contigs_aggregate
+from api.types.index_file import IndexFile, resolve_index_files, IndexFileAggregate, resolve_index_files_aggregate
 from api.types.phylogenetic_tree import (
     PhylogeneticTree,
     resolve_phylogenetic_trees,
@@ -82,13 +83,14 @@ class Query:
     sequencing_reads: Sequence[SequencingRead] = resolve_sequencing_reads
     genomic_ranges: Sequence[GenomicRange] = resolve_genomic_ranges
     reference_genomes: Sequence[ReferenceGenome] = resolve_reference_genomes
+    accessions: Sequence[Accession] = resolve_accessions
     host_organisms: Sequence[HostOrganism] = resolve_host_organisms
     metadatas: Sequence[Metadatum] = resolve_metadatas
     consensus_genomes: Sequence[ConsensusGenome] = resolve_consensus_genomes
     metrics_consensus_genomes: Sequence[MetricConsensusGenome] = resolve_metrics_consensus_genomes
     taxa: Sequence[Taxon] = resolve_taxa
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
-    contigs: Sequence[Contig] = resolve_contigs
+    index_files: Sequence[IndexFile] = resolve_index_files
     phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
     bulk_downloads: Sequence[BulkDownload] = resolve_bulk_downloads
 
@@ -97,12 +99,13 @@ class Query:
     sequencing_reads_aggregate: SequencingReadAggregate = resolve_sequencing_reads_aggregate
     genomic_ranges_aggregate: GenomicRangeAggregate = resolve_genomic_ranges_aggregate
     reference_genomes_aggregate: ReferenceGenomeAggregate = resolve_reference_genomes_aggregate
+    accessions_aggregate: AccessionAggregate = resolve_accessions_aggregate
     host_organisms_aggregate: HostOrganismAggregate = resolve_host_organisms_aggregate
     metadatas_aggregate: MetadatumAggregate = resolve_metadatas_aggregate
     consensus_genomes_aggregate: ConsensusGenomeAggregate = resolve_consensus_genomes_aggregate
     metrics_consensus_genomes_aggregate: MetricConsensusGenomeAggregate = resolve_metrics_consensus_genomes_aggregate
     taxa_aggregate: TaxonAggregate = resolve_taxa_aggregate
     upstream_databases_aggregate: UpstreamDatabaseAggregate = resolve_upstream_databases_aggregate
-    contigs_aggregate: ContigAggregate = resolve_contigs_aggregate
+    index_files_aggregate: IndexFileAggregate = resolve_index_files_aggregate
     phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate
     bulk_downloads_aggregate: BulkDownloadAggregate = resolve_bulk_downloads_aggregate

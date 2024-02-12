@@ -30,6 +30,7 @@ from api.types.reference_genome import (
     update_reference_genome,
     delete_reference_genome,
 )
+from api.types.accession import Accession, create_accession, update_accession, delete_accession
 from api.types.host_organism import HostOrganism, create_host_organism, update_host_organism, delete_host_organism
 from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
 from api.types.consensus_genome import (
@@ -51,7 +52,7 @@ from api.types.upstream_database import (
     update_upstream_database,
     delete_upstream_database,
 )
-from api.types.contig import Contig, create_contig, update_contig, delete_contig
+from api.types.index_file import IndexFile, create_index_file, update_index_file, delete_index_file
 from api.types.phylogenetic_tree import (
     PhylogeneticTree,
     create_phylogenetic_tree,
@@ -89,6 +90,11 @@ class Mutation:
     update_reference_genome: Sequence[ReferenceGenome] = update_reference_genome
     delete_reference_genome: Sequence[ReferenceGenome] = delete_reference_genome
 
+    # Accession mutations
+    create_accession: Accession = create_accession
+    update_accession: Sequence[Accession] = update_accession
+    delete_accession: Sequence[Accession] = delete_accession
+
     # HostOrganism mutations
     create_host_organism: HostOrganism = create_host_organism
     update_host_organism: Sequence[HostOrganism] = update_host_organism
@@ -119,10 +125,10 @@ class Mutation:
     update_upstream_database: Sequence[UpstreamDatabase] = update_upstream_database
     delete_upstream_database: Sequence[UpstreamDatabase] = delete_upstream_database
 
-    # Contig mutations
-    create_contig: Contig = create_contig
-    update_contig: Sequence[Contig] = update_contig
-    delete_contig: Sequence[Contig] = delete_contig
+    # IndexFile mutations
+    create_index_file: IndexFile = create_index_file
+    update_index_file: Sequence[IndexFile] = update_index_file
+    delete_index_file: Sequence[IndexFile] = delete_index_file
 
     # PhylogeneticTree mutations
     create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree

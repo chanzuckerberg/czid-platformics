@@ -16,9 +16,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 if TYPE_CHECKING:
     from database.models.file import File
     from database.models.taxon import Taxon
+    from database.models.index_file import IndexFile
+    from database.models.accession import Accession
 else:
     File = "File"
     Taxon = "Taxon"
+    IndexFile = "IndexFile"
+    Accession = "Accession"
 
 
 class UpstreamDatabase(Entity):
@@ -27,5 +31,11 @@ class UpstreamDatabase(Entity):
     name: Mapped[str] = mapped_column(String, nullable=False)
     taxa: Mapped[list[Taxon]] = relationship(
         "Taxon", back_populates="upstream_database", uselist=True, foreign_keys="Taxon.upstream_database_id"
+    )
+    indexes: Mapped[list[IndexFile]] = relationship(
+        "IndexFile", back_populates="upstream_database", uselist=True, foreign_keys="IndexFile.upstream_database_id"
+    )
+    accessions: Mapped[list[Accession]] = relationship(
+        "Accession", back_populates="upstream_database", uselist=True, foreign_keys="Accession.upstream_database_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

@@ -10,7 +10,7 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 import factory
 from database.models import Sample
 from test_infra.factories.main import CommonFactory
-from test_infra.factories.taxon import TaxonFactory
+from test_infra.factories.host_organism import HostOrganismFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -35,9 +35,9 @@ class SampleFactory(CommonFactory):
     water_control = factory.Faker("boolean")
     collection_date = factory.Faker("date")
     collection_location = factory.Faker("city")
-    description = fuzzy.FuzzyText()
-    host_taxon = factory.SubFactory(
-        TaxonFactory,
+    notes = fuzzy.FuzzyText()
+    host_organism = factory.SubFactory(
+        HostOrganismFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )

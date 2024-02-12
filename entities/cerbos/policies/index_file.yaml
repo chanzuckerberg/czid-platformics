@@ -6,7 +6,7 @@ resourcePolicy:
   version: "default"
   importDerivedRoles:
     - common_roles
-  resource: "contig"
+  resource: "index_file"
   rules:
     - actions: ['view', 'create', 'update']
       effect: EFFECT_ALLOW

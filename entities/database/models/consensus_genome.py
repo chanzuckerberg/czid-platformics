@@ -19,12 +19,14 @@ if TYPE_CHECKING:
     from database.models.taxon import Taxon
     from database.models.sequencing_read import SequencingRead
     from database.models.reference_genome import ReferenceGenome
+    from database.models.accession import Accession
     from database.models.metric_consensus_genome import MetricConsensusGenome
 else:
     File = "File"
     Taxon = "Taxon"
     SequencingRead = "SequencingRead"
     ReferenceGenome = "ReferenceGenome"
+    Accession = "Accession"
     MetricConsensusGenome = "MetricConsensusGenome"
 
 
@@ -38,10 +40,14 @@ class ConsensusGenome(Entity):
         "SequencingRead", back_populates="consensus_genomes", foreign_keys=sequence_read_id
     )
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("reference_genome.entity_id"), nullable=False
+        UUID, ForeignKey("reference_genome.entity_id"), nullable=True
     )
     reference_genome: Mapped["ReferenceGenome"] = relationship(
         "ReferenceGenome", back_populates="consensus_genomes", foreign_keys=reference_genome_id
+    )
+    accession_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("accession.entity_id"), nullable=True)
+    accession: Mapped["Accession"] = relationship(
+        "Accession", back_populates="consensus_genomes", foreign_keys=accession_id
     )
     sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)

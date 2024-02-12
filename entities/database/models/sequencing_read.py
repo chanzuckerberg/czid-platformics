@@ -10,7 +10,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, Enum, Boolean
+from sqlalchemy import ForeignKey, String, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
@@ -21,14 +21,12 @@ if TYPE_CHECKING:
     from database.models.taxon import Taxon
     from database.models.genomic_range import GenomicRange
     from database.models.consensus_genome import ConsensusGenome
-    from database.models.contig import Contig
 else:
     File = "File"
     Sample = "Sample"
     Taxon = "Taxon"
     GenomicRange = "GenomicRange"
     ConsensusGenome = "ConsensusGenome"
-    Contig = "Contig"
 
 
 class SequencingRead(Entity):
@@ -46,6 +44,7 @@ class SequencingRead(Entity):
     )
     nucleic_acid: Mapped[NucleicAcid] = mapped_column(Enum(NucleicAcid, native_enum=False), nullable=False)
     clearlabs_export: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    medaka_model: Mapped[str] = mapped_column(String, nullable=True)
     taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="sequencing_reads", foreign_keys=taxon_id)
     primer_file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("genomic_range.entity_id"), nullable=True)
@@ -54,8 +53,5 @@ class SequencingRead(Entity):
     )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome", back_populates="sequence_read", uselist=True, foreign_keys="ConsensusGenome.sequence_read_id"
-    )
-    contigs: Mapped[list[Contig]] = relationship(
-        "Contig", back_populates="sequencing_read", uselist=True, foreign_keys="Contig.sequencing_read_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

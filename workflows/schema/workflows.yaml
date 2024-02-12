@@ -155,6 +155,8 @@ classes:
         range: uuid
       field_name: 
         range: string
+      entity_type:
+        range: string
       workflow_run: 
         range: WorkflowRun
         inverse: WorkflowRun.entity_inputs
