@@ -67,6 +67,11 @@ codegen-test-schema:  ## Run codegen on the test schema
 	cp platformics/codegen/templates/api/queries.py.j2 platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
 	# Add a little bit of extra code to the base Query class so we can use it in our tests
 	cat platformics/codegen/tests/test_schemas/overrides/api/extra_test_code.py.j2 >> platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
+	# TODO FIXME these need to be owned by one module or the other! This is a crappy hack!!
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)api/types
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)database/models
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)test_infra/factories
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)cerbos/policies
 	# Make sure the codegen CLI has a `template-override-dir` argument so it uses our modified template for queries.py
 	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --template-override-paths platformics/codegen/tests/test_schemas/overrides --output-prefix $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
