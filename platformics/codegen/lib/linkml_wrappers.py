@@ -41,8 +41,8 @@ class FieldWrapper:
         return self.wrapped_field.multivalued
 
     @cached_property
-    def required(self) -> str:
-        return self.wrapped_field.required
+    def required(self) -> bool:
+        return self.wrapped_field.required or False
 
     # Whether these fields should be exposed in the GQL API
     @cached_property
@@ -120,7 +120,7 @@ class FieldWrapper:
         return EnumWrapper(self.view, self.view.get_element(self.wrapped_field.range))
 
     @property
-    def factory_type(self) -> str:
+    def factory_type(self) -> str | None:
         if "factory_type" in self.wrapped_field.annotations:
             return self.wrapped_field.annotations["factory_type"].value
         return None

@@ -5,6 +5,7 @@ Authorization spot-checks
 import uuid
 
 import pytest
+from database.models import Sample
 from platformics.codegen.conftest import GQLTestClient, SessionStorage
 from platformics.codegen.tests.output.test_infra.factories.sample import \
     SampleFactory
@@ -98,7 +99,7 @@ async def test_system_fields_only_mutable_by_system(
         sample = SampleFactory.create(collection_location="City1", owner_user_id=999, collection_id=333)
 
     # Fetch all samples
-    def get_query(input_value):
+    def get_query(input_value: str) -> str:
         return f"""
             mutation MyMutation {{
               updateSample(
@@ -143,7 +144,7 @@ async def test_update_wont_associate_inaccessible_relationships(
             sample=test_sample0, owner_user_id=owner_user_id, collection_id=111
         )
 
-    def gen_query(test_sample):
+    def gen_query(test_sample: Sample) -> str:
         # Fetch all samples
         query = f"""
             mutation MyMutation {{

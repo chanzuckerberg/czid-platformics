@@ -247,10 +247,10 @@ class Sample(EntityInterface):
     metadatas_aggregate: Optional[
         Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_aggregate_rows  # type:ignore
-    id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[strawberry.ID] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
+    id: strawberry.ID
+    producing_run_id: strawberry.ID
+    owner_user_id: int
+    collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
     deleted_at: Optional[datetime.datetime] = None

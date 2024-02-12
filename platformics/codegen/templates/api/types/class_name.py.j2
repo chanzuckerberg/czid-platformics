@@ -372,7 +372,7 @@ Mutation types
     {{ attr.name }}: {{ getTypeMutation(action, "datetime.datetime", attr.required) }}
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
-        {%- elif attr.inverse and not attr.multivalued %} {# Don't include multivalued fields, only fields where we can update an ID #}
+        {%- elif attr.is_entity and not attr.is_virtual_relationship %} {# Don't include multivalued fields, only fields where we can update an ID #}
     {{ attr.name }}_id: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
         {%- endif %}
     {%- endfor %}

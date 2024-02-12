@@ -84,6 +84,7 @@ classes:
         identifier: true
         range: uuid
         readonly: true # The API handles generating the values for these fields
+        required: true
       producing_run_id:
         range: uuid
         minimum_value: 0
@@ -94,9 +95,11 @@ classes:
         range: int
         minimum_value: 0
         readonly: true
+        required: true
       collection_id:
         range: int
         minimum_value: 0
+        required: true
         annotations:
           mutable: false
       created_at:

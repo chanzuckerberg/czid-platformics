@@ -190,9 +190,9 @@ class ReferenceGenome(EntityInterface):
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: Optional[strawberry.ID] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
+    producing_run_id: strawberry.ID
+    owner_user_id: int
+    collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
     deleted_at: Optional[datetime.datetime] = None

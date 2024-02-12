@@ -20,7 +20,7 @@ class EntityInterface(relay.Node):
     # In the Strawberry docs, this field is called `code`, but we're using `id` instead.
     # Otherwise, Strawberry SQLAlchemyMapper errors with: "SequencingRead object has no
     # attribute code" (unless you create a column `code` in the table)
-    id: relay.NodeID[str]
+    id: relay.NodeID[str]  # type: ignore
 
     @classmethod
     async def resolve_nodes(cls, *, info: Info, node_ids: Iterable[str], required: bool = False) -> list:
