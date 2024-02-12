@@ -34,7 +34,7 @@ class WorkflowStartedMessage(WorkflowStatusMessage):
 
 class WorkflowSucceededMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
-    outputs: Dict[str, str] = {}
+    outputs: Dict[str, str | list[str] | None] = {}
 
 
 class WorkflowFailedMessage(WorkflowStatusMessage):

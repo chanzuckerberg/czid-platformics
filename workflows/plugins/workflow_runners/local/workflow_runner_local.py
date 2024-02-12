@@ -111,41 +111,47 @@ allow_networks = ["czidnet"]"""
                 ]
             cmd += [os.path.abspath(local_workflow_path)]
             cmd += [f"{k}={v}" for k, v in inputs.items()]
-            try:
-                p = subprocess.Popen(
-                    cmd,
-                    cwd=tmpdir,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
+
+            process = await asyncio.create_subprocess_exec(
+                *cmd,
+                cwd=tmpdir,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            # Read from stderr and stdout concurrently
+            async def read_stream(stream, handler):
                 while True:
-                    assert p.stderr
-                    line = p.stderr.readline().decode()
-                    self._detect_task_output(line)
-                    print(line, file=sys.stderr)
-                    if not line:
+                    line = await stream.readline()
+                    if line:
+                        handler(line.decode())
+                    else:
                         break
 
-                assert p.stdout
-                outputs = json.loads(p.stdout.read().decode())["outputs"]
-                await event_bus.send(WorkflowSucceededMessage(runner_id=runner_id, outputs=outputs))
+            def stderr_handler(line):
+                self._detect_task_output(line)
+                print(line, file=sys.stderr)
 
-            except subprocess.CalledProcessError as e:
-                print(e.output)
+            stdout = ""
+            def stdout_handler(line):
+                nonlocal stdout
+                stdout += line
+
+            # Concurrently read stderr and stdout
+            await asyncio.gather(
+                read_stream(process.stderr, stderr_handler),
+                read_stream(process.stdout, stdout_handler),
+            )
+
+            # Wait for the subprocess to finish
+            await process.wait()
+
+            if process.returncode != 0:
                 await event_bus.send(WorkflowFailedMessage(runner_id=runner_id))
+                return
+            assert process.stdout
+            outputs = json.loads(stdout)["outputs"]
+            await event_bus.send(WorkflowSucceededMessage(runner_id=runner_id, outputs=outputs))
 
-    def _run_workflow_sync(
-        self,
-        event_bus: EventBus,
-        workflow_path: str,
-        inputs: dict,
-        runner_id: str,
-    ) -> None:
-        """Wrapper around async function to run synchronously"""
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(self._run_workflow_work(event_bus, workflow_path, inputs, runner_id))
-        loop.close()
 
     async def run_workflow(
         self,
@@ -155,14 +161,5 @@ allow_networks = ["czidnet"]"""
     ) -> str:
         """Creates runner id and runs workflow asynchronously"""
         runner_id = str(uuid4())
-        # run workflow in a thread, we are doing something a bit weird where we want to run the workflow
-        #   asynchronously and not wait for the result. Instead the listener will be informed that it
-        #   has terminated through the event bus. However, the event bus API is async so we need to call
-        #   it from an async function. This is why we spawn a thread to run a synchronous wrapper around
-        #   an async function.
-        thread = threading.Thread(
-            target=self._run_workflow_sync,
-            args=(event_bus, workflow_path, inputs, runner_id),
-        )
-        thread.start()
+        asyncio.create_task(self._run_workflow_work(event_bus, workflow_path, inputs, runner_id))
         return runner_id
