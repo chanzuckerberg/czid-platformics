@@ -22,7 +22,8 @@ from test_infra.factories.workflow_run import WorkflowRunFactory
 
 TEST_USER_ID = "111"
 TEST_COLLECTION_ID = "444"
-TEST_BUCKET="local-bucket"
+TEST_BUCKET = "local-bucket"
+
 
 def upload_wdl() -> None:
     boto_endpoint_url = os.getenv("BOTO_ENDPOINT_URL")
@@ -31,7 +32,7 @@ def upload_wdl() -> None:
     wdl_file = "/workflows/test_workflows/sample_name.wdl"
     s3 = boto3.client("s3", endpoint_url=boto_endpoint_url)
     try:
-        s3.create_bucket(Bucket=TEST_BUCKET) 
+        s3.create_bucket(Bucket=TEST_BUCKET)
     except ClientError as e:
         if e.response["Error"]["Code"] == "BucketAlreadyOwnedByYou":
             pass
@@ -41,8 +42,8 @@ def upload_wdl() -> None:
             raise e
     s3.upload_file(wdl_file, TEST_BUCKET, "sample_name.wdl")
 
-def import_manifest(session: Session) -> None:
 
+def import_manifest(session: Session) -> None:
     manifest_file = "/workflows/manifest/test_manifests/simple.yaml"
     with open(manifest_file) as f:
         manifest_str = f.read()
