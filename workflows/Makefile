@@ -15,11 +15,12 @@ export docker_compose:=docker compose --env-file .env.localdev
 export docker_compose_run:=docker compose --env-file .env.localdev run --rm
 
 ### DATABASE VARIABLES #################################################
-LOCAL_DB_NAME = workflows
+SERVICE_NAME = workflows
+LOCAL_DB_NAME = platformics
 LOCAL_DB_SERVER = localhost:5432
 LOCAL_DB_USERNAME = postgres
 LOCAL_DB_PASSWORD = password_postgres
-LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)
+LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)$(SERVICE_NAME)
 
 
 ### HELPFUL #################################################
@@ -46,6 +47,9 @@ local-init: .env.localdev ## initialize service containers
 	$(MAKE) local-seed
 	$(MAKE) local-editable-plugins
 	
+.PHONY: local-seed
+local-seed: 
+	$(docker_compose) exec $(FOLDER) python3 scripts/seed.py --use-moto
 .PHONY: local-start
 local-start: .env.localdev ## Start a local dev environment that's been stopped.
 	$(docker_compose) up -d 
