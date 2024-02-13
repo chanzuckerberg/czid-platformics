@@ -17,24 +17,18 @@ from typing_extensions import Annotated
 class IndexFileCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    name: Annotated[ IndexTypes, Field()]
-    version: Annotated[str, Field()]
-    file_id: Annotated[uuid.UUID, Field()]
+    #    name: Annotated[ IndexTypes | None, Field()]
+    version: Annotated[str | None, Field()]
     upstream_database_id: Annotated[uuid.UUID | None, Field()]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
 
 
 class IndexFileUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    name: Annotated[ IndexTypes | None, Field()]
     version: Annotated[str | None, Field()]
-    file_id: Annotated[uuid.UUID | None, Field()]
-    upstream_database_id: Annotated[uuid.UUID | None, Field()]
-    host_organism_id: Annotated[uuid.UUID | None, Field()]

@@ -17,18 +17,14 @@ from typing_extensions import Annotated
 class MetadatumCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
-    sample_id: Annotated[uuid.UUID, Field()]
-    field_name: Annotated[str, Field()]
-    value: Annotated[str, Field()]
+    sample_id: Annotated[uuid.UUID | None, Field()]
+    field_name: Annotated[str | None, Field()]
+    value: Annotated[str | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
 
 
 class MetadatumUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
-    sample_id: Annotated[uuid.UUID | None, Field()]
-    field_name: Annotated[str | None, Field()]
     value: Annotated[str | None, Field()]

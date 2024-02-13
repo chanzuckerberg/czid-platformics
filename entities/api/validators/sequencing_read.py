@@ -17,33 +17,9 @@ from typing_extensions import Annotated
 class SequencingReadCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
     sample_id: Annotated[uuid.UUID | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    protocol: Annotated[ SequencingProtocol | None, Field()]
-    r1_file_id: Annotated[uuid.UUID | None, Field()]
-    r2_file_id: Annotated[uuid.UUID | None, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    technology: Annotated[ SequencingTechnology, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    nucleic_acid: Annotated[ NucleicAcid, Field()]
-    clearlabs_export: Annotated[bool, Field()]
-    medaka_model: Annotated[str | None, Field()]
-    taxon_id: Annotated[uuid.UUID | None, Field()]
-    primer_file_id: Annotated[uuid.UUID | None, Field()]
-
-
-class SequencingReadUpdateInputValidator(BaseModel):
-    # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
-    sample_id: Annotated[uuid.UUID | None, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    protocol: Annotated[ SequencingProtocol | None, Field()]
-    r1_file_id: Annotated[uuid.UUID | None, Field()]
-    r2_file_id: Annotated[uuid.UUID | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    technology: Annotated[ SequencingTechnology | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
@@ -52,3 +28,14 @@ class SequencingReadUpdateInputValidator(BaseModel):
     medaka_model: Annotated[str | None, Field()]
     taxon_id: Annotated[uuid.UUID | None, Field()]
     primer_file_id: Annotated[uuid.UUID | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
+
+
+class SequencingReadUpdateInputValidator(BaseModel):
+    # Pydantic stuff
+    model_config = ConfigDict(from_attributes=True)
+    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
+    #    nucleic_acid: Annotated[ NucleicAcid | None, Field()]
+    clearlabs_export: Annotated[bool | None, Field()]
+    medaka_model: Annotated[str | None, Field()]

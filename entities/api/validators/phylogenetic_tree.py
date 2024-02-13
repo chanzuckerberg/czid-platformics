@@ -17,19 +17,15 @@ from typing_extensions import Annotated
 class PhylogeneticTreeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
+    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
+    #    format: Annotated[ PhylogeneticTreeFormat | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
 
-    collection_id: Annotated[int, Field()]
-    tree_id: Annotated[uuid.UUID | None, Field()]
 
-
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    format: Annotated[ PhylogeneticTreeFormat, Field()]
 class PhylogeneticTreeUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
-    tree_id: Annotated[uuid.UUID | None, Field()]
 
 
 # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?

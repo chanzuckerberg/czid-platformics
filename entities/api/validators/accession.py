@@ -17,18 +17,14 @@ from typing_extensions import Annotated
 class AccessionCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
-    accession_id: Annotated[str, Field()]
-    accession_name: Annotated[str, Field()]
-    upstream_database_id: Annotated[uuid.UUID, Field()]
+    accession_id: Annotated[str | None, Field()]
+    accession_name: Annotated[str | None, Field()]
+    upstream_database_id: Annotated[uuid.UUID | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
 
 
 class AccessionUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
-    accession_id: Annotated[str | None, Field()]
     accession_name: Annotated[str | None, Field()]
-    upstream_database_id: Annotated[uuid.UUID | None, Field()]

@@ -17,24 +17,20 @@ from typing_extensions import Annotated
 class HostOrganismCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
-    name: Annotated[str, Field()]
-    version: Annotated[str, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    category: Annotated[ HostOrganismCategory, Field()]
-    is_deuterostome: Annotated[bool, Field()]
-    sequence_id: Annotated[uuid.UUID | None, Field()]
-
-
-class HostOrganismUpdateInputValidator(BaseModel):
-    # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
     name: Annotated[str | None, Field()]
     version: Annotated[str | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    category: Annotated[ HostOrganismCategory | None, Field()]
     is_deuterostome: Annotated[bool | None, Field()]
-    sequence_id: Annotated[uuid.UUID | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
+
+
+class HostOrganismUpdateInputValidator(BaseModel):
+    # Pydantic stuff
+    model_config = ConfigDict(from_attributes=True)
+    name: Annotated[str | None, Field()]
+    version: Annotated[str | None, Field()]
+    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
+    #    category: Annotated[ HostOrganismCategory | None, Field()]
+    is_deuterostome: Annotated[bool | None, Field()]

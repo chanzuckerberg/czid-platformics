@@ -17,14 +17,5 @@ from typing_extensions import Annotated
 class GenomicRangeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
-    file_id: Annotated[uuid.UUID | None, Field()]
-
-
-class GenomicRangeUpdateInputValidator(BaseModel):
-    # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[int | None, Field()]
-    file_id: Annotated[uuid.UUID | None, Field()]

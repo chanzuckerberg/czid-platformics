@@ -17,16 +17,12 @@ from typing_extensions import Annotated
 class ReferenceGenomeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int, Field()]
-    file_id: Annotated[uuid.UUID | None, Field()]
-    name: Annotated[str, Field()]
+    name: Annotated[str | None, Field()]
+    producing_run_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[int | None, Field()]
 
 
 class ReferenceGenomeUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[int | None, Field()]
-    file_id: Annotated[uuid.UUID | None, Field()]
     name: Annotated[str | None, Field()]
