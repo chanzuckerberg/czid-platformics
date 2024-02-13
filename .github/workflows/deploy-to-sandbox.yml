@@ -15,6 +15,9 @@ jobs:
   run-deploy:
     runs-on: [ARM64, self-hosted, Linux]
     environment: sandbox
+    permissions:
+      id-token: write
+      contents: read
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
