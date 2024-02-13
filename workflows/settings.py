@@ -32,7 +32,7 @@ class LocalWorkflowRunnerSettings(BaseModel):
 class SWIPEWorkflowRunnerSettings(BaseModel):
     STATE_MACHINE_ARN: str
     OUTPUT_S3_PREFIX: str
-    SFN_ENDPOINT: Optional[str]
+    SFN_ENDPOINT: Optional[str] = None
 
 
 class WorkflowRunnerSettings(BaseModel):
