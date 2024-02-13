@@ -21,6 +21,9 @@ module "stack" {
   }
   services = {
     workflows = {
+      aws_iam = {
+        policy_json = data.aws_iam_policy_document.workflows.json,
+      }
       cpu                   = "2" # TODO: right size this as necessary
       memory                = "1000Mi" # TODO: right size this as necessary
       name                  = "workflows"
