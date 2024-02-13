@@ -337,25 +337,27 @@ class WorkflowRunEntityInputOrderByClause(sgqlc.types.Input):
 class WorkflowRunEntityInputWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "input_entity_id",
         "field_name",
         "entity_type",
         "workflow_run",
-        "entity_id",
+        "id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     input_entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(StrComparators, graphql_name="fieldName")
     entity_type = sgqlc.types.Field(StrComparators, graphql_name="entityType")
     workflow_run = sgqlc.types.Field("WorkflowRunWhereClause", graphql_name="workflowRun")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputWhereClauseMutations(sgqlc.types.Input):
@@ -473,25 +475,27 @@ class WorkflowRunStepUpdateInput(sgqlc.types.Input):
 class WorkflowRunStepWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "workflow_run",
         "started_at",
         "ended_at",
         "status",
-        "entity_id",
+        "id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     workflow_run = sgqlc.types.Field("WorkflowRunWhereClause", graphql_name="workflowRun")
     started_at = sgqlc.types.Field(DatetimeComparators, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DatetimeComparators, graphql_name="endedAt")
     status = sgqlc.types.Field(WorkflowRunStepStatusEnumComparators, graphql_name="status")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowRunStepWhereClauseMutations(sgqlc.types.Input):
@@ -521,10 +525,6 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
 class WorkflowRunWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "started_at",
         "ended_at",
         "execution_id",
@@ -535,12 +535,13 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
         "steps",
         "entity_inputs",
         "raw_inputs_json",
-        "entity_id",
+        "id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     started_at = sgqlc.types.Field(DatetimeComparators, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DatetimeComparators, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(StrComparators, graphql_name="executionId")
@@ -551,7 +552,12 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
     steps = sgqlc.types.Field(WorkflowRunStepWhereClause, graphql_name="steps")
     entity_inputs = sgqlc.types.Field(WorkflowRunEntityInputWhereClause, graphql_name="entityInputs")
     raw_inputs_json = sgqlc.types.Field(StrComparators, graphql_name="rawInputsJson")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowRunWhereClauseMutations(sgqlc.types.Input):
@@ -610,29 +616,31 @@ class WorkflowVersionOrderByClause(sgqlc.types.Input):
 class WorkflowVersionWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "graph_json",
         "workflow_uri",
         "version",
         "manifest",
         "workflow",
         "runs",
-        "entity_id",
+        "id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     graph_json = sgqlc.types.Field(StrComparators, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(StrComparators, graphql_name="workflowUri")
     version = sgqlc.types.Field(StrComparators, graphql_name="version")
     manifest = sgqlc.types.Field(StrComparators, graphql_name="manifest")
     workflow = sgqlc.types.Field("WorkflowWhereClause", graphql_name="workflow")
     runs = sgqlc.types.Field(WorkflowRunWhereClause, graphql_name="runs")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowVersionWhereClauseMutations(sgqlc.types.Input):
@@ -644,25 +652,27 @@ class WorkflowVersionWhereClauseMutations(sgqlc.types.Input):
 class WorkflowWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "name",
         "default_version",
         "minimum_supported_version",
         "versions",
-        "entity_id",
+        "id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     name = sgqlc.types.Field(StrComparators, graphql_name="name")
     default_version = sgqlc.types.Field(StrComparators, graphql_name="defaultVersion")
     minimum_supported_version = sgqlc.types.Field(StrComparators, graphql_name="minimumSupportedVersion")
     versions = sgqlc.types.Field(WorkflowVersionWhereClause, graphql_name="versions")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowWhereClauseMutations(sgqlc.types.Input):

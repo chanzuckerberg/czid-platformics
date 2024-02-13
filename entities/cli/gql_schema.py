@@ -469,25 +469,29 @@ class AccessionUpdateInput(sgqlc.types.Input):
 class AccessionWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "accession_id",
         "accession_name",
         "upstream_database",
         "consensus_genomes",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
     accession_name = sgqlc.types.Field("StrComparators", graphql_name="accessionName")
     upstream_database = sgqlc.types.Field("UpstreamDatabaseWhereClause", graphql_name="upstreamDatabase")
     consensus_genomes = sgqlc.types.Field("ConsensusGenomeWhereClause", graphql_name="consensusGenomes")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+    created_at = sgqlc.types.Field("DatetimeComparators", graphql_name="createdAt")
+    updated_at = sgqlc.types.Field("DatetimeComparators", graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field("DatetimeComparators", graphql_name="deletedAt")
 
 
 class AccessionWhereClauseMutations(sgqlc.types.Input):
@@ -556,13 +560,24 @@ class BulkDownloadTypeEnumComparators(sgqlc.types.Input):
 
 class BulkDownloadWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "download_type", "entity_id")
+    __field_names__ = (
+        "download_type",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+    download_type = sgqlc.types.Field(BulkDownloadTypeEnumComparators, graphql_name="downloadType")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
-    download_type = sgqlc.types.Field(BulkDownloadTypeEnumComparators, graphql_name="downloadType")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    created_at = sgqlc.types.Field("DatetimeComparators", graphql_name="createdAt")
+    updated_at = sgqlc.types.Field("DatetimeComparators", graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field("DatetimeComparators", graphql_name="deletedAt")
 
 
 class BulkDownloadWhereClauseMutations(sgqlc.types.Input):
@@ -622,27 +637,31 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
 class ConsensusGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "taxon",
         "sequence_read",
         "reference_genome",
         "accession",
         "metrics",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     accession = sgqlc.types.Field(AccessionWhereClause, graphql_name="accession")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+    created_at = sgqlc.types.Field("DatetimeComparators", graphql_name="createdAt")
+    updated_at = sgqlc.types.Field("DatetimeComparators", graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field("DatetimeComparators", graphql_name="deletedAt")
 
 
 class ConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -777,13 +796,24 @@ class GenomicRangeOrderByClause(sgqlc.types.Input):
 
 class GenomicRangeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "sequencing_reads", "entity_id")
+    __field_names__ = (
+        "sequencing_reads",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+    sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
-    sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class GenomicRangeWhereClauseMutations(sgqlc.types.Input):
@@ -857,29 +887,33 @@ class HostOrganismUpdateInput(sgqlc.types.Input):
 class HostOrganismWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "name",
         "version",
         "category",
         "is_deuterostome",
         "indexes",
         "samples",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     version = sgqlc.types.Field("StrComparators", graphql_name="version")
     category = sgqlc.types.Field(HostOrganismCategoryEnumComparators, graphql_name="category")
     is_deuterostome = sgqlc.types.Field(BoolComparators, graphql_name="isDeuterostome")
     indexes = sgqlc.types.Field("IndexFileWhereClause", graphql_name="indexes")
     samples = sgqlc.types.Field("SampleWhereClause", graphql_name="samples")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class HostOrganismWhereClauseMutations(sgqlc.types.Input):
@@ -944,25 +978,29 @@ class IndexFileUpdateInput(sgqlc.types.Input):
 class IndexFileWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "name",
         "version",
         "upstream_database",
         "host_organism",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     name = sgqlc.types.Field("IndexTypesEnumComparators", graphql_name="name")
     version = sgqlc.types.Field("StrComparators", graphql_name="version")
     upstream_database = sgqlc.types.Field("UpstreamDatabaseWhereClause", graphql_name="upstreamDatabase")
     host_organism = sgqlc.types.Field(HostOrganismWhereClause, graphql_name="hostOrganism")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class IndexFileWhereClauseMutations(sgqlc.types.Input):
@@ -1044,23 +1082,27 @@ class MetadatumUpdateInput(sgqlc.types.Input):
 class MetadatumWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
+        "sample",
+        "field_name",
+        "value",
         "id",
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "sample",
-        "field_name",
-        "value",
-        "entity_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     sample = sgqlc.types.Field("SampleWhereClause", graphql_name="sample")
     field_name = sgqlc.types.Field("StrComparators", graphql_name="fieldName")
     value = sgqlc.types.Field("StrComparators", graphql_name="value")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class MetadatumWhereClauseMutations(sgqlc.types.Input):
@@ -1169,10 +1211,6 @@ class MetricConsensusGenomeOrderByClause(sgqlc.types.Input):
 class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "consensus_genome",
         "reference_genome_length",
         "percent_genome_called",
@@ -1188,12 +1226,14 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
         "coverage_breadth",
         "coverage_bin_size",
         "coverage_total_length",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     consensus_genome = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenome")
     reference_genome_length = sgqlc.types.Field(FloatComparators, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(FloatComparators, graphql_name="percentGenomeCalled")
@@ -1209,7 +1249,13 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
     coverage_breadth = sgqlc.types.Field(FloatComparators, graphql_name="coverageBreadth")
     coverage_bin_size = sgqlc.types.Field(FloatComparators, graphql_name="coverageBinSize")
     coverage_total_length = sgqlc.types.Field(IntComparators, graphql_name="coverageTotalLength")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class MetricConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -1284,13 +1330,24 @@ class PhylogeneticTreeUpdateInput(sgqlc.types.Input):
 
 class PhylogeneticTreeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "format", "entity_id")
+    __field_names__ = (
+        "format",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+    format = sgqlc.types.Field(PhylogeneticTreeFormatEnumComparators, graphql_name="format")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
-    format = sgqlc.types.Field(PhylogeneticTreeFormatEnumComparators, graphql_name="format")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class PhylogeneticTreeWhereClauseMutations(sgqlc.types.Input):
@@ -1338,21 +1395,25 @@ class ReferenceGenomeUpdateInput(sgqlc.types.Input):
 class ReferenceGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
+        "name",
+        "consensus_genomes",
         "id",
         "producing_run_id",
         "owner_user_id",
         "collection_id",
-        "name",
-        "consensus_genomes",
-        "entity_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class ReferenceGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -1437,10 +1498,6 @@ class SampleUpdateInput(sgqlc.types.Input):
 class SampleWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "rails_sample_id",
         "name",
         "sample_type",
@@ -1451,12 +1508,14 @@ class SampleWhereClause(sgqlc.types.Input):
         "host_organism",
         "sequencing_reads",
         "metadatas",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     rails_sample_id = sgqlc.types.Field(IntComparators, graphql_name="railsSampleId")
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     sample_type = sgqlc.types.Field("StrComparators", graphql_name="sampleType")
@@ -1467,7 +1526,13 @@ class SampleWhereClause(sgqlc.types.Input):
     host_organism = sgqlc.types.Field(HostOrganismWhereClause, graphql_name="hostOrganism")
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
     metadatas = sgqlc.types.Field(MetadatumWhereClause, graphql_name="metadatas")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class SampleWhereClauseMutations(sgqlc.types.Input):
@@ -1563,10 +1628,6 @@ class SequencingReadUpdateInput(sgqlc.types.Input):
 class SequencingReadWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "sample",
         "protocol",
         "technology",
@@ -1576,12 +1637,14 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "taxon",
         "primer_file",
         "consensus_genomes",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     sample = sgqlc.types.Field(SampleWhereClause, graphql_name="sample")
     protocol = sgqlc.types.Field(SequencingProtocolEnumComparators, graphql_name="protocol")
     technology = sgqlc.types.Field("SequencingTechnologyEnumComparators", graphql_name="technology")
@@ -1591,7 +1654,13 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     primer_file = sgqlc.types.Field(GenomicRangeWhereClause, graphql_name="primerFile")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class SequencingReadWhereClauseMutations(sgqlc.types.Input):
@@ -1809,10 +1878,6 @@ class TaxonUpdateInput(sgqlc.types.Input):
 class TaxonWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "wikipedia_id",
         "description",
         "common_name",
@@ -1823,12 +1888,14 @@ class TaxonWhereClause(sgqlc.types.Input):
         "level",
         "consensus_genomes",
         "sequencing_reads",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     wikipedia_id = sgqlc.types.Field(StrComparators, graphql_name="wikipediaId")
     description = sgqlc.types.Field(StrComparators, graphql_name="description")
     common_name = sgqlc.types.Field(StrComparators, graphql_name="commonName")
@@ -1839,7 +1906,13 @@ class TaxonWhereClause(sgqlc.types.Input):
     level = sgqlc.types.Field(TaxonLevelEnumComparators, graphql_name="level")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
     sequencing_reads = sgqlc.types.Field(SequencingReadWhereClause, graphql_name="sequencingReads")
-    entity_id = sgqlc.types.Field("UUIDComparators", graphql_name="entityId")
+    id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
+    producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class TaxonWhereClauseMutations(sgqlc.types.Input):
@@ -1900,25 +1973,29 @@ class UpstreamDatabaseUpdateInput(sgqlc.types.Input):
 class UpstreamDatabaseWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
         "name",
         "taxa",
         "indexes",
         "accessions",
-        "entity_id",
+        "id",
+        "producing_run_id",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
     )
-    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
-    producing_run_id = sgqlc.types.Field(IntComparators, graphql_name="producingRunId")
-    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     name = sgqlc.types.Field(StrComparators, graphql_name="name")
     taxa = sgqlc.types.Field(TaxonWhereClause, graphql_name="taxa")
     indexes = sgqlc.types.Field(IndexFileWhereClause, graphql_name="indexes")
     accessions = sgqlc.types.Field(AccessionWhereClause, graphql_name="accessions")
-    entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="entityId")
+    id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
+    producing_run_id = sgqlc.types.Field(UUIDComparators, graphql_name="producingRunId")
+    owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
+    collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
+    created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
+    updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class UpstreamDatabaseWhereClauseMutations(sgqlc.types.Input):

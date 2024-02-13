@@ -25,6 +25,7 @@ from platformics.api.core.deps import get_cerbos_client, get_db_session, require
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
+    DatetimeComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -119,15 +120,16 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class WorkflowWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     default_version: Optional[StrComparators] | None
     minimum_supported_version: Optional[StrComparators] | None
     versions: Optional[Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]] | None
-    entity_id: Optional[UUIDComparators] | None
+    id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """

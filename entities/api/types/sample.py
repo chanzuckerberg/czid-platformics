@@ -175,10 +175,6 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class SampleWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     rails_sample_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
     sample_type: Optional[StrComparators] | None
@@ -191,7 +187,13 @@ class SampleWhereClause(TypedDict):
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     metadatas: Optional[Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")]] | None
-    entity_id: Optional[UUIDComparators] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """

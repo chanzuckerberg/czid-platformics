@@ -98,15 +98,16 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class WorkflowRunStepWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     workflow_run: Optional[Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")]] | None
     started_at: Optional[DatetimeComparators] | None
     ended_at: Optional[DatetimeComparators] | None
     status: Optional[EnumComparators[WorkflowRunStepStatus]] | None
-    entity_id: Optional[UUIDComparators] | None
+    id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """

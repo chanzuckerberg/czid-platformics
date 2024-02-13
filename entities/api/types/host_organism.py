@@ -28,6 +28,7 @@ from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
+    DatetimeComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -183,17 +184,19 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class HostOrganismWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
     category: Optional[EnumComparators[HostOrganismCategory]] | None
     is_deuterostome: Optional[BoolComparators] | None
     indexes: Optional[Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")]] | None
     samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
-    entity_id: Optional[UUIDComparators] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """

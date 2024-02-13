@@ -447,15 +447,16 @@ input WorkflowRunEntityInputOrderByClause {
 }
 
 input WorkflowRunEntityInputWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   inputEntityId: UUIDComparators
   fieldName: StrComparators
   entityType: StrComparators
   workflowRun: WorkflowRunWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunEntityInputWhereClauseMutations {
@@ -638,15 +639,16 @@ input WorkflowRunStepUpdateInput {
 }
 
 input WorkflowRunStepWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   workflowRun: WorkflowRunWhereClause
   startedAt: DatetimeComparators
   endedAt: DatetimeComparators
   status: WorkflowRunStepStatusEnumComparators
-  entityId: UUIDComparators
+  id: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunStepWhereClauseMutations {
@@ -663,10 +665,6 @@ input WorkflowRunUpdateInput {
 }
 
 input WorkflowRunWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   startedAt: DatetimeComparators
   endedAt: DatetimeComparators
   executionId: StrComparators
@@ -677,7 +675,12 @@ input WorkflowRunWhereClause {
   steps: WorkflowRunStepWhereClause
   entityInputs: WorkflowRunEntityInputWhereClause
   rawInputsJson: StrComparators
-  entityId: UUIDComparators
+  id: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunWhereClauseMutations {
@@ -811,17 +814,18 @@ input WorkflowVersionOrderByClause {
 }
 
 input WorkflowVersionWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   graphJson: StrComparators
   workflowUri: StrComparators
   version: StrComparators
   manifest: StrComparators
   workflow: WorkflowWhereClause
   runs: WorkflowRunWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input WorkflowVersionWhereClauseMutations {
@@ -829,15 +833,16 @@ input WorkflowVersionWhereClauseMutations {
 }
 
 input WorkflowWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: StrComparators
   defaultVersion: StrComparators
   minimumSupportedVersion: StrComparators
   versions: WorkflowVersionWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input WorkflowWhereClauseMutations {

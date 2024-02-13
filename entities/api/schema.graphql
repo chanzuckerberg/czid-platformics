@@ -117,15 +117,17 @@ input AccessionUpdateInput {
 }
 
 input AccessionWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   accessionId: StrComparators
   accessionName: StrComparators
   upstreamDatabase: UpstreamDatabaseWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input AccessionWhereClauseMutations {
@@ -233,12 +235,14 @@ input BulkDownloadTypeEnumComparators {
 }
 
 input BulkDownloadWhereClause {
+  downloadType: BulkDownloadTypeEnumComparators
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  downloadType: BulkDownloadTypeEnumComparators
-  entityId: UUIDComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input BulkDownloadWhereClauseMutations {
@@ -353,16 +357,18 @@ input ConsensusGenomeOrderByClause {
 }
 
 input ConsensusGenomeWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
   referenceGenome: ReferenceGenomeWhereClause
   accession: AccessionWhereClause
   metrics: MetricConsensusGenomeWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input ConsensusGenomeWhereClauseMutations {
@@ -569,12 +575,14 @@ input GenomicRangeOrderByClause {
 }
 
 input GenomicRangeWhereClause {
+  sequencingReads: SequencingReadWhereClause
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  sequencingReads: SequencingReadWhereClause
-  entityId: UUIDComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input GenomicRangeWhereClauseMutations {
@@ -734,17 +742,19 @@ input HostOrganismUpdateInput {
 }
 
 input HostOrganismWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: StrComparators
   version: StrComparators
   category: HostOrganismCategoryEnumComparators
   isDeuterostome: BoolComparators
   indexes: IndexFileWhereClause
   samples: SampleWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input HostOrganismWhereClauseMutations {
@@ -859,15 +869,17 @@ input IndexFileUpdateInput {
 }
 
 input IndexFileWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: IndexTypesEnumComparators
   version: StrComparators
   upstreamDatabase: UpstreamDatabaseWhereClause
   hostOrganism: HostOrganismWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input IndexFileWhereClauseMutations {
@@ -1027,14 +1039,16 @@ input MetadatumUpdateInput {
 }
 
 input MetadatumWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   sample: SampleWhereClause
   fieldName: StrComparators
   value: StrComparators
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input MetadatumWhereClauseMutations {
@@ -1198,10 +1212,6 @@ input MetricConsensusGenomeOrderByClause {
 }
 
 input MetricConsensusGenomeWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   consensusGenome: ConsensusGenomeWhereClause
   referenceGenomeLength: FloatComparators
   percentGenomeCalled: FloatComparators
@@ -1217,7 +1227,13 @@ input MetricConsensusGenomeWhereClause {
   coverageBreadth: FloatComparators
   coverageBinSize: FloatComparators
   coverageTotalLength: IntComparators
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input MetricConsensusGenomeWhereClauseMutations {
@@ -1416,12 +1432,14 @@ input PhylogeneticTreeUpdateInput {
 }
 
 input PhylogeneticTreeWhereClause {
+  format: PhylogeneticTreeFormatEnumComparators
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  format: PhylogeneticTreeFormatEnumComparators
-  entityId: UUIDComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input PhylogeneticTreeWhereClauseMutations {
@@ -1563,13 +1581,15 @@ input ReferenceGenomeUpdateInput {
 }
 
 input ReferenceGenomeWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: StrComparators
   consensusGenomes: ConsensusGenomeWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input ReferenceGenomeWhereClauseMutations {
@@ -1743,10 +1763,6 @@ input SampleUpdateInput {
 }
 
 input SampleWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   railsSampleId: IntComparators
   name: StrComparators
   sampleType: StrComparators
@@ -1757,7 +1773,13 @@ input SampleWhereClause {
   hostOrganism: HostOrganismWhereClause
   sequencingReads: SequencingReadWhereClause
   metadatas: MetadatumWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input SampleWhereClauseMutations {
@@ -1937,10 +1959,6 @@ input SequencingReadUpdateInput {
 }
 
 input SequencingReadWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   sample: SampleWhereClause
   protocol: SequencingProtocolEnumComparators
   technology: SequencingTechnologyEnumComparators
@@ -1950,7 +1968,13 @@ input SequencingReadWhereClause {
   taxon: TaxonWhereClause
   primerFile: GenomicRangeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input SequencingReadWhereClauseMutations {
@@ -2230,10 +2254,6 @@ input TaxonUpdateInput {
 }
 
 input TaxonWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   wikipediaId: StrComparators
   description: StrComparators
   commonName: StrComparators
@@ -2244,7 +2264,13 @@ input TaxonWhereClause {
   level: TaxonLevelEnumComparators
   consensusGenomes: ConsensusGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input TaxonWhereClauseMutations {
@@ -2392,15 +2418,17 @@ input UpstreamDatabaseUpdateInput {
 }
 
 input UpstreamDatabaseWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: StrComparators
   taxa: TaxonWhereClause
   indexes: IndexFileWhereClause
   accessions: AccessionWhereClause
-  entityId: UUIDComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input UpstreamDatabaseWhereClauseMutations {

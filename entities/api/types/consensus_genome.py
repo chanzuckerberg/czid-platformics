@@ -25,6 +25,7 @@ from platformics.api.core.deps import get_cerbos_client, get_db_session, require
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
+    DatetimeComparators,
     IntComparators,
     UUIDComparators,
 )
@@ -200,10 +201,6 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class ConsensusGenomeWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     sequence_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
     reference_genome: Optional[
@@ -213,7 +210,13 @@ class ConsensusGenomeWhereClause(TypedDict):
     metrics: Optional[
         Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
-    entity_id: Optional[UUIDComparators] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """

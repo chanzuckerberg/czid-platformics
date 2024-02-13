@@ -184,11 +184,7 @@ Supported WHERE clause attributes
 """
 @strawberry.input
 class {{ cls.name }}WhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "uuid" %}
     {{ attr.name }}: Optional[UUIDComparators] | None
         {%- elif attr.type == "string" %}

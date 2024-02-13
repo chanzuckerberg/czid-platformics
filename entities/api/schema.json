@@ -4681,42 +4681,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "name",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -4753,25 +4717,6 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "UpstreamDatabaseWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -4784,7 +4729,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -4806,6 +4751,43 @@
                 "ofType": null
               }
             },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "UpstreamDatabaseWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
             {
               "defaultValue": null,
               "name": "wikipediaId",
@@ -4898,10 +4880,64 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -5168,42 +5204,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "taxon",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5249,25 +5249,6 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "ConsensusGenomeWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5280,7 +5261,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -5302,6 +5283,43 @@
                 "ofType": null
               }
             },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ConsensusGenomeWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
             {
               "defaultValue": null,
               "name": "sample",
@@ -5385,25 +5403,6 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "SequencingReadWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5416,7 +5415,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -5438,6 +5437,43 @@
                 "ofType": null
               }
             },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "SequencingReadWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
             {
               "defaultValue": null,
               "name": "railsSampleId",
@@ -5530,10 +5566,64 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -5656,42 +5746,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "name",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5746,10 +5800,64 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -5872,42 +5980,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "name",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5944,10 +6016,64 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -6070,42 +6196,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "sample",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6133,10 +6223,64 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -6551,6 +6695,15 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "sequencingReads",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "SequencingReadWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6563,7 +6716,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -6587,19 +6740,28 @@
             },
             {
               "defaultValue": null,
-              "name": "sequencingReads",
+              "name": "createdAt",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "SequencingReadWhereClause",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "updatedAt",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -6613,42 +6775,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": null,
               "name": "name",
@@ -6669,25 +6795,6 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "ReferenceGenomeWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6700,7 +6807,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -6722,6 +6829,43 @@
                 "ofType": null
               }
             },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ReferenceGenomeWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
             {
               "defaultValue": null,
               "name": "accessionId",
@@ -6760,25 +6904,6 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "AccessionWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6791,7 +6916,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -6813,6 +6938,43 @@
                 "ofType": null
               }
             },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "AccessionWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
             {
               "defaultValue": null,
               "name": "consensusGenome",
@@ -6950,10 +7112,64 @@
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "producingRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -13158,6 +13374,15 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "format",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "PhylogeneticTreeFormatEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -13170,7 +13395,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -13194,19 +13419,28 @@
             },
             {
               "defaultValue": null,
-              "name": "format",
+              "name": "createdAt",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PhylogeneticTreeFormatEnumComparators",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "updatedAt",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -13585,6 +13819,15 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "downloadType",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "BulkDownloadTypeEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "id",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -13597,7 +13840,7 @@
               "name": "producingRunId",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -13621,19 +13864,28 @@
             },
             {
               "defaultValue": null,
-              "name": "downloadType",
+              "name": "createdAt",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "BulkDownloadTypeEnumComparators",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
-              "name": "entityId",
+              "name": "updatedAt",
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
