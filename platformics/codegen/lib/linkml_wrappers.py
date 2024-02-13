@@ -206,7 +206,7 @@ class EntityWrapper:
     def create_fields(self) -> list[FieldWrapper]:
         return [
             field
-            for field in self.all_fields
+            for field in self.visible_fields
             if not field.readonly and not field.hidden and not field.is_virtual_relationship
         ]
 
@@ -214,7 +214,7 @@ class EntityWrapper:
     def mutable_fields(self) -> list[FieldWrapper]:
         if not self.is_mutable:
             return []
-        return [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
+        return [field for field in self.visible_fields if field.mutable and not field.is_virtual_relationship]
 
     @cached_property
     def is_mutable(self) -> bool:
@@ -272,11 +272,11 @@ class EntityWrapper:
     def enum_fields(self) -> list[FieldWrapper]:
         enumfields = self.view.all_enums()
         class_names = [k for k, _ in enumfields.items()]
-        return [field for field in self.all_fields if field.type in class_names]
+        return [field for field in self.visible_fields if field.type in class_names]
 
     @cached_property
     def related_fields(self) -> list[FieldWrapper]:
-        return [field for field in self.all_fields if field.is_entity]
+        return [field for field in self.visible_fields if field.is_entity]
 
 
 class ViewWrapper:

@@ -2,6 +2,7 @@
 erDiagram
 Entity {
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -32,6 +33,7 @@ Sample {
     string notes  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -47,6 +49,7 @@ SequencingRead {
     string medaka_model  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -57,6 +60,7 @@ SequencingRead {
 GenomicRange {
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -68,6 +72,7 @@ ReferenceGenome {
     string name  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -80,6 +85,7 @@ Accession {
     string accession_name  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -94,6 +100,7 @@ HostOrganism {
     boolean is_deuterostome  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -106,6 +113,7 @@ Metadatum {
     string value  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -116,6 +124,7 @@ Metadatum {
 ConsensusGenome {
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -141,6 +150,7 @@ MetricConsensusGenome {
     Array2dInt coverage_viz  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -158,6 +168,7 @@ Taxon {
     TaxonLevel level  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -169,6 +180,7 @@ UpstreamDatabase {
     string name  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -181,6 +193,7 @@ IndexFile {
     string version  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -192,6 +205,7 @@ PhylogeneticTree {
     PhylogeneticTreeFormat format  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  
@@ -203,6 +217,7 @@ BulkDownload {
     BulkDownloadType download_type  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
     integer owner_user_id  
     integer collection_id  

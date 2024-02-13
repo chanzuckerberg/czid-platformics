@@ -148,11 +148,11 @@ classes:
         range: uuid
         readonly: true # The API handles generating the values for these fields
         required: true
-#      types:
-#        range: string
-#        designates_type: true
-#        annotations:
-#          hidden: true
+      type:
+        range: string
+        designates_type: true
+        annotations:
+          hidden: true
       producing_run_id:
         range: uuid
         required: true
