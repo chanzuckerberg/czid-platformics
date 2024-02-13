@@ -191,7 +191,7 @@ class {{ cls.name }}WhereClause(TypedDict):
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.is_enum %}
     {{ attr.name }}: Optional[EnumComparators[{{ attr.type }}]] | None
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{ attr.name }}: Optional[IntComparators] | None
         {%- elif attr.type == "float" %}
     {{ attr.name }}: Optional[FloatComparators] | None
@@ -240,7 +240,7 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: {{ getType("List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getType(attr.type, attr.required) }}
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", attr.required) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", attr.required) }}
@@ -279,7 +279,7 @@ Define columns that support numerical aggregations
 @strawberry.type
 class {{ cls.name }}NumericalColumns:
     {%- for attr in cls.visible_fields %}
-        {%- if attr.type == "int" %}
+        {%- if attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", False) }}
@@ -292,7 +292,7 @@ Define columns that support min/max aggregations
 @strawberry.type
 class {{ cls.name }}MinMaxColumns:
     {%- for attr in cls.visible_fields %}
-        {%- if attr.type == "int" %}
+        {%- if attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", False) }}
@@ -358,7 +358,7 @@ Mutation types
     {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{ attr.name }}: {{ getTypeMutation(action, "int", attr.required) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getTypeMutation(action, "float", attr.required) }}

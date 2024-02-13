@@ -52,7 +52,7 @@ class {{cls.name}}(Entity):
     {{attr.name}}: Mapped[str] = mapped_column(String, nullable={{ "False" if attr.required else "True"}})
         {%- elif attr.type == "Array2dInt" %}
     {{attr.name}}: Mapped[JSONB] = mapped_column(JSONB, nullable={{ "False" if attr.required else "True"}})
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{attr.name}}: Mapped[int] = mapped_column(Integer, nullable={{ "False" if attr.required else "True"}})
         {%- elif attr.type == "float" %}
     {{attr.name}}: Mapped[int] = mapped_column(Float, nullable={{ "False" if attr.required else "True"}})
