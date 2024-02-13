@@ -20,6 +20,21 @@ types:
     base: int
     description: An integer
 
+  float:
+    uri: xsd:float
+    base: float
+    description: A float
+
+  boolean:
+    uri: xsd:boolean
+    base: bool
+    description: A boolean
+
+  date:
+    uri: xsd:date
+    base: XSDDate
+    description: A Date
+
   uuid:
     uri: xsd:string
     typeof: str
