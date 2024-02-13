@@ -52,6 +52,11 @@ classes:
         range: uuid
         readonly: true # The API handles generating the values for these fields
         required: true
+      producing_run_id:
+        range: uuid
+        required: true
+        annotations:
+          hidden: true # This field shouldn't exist but we're living with it for now since it's part of the base Entity class.
       owner_user_id:
         range: int
         minimum_value: 0

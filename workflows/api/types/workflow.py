@@ -286,6 +286,7 @@ class WorkflowUpdateInput:
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
+    producing_run_id: Optional[strawberry.ID] = None
 
 
 """

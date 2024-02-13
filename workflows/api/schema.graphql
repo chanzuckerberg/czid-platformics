@@ -636,6 +636,7 @@ input WorkflowRunStepStatusEnumComparators {
 input WorkflowRunStepUpdateInput {
   endedAt: DateTime = null
   status: WorkflowRunStepStatus = null
+  producingRunId: ID = null
 }
 
 input WorkflowRunStepWhereClause {
@@ -662,6 +663,7 @@ input WorkflowRunUpdateInput {
   workflowRunnerInputsJson: String = null
   status: WorkflowRunStatus = null
   deprecatedById: ID = null
+  producingRunId: ID = null
 }
 
 input WorkflowRunWhereClause {
@@ -691,6 +693,7 @@ input WorkflowUpdateInput {
   name: String = null
   defaultVersion: String = null
   minimumSupportedVersion: String = null
+  producingRunId: ID = null
 }
 
 type WorkflowVersion implements EntityInterface & Node {

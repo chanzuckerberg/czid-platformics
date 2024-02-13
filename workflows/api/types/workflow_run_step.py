@@ -262,6 +262,7 @@ class WorkflowRunStepCreateInput:
 class WorkflowRunStepUpdateInput:
     ended_at: Optional[datetime.datetime] = None
     status: Optional[WorkflowRunStepStatus] = None
+    producing_run_id: Optional[strawberry.ID] = None
 
 
 """

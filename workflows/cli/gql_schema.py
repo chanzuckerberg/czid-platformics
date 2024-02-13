@@ -467,9 +467,10 @@ class WorkflowRunStepStatusEnumComparators(sgqlc.types.Input):
 
 class WorkflowRunStepUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("ended_at", "status")
+    __field_names__ = ("ended_at", "status", "producing_run_id")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     status = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="status")
+    producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
 
 
 class WorkflowRunStepWhereClause(sgqlc.types.Input):
@@ -513,6 +514,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
         "workflow_runner_inputs_json",
         "status",
         "deprecated_by_id",
+        "producing_run_id",
     )
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")
@@ -520,6 +522,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
     deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
+    producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
 
 
 class WorkflowRunWhereClause(sgqlc.types.Input):
@@ -568,10 +571,11 @@ class WorkflowRunWhereClauseMutations(sgqlc.types.Input):
 
 class WorkflowUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "default_version", "minimum_supported_version")
+    __field_names__ = ("name", "default_version", "minimum_supported_version", "producing_run_id")
     name = sgqlc.types.Field(String, graphql_name="name")
     default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
     minimum_supported_version = sgqlc.types.Field(String, graphql_name="minimumSupportedVersion")
+    producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
 
 
 class WorkflowVersionCreateInput(sgqlc.types.Input):

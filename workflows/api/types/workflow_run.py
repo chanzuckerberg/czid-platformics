@@ -408,6 +408,7 @@ class WorkflowRunUpdateInput:
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
     deprecated_by_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[strawberry.ID] = None
 
 
 """
