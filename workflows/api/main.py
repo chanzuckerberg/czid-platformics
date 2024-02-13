@@ -10,9 +10,13 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import APIRouter, Depends, FastAPI, Request
 from manifest.manifest import EntityInput, Manifest
-from platformics.api.core.deps import (get_auth_principal, get_cerbos_client,
-                                       get_db_session, get_engine,
-                                       require_auth_principal)
+from platformics.api.core.deps import (
+    get_auth_principal,
+    get_cerbos_client,
+    get_db_session,
+    get_engine,
+    require_auth_principal,
+)
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
@@ -23,8 +27,7 @@ from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.config import StrawberryConfig
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 
-from api.config import (load_event_bus, load_workflow_runner,
-                        resolve_input_loader)
+from api.config import load_event_bus, load_workflow_runner, resolve_input_loader
 from api.core.gql_loaders import WorkflowLoader
 from api.mutations import Mutation as CodegenMutation
 from api.queries import Query
