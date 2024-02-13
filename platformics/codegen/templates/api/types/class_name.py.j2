@@ -30,7 +30,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import aggregator_map, orderBy, EnumComparators, DatetimeComparators, IntComparators, FloatComparators, StrComparators, UUIDComparators, BoolComparators
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction, get_resource_query
@@ -107,10 +107,10 @@ async def load_{{ related_field.related_class.snake_name }}_rows(
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
         {%- else %}
-	        {%- if related_field.is_virtual_relationship %}
+            {%- if related_field.is_virtual_relationship %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where).load(root.id) # type:ignore
-	        {%- else %}
+            {%- else %}
     relationship = mapper.relationships["{{ related_field.name }}"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.{{ related_field.name }}_id) # type:ignore
             {%- endif %}
@@ -184,15 +184,9 @@ Supported WHERE clause attributes
 """
 @strawberry.input
 class {{ cls.name }}WhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "uuid" %}
-            {%- if attr.name != "entity_id" %}
     {{ attr.name }}: Optional[UUIDComparators] | None
-            {%- endif %}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.is_enum %}
@@ -215,8 +209,8 @@ Supported ORDER BY clause attributes
 """
 @strawberry.input
 class {{ cls.name }}OrderByClause(TypedDict):
-    {%- for attr in cls.all_fields %}
-        {%- if attr.type != "File" and attr.name != "entity_id" and not attr.multivalued %}
+    {%- for attr in cls.visible_fields %}
+        {%- if attr.type != "File" and not attr.multivalued %}
             {%- if attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}OrderByClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
             {%- else %}
@@ -237,15 +231,9 @@ Define {{ cls.name }} type
 """
 @strawberry.type
 class {{ cls.name }}(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "uuid" %}
-           {%- if attr.name != "entity_id" %}
     {{ attr.name }}: {{ getType("strawberry.ID", attr.required) }}
-           {%- endif %}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getType("str", attr.required) }}
         {%- elif attr.type == "Array2dInt" %}
@@ -290,10 +278,7 @@ Define columns that support numerical aggregations
 """
 @strawberry.type
 class {{ cls.name }}NumericalColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "int" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
@@ -306,10 +291,7 @@ Define columns that support min/max aggregations
 """
 @strawberry.type
 class {{ cls.name }}MinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
-    {%- for attr in cls.owned_fields %}
+    {%- for attr in cls.visible_fields %}
         {%- if attr.type == "int" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
@@ -326,7 +308,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 """
 @strawberry.enum
 class {{ cls.name }}CountColumns(enum.Enum):
-    {%- for attr in cls.all_fields %}
+    {%- for attr in cls.visible_fields %}
     {{ attr.name }} = "{{ attr.name }}"
     {%- endfor %}
 
@@ -366,15 +348,12 @@ Mutation types
     {%- endif %}
 {%- endmacro %}
 
-{# Generate Create and Update Strawberry input types #}
-{%- for action in ["Create", "Update"] %}
-@strawberry.input()
-class {{ cls.name }}{{ action }}Input:
-    collection_id: {{ getTypeMutation(action, "int", true) }}
-    {%- for attr in cls.owned_fields %}
-        {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
-        {%- elif attr.type == "string" %}
+{% macro getInputFields(fields) -%}
+    {%- for attr in fields %}
+        {%- if attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
+        {%- elif attr.type == "uuid" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
         {%- elif attr.type == "Array2dInt" %}
     {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
@@ -389,12 +368,24 @@ class {{ cls.name }}{{ action }}Input:
     {{ attr.name }}: {{ getTypeMutation(action, "datetime.datetime", attr.required) }}
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
-        {%- elif attr.inverse and not attr.multivalued %} {# Don't include multivalued fields, only fields where can update an ID #}
+        {%- elif attr.is_entity and not attr.is_virtual_relationship %} {# Don't include multivalued fields, only fields where we can update an ID #}
     {{ attr.name }}_id: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
         {%- endif %}
     {%- endfor %}
-{%- endfor %}
+{%- endmacro %}
 
+{# Generate Create and Update Strawberry input types #}
+{%- if cls.create_fields %}
+@strawberry.input()
+class {{ cls.name }}CreateInput:
+    {{- getInputFields(cls.create_fields) }}
+{%- endif %}
+
+{%- if cls.mutable_fields %}
+@strawberry.input()
+class {{ cls.name }}UpdateInput:
+    {{- getInputFields(cls.mutable_fields) }}
+{%- endif %}
 
 """
 ------------------------------------------------------------------------------
@@ -456,23 +447,54 @@ async def resolve_{{ cls.plural_snake_name }}_aggregate(
     aggregate_output = format_{{ cls.snake_name }}_aggregate_output(rows)
     return {{ cls.name }}Aggregate(aggregate=aggregate_output)
 
+{%- if cls.create_fields %}
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_{{ cls.snake_name }}(
     input: {{ cls.name }}CreateInput,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new {{ cls.name }} object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
+    # Validate that the user can read all of the entities they're linking to.
+    {%- if cls.system_only_create_fields %}
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        {%- if not cls.user_create_fields %}
+        raise PlatformicsException("Unauthorized: {{cls.name}} is not creatable")
+        {%- else %}
+            {%- for field in cls.system_only_create_fields %}
+        input.{{field.name}} = None
+            {%- endfor %}
+        {%- endif %}
+    {%- endif %}
+
+
+    {%- for field in cls.create_fields %}
+        {%- if field.name == "collection_id" %}
+    # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+        {%- endif %}
+    {%- endfor %}
+
+    # Validate that the user can read all of the entities they're linking to.
+    {%- for field in cls.create_fields %}
+        {%- if field.is_entity and not field.is_virtual_relationship %}
+    # Check that {{field.name}} relationship is accessible.
+    if input.{{field.name}}_id:
+        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
+        if not {{field.name}}:
+            raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
+        {%- endif %}
+    {%- endfor %}
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -480,8 +502,10 @@ async def create_{{ cls.snake_name }}(
     session.add(new_entity)
     await session.commit()
     return new_entity
+{%- endif %}
 
 
+{%- if cls.mutable_fields %}
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def update_{{ cls.snake_name }}(
     input: {{ cls.name }}UpdateInput,
@@ -489,6 +513,7 @@ async def update_{{ cls.snake_name }}(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update {{ cls.name }} objects. Used for mutations (see api/mutations.py).
@@ -500,17 +525,46 @@ async def update_{{ cls.snake_name }}(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    {%- for field in cls.mutable_fields %}
+        {%- if field.is_entity and not field.is_virtual_relationship %}
+    # Check that {{field.name}} relationship is accessible.
+    if input.{{field.name}}_id:
+        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
+        if not {{field.name}}:
+            raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
+        params["{{field.name}}"] = {{field.name}}[0]
+        del params["{{field.name}}_id"]
+        {%- endif %}
+    {%- endfor %}
+
+    {%- if cls.system_only_mutable_fields %}
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        {%- if not cls.user_mutable_fields %}
+        raise PlatformicsException("Unauthorized: {{cls.name}} is not mutable")
+        {%- else %}
+            {%- for field in cls.system_only_mutable_fields %}
+        del params["{{field.name}}"]
+            {%- endfor %}
+        {%- endif %}
+    {%- endif %}
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
 
+    {%- for field in self.mutable_fields %}
+        {%- if field.name == "collection_id" %}
     # Validate that the user has access to the new collection ID
     if input.collection_id:
         attr = {"collection_id": input.collection_id}
         resource = Resource(id="SOME_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
         if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
             raise PlatformicsException("Unauthorized: Cannot access new collection")
+        {%- endif %}
+    {%- endfor %}
 
     # Update DB
     for entity in entities:
@@ -519,6 +573,7 @@ async def update_{{ cls.snake_name }}(
                 setattr(entity, key, params[key])
     await session.commit()
     return entities
+{%- endif %}
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

@@ -2,7 +2,7 @@
 erDiagram
 Entity {
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -32,7 +32,7 @@ Sample {
     string notes  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -47,7 +47,7 @@ SequencingRead {
     string medaka_model  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -57,7 +57,7 @@ SequencingRead {
 GenomicRange {
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -68,7 +68,7 @@ ReferenceGenome {
     string name  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -80,7 +80,7 @@ Accession {
     string accession_name  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -94,7 +94,7 @@ HostOrganism {
     boolean is_deuterostome  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -106,7 +106,7 @@ Metadatum {
     string value  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -116,7 +116,7 @@ Metadatum {
 ConsensusGenome {
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -141,7 +141,7 @@ MetricConsensusGenome {
     Array2dInt coverage_viz  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -158,7 +158,7 @@ Taxon {
     TaxonLevel level  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -169,7 +169,7 @@ UpstreamDatabase {
     string name  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -181,7 +181,7 @@ IndexFile {
     string version  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -192,7 +192,7 @@ PhylogeneticTree {
     PhylogeneticTreeFormat format  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -203,7 +203,7 @@ BulkDownload {
     BulkDownloadType download_type  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  

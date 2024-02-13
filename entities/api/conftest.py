@@ -4,25 +4,27 @@ Fixtures for API tests
 
 import json
 import typing
+from typing import Optional
+
 import boto3
 import pytest_asyncio
-from typing import Optional
 from cerbos.sdk.model import Principal
-from platformics.database.connect import AsyncDB
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.requests import Request
 from moto import mock_s3
 from mypy_boto3_s3.client import S3Client
-from api.main import get_app
 from platformics.api.core.deps import (
     get_auth_principal,
     get_db_session,
     get_engine,
-    require_auth_principal,
     get_s3_client,
+    require_auth_principal,
 )
+from platformics.database.connect import AsyncDB
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request
+
+from api.main import get_app
 
 
 class GQLTestClient:
@@ -35,6 +37,8 @@ class GQLTestClient:
         user_id: Optional[int] = None,
         member_projects: Optional[list[int]] = None,
         admin_projects: Optional[list[int]] = None,
+        viewer_projects: Optional[list[int]] = None,
+        service_identity: Optional[str] = None,
     ) -> dict[str, typing.Any]:
         """
         Utility function for making GQL HTTP queries with authorization info.
@@ -45,12 +49,16 @@ class GQLTestClient:
             admin_projects = []
         if not member_projects:
             member_projects = []
+        if not viewer_projects:
+            viewer_projects = []
         gql_headers = {
             "content-type": "application/json",
             "accept": "application/json",
             "user_id": str(user_id),
             "member_projects": json.dumps(member_projects),
             "admin_projects": json.dumps(admin_projects),
+            "viewer_projects": json.dumps(viewer_projects),
+            "service_identity": service_identity or "",
         }
         result = await self.http_client.post("/graphql", json={"query": query}, headers=gql_headers)
         return result.json()
@@ -97,6 +105,8 @@ async def patched_authprincipal(request: Request) -> Principal:
             "user_id": int(user_id),
             "member_projects": json.loads(request.headers.get("member_projects", "[]")),
             "admin_projects": json.loads(request.headers.get("admin_projects", "[]")),
+            "viewer_projects": json.loads(request.headers.get("viewer_projects", "[]")),
+            "service_identity": request.headers.get("service_identity"),
         },
     )
     return principal
@@ -126,7 +136,7 @@ async def api(async_db: AsyncDB) -> FastAPI:
     """
     Create an API instance using the real schema.
     """
-    api = get_app(use_test_schema=False)
+    api = get_app()
     overwrite_api(api, async_db)
     return api
 

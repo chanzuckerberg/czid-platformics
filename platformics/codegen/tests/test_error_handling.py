@@ -3,10 +3,7 @@ Test basic error handling
 """
 
 import pytest
-from platformics.codegen.conftest import GQLTestClient, SessionStorage
-from platformics.codegen.tests.output.test_infra.factories.sample import \
-    SampleFactory
-from platformics.database.connect import SyncDB
+from platformics.codegen.conftest import GQLTestClient
 
 
 @pytest.mark.asyncio

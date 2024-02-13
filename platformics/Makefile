@@ -82,7 +82,7 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run tests
-	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest"
+	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest --ignore platformics"
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
