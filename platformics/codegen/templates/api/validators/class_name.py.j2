@@ -48,10 +48,10 @@ from typing_extensions import Annotated
 
 {% macro getNumericConstraints(attr) -%}
     {%- if attr.minimum_value is not none %}
-    gte={{attr.minimum_value}},
+    ge={{attr.minimum_value}},
     {%- endif %}
     {%- if attr.maximum_value is not none %}
-    lte={{attr.maximum_value}},
+    le={{attr.maximum_value}},
     {%- endif %}
 {%- endmacro %}
 

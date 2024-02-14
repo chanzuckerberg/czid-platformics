@@ -34,7 +34,7 @@ class AccessionCreateInputValidator(BaseModel):
     collection_id: Annotated[
         int,
         Field(
-            gte=0,
+            ge=0,
         ),
     ]
 

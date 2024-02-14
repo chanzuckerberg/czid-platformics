@@ -268,6 +268,21 @@ classes:
     annotations:
       plural: Taxa
 
+  UpstreamDatabase:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.upstream_database
+    annotations:
+      plural: UpstreamDatabases
+
   SystemWritableOnlyType:
     is_a: Entity
     mixins:
@@ -292,20 +307,41 @@ classes:
       mutable: false
       plural: ImmutableTypes
 
-  UpstreamDatabase:
+  ConstraintCheckedType:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      name:
+      length_3_to_8:
         range: string
-        required: true
-      taxa:
-        range: Taxon
-        multivalued: true
-        inverse: Taxon.upstream_database
+        annotations:
+          minimum_length: 3
+          maximum_length: 8
+      regex_format_check:
+        range: string
+        pattern: '\d{3}-\d{2}-\d{4}'
+      min_value_0:
+        range: integer
+        minimum_value: 0
+      max_value_9:
+        range: integer
+        maximum_value: 9
+      min_value_0_max_value_9:
+        range: integer
+        minimum_value: 0
+        maximum_value: 9
+      float_1dot1_to_2dot2:
+        range: float
+        minimum_value: 1.1
+        maximum_value: 2.2
+      no_string_checks:
+        range: string
+      no_int_checks:
+        range: integer
+      no_float_checks:
+        range: float
     annotations:
-      plural: UpstreamDatabases
+      plural: ConstraintCheckedTypes
 
   EntityMixin:
     mixin: true

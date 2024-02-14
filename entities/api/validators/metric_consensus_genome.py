@@ -29,8 +29,8 @@ class MetricConsensusGenomeCreateInputValidator(BaseModel):
     total_reads: Annotated[
         int | None,
         Field(
-            gte=0,
-            lte=999999999999,
+            ge=0,
+            le=999999999999,
         ),
     ]
     mapped_reads: Annotated[int | None, Field()]
@@ -49,6 +49,6 @@ class MetricConsensusGenomeCreateInputValidator(BaseModel):
     collection_id: Annotated[
         int,
         Field(
-            gte=0,
+            ge=0,
         ),
     ]
