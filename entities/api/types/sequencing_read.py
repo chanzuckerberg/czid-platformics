@@ -15,7 +15,6 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from platformics.api.core.input_validation import validate_input
 from api.validators.sequencing_read import SequencingReadCreateInputValidator, SequencingReadUpdateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -491,34 +490,34 @@ async def create_sequencing_read(
     if not is_system_user:
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.SequencingRead.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that sample relationship is accessible.
-    if input.sample_id:
+    if validated.sample_id:
         sample = await get_db_rows(
-            db.Sample, session, cerbos_client, principal, {"id": {"_eq": input.sample_id}}, [], CerbosAction.VIEW
+            db.Sample, session, cerbos_client, principal, {"id": {"_eq": validated.sample_id}}, [], CerbosAction.VIEW
         )
         if not sample:
             raise PlatformicsException("Unauthorized: sample does not exist")
     # Check that taxon relationship is accessible.
-    if input.taxon_id:
+    if validated.taxon_id:
         taxon = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.taxon_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.taxon_id}}, [], CerbosAction.VIEW
         )
         if not taxon:
             raise PlatformicsException("Unauthorized: taxon does not exist")
     # Check that primer_file relationship is accessible.
-    if input.primer_file_id:
+    if validated.primer_file_id:
         primer_file = await get_db_rows(
             db.GenomicRange,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.primer_file_id}},
+            {"id": {"_eq": validated.primer_file_id}},
             [],
             CerbosAction.VIEW,
         )
@@ -545,8 +544,8 @@ async def update_sequencing_read(
     """
     Update SequencingRead objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, SequencingReadUpdateInputValidator)
+    validated = SequencingReadUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])

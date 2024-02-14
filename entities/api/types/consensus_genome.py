@@ -473,49 +473,55 @@ async def create_consensus_genome(
     if not is_system_user:
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.ConsensusGenome.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that taxon relationship is accessible.
-    if input.taxon_id:
+    if validated.taxon_id:
         taxon = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.taxon_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.taxon_id}}, [], CerbosAction.VIEW
         )
         if not taxon:
             raise PlatformicsException("Unauthorized: taxon does not exist")
     # Check that sequence_read relationship is accessible.
-    if input.sequence_read_id:
+    if validated.sequence_read_id:
         sequence_read = await get_db_rows(
             db.SequencingRead,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.sequence_read_id}},
+            {"id": {"_eq": validated.sequence_read_id}},
             [],
             CerbosAction.VIEW,
         )
         if not sequence_read:
             raise PlatformicsException("Unauthorized: sequence_read does not exist")
     # Check that reference_genome relationship is accessible.
-    if input.reference_genome_id:
+    if validated.reference_genome_id:
         reference_genome = await get_db_rows(
             db.ReferenceGenome,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.reference_genome_id}},
+            {"id": {"_eq": validated.reference_genome_id}},
             [],
             CerbosAction.VIEW,
         )
         if not reference_genome:
             raise PlatformicsException("Unauthorized: reference_genome does not exist")
     # Check that accession relationship is accessible.
-    if input.accession_id:
+    if validated.accession_id:
         accession = await get_db_rows(
-            db.Accession, session, cerbos_client, principal, {"id": {"_eq": input.accession_id}}, [], CerbosAction.VIEW
+            db.Accession,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.accession_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not accession:
             raise PlatformicsException("Unauthorized: accession does not exist")

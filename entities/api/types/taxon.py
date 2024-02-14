@@ -15,7 +15,6 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from platformics.api.core.input_validation import validate_input
 from api.validators.taxon import TaxonCreateInputValidator, TaxonUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
@@ -524,96 +523,114 @@ async def create_taxon(
     if not is_system_user:
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Taxon.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that upstream_database relationship is accessible.
-    if input.upstream_database_id:
+    if validated.upstream_database_id:
         upstream_database = await get_db_rows(
             db.UpstreamDatabase,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.upstream_database_id}},
+            {"id": {"_eq": validated.upstream_database_id}},
             [],
             CerbosAction.VIEW,
         )
         if not upstream_database:
             raise PlatformicsException("Unauthorized: upstream_database does not exist")
     # Check that tax_parent relationship is accessible.
-    if input.tax_parent_id:
+    if validated.tax_parent_id:
         tax_parent = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_parent_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_parent_id}}, [], CerbosAction.VIEW
         )
         if not tax_parent:
             raise PlatformicsException("Unauthorized: tax_parent does not exist")
     # Check that tax_subspecies relationship is accessible.
-    if input.tax_subspecies_id:
+    if validated.tax_subspecies_id:
         tax_subspecies = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_subspecies_id}}, [], CerbosAction.VIEW
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_subspecies_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not tax_subspecies:
             raise PlatformicsException("Unauthorized: tax_subspecies does not exist")
     # Check that tax_species relationship is accessible.
-    if input.tax_species_id:
+    if validated.tax_species_id:
         tax_species = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_species_id}}, [], CerbosAction.VIEW
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_species_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not tax_species:
             raise PlatformicsException("Unauthorized: tax_species does not exist")
     # Check that tax_genus relationship is accessible.
-    if input.tax_genus_id:
+    if validated.tax_genus_id:
         tax_genus = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_genus_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_genus_id}}, [], CerbosAction.VIEW
         )
         if not tax_genus:
             raise PlatformicsException("Unauthorized: tax_genus does not exist")
     # Check that tax_family relationship is accessible.
-    if input.tax_family_id:
+    if validated.tax_family_id:
         tax_family = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_family_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_family_id}}, [], CerbosAction.VIEW
         )
         if not tax_family:
             raise PlatformicsException("Unauthorized: tax_family does not exist")
     # Check that tax_order relationship is accessible.
-    if input.tax_order_id:
+    if validated.tax_order_id:
         tax_order = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_order_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_order_id}}, [], CerbosAction.VIEW
         )
         if not tax_order:
             raise PlatformicsException("Unauthorized: tax_order does not exist")
     # Check that tax_class relationship is accessible.
-    if input.tax_class_id:
+    if validated.tax_class_id:
         tax_class = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_class_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_class_id}}, [], CerbosAction.VIEW
         )
         if not tax_class:
             raise PlatformicsException("Unauthorized: tax_class does not exist")
     # Check that tax_phylum relationship is accessible.
-    if input.tax_phylum_id:
+    if validated.tax_phylum_id:
         tax_phylum = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_phylum_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_phylum_id}}, [], CerbosAction.VIEW
         )
         if not tax_phylum:
             raise PlatformicsException("Unauthorized: tax_phylum does not exist")
     # Check that tax_kingdom relationship is accessible.
-    if input.tax_kingdom_id:
+    if validated.tax_kingdom_id:
         tax_kingdom = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_kingdom_id}}, [], CerbosAction.VIEW
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_kingdom_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not tax_kingdom:
             raise PlatformicsException("Unauthorized: tax_kingdom does not exist")
     # Check that tax_superkingdom relationship is accessible.
-    if input.tax_superkingdom_id:
+    if validated.tax_superkingdom_id:
         tax_superkingdom = await get_db_rows(
             db.Taxon,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.tax_superkingdom_id}},
+            {"id": {"_eq": validated.tax_superkingdom_id}},
             [],
             CerbosAction.VIEW,
         )
@@ -640,8 +657,8 @@ async def update_taxon(
     """
     Update Taxon objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, TaxonUpdateInputValidator)
+    validated = TaxonUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
@@ -650,94 +667,112 @@ async def update_taxon(
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that tax_parent relationship is accessible.
-    if input.tax_parent_id:
+    if validated.tax_parent_id:
         tax_parent = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_parent_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_parent_id}}, [], CerbosAction.VIEW
         )
         if not tax_parent:
             raise PlatformicsException("Unauthorized: tax_parent does not exist")
         params["tax_parent"] = tax_parent[0]
         del params["tax_parent_id"]
     # Check that tax_subspecies relationship is accessible.
-    if input.tax_subspecies_id:
+    if validated.tax_subspecies_id:
         tax_subspecies = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_subspecies_id}}, [], CerbosAction.VIEW
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_subspecies_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not tax_subspecies:
             raise PlatformicsException("Unauthorized: tax_subspecies does not exist")
         params["tax_subspecies"] = tax_subspecies[0]
         del params["tax_subspecies_id"]
     # Check that tax_species relationship is accessible.
-    if input.tax_species_id:
+    if validated.tax_species_id:
         tax_species = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_species_id}}, [], CerbosAction.VIEW
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_species_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not tax_species:
             raise PlatformicsException("Unauthorized: tax_species does not exist")
         params["tax_species"] = tax_species[0]
         del params["tax_species_id"]
     # Check that tax_genus relationship is accessible.
-    if input.tax_genus_id:
+    if validated.tax_genus_id:
         tax_genus = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_genus_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_genus_id}}, [], CerbosAction.VIEW
         )
         if not tax_genus:
             raise PlatformicsException("Unauthorized: tax_genus does not exist")
         params["tax_genus"] = tax_genus[0]
         del params["tax_genus_id"]
     # Check that tax_family relationship is accessible.
-    if input.tax_family_id:
+    if validated.tax_family_id:
         tax_family = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_family_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_family_id}}, [], CerbosAction.VIEW
         )
         if not tax_family:
             raise PlatformicsException("Unauthorized: tax_family does not exist")
         params["tax_family"] = tax_family[0]
         del params["tax_family_id"]
     # Check that tax_order relationship is accessible.
-    if input.tax_order_id:
+    if validated.tax_order_id:
         tax_order = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_order_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_order_id}}, [], CerbosAction.VIEW
         )
         if not tax_order:
             raise PlatformicsException("Unauthorized: tax_order does not exist")
         params["tax_order"] = tax_order[0]
         del params["tax_order_id"]
     # Check that tax_class relationship is accessible.
-    if input.tax_class_id:
+    if validated.tax_class_id:
         tax_class = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_class_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_class_id}}, [], CerbosAction.VIEW
         )
         if not tax_class:
             raise PlatformicsException("Unauthorized: tax_class does not exist")
         params["tax_class"] = tax_class[0]
         del params["tax_class_id"]
     # Check that tax_phylum relationship is accessible.
-    if input.tax_phylum_id:
+    if validated.tax_phylum_id:
         tax_phylum = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_phylum_id}}, [], CerbosAction.VIEW
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_phylum_id}}, [], CerbosAction.VIEW
         )
         if not tax_phylum:
             raise PlatformicsException("Unauthorized: tax_phylum does not exist")
         params["tax_phylum"] = tax_phylum[0]
         del params["tax_phylum_id"]
     # Check that tax_kingdom relationship is accessible.
-    if input.tax_kingdom_id:
+    if validated.tax_kingdom_id:
         tax_kingdom = await get_db_rows(
-            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.tax_kingdom_id}}, [], CerbosAction.VIEW
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_kingdom_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not tax_kingdom:
             raise PlatformicsException("Unauthorized: tax_kingdom does not exist")
         params["tax_kingdom"] = tax_kingdom[0]
         del params["tax_kingdom_id"]
     # Check that tax_superkingdom relationship is accessible.
-    if input.tax_superkingdom_id:
+    if validated.tax_superkingdom_id:
         tax_superkingdom = await get_db_rows(
             db.Taxon,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.tax_superkingdom_id}},
+            {"id": {"_eq": validated.tax_superkingdom_id}},
             [],
             CerbosAction.VIEW,
         )

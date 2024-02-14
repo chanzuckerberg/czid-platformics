@@ -15,7 +15,6 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from platformics.api.core.input_validation import validate_input
 from api.validators.sample import SampleCreateInputValidator, SampleUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
@@ -476,20 +475,20 @@ async def create_sample(
         del params["rails_sample_id"]
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Sample.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that host_organism relationship is accessible.
-    if input.host_organism_id:
+    if validated.host_organism_id:
         host_organism = await get_db_rows(
             db.HostOrganism,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.host_organism_id}},
+            {"id": {"_eq": validated.host_organism_id}},
             [],
             CerbosAction.VIEW,
         )
@@ -516,8 +515,8 @@ async def update_sample(
     """
     Update Sample objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, SampleUpdateInputValidator)
+    validated = SampleUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
