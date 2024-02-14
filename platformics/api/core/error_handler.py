@@ -1,66 +1,61 @@
-from typing import Callable, Iterator, List, Optional, Union, Any, Dict
+from typing import Any, Callable, Dict, Iterator, List, Optional, Union
 
+import strawberry
 from graphql.error import GraphQLError
 from platformics.api.core.errors import PlatformicsException
-from strawberry.extensions.base_extension import SchemaExtension
-
 from pydantic import ValidationError
-import strawberry
-
-
-@strawberry.type
-class PlatformicsFieldValidationError:
-    loc: list[str]
-    error: str
-    type: str
-    def __init__(self, loc: list[str], error: str, type: str):
-        self.loc = loc
-        self.error = error
-        self.type = type
+from strawberry.extensions.base_extension import SchemaExtension
 
 
 @strawberry.type
 class PlatformicsValidationError(GraphQLError):
     message: str
-    errors: list[PlatformicsFieldValidationError]
     nodes: Any
     stack: Optional[Any] = None
     source: Optional[Any] = None
-    positions: Optional[Any] =None  # type: Optional[Any]
+    positions: Optional[Any] = None  # type: Optional[Any]
     path: Union[List[Union[int, str]], List[str], None] = None
     extensions: Optional[Dict[str, Any]] = None
     original_error: Optional[Exception] = None
 
+
 class NoOpHandler:
     def convert_exception(self, err: PlatformicsException) -> PlatformicsException:
         return [err]
+
 
 class ValidationExceptionHandler:
     def convert_exception(self, err: GraphQLError) -> PlatformicsValidationError:
         validation_error = err.original_error
         errors = []
         for field_err in validation_error.errors():
-            errors.append( GraphQLError(
-                message=f"Validation Error: {'.'.join(field_err['loc'])} - {field_err['msg']}",
+            errors.append(
+                GraphQLError(
+                    message=f"Validation Error: {'.'.join(field_err['loc'])} - {field_err['msg']}",
+                    nodes=err.nodes,
+                    source=err.source,
+                    positions=err.positions,
+                    path=err.path,
+                    original_error=None,
+                )
+            )
+        return errors
+
+
+class DefaultExceptionHandler:
+    error_message: str = "Unexpected error."
+
+    def convert_exception(self, err: GraphQLError) -> list[GraphQLError]:
+        return [
+            GraphQLError(
+                message=self.error_message,
                 nodes=err.nodes,
                 source=err.source,
                 positions=err.positions,
                 path=err.path,
                 original_error=None,
-            ))
-        return errors
-
-class DefaultExceptionHandler:
-    error_message: str = "Unexpected error."
-    def convert_exception(self, err: GraphQLError) -> list[GraphQLError]:
-        return [GraphQLError(
-            message=self.error_message,
-            nodes=err.nodes,
-            source=err.source,
-            positions=err.positions,
-            path=err.path,
-            original_error=None,
-        )]
+            )
+        ]
 
 
 class HandleErrors(SchemaExtension):
