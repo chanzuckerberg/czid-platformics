@@ -47,7 +47,7 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism
+    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism, HostOrganismGroupByOptions
     from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
     from api.types.metadatum import MetadatumOrderByClause, MetadatumWhereClause, Metadatum
 
@@ -350,9 +350,19 @@ class SampleAggregateFunctions:
 Wrapper around SampleAggregateFunctions
 """
 
+@strawberry.type
+class SampleGroupByOptions:
+    collection_id: Optional[int] = None
+    collection_location: Optional[str] = None
+    host_organism: Optional[Annotated["HostOrganismGroupByOptions", strawberry.lazy("api.types.host_organism")]] | None
 
 @strawberry.type
 class SampleAggregate:
+    # TODO: need to convert groupBy to an input rather than part of the output type?
+    # if groupBy stays as part of the SampleAggregate, need to throw an error if
+    # user selected groupBy options without any aggregate functions
+    groupBy: Optional[SampleGroupByOptions] = None
+    # TODO: need up update output structure to support groupBy keys
     aggregate: Optional[SampleAggregateFunctions] = None
 
 
@@ -414,19 +424,22 @@ def format_sample_aggregate_output(query_results: RowMapping) -> SampleAggregate
     format the results using the proper GraphQL types.
     """
     output = SampleAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
-        else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
-                if not getattr(output, aggregator_fn):
-                    if aggregate_name in ["min", "max"]:
-                        setattr(output, aggregator_fn, SampleMinMaxColumns())
-                    else:
-                        setattr(output, aggregator_fn, SampleNumericalColumns())
-                setattr(getattr(output, aggregator_fn), col_name, value)
+    print(query_results)
+    for row in query_results:
+    # TODO: update this to process groupBy keys and output in the proper grouped format
+        for aggregate_name, value in row.items():
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate_name.split("_", 1)
+                # Filter out the group_by key from the results if one was provided.
+                if aggregator_fn in aggregator_map.keys():
+                    if not getattr(output, aggregator_fn):
+                        if aggregate_name in ["min", "max"]:
+                            setattr(output, aggregator_fn, SampleMinMaxColumns())
+                        else:
+                            setattr(output, aggregator_fn, SampleNumericalColumns())
+                    setattr(getattr(output, aggregator_fn), col_name, value)
     return output
 
 
@@ -437,15 +450,22 @@ async def resolve_samples_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[SampleWhereClause] = None,
-) -> SampleAggregate:
+) -> list[RowMapping]:
     """
     Aggregate values for Sample objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
-    selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.Sample, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    selections = info.selected_fields[0].selections
+    aggregate_selections = []
+    groupby_selections = []
+    for selection in selections:
+        if getattr(selection, "name") == "aggregate":
+            aggregate_selections = selection.selections
+        elif getattr(selection, "name") == "groupBy":
+            groupby_selections = selection.selections
+
+    rows = await get_aggregate_db_rows(db.Sample, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_sample_aggregate_output(rows)
     return SampleAggregate(aggregate=aggregate_output)
 

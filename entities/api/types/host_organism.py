@@ -308,10 +308,16 @@ class HostOrganismAggregateFunctions:
 Wrapper around HostOrganismAggregateFunctions
 """
 
+@strawberry.type
+class HostOrganismGroupByOptions:
+    name: Optional[str] = None
+    version: Optional[str] = None
+
 
 @strawberry.type
 class HostOrganismAggregate:
     aggregate: Optional[HostOrganismAggregateFunctions] = None
+    group_by: Optional[HostOrganismGroupByOptions] = None
 
 
 """
