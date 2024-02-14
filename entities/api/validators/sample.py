@@ -23,7 +23,6 @@ class SampleCreateInputValidator(BaseModel):
         str,
         StringConstraints(
             strip_whitespace=True,
-            pattern=r"\d",
             min_length=4,
             max_length=64,
         ),
@@ -65,7 +64,6 @@ class SampleUpdateInputValidator(BaseModel):
         str | None,
         StringConstraints(
             strip_whitespace=True,
-            pattern=r"\d",
             min_length=4,
             max_length=64,
         ),

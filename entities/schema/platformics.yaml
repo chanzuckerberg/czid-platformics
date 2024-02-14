@@ -260,7 +260,6 @@ classes:
       name:
         range: string
         required: true
-        pattern: '\d'
         annotations:
             minimum_length: 4
             maximum_length: 64
