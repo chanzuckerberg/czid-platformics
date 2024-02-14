@@ -10,21 +10,26 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
 class MetadatumCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    sample_id: Annotated[uuid.UUID | None, Field()]
-    field_name: Annotated[str | None, Field()]
-    value: Annotated[str | None, Field()]
+    sample_id: Annotated[uuid.UUID, Field()]
+    field_name: Annotated[str, StringConstraints()]
+    value: Annotated[str, StringConstraints()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class MetadatumUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    value: Annotated[str | None, Field()]
+    value: Annotated[str | None, StringConstraints()]

@@ -198,7 +198,7 @@ class Accession(EntityInterface):
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -219,7 +219,6 @@ Accession.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -282,10 +281,10 @@ class AccessionAggregateFunctions:
 
     sum: Optional[AccessionNumericalColumns] = None
     avg: Optional[AccessionNumericalColumns] = None
-    min: Optional[AccessionMinMaxColumns] = None
-    max: Optional[AccessionMinMaxColumns] = None
     stddev: Optional[AccessionNumericalColumns] = None
     variance: Optional[AccessionNumericalColumns] = None
+    min: Optional[AccessionMinMaxColumns] = None
+    max: Optional[AccessionMinMaxColumns] = None
 
 
 """
@@ -307,11 +306,11 @@ Mutation types
 
 @strawberry.input()
 class AccessionCreateInput:
-    accession_id: Optional[str] = None
-    accession_name: Optional[str] = None
-    upstream_database_id: Optional[strawberry.ID] = None
+    accession_id: str
+    accession_name: str
+    upstream_database_id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

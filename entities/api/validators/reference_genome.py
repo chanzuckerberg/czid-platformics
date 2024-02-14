@@ -10,19 +10,24 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
 class ReferenceGenomeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, Field()]
+    name: Annotated[str, StringConstraints()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class ReferenceGenomeUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, Field()]
+    name: Annotated[str | None, StringConstraints()]

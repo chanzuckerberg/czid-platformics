@@ -189,7 +189,7 @@ class MetricConsensusGenome(EntityInterface):
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -210,7 +210,6 @@ MetricConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -313,10 +312,10 @@ class MetricConsensusGenomeAggregateFunctions:
 
     sum: Optional[MetricConsensusGenomeNumericalColumns] = None
     avg: Optional[MetricConsensusGenomeNumericalColumns] = None
-    min: Optional[MetricConsensusGenomeMinMaxColumns] = None
-    max: Optional[MetricConsensusGenomeMinMaxColumns] = None
     stddev: Optional[MetricConsensusGenomeNumericalColumns] = None
     variance: Optional[MetricConsensusGenomeNumericalColumns] = None
+    min: Optional[MetricConsensusGenomeMinMaxColumns] = None
+    max: Optional[MetricConsensusGenomeMinMaxColumns] = None
 
 
 """
@@ -338,7 +337,7 @@ Mutation types
 
 @strawberry.input()
 class MetricConsensusGenomeCreateInput:
-    consensus_genome_id: Optional[strawberry.ID] = None
+    consensus_genome_id: strawberry.ID
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -355,7 +354,7 @@ class MetricConsensusGenomeCreateInput:
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """

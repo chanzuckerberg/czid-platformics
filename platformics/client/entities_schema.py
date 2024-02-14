@@ -171,11 +171,11 @@ class orderBy(sgqlc.types.Enum):
 class AccessionCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('accession_id', 'accession_name', 'upstream_database_id', 'producing_run_id', 'collection_id')
-    accession_id = sgqlc.types.Field(String, graphql_name='accessionId')
-    accession_name = sgqlc.types.Field(String, graphql_name='accessionName')
-    upstream_database_id = sgqlc.types.Field(ID, graphql_name='upstreamDatabaseId')
+    accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='accessionId')
+    accession_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='accessionName')
+    upstream_database_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='upstreamDatabaseId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class AccessionOrderByClause(sgqlc.types.Input):
@@ -238,9 +238,9 @@ class BoolComparators(sgqlc.types.Input):
 class BulkDownloadCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('download_type', 'producing_run_id', 'collection_id')
-    download_type = sgqlc.types.Field(BulkDownloadType, graphql_name='downloadType')
+    download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name='downloadType')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class BulkDownloadOrderByClause(sgqlc.types.Input):
@@ -292,12 +292,12 @@ class BulkDownloadWhereClauseMutations(sgqlc.types.Input):
 class ConsensusGenomeCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('taxon_id', 'sequence_read_id', 'reference_genome_id', 'accession_id', 'producing_run_id', 'collection_id')
-    taxon_id = sgqlc.types.Field(ID, graphql_name='taxonId')
-    sequence_read_id = sgqlc.types.Field(ID, graphql_name='sequenceReadId')
+    taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='taxonId')
+    sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='sequenceReadId')
     reference_genome_id = sgqlc.types.Field(ID, graphql_name='referenceGenomeId')
     accession_id = sgqlc.types.Field(ID, graphql_name='accessionId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class ConsensusGenomeOrderByClause(sgqlc.types.Input):
@@ -430,7 +430,7 @@ class GenomicRangeCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('producing_run_id', 'collection_id')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class GenomicRangeOrderByClause(sgqlc.types.Input):
@@ -481,12 +481,12 @@ class HostOrganismCategoryEnumComparators(sgqlc.types.Input):
 class HostOrganismCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('name', 'version', 'category', 'is_deuterostome', 'producing_run_id', 'collection_id')
-    name = sgqlc.types.Field(String, graphql_name='name')
-    version = sgqlc.types.Field(String, graphql_name='version')
-    category = sgqlc.types.Field(HostOrganismCategory, graphql_name='category')
-    is_deuterostome = sgqlc.types.Field(Boolean, graphql_name='isDeuterostome')
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
+    version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='version')
+    category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name='category')
+    is_deuterostome = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name='isDeuterostome')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class HostOrganismOrderByClause(sgqlc.types.Input):
@@ -541,12 +541,12 @@ class HostOrganismWhereClauseMutations(sgqlc.types.Input):
 class IndexFileCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('name', 'version', 'upstream_database_id', 'host_organism_id', 'producing_run_id', 'collection_id')
-    name = sgqlc.types.Field(IndexTypes, graphql_name='name')
-    version = sgqlc.types.Field(String, graphql_name='version')
+    name = sgqlc.types.Field(sgqlc.types.non_null(IndexTypes), graphql_name='name')
+    version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='version')
     upstream_database_id = sgqlc.types.Field(ID, graphql_name='upstreamDatabaseId')
     host_organism_id = sgqlc.types.Field(ID, graphql_name='hostOrganismId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class IndexFileOrderByClause(sgqlc.types.Input):
@@ -625,11 +625,11 @@ class IntComparators(sgqlc.types.Input):
 class MetadatumCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('sample_id', 'field_name', 'value', 'producing_run_id', 'collection_id')
-    sample_id = sgqlc.types.Field(ID, graphql_name='sampleId')
-    field_name = sgqlc.types.Field(String, graphql_name='fieldName')
-    value = sgqlc.types.Field(String, graphql_name='value')
+    sample_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='sampleId')
+    field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='fieldName')
+    value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='value')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class MetadatumOrderByClause(sgqlc.types.Input):
@@ -677,7 +677,7 @@ class MetadatumWhereClauseMutations(sgqlc.types.Input):
 class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('consensus_genome_id', 'reference_genome_length', 'percent_genome_called', 'percent_identity', 'gc_percent', 'total_reads', 'mapped_reads', 'ref_snps', 'n_actg', 'n_missing', 'n_ambiguous', 'coverage_depth', 'coverage_breadth', 'coverage_bin_size', 'coverage_total_length', 'coverage_viz', 'producing_run_id', 'collection_id')
-    consensus_genome_id = sgqlc.types.Field(ID, graphql_name='consensusGenomeId')
+    consensus_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='consensusGenomeId')
     reference_genome_length = sgqlc.types.Field(Float, graphql_name='referenceGenomeLength')
     percent_genome_called = sgqlc.types.Field(Float, graphql_name='percentGenomeCalled')
     percent_identity = sgqlc.types.Field(Float, graphql_name='percentIdentity')
@@ -694,7 +694,7 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     coverage_total_length = sgqlc.types.Field(Int, graphql_name='coverageTotalLength')
     coverage_viz = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))), graphql_name='coverageViz')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class MetricConsensusGenomeOrderByClause(sgqlc.types.Input):
@@ -775,9 +775,9 @@ class NucleicAcidEnumComparators(sgqlc.types.Input):
 class PhylogeneticTreeCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('format', 'producing_run_id', 'collection_id')
-    format = sgqlc.types.Field(PhylogeneticTreeFormat, graphql_name='format')
+    format = sgqlc.types.Field(sgqlc.types.non_null(PhylogeneticTreeFormat), graphql_name='format')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class PhylogeneticTreeFormatEnumComparators(sgqlc.types.Input):
@@ -835,9 +835,9 @@ class PhylogeneticTreeWhereClauseMutations(sgqlc.types.Input):
 class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('name', 'producing_run_id', 'collection_id')
-    name = sgqlc.types.Field(String, graphql_name='name')
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class ReferenceGenomeOrderByClause(sgqlc.types.Input):
@@ -883,15 +883,15 @@ class SampleCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('rails_sample_id', 'name', 'sample_type', 'water_control', 'collection_date', 'collection_location', 'notes', 'host_organism_id', 'producing_run_id', 'collection_id')
     rails_sample_id = sgqlc.types.Field(Int, graphql_name='railsSampleId')
-    name = sgqlc.types.Field(String, graphql_name='name')
-    sample_type = sgqlc.types.Field(String, graphql_name='sampleType')
-    water_control = sgqlc.types.Field(Boolean, graphql_name='waterControl')
-    collection_date = sgqlc.types.Field(DateTime, graphql_name='collectionDate')
-    collection_location = sgqlc.types.Field(String, graphql_name='collectionLocation')
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
+    sample_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='sampleType')
+    water_control = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name='waterControl')
+    collection_date = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='collectionDate')
+    collection_location = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='collectionLocation')
     notes = sgqlc.types.Field(String, graphql_name='notes')
     host_organism_id = sgqlc.types.Field(ID, graphql_name='hostOrganismId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class SampleOrderByClause(sgqlc.types.Input):
@@ -972,14 +972,14 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     __field_names__ = ('sample_id', 'protocol', 'technology', 'nucleic_acid', 'clearlabs_export', 'medaka_model', 'taxon_id', 'primer_file_id', 'producing_run_id', 'collection_id')
     sample_id = sgqlc.types.Field(ID, graphql_name='sampleId')
     protocol = sgqlc.types.Field(SequencingProtocol, graphql_name='protocol')
-    technology = sgqlc.types.Field(SequencingTechnology, graphql_name='technology')
-    nucleic_acid = sgqlc.types.Field(NucleicAcid, graphql_name='nucleicAcid')
-    clearlabs_export = sgqlc.types.Field(Boolean, graphql_name='clearlabsExport')
+    technology = sgqlc.types.Field(sgqlc.types.non_null(SequencingTechnology), graphql_name='technology')
+    nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name='nucleicAcid')
+    clearlabs_export = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name='clearlabsExport')
     medaka_model = sgqlc.types.Field(String, graphql_name='medakaModel')
     taxon_id = sgqlc.types.Field(ID, graphql_name='taxonId')
     primer_file_id = sgqlc.types.Field(ID, graphql_name='primerFileId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class SequencingReadOrderByClause(sgqlc.types.Input):
@@ -1079,11 +1079,11 @@ class TaxonCreateInput(sgqlc.types.Input):
     wikipedia_id = sgqlc.types.Field(String, graphql_name='wikipediaId')
     description = sgqlc.types.Field(String, graphql_name='description')
     common_name = sgqlc.types.Field(String, graphql_name='commonName')
-    name = sgqlc.types.Field(String, graphql_name='name')
-    is_phage = sgqlc.types.Field(Boolean, graphql_name='isPhage')
-    upstream_database_id = sgqlc.types.Field(ID, graphql_name='upstreamDatabaseId')
-    upstream_database_identifier = sgqlc.types.Field(String, graphql_name='upstreamDatabaseIdentifier')
-    level = sgqlc.types.Field(TaxonLevel, graphql_name='level')
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
+    is_phage = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name='isPhage')
+    upstream_database_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='upstreamDatabaseId')
+    upstream_database_identifier = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='upstreamDatabaseIdentifier')
+    level = sgqlc.types.Field(sgqlc.types.non_null(TaxonLevel), graphql_name='level')
     tax_parent_id = sgqlc.types.Field(ID, graphql_name='taxParentId')
     tax_subspecies_id = sgqlc.types.Field(ID, graphql_name='taxSubspeciesId')
     tax_species_id = sgqlc.types.Field(ID, graphql_name='taxSpeciesId')
@@ -1095,7 +1095,7 @@ class TaxonCreateInput(sgqlc.types.Input):
     tax_kingdom_id = sgqlc.types.Field(ID, graphql_name='taxKingdomId')
     tax_superkingdom_id = sgqlc.types.Field(ID, graphql_name='taxSuperkingdomId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class TaxonLevelEnumComparators(sgqlc.types.Input):
@@ -1206,9 +1206,9 @@ class UUIDComparators(sgqlc.types.Input):
 class UpstreamDatabaseCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('name', 'producing_run_id', 'collection_id')
-    name = sgqlc.types.Field(String, graphql_name='name')
+    name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
-    collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class UpstreamDatabaseOrderByClause(sgqlc.types.Input):
@@ -1276,13 +1276,13 @@ class AccessionAggregate(sgqlc.types.Type):
 
 class AccessionAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('AccessionNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('AccessionNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('AccessionMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('AccessionMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('AccessionNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('AccessionNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('AccessionMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('AccessionMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(AccessionCountColumns, graphql_name='columns', default=None)),
@@ -1331,13 +1331,13 @@ class BulkDownloadAggregate(sgqlc.types.Type):
 
 class BulkDownloadAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('BulkDownloadNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('BulkDownloadNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('BulkDownloadMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('BulkDownloadMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('BulkDownloadNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('BulkDownloadNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('BulkDownloadMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('BulkDownloadMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(BulkDownloadCountColumns, graphql_name='columns', default=None)),
@@ -1370,13 +1370,13 @@ class ConsensusGenomeAggregate(sgqlc.types.Type):
 
 class ConsensusGenomeAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('ConsensusGenomeNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('ConsensusGenomeNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('ConsensusGenomeMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('ConsensusGenomeMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('ConsensusGenomeNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('ConsensusGenomeNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('ConsensusGenomeMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('ConsensusGenomeMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(ConsensusGenomeCountColumns, graphql_name='columns', default=None)),
@@ -1457,13 +1457,13 @@ class GenomicRangeAggregate(sgqlc.types.Type):
 
 class GenomicRangeAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('GenomicRangeNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('GenomicRangeNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('GenomicRangeMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('GenomicRangeMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('GenomicRangeNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('GenomicRangeNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('GenomicRangeMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('GenomicRangeMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(GenomicRangeCountColumns, graphql_name='columns', default=None)),
@@ -1496,13 +1496,13 @@ class HostOrganismAggregate(sgqlc.types.Type):
 
 class HostOrganismAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('HostOrganismNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('HostOrganismNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('HostOrganismMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('HostOrganismMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('HostOrganismNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('HostOrganismNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('HostOrganismMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('HostOrganismMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(HostOrganismCountColumns, graphql_name='columns', default=None)),
@@ -1537,13 +1537,13 @@ class IndexFileAggregate(sgqlc.types.Type):
 
 class IndexFileAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('IndexFileNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('IndexFileNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('IndexFileMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('IndexFileMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('IndexFileNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('IndexFileNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('IndexFileMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('IndexFileMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(IndexFileCountColumns, graphql_name='columns', default=None)),
@@ -1591,13 +1591,13 @@ class MetadatumAggregate(sgqlc.types.Type):
 
 class MetadatumAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('MetadatumNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('MetadatumNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('MetadatumMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('MetadatumMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('MetadatumNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('MetadatumNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('MetadatumMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('MetadatumMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(MetadatumCountColumns, graphql_name='columns', default=None)),
@@ -1646,13 +1646,13 @@ class MetricConsensusGenomeAggregate(sgqlc.types.Type):
 
 class MetricConsensusGenomeAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('MetricConsensusGenomeNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('MetricConsensusGenomeNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('MetricConsensusGenomeMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('MetricConsensusGenomeMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('MetricConsensusGenomeNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('MetricConsensusGenomeNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('MetricConsensusGenomeMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('MetricConsensusGenomeMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(MetricConsensusGenomeCountColumns, graphql_name='columns', default=None)),
@@ -1929,13 +1929,13 @@ class PhylogeneticTreeAggregate(sgqlc.types.Type):
 
 class PhylogeneticTreeAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('PhylogeneticTreeNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('PhylogeneticTreeNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('PhylogeneticTreeMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('PhylogeneticTreeMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('PhylogeneticTreeNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('PhylogeneticTreeNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('PhylogeneticTreeMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('PhylogeneticTreeMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(PhylogeneticTreeCountColumns, graphql_name='columns', default=None)),
@@ -2111,13 +2111,13 @@ class ReferenceGenomeAggregate(sgqlc.types.Type):
 
 class ReferenceGenomeAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('ReferenceGenomeNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('ReferenceGenomeNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('ReferenceGenomeMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('ReferenceGenomeMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('ReferenceGenomeNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('ReferenceGenomeNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('ReferenceGenomeMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('ReferenceGenomeMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(ReferenceGenomeCountColumns, graphql_name='columns', default=None)),
@@ -2151,13 +2151,13 @@ class SampleAggregate(sgqlc.types.Type):
 
 class SampleAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('SampleNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('SampleNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('SampleMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('SampleMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('SampleNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('SampleNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('SampleMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('SampleMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(SampleCountColumns, graphql_name='columns', default=None)),
@@ -2211,13 +2211,13 @@ class SequencingReadAggregate(sgqlc.types.Type):
 
 class SequencingReadAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('SequencingReadNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('SequencingReadNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('SequencingReadMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('SequencingReadMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('SequencingReadNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('SequencingReadNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('SequencingReadMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('SequencingReadMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(SequencingReadCountColumns, graphql_name='columns', default=None)),
@@ -2275,13 +2275,13 @@ class TaxonAggregate(sgqlc.types.Type):
 
 class TaxonAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('TaxonNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('TaxonNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('TaxonMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('TaxonMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('TaxonNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('TaxonNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('TaxonMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('TaxonMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(TaxonCountColumns, graphql_name='columns', default=None)),
@@ -2333,13 +2333,13 @@ class UpstreamDatabaseAggregate(sgqlc.types.Type):
 
 class UpstreamDatabaseAggregateFunctions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('sum', 'avg', 'min', 'max', 'stddev', 'variance', 'count')
+    __field_names__ = ('sum', 'avg', 'stddev', 'variance', 'min', 'max', 'count')
     sum = sgqlc.types.Field('UpstreamDatabaseNumericalColumns', graphql_name='sum')
     avg = sgqlc.types.Field('UpstreamDatabaseNumericalColumns', graphql_name='avg')
-    min = sgqlc.types.Field('UpstreamDatabaseMinMaxColumns', graphql_name='min')
-    max = sgqlc.types.Field('UpstreamDatabaseMinMaxColumns', graphql_name='max')
     stddev = sgqlc.types.Field('UpstreamDatabaseNumericalColumns', graphql_name='stddev')
     variance = sgqlc.types.Field('UpstreamDatabaseNumericalColumns', graphql_name='variance')
+    min = sgqlc.types.Field('UpstreamDatabaseMinMaxColumns', graphql_name='min')
+    max = sgqlc.types.Field('UpstreamDatabaseMinMaxColumns', graphql_name='max')
     count = sgqlc.types.Field(Int, graphql_name='count', args=sgqlc.types.ArgDict((
         ('distinct', sgqlc.types.Arg(Boolean, graphql_name='distinct', default=False)),
         ('columns', sgqlc.types.Arg(UpstreamDatabaseCountColumns, graphql_name='columns', default=None)),
@@ -2389,7 +2389,7 @@ class Accession(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2407,7 +2407,7 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(FileWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2454,7 +2454,7 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(FileWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2484,7 +2484,7 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(SequencingReadWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2531,7 +2531,7 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(SampleWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2560,7 +2560,7 @@ class IndexFile(sgqlc.types.Type, EntityInterface, Node):
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(HostOrganismOrderByClause)), graphql_name='orderBy', default=())),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2579,7 +2579,7 @@ class Metadatum(sgqlc.types.Type, EntityInterface, Node):
     )
     field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='fieldName')
     value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='value')
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2611,7 +2611,7 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     coverage_bin_size = sgqlc.types.Field(Float, graphql_name='coverageBinSize')
     coverage_total_length = sgqlc.types.Field(Int, graphql_name='coverageTotalLength')
     coverage_viz = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))), graphql_name='coverageViz')
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2629,7 +2629,7 @@ class PhylogeneticTree(sgqlc.types.Type, EntityInterface, Node):
 ))
     )
     format = sgqlc.types.Field(sgqlc.types.non_null(PhylogeneticTreeFormat), graphql_name='format')
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2660,7 +2660,7 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2710,7 +2710,7 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(MetadatumWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2765,7 +2765,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2815,7 +2815,7 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(SequencingReadWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
@@ -2867,7 +2867,7 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
         ('where', sgqlc.types.Arg(AccessionWhereClause, graphql_name='where', default=None)),
 ))
     )
-    producing_run_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='producingRunId')
+    producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')

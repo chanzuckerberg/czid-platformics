@@ -14,7 +14,7 @@ import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 {# Macro for mutations to output X or Optional[X] #}
@@ -24,19 +24,34 @@ from typing_extensions import Annotated
     {%- endif %}
 {%- endmacro %}
 
-{% macro getInputFields(fields) -%}
+{% macro getStringConstraints(attr) -%}
+    {%- if attr.pattern %}
+    pattern=r'{{attr.pattern}}',
+    {%- endif %}
+{%- endmacro %}
+
+{% macro getNumericConstraints(attr) -%}
+    {%- if attr.minimum_value is not none %}
+    gte={{attr.minimum_value}},
+    {%- endif %}
+    {%- if attr.maximum_value is not none %}
+    lte={{attr.maximum_value}},
+    {%- endif %}
+{%- endmacro %}
+
+{% macro getInputFields(action, fields) -%}
     {%- for attr in fields %}
         {%- if attr.type == "uuid" %} {# Don't allow setting UUID fields #}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "uuid.UUID", attr.required) }}, Field()]
         {%- elif attr.type == "string" %}
-    {{ attr.name }}: Annotated[{{ getTypeValidation(action, "str", attr.required) }}, Field()]
+    {{ attr.name }}: Annotated[{{ getTypeValidation(action, "str", attr.required) }}, StringConstraints({{ getStringConstraints(attr) }})]
         {%- elif attr.is_enum %}
 # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
 #    {{ attr.name }}: Annotated[{{ getTypeValidation(action, attr.type, attr.required) }}, Field()]
         {%- elif attr.type == "integer" %}
-    {{ attr.name }}: Annotated[{{ getTypeValidation(action, "int", attr.required) }}, Field()]
+    {{ attr.name }}: Annotated[{{ getTypeValidation(action, "int", attr.required) }}, Field({{getNumericConstraints(attr)}})]
         {%- elif attr.type == "float" %}
-    {{ attr.name }}: Annotated[{{ getTypeValidation(action, "float", attr.required) }}, Field()]
+    {{ attr.name }}: Annotated[{{ getTypeValidation(action, "float", attr.required) }}, Field({{getNumericConstraints(attr)}})]
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "bool", attr.required) }}, Field()]
         {%- elif attr.type == "date" %}
@@ -54,12 +69,12 @@ from typing_extensions import Annotated
 class {{ cls.name }}CreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    {{- getInputFields(cls.create_fields) }}
+    {{- getInputFields("Create", cls.create_fields) }}
 {%- endif %}
 
 {%- if cls.mutable_fields %}
 class {{ cls.name }}UpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    {{- getInputFields(cls.mutable_fields) }}
+    {{- getInputFields("Update", cls.mutable_fields) }}
 {%- endif %}

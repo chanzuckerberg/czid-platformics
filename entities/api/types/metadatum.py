@@ -141,7 +141,7 @@ class Metadatum(EntityInterface):
     field_name: str
     value: str
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -162,7 +162,6 @@ Metadatum.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -224,10 +223,10 @@ class MetadatumAggregateFunctions:
 
     sum: Optional[MetadatumNumericalColumns] = None
     avg: Optional[MetadatumNumericalColumns] = None
-    min: Optional[MetadatumMinMaxColumns] = None
-    max: Optional[MetadatumMinMaxColumns] = None
     stddev: Optional[MetadatumNumericalColumns] = None
     variance: Optional[MetadatumNumericalColumns] = None
+    min: Optional[MetadatumMinMaxColumns] = None
+    max: Optional[MetadatumMinMaxColumns] = None
 
 
 """
@@ -249,11 +248,11 @@ Mutation types
 
 @strawberry.input()
 class MetadatumCreateInput:
-    sample_id: Optional[strawberry.ID] = None
-    field_name: Optional[str] = None
-    value: Optional[str] = None
+    sample_id: strawberry.ID
+    field_name: str
+    value: str
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

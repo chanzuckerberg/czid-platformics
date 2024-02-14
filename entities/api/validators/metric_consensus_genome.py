@@ -17,12 +17,18 @@ from typing_extensions import Annotated
 class MetricConsensusGenomeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    consensus_genome_id: Annotated[uuid.UUID | None, Field()]
+    consensus_genome_id: Annotated[uuid.UUID, Field()]
     reference_genome_length: Annotated[float | None, Field()]
     percent_genome_called: Annotated[float | None, Field()]
     percent_identity: Annotated[float | None, Field()]
     gc_percent: Annotated[float | None, Field()]
-    total_reads: Annotated[int | None, Field()]
+    total_reads: Annotated[
+        int | None,
+        Field(
+            gte=0,
+            lte=999999999999,
+        ),
+    ]
     mapped_reads: Annotated[int | None, Field()]
     ref_snps: Annotated[int | None, Field()]
     n_actg: Annotated[int | None, Field()]
@@ -33,4 +39,9 @@ class MetricConsensusGenomeCreateInputValidator(BaseModel):
     coverage_bin_size: Annotated[float | None, Field()]
     coverage_total_length: Annotated[int | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]

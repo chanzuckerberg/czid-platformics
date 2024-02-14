@@ -274,7 +274,7 @@ class SequencingRead(EntityInterface):
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -295,7 +295,6 @@ SequencingRead.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -366,10 +365,10 @@ class SequencingReadAggregateFunctions:
 
     sum: Optional[SequencingReadNumericalColumns] = None
     avg: Optional[SequencingReadNumericalColumns] = None
-    min: Optional[SequencingReadMinMaxColumns] = None
-    max: Optional[SequencingReadMinMaxColumns] = None
     stddev: Optional[SequencingReadNumericalColumns] = None
     variance: Optional[SequencingReadNumericalColumns] = None
+    min: Optional[SequencingReadMinMaxColumns] = None
+    max: Optional[SequencingReadMinMaxColumns] = None
 
 
 """
@@ -393,14 +392,14 @@ Mutation types
 class SequencingReadCreateInput:
     sample_id: Optional[strawberry.ID] = None
     protocol: Optional[SequencingProtocol] = None
-    technology: Optional[SequencingTechnology] = None
-    nucleic_acid: Optional[NucleicAcid] = None
-    clearlabs_export: Optional[bool] = None
+    technology: SequencingTechnology
+    nucleic_acid: NucleicAcid
+    clearlabs_export: bool
     medaka_model: Optional[str] = None
     taxon_id: Optional[strawberry.ID] = None
     primer_file_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

@@ -252,7 +252,7 @@ class Sample(EntityInterface):
         Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -273,7 +273,6 @@ Sample.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -347,10 +346,10 @@ class SampleAggregateFunctions:
 
     sum: Optional[SampleNumericalColumns] = None
     avg: Optional[SampleNumericalColumns] = None
-    min: Optional[SampleMinMaxColumns] = None
-    max: Optional[SampleMinMaxColumns] = None
     stddev: Optional[SampleNumericalColumns] = None
     variance: Optional[SampleNumericalColumns] = None
+    min: Optional[SampleMinMaxColumns] = None
+    max: Optional[SampleMinMaxColumns] = None
 
 
 """
@@ -373,15 +372,15 @@ Mutation types
 @strawberry.input()
 class SampleCreateInput:
     rails_sample_id: Optional[int] = None
-    name: Optional[str] = None
-    sample_type: Optional[str] = None
-    water_control: Optional[bool] = None
-    collection_date: Optional[datetime.datetime] = None
-    collection_location: Optional[str] = None
+    name: str
+    sample_type: str
+    water_control: bool
+    collection_date: datetime.datetime
+    collection_location: str
     notes: Optional[str] = None
     host_organism_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

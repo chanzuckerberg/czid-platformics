@@ -201,7 +201,7 @@ class IndexFile(EntityInterface):
         Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]
     ] = load_host_organism_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -222,7 +222,6 @@ IndexFile.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -285,10 +284,10 @@ class IndexFileAggregateFunctions:
 
     sum: Optional[IndexFileNumericalColumns] = None
     avg: Optional[IndexFileNumericalColumns] = None
-    min: Optional[IndexFileMinMaxColumns] = None
-    max: Optional[IndexFileMinMaxColumns] = None
     stddev: Optional[IndexFileNumericalColumns] = None
     variance: Optional[IndexFileNumericalColumns] = None
+    min: Optional[IndexFileMinMaxColumns] = None
+    max: Optional[IndexFileMinMaxColumns] = None
 
 
 """
@@ -310,12 +309,12 @@ Mutation types
 
 @strawberry.input()
 class IndexFileCreateInput:
-    name: Optional[IndexTypes] = None
-    version: Optional[str] = None
+    name: IndexTypes
+    version: str
     upstream_database_id: Optional[strawberry.ID] = None
     host_organism_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

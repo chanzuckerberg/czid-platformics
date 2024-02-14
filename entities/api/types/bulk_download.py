@@ -144,7 +144,7 @@ class BulkDownload(EntityInterface):
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -165,7 +165,6 @@ BulkDownload.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -226,10 +225,10 @@ class BulkDownloadAggregateFunctions:
 
     sum: Optional[BulkDownloadNumericalColumns] = None
     avg: Optional[BulkDownloadNumericalColumns] = None
-    min: Optional[BulkDownloadMinMaxColumns] = None
-    max: Optional[BulkDownloadMinMaxColumns] = None
     stddev: Optional[BulkDownloadNumericalColumns] = None
     variance: Optional[BulkDownloadNumericalColumns] = None
+    min: Optional[BulkDownloadMinMaxColumns] = None
+    max: Optional[BulkDownloadMinMaxColumns] = None
 
 
 """
@@ -251,9 +250,9 @@ Mutation types
 
 @strawberry.input()
 class BulkDownloadCreateInput:
-    download_type: Optional[BulkDownloadType] = None
+    download_type: BulkDownloadType
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """

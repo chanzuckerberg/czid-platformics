@@ -44,6 +44,23 @@ class FieldWrapper:
     def required(self) -> bool:
         return self.wrapped_field.required or False
 
+    # Validation attributes
+    @cached_property
+    def minimum_value(self) -> float | int | None:
+        if self.wrapped_field.minimum_value is not None:
+            return self.wrapped_field.minimum_value
+        return None
+
+    @cached_property
+    def maximum_value(self) -> float | int | None:
+        if self.wrapped_field.maximum_value is not None:
+            return self.wrapped_field.maximum_value
+        return None
+
+    @cached_property
+    def pattern(self) -> str | None:
+        return self.wrapped_field.pattern or None
+
     # Whether these fields should be exposed in the GQL API
     @cached_property
     def hidden(self) -> bool:
@@ -235,6 +252,10 @@ class EntityWrapper:
     @cached_property
     def visible_fields(self) -> list[FieldWrapper]:
         return [field for field in self.all_fields if not field.hidden]
+
+    @cached_property
+    def numeric_fields(self) -> list[FieldWrapper]:
+        return [field for field in self.visible_fields if field.type in ["integer", "float"]]
 
     @cached_property
     def user_create_fields(self) -> list[FieldWrapper]:

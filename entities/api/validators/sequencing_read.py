@@ -10,7 +10,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
@@ -21,15 +21,20 @@ class SequencingReadCreateInputValidator(BaseModel):
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    protocol: Annotated[ SequencingProtocol | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    technology: Annotated[ SequencingTechnology | None, Field()]
+    #    technology: Annotated[ SequencingTechnology, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    nucleic_acid: Annotated[ NucleicAcid | None, Field()]
-    clearlabs_export: Annotated[bool | None, Field()]
-    medaka_model: Annotated[str | None, Field()]
+    #    nucleic_acid: Annotated[ NucleicAcid, Field()]
+    clearlabs_export: Annotated[bool, Field()]
+    medaka_model: Annotated[str | None, StringConstraints()]
     taxon_id: Annotated[uuid.UUID | None, Field()]
     primer_file_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class SequencingReadUpdateInputValidator(BaseModel):
@@ -38,4 +43,4 @@ class SequencingReadUpdateInputValidator(BaseModel):
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    nucleic_acid: Annotated[ NucleicAcid | None, Field()]
     clearlabs_export: Annotated[bool | None, Field()]
-    medaka_model: Annotated[str | None, Field()]
+    medaka_model: Annotated[str | None, StringConstraints()]

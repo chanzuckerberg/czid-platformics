@@ -18,6 +18,11 @@ class BulkDownloadCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    download_type: Annotated[ BulkDownloadType | None, Field()]
+    #    download_type: Annotated[ BulkDownloadType, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]

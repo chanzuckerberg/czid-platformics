@@ -92,12 +92,12 @@ classes:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
       owner_user_id:
-        range: int
+        range: integer
         minimum_value: 0
         readonly: true
         required: true
       collection_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         annotations:
@@ -149,7 +149,7 @@ classes:
       compression_type:
        range: string
       size:
-        range: int
+        range: integer
         minimum_value: 0
 
   Sample:

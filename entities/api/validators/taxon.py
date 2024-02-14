@@ -10,22 +10,22 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
 class TaxonCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    wikipedia_id: Annotated[str | None, Field()]
-    description: Annotated[str | None, Field()]
-    common_name: Annotated[str | None, Field()]
-    name: Annotated[str | None, Field()]
-    is_phage: Annotated[bool | None, Field()]
-    upstream_database_id: Annotated[uuid.UUID | None, Field()]
-    upstream_database_identifier: Annotated[str | None, Field()]
+    wikipedia_id: Annotated[str | None, StringConstraints()]
+    description: Annotated[str | None, StringConstraints()]
+    common_name: Annotated[str | None, StringConstraints()]
+    name: Annotated[str, StringConstraints()]
+    is_phage: Annotated[bool, Field()]
+    upstream_database_id: Annotated[uuid.UUID, Field()]
+    upstream_database_identifier: Annotated[str, StringConstraints()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    level: Annotated[ TaxonLevel | None, Field()]
+    #    level: Annotated[ TaxonLevel, Field()]
     tax_parent_id: Annotated[uuid.UUID | None, Field()]
     tax_subspecies_id: Annotated[uuid.UUID | None, Field()]
     tax_species_id: Annotated[uuid.UUID | None, Field()]
@@ -37,15 +37,20 @@ class TaxonCreateInputValidator(BaseModel):
     tax_kingdom_id: Annotated[uuid.UUID | None, Field()]
     tax_superkingdom_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class TaxonUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    wikipedia_id: Annotated[str | None, Field()]
-    description: Annotated[str | None, Field()]
-    common_name: Annotated[str | None, Field()]
+    wikipedia_id: Annotated[str | None, StringConstraints()]
+    description: Annotated[str | None, StringConstraints()]
+    common_name: Annotated[str | None, StringConstraints()]
     is_phage: Annotated[bool | None, Field()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    level: Annotated[ TaxonLevel | None, Field()]

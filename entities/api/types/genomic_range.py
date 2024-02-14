@@ -191,7 +191,7 @@ class GenomicRange(EntityInterface):
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -212,7 +212,6 @@ GenomicRange.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -273,10 +272,10 @@ class GenomicRangeAggregateFunctions:
 
     sum: Optional[GenomicRangeNumericalColumns] = None
     avg: Optional[GenomicRangeNumericalColumns] = None
-    min: Optional[GenomicRangeMinMaxColumns] = None
-    max: Optional[GenomicRangeMinMaxColumns] = None
     stddev: Optional[GenomicRangeNumericalColumns] = None
     variance: Optional[GenomicRangeNumericalColumns] = None
+    min: Optional[GenomicRangeMinMaxColumns] = None
+    max: Optional[GenomicRangeMinMaxColumns] = None
 
 
 """
@@ -299,7 +298,7 @@ Mutation types
 @strawberry.input()
 class GenomicRangeCreateInput:
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """

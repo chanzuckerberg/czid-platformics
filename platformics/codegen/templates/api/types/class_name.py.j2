@@ -275,18 +275,20 @@ Aggregation types
 ------------------------------------------------------------------------------
 """
 
+{%- if cls.numeric_fields %}
 """
 Define columns that support numerical aggregations
 """
 @strawberry.type
 class {{ cls.name }}NumericalColumns:
-    {%- for attr in cls.visible_fields %}
+    {%- for attr in cls.numeric_fields %}
         {%- if attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", False) }}
         {%- endif %}
     {%- endfor %}
+{%- endif %}
 
 """
 Define columns that support min/max aggregations
@@ -324,12 +326,14 @@ class {{ cls.name }}AggregateFunctions:
     def count(self, distinct: Optional[bool] = False, columns: Optional[{{ cls.name }}CountColumns] = None) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
         return self.count # type: ignore
+    {%- if cls.numeric_fields %}
     sum: Optional[{{ cls.name }}NumericalColumns] = None
     avg: Optional[{{ cls.name }}NumericalColumns] = None
-    min: Optional[{{ cls.name }}MinMaxColumns] = None
-    max: Optional[{{ cls.name }}MinMaxColumns] = None
     stddev: Optional[{{ cls.name }}NumericalColumns] = None
     variance: Optional[{{ cls.name }}NumericalColumns] = None
+    {%- endif %}
+    min: Optional[{{ cls.name }}MinMaxColumns] = None
+    max: Optional[{{ cls.name }}MinMaxColumns] = None
 
 """
 Wrapper around {{ cls.name }}AggregateFunctions
@@ -350,7 +354,7 @@ Mutation types
     {%- endif %}
 {%- endmacro %}
 
-{% macro getInputFields(fields) -%}
+{% macro getInputFields(action, fields) -%}
     {%- for attr in fields %}
         {%- if attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
@@ -380,13 +384,13 @@ Mutation types
 {%- if cls.create_fields %}
 @strawberry.input()
 class {{ cls.name }}CreateInput:
-    {{- getInputFields(cls.create_fields) }}
+    {{- getInputFields("Create", cls.create_fields) }}
 {%- endif %}
 
 {%- if cls.mutable_fields %}
 @strawberry.input()
 class {{ cls.name }}UpdateInput:
-    {{- getInputFields(cls.mutable_fields) }}
+    {{- getInputFields("Update", cls.mutable_fields) }}
 {%- endif %}
 
 """
@@ -425,8 +429,10 @@ def format_{{ cls.snake_name }}_aggregate_output(query_results: RowMapping) -> {
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, {{ cls.name }}MinMaxColumns())
+                   {%- if cls.numeric_fields %}
                     else:
                         setattr(output, aggregator_fn, {{ cls.name }}NumericalColumns())
+                   {%- endif %}
                 setattr(getattr(output, aggregator_fn), col_name, value)
     return output
 

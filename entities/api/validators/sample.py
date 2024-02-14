@@ -11,7 +11,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
@@ -19,23 +19,38 @@ class SampleCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     rails_sample_id: Annotated[int | None, Field()]
-    name: Annotated[str | None, Field()]
-    sample_type: Annotated[str | None, Field()]
-    water_control: Annotated[bool | None, Field()]
-    collection_date: Annotated[datetime.datetime | None, Field()]
-    collection_location: Annotated[str | None, Field()]
-    notes: Annotated[str | None, Field()]
+    name: Annotated[
+        str,
+        StringConstraints(
+            pattern=r".*{4,64}",
+        ),
+    ]
+    sample_type: Annotated[str, StringConstraints()]
+    water_control: Annotated[bool, Field()]
+    collection_date: Annotated[datetime.datetime, Field()]
+    collection_location: Annotated[str, StringConstraints()]
+    notes: Annotated[str | None, StringConstraints()]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class SampleUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, Field()]
-    sample_type: Annotated[str | None, Field()]
+    name: Annotated[
+        str | None,
+        StringConstraints(
+            pattern=r".*{4,64}",
+        ),
+    ]
+    sample_type: Annotated[str | None, StringConstraints()]
     water_control: Annotated[bool | None, Field()]
     collection_date: Annotated[datetime.datetime | None, Field()]
-    collection_location: Annotated[str | None, Field()]
-    notes: Annotated[str | None, Field()]
+    collection_location: Annotated[str | None, StringConstraints()]
+    notes: Annotated[str | None, StringConstraints()]

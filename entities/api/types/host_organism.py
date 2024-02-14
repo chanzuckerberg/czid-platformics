@@ -245,7 +245,7 @@ class HostOrganism(EntityInterface):
         Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
     ] = load_sample_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -266,7 +266,6 @@ HostOrganism.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -334,10 +333,10 @@ class HostOrganismAggregateFunctions:
 
     sum: Optional[HostOrganismNumericalColumns] = None
     avg: Optional[HostOrganismNumericalColumns] = None
-    min: Optional[HostOrganismMinMaxColumns] = None
-    max: Optional[HostOrganismMinMaxColumns] = None
     stddev: Optional[HostOrganismNumericalColumns] = None
     variance: Optional[HostOrganismNumericalColumns] = None
+    min: Optional[HostOrganismMinMaxColumns] = None
+    max: Optional[HostOrganismMinMaxColumns] = None
 
 
 """
@@ -359,12 +358,12 @@ Mutation types
 
 @strawberry.input()
 class HostOrganismCreateInput:
-    name: Optional[str] = None
-    version: Optional[str] = None
-    category: Optional[HostOrganismCategory] = None
-    is_deuterostome: Optional[bool] = None
+    name: str
+    version: str
+    category: HostOrganismCategory
+    is_deuterostome: bool
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

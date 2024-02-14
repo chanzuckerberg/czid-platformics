@@ -273,7 +273,7 @@ class ConsensusGenome(EntityInterface):
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -294,7 +294,6 @@ ConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -360,10 +359,10 @@ class ConsensusGenomeAggregateFunctions:
 
     sum: Optional[ConsensusGenomeNumericalColumns] = None
     avg: Optional[ConsensusGenomeNumericalColumns] = None
-    min: Optional[ConsensusGenomeMinMaxColumns] = None
-    max: Optional[ConsensusGenomeMinMaxColumns] = None
     stddev: Optional[ConsensusGenomeNumericalColumns] = None
     variance: Optional[ConsensusGenomeNumericalColumns] = None
+    min: Optional[ConsensusGenomeMinMaxColumns] = None
+    max: Optional[ConsensusGenomeMinMaxColumns] = None
 
 
 """
@@ -385,12 +384,12 @@ Mutation types
 
 @strawberry.input()
 class ConsensusGenomeCreateInput:
-    taxon_id: Optional[strawberry.ID] = None
-    sequence_read_id: Optional[strawberry.ID] = None
+    taxon_id: strawberry.ID
+    sequence_read_id: strawberry.ID
     reference_genome_id: Optional[strawberry.ID] = None
     accession_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """

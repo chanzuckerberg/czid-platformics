@@ -18,9 +18,14 @@ class PhylogeneticTreeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    format: Annotated[ PhylogeneticTreeFormat | None, Field()]
+    #    format: Annotated[ PhylogeneticTreeFormat, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class PhylogeneticTreeUpdateInputValidator(BaseModel):

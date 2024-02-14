@@ -274,7 +274,7 @@ class Taxon(EntityInterface):
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -295,7 +295,6 @@ Taxon.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -377,10 +376,10 @@ class TaxonAggregateFunctions:
 
     sum: Optional[TaxonNumericalColumns] = None
     avg: Optional[TaxonNumericalColumns] = None
-    min: Optional[TaxonMinMaxColumns] = None
-    max: Optional[TaxonMinMaxColumns] = None
     stddev: Optional[TaxonNumericalColumns] = None
     variance: Optional[TaxonNumericalColumns] = None
+    min: Optional[TaxonMinMaxColumns] = None
+    max: Optional[TaxonMinMaxColumns] = None
 
 
 """
@@ -405,11 +404,11 @@ class TaxonCreateInput:
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
-    name: Optional[str] = None
-    is_phage: Optional[bool] = None
-    upstream_database_id: Optional[strawberry.ID] = None
-    upstream_database_identifier: Optional[str] = None
-    level: Optional[TaxonLevel] = None
+    name: str
+    is_phage: bool
+    upstream_database_id: strawberry.ID
+    upstream_database_identifier: str
+    level: TaxonLevel
     tax_parent_id: Optional[strawberry.ID] = None
     tax_subspecies_id: Optional[strawberry.ID] = None
     tax_species_id: Optional[strawberry.ID] = None
@@ -421,7 +420,7 @@ class TaxonCreateInput:
     tax_kingdom_id: Optional[strawberry.ID] = None
     tax_superkingdom_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()

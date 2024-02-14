@@ -10,27 +10,32 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
 class HostOrganismCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, Field()]
-    version: Annotated[str | None, Field()]
+    name: Annotated[str, StringConstraints()]
+    version: Annotated[str, StringConstraints()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    category: Annotated[ HostOrganismCategory | None, Field()]
-    is_deuterostome: Annotated[bool | None, Field()]
+    #    category: Annotated[ HostOrganismCategory, Field()]
+    is_deuterostome: Annotated[bool, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
-    collection_id: Annotated[int | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            gte=0,
+        ),
+    ]
 
 
 class HostOrganismUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, Field()]
-    version: Annotated[str | None, Field()]
+    name: Annotated[str | None, StringConstraints()]
+    version: Annotated[str | None, StringConstraints()]
     # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
     #    category: Annotated[ HostOrganismCategory | None, Field()]
     is_deuterostome: Annotated[bool | None, Field()]

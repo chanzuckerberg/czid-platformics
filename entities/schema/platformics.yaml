@@ -3,12 +3,6 @@ title: CZID Platformics Bio-Entities Schema
 name: platformics
 default_range: string
 
-settings:
-  float: "\\d+[\\.\\d+]"
-  unit: "\\S+"
-  email: "\\S+@\\S+{\\.\\w}+"
-  not_empty_string: "[^\\s]+"
-  
 types:
   string:
     uri: xsd:string
@@ -170,7 +164,6 @@ classes:
           hidden: true
       producing_run_id:
         range: uuid
-        required: true
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
@@ -267,10 +260,6 @@ classes:
       name:
         range: string
         required: true
-        structured_pattern:
-          syntax: "{not_empty_string}"
-          interpolated: true
-          partial_match: true
         pattern: '.*{4,64}'
       sample_type:
         range: string
