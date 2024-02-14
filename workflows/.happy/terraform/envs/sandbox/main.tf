@@ -11,6 +11,9 @@ module "stack" {
   deployment_stage = "sandbox"
   services = {
     workflows = {
+      aws_iam = {
+        policy_json = data.aws_iam_policy_document.workflows.json,
+      }
       name                  = "workflows"
       health_check_path     = "/graphql"
       platform_architecture = "arm64"
