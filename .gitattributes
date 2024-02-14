@@ -11,3 +11,5 @@ entities/support/enums.py	linguist-generated=true
 entities/schema/README.md	linguist-generated=true
 entities/test_infra/factories/* linguist-generated=true
 entities/test_infra/factories/main.py linguist-generated=false
+workflows/api/types/*	linguist-generated=true
+workflows/api/validators/*	linguist-generated=true

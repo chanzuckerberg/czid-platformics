@@ -178,10 +178,10 @@ type WorkflowAggregate {
 type WorkflowAggregateFunctions {
   sum: WorkflowNumericalColumns
   avg: WorkflowNumericalColumns
-  min: WorkflowMinMaxColumns
-  max: WorkflowMinMaxColumns
   stddev: WorkflowNumericalColumns
   variance: WorkflowNumericalColumns
+  min: WorkflowMinMaxColumns
+  max: WorkflowMinMaxColumns
   count(distinct: Boolean = false, columns: WorkflowCountColumns = null): Int
 }
 
@@ -202,7 +202,7 @@ input WorkflowCreateInput {
   name: String = null
   defaultVersion: String = null
   minimumSupportedVersion: String = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 type WorkflowMinMaxColumns {
@@ -293,10 +293,10 @@ type WorkflowRunAggregate {
 type WorkflowRunAggregateFunctions {
   sum: WorkflowRunNumericalColumns
   avg: WorkflowRunNumericalColumns
-  min: WorkflowRunMinMaxColumns
-  max: WorkflowRunMinMaxColumns
   stddev: WorkflowRunNumericalColumns
   variance: WorkflowRunNumericalColumns
+  min: WorkflowRunMinMaxColumns
+  max: WorkflowRunMinMaxColumns
   count(distinct: Boolean = false, columns: WorkflowRunCountColumns = null): Int
 }
 
@@ -338,7 +338,7 @@ input WorkflowRunCreateInput {
   workflowVersionId: ID = null
   rawInputsJson: String = null
   deprecatedById: ID = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -372,10 +372,10 @@ type WorkflowRunEntityInputAggregate {
 type WorkflowRunEntityInputAggregateFunctions {
   sum: WorkflowRunEntityInputNumericalColumns
   avg: WorkflowRunEntityInputNumericalColumns
-  min: WorkflowRunEntityInputMinMaxColumns
-  max: WorkflowRunEntityInputMinMaxColumns
   stddev: WorkflowRunEntityInputNumericalColumns
   variance: WorkflowRunEntityInputNumericalColumns
+  min: WorkflowRunEntityInputMinMaxColumns
+  max: WorkflowRunEntityInputMinMaxColumns
   count(distinct: Boolean = false, columns: WorkflowRunEntityInputCountColumns = null): Int
 }
 
@@ -406,7 +406,7 @@ input WorkflowRunEntityInputCreateInput {
   fieldName: String = null
   entityType: String = null
   workflowRunId: ID = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -542,10 +542,10 @@ type WorkflowRunStepAggregate {
 type WorkflowRunStepAggregateFunctions {
   sum: WorkflowRunStepNumericalColumns
   avg: WorkflowRunStepNumericalColumns
-  min: WorkflowRunStepMinMaxColumns
-  max: WorkflowRunStepMinMaxColumns
   stddev: WorkflowRunStepNumericalColumns
   variance: WorkflowRunStepNumericalColumns
+  min: WorkflowRunStepMinMaxColumns
+  max: WorkflowRunStepMinMaxColumns
   count(distinct: Boolean = false, columns: WorkflowRunStepCountColumns = null): Int
 }
 
@@ -575,7 +575,7 @@ input WorkflowRunStepCreateInput {
   workflowRunId: ID = null
   endedAt: DateTime = null
   status: WorkflowRunStepStatus = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -733,10 +733,10 @@ type WorkflowVersionAggregate {
 type WorkflowVersionAggregateFunctions {
   sum: WorkflowVersionNumericalColumns
   avg: WorkflowVersionNumericalColumns
-  min: WorkflowVersionMinMaxColumns
-  max: WorkflowVersionMinMaxColumns
   stddev: WorkflowVersionNumericalColumns
   variance: WorkflowVersionNumericalColumns
+  min: WorkflowVersionMinMaxColumns
+  max: WorkflowVersionMinMaxColumns
   count(distinct: Boolean = false, columns: WorkflowVersionCountColumns = null): Int
 }
 
@@ -770,7 +770,7 @@ input WorkflowVersionCreateInput {
   version: String = null
   manifest: String = null
   workflowId: ID = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""

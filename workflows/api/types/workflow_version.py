@@ -15,7 +15,6 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from platformics.api.core.input_validation import validate_input
 from api.validators.workflow_version import WorkflowVersionCreateInputValidator
 from api.types.entities import EntityInterface
 from api.types.workflow_run import WorkflowRunAggregate, format_workflow_run_aggregate_output
@@ -210,7 +209,6 @@ WorkflowVersion.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -278,10 +276,10 @@ class WorkflowVersionAggregateFunctions:
 
     sum: Optional[WorkflowVersionNumericalColumns] = None
     avg: Optional[WorkflowVersionNumericalColumns] = None
-    min: Optional[WorkflowVersionMinMaxColumns] = None
-    max: Optional[WorkflowVersionMinMaxColumns] = None
     stddev: Optional[WorkflowVersionNumericalColumns] = None
     variance: Optional[WorkflowVersionNumericalColumns] = None
+    min: Optional[WorkflowVersionMinMaxColumns] = None
+    max: Optional[WorkflowVersionMinMaxColumns] = None
 
 
 """
@@ -308,7 +306,7 @@ class WorkflowVersionCreateInput:
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """
@@ -385,24 +383,30 @@ async def create_workflow_version(
     """
     Create a new WorkflowVersion object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, WorkflowVersionCreateInputValidator)
+    validated = WorkflowVersionCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         raise PlatformicsException("Unauthorized: WorkflowVersion is not creatable")
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowVersion.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that workflow relationship is accessible.
-    if input.workflow_id:
+    if validated.workflow_id:
         workflow = await get_db_rows(
-            db.Workflow, session, cerbos_client, principal, {"id": {"_eq": input.workflow_id}}, [], CerbosAction.VIEW
+            db.Workflow,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.workflow_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not workflow:
             raise PlatformicsException("Unauthorized: workflow does not exist")

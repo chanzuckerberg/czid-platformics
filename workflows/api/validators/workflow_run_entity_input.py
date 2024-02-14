@@ -14,8 +14,14 @@ import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
+
+
+
+
+
+
 
 
 
@@ -23,17 +29,10 @@ from typing_extensions import Annotated
 
 class WorkflowRunEntityInputCreateInputValidator(BaseModel):
     # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int, Field()] 
-    field_name: Annotated[ str | None, Field()]
-    entity_type: Annotated[ str | None, Field()] 
-    workflow_run_id: Annotated[ uuid.UUID | None, Field()] 
-class WorkflowRunEntityInputUpdateInputValidator(BaseModel):
-    # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int | None, Field()] 
-    field_name: Annotated[ str | None, Field()]
-    entity_type: Annotated[ str | None, Field()] 
-    workflow_run_id: Annotated[ uuid.UUID | None, Field()] 
+    model_config = ConfigDict(from_attributes=True) 
+    input_entity_id: Annotated[ uuid.UUID | None, Field()]
+    field_name: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    entity_type: Annotated[ str | None, StringConstraints(strip_whitespace=True,)] 
+    workflow_run_id: Annotated[ uuid.UUID | None, Field()]
+    collection_id: Annotated[ int, Field(
+    ge=0,)]

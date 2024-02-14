@@ -247,7 +247,7 @@ class WorkflowCreateInput(sgqlc.types.Input):
     name = sgqlc.types.Field(String, graphql_name="name")
     default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
     minimum_supported_version = sgqlc.types.Field(String, graphql_name="minimumSupportedVersion")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
 class WorkflowOrderByClause(sgqlc.types.Input):
@@ -295,7 +295,7 @@ class WorkflowRunCreateInput(sgqlc.types.Input):
     workflow_version_id = sgqlc.types.Field(ID, graphql_name="workflowVersionId")
     raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
     deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
 class WorkflowRunEntityInputCreateInput(sgqlc.types.Input):
@@ -305,7 +305,7 @@ class WorkflowRunEntityInputCreateInput(sgqlc.types.Input):
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
     entity_type = sgqlc.types.Field(String, graphql_name="entityType")
     workflow_run_id = sgqlc.types.Field(ID, graphql_name="workflowRunId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
 class WorkflowRunEntityInputOrderByClause(sgqlc.types.Input):
@@ -422,7 +422,7 @@ class WorkflowRunStepCreateInput(sgqlc.types.Input):
     workflow_run_id = sgqlc.types.Field(ID, graphql_name="workflowRunId")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     status = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="status")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
 class WorkflowRunStepOrderByClause(sgqlc.types.Input):
@@ -582,7 +582,7 @@ class WorkflowVersionCreateInput(sgqlc.types.Input):
     version = sgqlc.types.Field(String, graphql_name="version")
     manifest = sgqlc.types.Field(String, graphql_name="manifest")
     workflow_id = sgqlc.types.Field(ID, graphql_name="workflowId")
-    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
 class WorkflowVersionOrderByClause(sgqlc.types.Input):
@@ -1095,13 +1095,13 @@ class WorkflowAggregate(sgqlc.types.Type):
 
 class WorkflowAggregateFunctions(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    __field_names__ = ("sum", "avg", "stddev", "variance", "min", "max", "count")
     sum = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="sum")
     avg = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("WorkflowMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("WorkflowMinMaxColumns", graphql_name="max")
     stddev = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="stddev")
     variance = sgqlc.types.Field("WorkflowNumericalColumns", graphql_name="variance")
+    min = sgqlc.types.Field("WorkflowMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowMinMaxColumns", graphql_name="max")
     count = sgqlc.types.Field(
         Int,
         graphql_name="count",
@@ -1151,13 +1151,13 @@ class WorkflowRunAggregate(sgqlc.types.Type):
 
 class WorkflowRunAggregateFunctions(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    __field_names__ = ("sum", "avg", "stddev", "variance", "min", "max", "count")
     sum = sgqlc.types.Field("WorkflowRunNumericalColumns", graphql_name="sum")
     avg = sgqlc.types.Field("WorkflowRunNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("WorkflowRunMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("WorkflowRunMinMaxColumns", graphql_name="max")
     stddev = sgqlc.types.Field("WorkflowRunNumericalColumns", graphql_name="stddev")
     variance = sgqlc.types.Field("WorkflowRunNumericalColumns", graphql_name="variance")
+    min = sgqlc.types.Field("WorkflowRunMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowRunMinMaxColumns", graphql_name="max")
     count = sgqlc.types.Field(
         Int,
         graphql_name="count",
@@ -1194,13 +1194,13 @@ class WorkflowRunEntityInputAggregate(sgqlc.types.Type):
 
 class WorkflowRunEntityInputAggregateFunctions(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    __field_names__ = ("sum", "avg", "stddev", "variance", "min", "max", "count")
     sum = sgqlc.types.Field("WorkflowRunEntityInputNumericalColumns", graphql_name="sum")
     avg = sgqlc.types.Field("WorkflowRunEntityInputNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("WorkflowRunEntityInputMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("WorkflowRunEntityInputMinMaxColumns", graphql_name="max")
     stddev = sgqlc.types.Field("WorkflowRunEntityInputNumericalColumns", graphql_name="stddev")
     variance = sgqlc.types.Field("WorkflowRunEntityInputNumericalColumns", graphql_name="variance")
+    min = sgqlc.types.Field("WorkflowRunEntityInputMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowRunEntityInputMinMaxColumns", graphql_name="max")
     count = sgqlc.types.Field(
         Int,
         graphql_name="count",
@@ -1300,13 +1300,13 @@ class WorkflowRunStepAggregate(sgqlc.types.Type):
 
 class WorkflowRunStepAggregateFunctions(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    __field_names__ = ("sum", "avg", "stddev", "variance", "min", "max", "count")
     sum = sgqlc.types.Field("WorkflowRunStepNumericalColumns", graphql_name="sum")
     avg = sgqlc.types.Field("WorkflowRunStepNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("WorkflowRunStepMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("WorkflowRunStepMinMaxColumns", graphql_name="max")
     stddev = sgqlc.types.Field("WorkflowRunStepNumericalColumns", graphql_name="stddev")
     variance = sgqlc.types.Field("WorkflowRunStepNumericalColumns", graphql_name="variance")
+    min = sgqlc.types.Field("WorkflowRunStepMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowRunStepMinMaxColumns", graphql_name="max")
     count = sgqlc.types.Field(
         Int,
         graphql_name="count",
@@ -1370,13 +1370,13 @@ class WorkflowVersionAggregate(sgqlc.types.Type):
 
 class WorkflowVersionAggregateFunctions(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("sum", "avg", "min", "max", "stddev", "variance", "count")
+    __field_names__ = ("sum", "avg", "stddev", "variance", "min", "max", "count")
     sum = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="sum")
     avg = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="avg")
-    min = sgqlc.types.Field("WorkflowVersionMinMaxColumns", graphql_name="min")
-    max = sgqlc.types.Field("WorkflowVersionMinMaxColumns", graphql_name="max")
     stddev = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="stddev")
     variance = sgqlc.types.Field("WorkflowVersionNumericalColumns", graphql_name="variance")
+    min = sgqlc.types.Field("WorkflowVersionMinMaxColumns", graphql_name="min")
+    max = sgqlc.types.Field("WorkflowVersionMinMaxColumns", graphql_name="max")
     count = sgqlc.types.Field(
         Int,
         graphql_name="count",

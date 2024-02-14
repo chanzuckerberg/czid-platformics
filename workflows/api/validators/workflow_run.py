@@ -9,13 +9,20 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 
+from support.enums import WorkflowRunStatus
 
 import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
+
+
+
+
+
+
 
 
 
@@ -24,28 +31,22 @@ from typing_extensions import Annotated
 class WorkflowRunCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int, Field()]
-    started_at: Annotated[ datetime.datetime | None, Field()]
     ended_at: Annotated[ datetime.datetime | None, Field()]
-    execution_id: Annotated[ str | None, Field()]
-    outputs_json: Annotated[ str | None, Field()]
-    workflow_runner_inputs_json: Annotated[ str | None, Field()]
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    status: Annotated[ WorkflowRunStatus | None, Field()] 
+    execution_id: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    outputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    workflow_runner_inputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    status: Annotated[ WorkflowRunStatus | None, Field()] 
     workflow_version_id: Annotated[ uuid.UUID | None, Field()]
-    raw_inputs_json: Annotated[ str | None, Field()] 
+    raw_inputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)] 
+    deprecated_by_id: Annotated[ uuid.UUID | None, Field()]
+    collection_id: Annotated[ int, Field(
+    ge=0,)]
 class WorkflowRunUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int | None, Field()]
-    started_at: Annotated[ datetime.datetime | None, Field()]
     ended_at: Annotated[ datetime.datetime | None, Field()]
-    execution_id: Annotated[ str | None, Field()]
-    outputs_json: Annotated[ str | None, Field()]
-    workflow_runner_inputs_json: Annotated[ str | None, Field()]
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    status: Annotated[ WorkflowRunStatus | None, Field()] 
-    workflow_version_id: Annotated[ uuid.UUID | None, Field()]
-    raw_inputs_json: Annotated[ str | None, Field()] 
+    execution_id: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    outputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    workflow_runner_inputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    status: Annotated[ WorkflowRunStatus | None, Field()] 
+    deprecated_by_id: Annotated[ uuid.UUID | None, Field()]

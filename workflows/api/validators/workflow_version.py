@@ -14,8 +14,14 @@ import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
+
+
+
+
+
+
 
 
 
@@ -24,20 +30,10 @@ from typing_extensions import Annotated
 class WorkflowVersionCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int, Field()]
-    graph_json: Annotated[ str | None, Field()]
-    workflow_uri: Annotated[ str | None, Field()]
-    version: Annotated[ str | None, Field()]
-    manifest: Annotated[ str | None, Field()] 
-    workflow_id: Annotated[ uuid.UUID | None, Field()] 
-class WorkflowVersionUpdateInputValidator(BaseModel):
-    # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int | None, Field()]
-    graph_json: Annotated[ str | None, Field()]
-    workflow_uri: Annotated[ str | None, Field()]
-    version: Annotated[ str | None, Field()]
-    manifest: Annotated[ str | None, Field()] 
-    workflow_id: Annotated[ uuid.UUID | None, Field()] 
+    graph_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    workflow_uri: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    manifest: Annotated[ str | None, StringConstraints(strip_whitespace=True,)] 
+    workflow_id: Annotated[ uuid.UUID | None, Field()]
+    collection_id: Annotated[ int, Field(
+    ge=0,)]

@@ -9,13 +9,20 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 
+from support.enums import WorkflowRunStepStatus
 
 import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
+
+
+
+
+
+
 
 
 
@@ -23,21 +30,14 @@ from typing_extensions import Annotated
 
 class WorkflowRunStepCreateInputValidator(BaseModel):
     # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int, Field()] 
+    model_config = ConfigDict(from_attributes=True) 
     workflow_run_id: Annotated[ uuid.UUID | None, Field()]
-    started_at: Annotated[ datetime.datetime | None, Field()]
     ended_at: Annotated[ datetime.datetime | None, Field()]
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    status: Annotated[ WorkflowRunStepStatus | None, Field()] 
+    status: Annotated[ WorkflowRunStepStatus | None, Field()]
+    collection_id: Annotated[ int, Field(
+    ge=0,)]
 class WorkflowRunStepUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int | None, Field()] 
-    workflow_run_id: Annotated[ uuid.UUID | None, Field()]
-    started_at: Annotated[ datetime.datetime | None, Field()]
     ended_at: Annotated[ datetime.datetime | None, Field()]
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    status: Annotated[ WorkflowRunStepStatus | None, Field()] 
+    status: Annotated[ WorkflowRunStepStatus | None, Field()]

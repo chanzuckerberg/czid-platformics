@@ -14,8 +14,14 @@ import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
+
+
+
+
+
+
 
 
 
@@ -24,16 +30,14 @@ from typing_extensions import Annotated
 class WorkflowCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int, Field()]
-    name: Annotated[ str | None, Field()]
-    default_version: Annotated[ str | None, Field()]
-    minimum_supported_version: Annotated[ str | None, Field()] 
+    name: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    default_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    minimum_supported_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    collection_id: Annotated[ int, Field(
+    ge=0,)]
 class WorkflowUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-
-    collection_id: Annotated[ int | None, Field()]
-    name: Annotated[ str | None, Field()]
-    default_version: Annotated[ str | None, Field()]
-    minimum_supported_version: Annotated[ str | None, Field()] 
+    name: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    default_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    minimum_supported_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]

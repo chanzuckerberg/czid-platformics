@@ -15,7 +15,6 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from platformics.api.core.input_validation import validate_input
 from api.validators.workflow_run_entity_input import (
     WorkflowRunEntityInputCreateInputValidator,
 )
@@ -166,7 +165,6 @@ WorkflowRunEntityInput.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -230,10 +228,10 @@ class WorkflowRunEntityInputAggregateFunctions:
 
     sum: Optional[WorkflowRunEntityInputNumericalColumns] = None
     avg: Optional[WorkflowRunEntityInputNumericalColumns] = None
-    min: Optional[WorkflowRunEntityInputMinMaxColumns] = None
-    max: Optional[WorkflowRunEntityInputMinMaxColumns] = None
     stddev: Optional[WorkflowRunEntityInputNumericalColumns] = None
     variance: Optional[WorkflowRunEntityInputNumericalColumns] = None
+    min: Optional[WorkflowRunEntityInputMinMaxColumns] = None
+    max: Optional[WorkflowRunEntityInputMinMaxColumns] = None
 
 
 """
@@ -259,7 +257,7 @@ class WorkflowRunEntityInputCreateInput:
     field_name: Optional[str] = None
     entity_type: Optional[str] = None
     workflow_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """
@@ -338,25 +336,25 @@ async def create_workflow_run_entity_input(
     """
     Create a new WorkflowRunEntityInput object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, WorkflowRunEntityInputCreateInputValidator)
+    validated = WorkflowRunEntityInputCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRunEntityInput.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that workflow_run relationship is accessible.
-    if input.workflow_run_id:
+    if validated.workflow_run_id:
         workflow_run = await get_db_rows(
             db.WorkflowRun,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.workflow_run_id}},
+            {"id": {"_eq": validated.workflow_run_id}},
             [],
             CerbosAction.VIEW,
         )
