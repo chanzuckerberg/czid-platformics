@@ -467,8 +467,8 @@ async def create_{{ cls.snake_name }}(
     """
     Create a new {{ cls.name }} object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, {{cls.name}}CreateInputValidator)
+    validated = {{cls.name}}CreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     {%- if cls.system_only_create_fields %}
@@ -478,7 +478,7 @@ async def create_{{ cls.snake_name }}(
         raise PlatformicsException("Unauthorized: {{cls.name}} is not creatable")
         {%- else %}
             {%- for field in cls.system_only_create_fields %}
-        input.{{field.name}} = None
+	    del(params["{{field.name}}"])
             {%- endfor %}
         {%- endif %}
     {%- endif %}

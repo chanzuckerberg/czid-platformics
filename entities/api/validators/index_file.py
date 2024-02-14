@@ -8,6 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+from support.enums import IndexTypes
+
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -17,9 +19,14 @@ from typing_extensions import Annotated
 class IndexFileCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    name: Annotated[ IndexTypes, Field()]
-    version: Annotated[str, StringConstraints()]
+    name: Annotated[IndexTypes, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
+    version: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     upstream_database_id: Annotated[uuid.UUID | None, Field()]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
@@ -34,6 +41,11 @@ class IndexFileCreateInputValidator(BaseModel):
 class IndexFileUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    name: Annotated[ IndexTypes | None, Field()]
-    version: Annotated[str | None, StringConstraints()]
+    name: Annotated[IndexTypes | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
+    version: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]

@@ -10,6 +10,15 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 {% set related_fields = cls.related_fields | unique(attribute='related_class.name') | list %}
 {% set ignored_fields = ["File", "Entity", cls.name] %}
 
+{%- for field in cls.enum_fields %}
+    {%- if loop.first %}
+from support.enums import 
+    {%- endif %}
+    {{- " " }}
+    {{- field.type}}
+    {{- "," if not loop.last else "" }}
+{%- endfor %}
+
 import typing
 import datetime
 import uuid
@@ -25,8 +34,15 @@ from typing_extensions import Annotated
 {%- endmacro %}
 
 {% macro getStringConstraints(attr) -%}
+    strip_whitespace=True,
     {%- if attr.pattern %}
     pattern=r'{{attr.pattern}}',
+    {%- endif %}
+    {%- if attr.minimum_length is not none %}
+    min_length={{attr.minimum_length}},
+    {%- endif %}
+    {%- if attr.maximum_length is not none %}
+    max_length={{attr.maximum_length}},
     {%- endif %}
 {%- endmacro %}
 
@@ -45,13 +61,14 @@ from typing_extensions import Annotated
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "uuid.UUID", attr.required) }}, Field()]
         {%- elif attr.type == "string" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "str", attr.required) }}, StringConstraints({{ getStringConstraints(attr) }})]
-        {%- elif attr.is_enum %}
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    {{ attr.name }}: Annotated[{{ getTypeValidation(action, attr.type, attr.required) }}, Field()]
         {%- elif attr.type == "integer" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "int", attr.required) }}, Field({{getNumericConstraints(attr)}})]
         {%- elif attr.type == "float" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "float", attr.required) }}, Field({{getNumericConstraints(attr)}})]
+# GraphQL Query validation takes care of bools for us, but this is here for completeness?
+        {%- elif attr.is_enum %}
+    {{ attr.name }}: Annotated[{{ getTypeValidation(action, attr.type, attr.required) }}, Field()]
+# GraphQL Query validation takes care of bools for us, but this is here for completeness?
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "bool", attr.required) }}, Field()]
         {%- elif attr.type == "date" %}

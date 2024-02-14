@@ -17,7 +17,12 @@ from typing_extensions import Annotated
 class UpstreamDatabaseCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str, StringConstraints()]
+    name: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
         int,
@@ -30,4 +35,9 @@ class UpstreamDatabaseCreateInputValidator(BaseModel):
 class UpstreamDatabaseUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, StringConstraints()]
+    name: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]

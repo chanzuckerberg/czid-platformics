@@ -19,9 +19,13 @@ class MetricConsensusGenomeCreateInputValidator(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     consensus_genome_id: Annotated[uuid.UUID, Field()]
     reference_genome_length: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     percent_genome_called: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     percent_identity: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     gc_percent: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     total_reads: Annotated[
         int | None,
         Field(
@@ -35,8 +39,11 @@ class MetricConsensusGenomeCreateInputValidator(BaseModel):
     n_missing: Annotated[int | None, Field()]
     n_ambiguous: Annotated[int | None, Field()]
     coverage_depth: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     coverage_breadth: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     coverage_bin_size: Annotated[float | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     coverage_total_length: Annotated[int | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[

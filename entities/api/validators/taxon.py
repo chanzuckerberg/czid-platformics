@@ -8,6 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+from support.enums import TaxonLevel
+
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -17,15 +19,40 @@ from typing_extensions import Annotated
 class TaxonCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    wikipedia_id: Annotated[str | None, StringConstraints()]
-    description: Annotated[str | None, StringConstraints()]
-    common_name: Annotated[str | None, StringConstraints()]
-    name: Annotated[str, StringConstraints()]
+    wikipedia_id: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    description: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    common_name: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    name: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     is_phage: Annotated[bool, Field()]
     upstream_database_id: Annotated[uuid.UUID, Field()]
-    upstream_database_identifier: Annotated[str, StringConstraints()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    level: Annotated[ TaxonLevel, Field()]
+    upstream_database_identifier: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    level: Annotated[TaxonLevel, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     tax_parent_id: Annotated[uuid.UUID | None, Field()]
     tax_subspecies_id: Annotated[uuid.UUID | None, Field()]
     tax_species_id: Annotated[uuid.UUID | None, Field()]
@@ -48,12 +75,27 @@ class TaxonCreateInputValidator(BaseModel):
 class TaxonUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    wikipedia_id: Annotated[str | None, StringConstraints()]
-    description: Annotated[str | None, StringConstraints()]
-    common_name: Annotated[str | None, StringConstraints()]
+    wikipedia_id: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    description: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    common_name: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     is_phage: Annotated[bool | None, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    level: Annotated[ TaxonLevel | None, Field()]
+    level: Annotated[TaxonLevel | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     tax_parent_id: Annotated[uuid.UUID | None, Field()]
     tax_subspecies_id: Annotated[uuid.UUID | None, Field()]
     tax_species_id: Annotated[uuid.UUID | None, Field()]

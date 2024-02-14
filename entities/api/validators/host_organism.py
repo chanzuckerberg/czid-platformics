@@ -8,6 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+from support.enums import HostOrganismCategory
+
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -17,10 +19,20 @@ from typing_extensions import Annotated
 class HostOrganismCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str, StringConstraints()]
-    version: Annotated[str, StringConstraints()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    category: Annotated[ HostOrganismCategory, Field()]
+    name: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    version: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    category: Annotated[HostOrganismCategory, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     is_deuterostome: Annotated[bool, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
@@ -34,8 +46,18 @@ class HostOrganismCreateInputValidator(BaseModel):
 class HostOrganismUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[str | None, StringConstraints()]
-    version: Annotated[str | None, StringConstraints()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    category: Annotated[ HostOrganismCategory | None, Field()]
+    name: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    version: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    category: Annotated[HostOrganismCategory | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     is_deuterostome: Annotated[bool | None, Field()]

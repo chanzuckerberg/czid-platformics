@@ -8,6 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
+
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -18,14 +20,19 @@ class SequencingReadCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     sample_id: Annotated[uuid.UUID | None, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    protocol: Annotated[ SequencingProtocol | None, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    technology: Annotated[ SequencingTechnology, Field()]
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    nucleic_acid: Annotated[ NucleicAcid, Field()]
+    protocol: Annotated[SequencingProtocol | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
+    technology: Annotated[SequencingTechnology, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
+    nucleic_acid: Annotated[NucleicAcid, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     clearlabs_export: Annotated[bool, Field()]
-    medaka_model: Annotated[str | None, StringConstraints()]
+    medaka_model: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     taxon_id: Annotated[uuid.UUID | None, Field()]
     primer_file_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
@@ -40,7 +47,12 @@ class SequencingReadCreateInputValidator(BaseModel):
 class SequencingReadUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    nucleic_acid: Annotated[ NucleicAcid | None, Field()]
+    nucleic_acid: Annotated[NucleicAcid | None, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     clearlabs_export: Annotated[bool | None, Field()]
-    medaka_model: Annotated[str | None, StringConstraints()]
+    medaka_model: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]

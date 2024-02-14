@@ -467,14 +467,14 @@ async def create_sample(
     """
     Create a new Sample object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
-    validate_input(input, SampleCreateInputValidator)
+    validated = SampleCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.rails_sample_id = None
-        input.producing_run_id = None
+        del params["rails_sample_id"]
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Sample.__tablename__, attr=attr)

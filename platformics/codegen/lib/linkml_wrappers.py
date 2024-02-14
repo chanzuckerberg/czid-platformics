@@ -58,6 +58,18 @@ class FieldWrapper:
         return None
 
     @cached_property
+    def minimum_length(self) -> int | None:
+        if "minimum_length" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["minimum_length"].value
+        return None
+
+    @cached_property
+    def maximum_length(self) -> int | None:
+        if "maximum_length" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["maximum_length"].value
+        return None
+
+    @cached_property
     def pattern(self) -> str | None:
         return self.wrapped_field.pattern or None
 

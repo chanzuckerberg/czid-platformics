@@ -8,6 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+from support.enums import PhylogeneticTreeFormat
+
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -17,8 +19,8 @@ from typing_extensions import Annotated
 class PhylogeneticTreeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    # TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-    #    format: Annotated[ PhylogeneticTreeFormat, Field()]
+    format: Annotated[PhylogeneticTreeFormat, Field()]
+    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
         int,
@@ -31,7 +33,7 @@ class PhylogeneticTreeCreateInputValidator(BaseModel):
 class PhylogeneticTreeUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
+    format: Annotated[PhylogeneticTreeFormat | None, Field()]
 
 
-# TODO what do we do about enums here. GraphQL is supposed to take care of that for us I think?
-#    format: Annotated[ PhylogeneticTreeFormat | None, Field()]
+# GraphQL Query validation takes care of bools for us, but this is here for completeness?

@@ -22,14 +22,32 @@ class SampleCreateInputValidator(BaseModel):
     name: Annotated[
         str,
         StringConstraints(
-            pattern=r".*{4,64}",
+            strip_whitespace=True,
+            pattern=r"\d",
+            min_length=4,
+            max_length=64,
         ),
     ]
-    sample_type: Annotated[str, StringConstraints()]
+    sample_type: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     water_control: Annotated[bool, Field()]
     collection_date: Annotated[datetime.datetime, Field()]
-    collection_location: Annotated[str, StringConstraints()]
-    notes: Annotated[str | None, StringConstraints()]
+    collection_location: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    notes: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
@@ -46,11 +64,29 @@ class SampleUpdateInputValidator(BaseModel):
     name: Annotated[
         str | None,
         StringConstraints(
-            pattern=r".*{4,64}",
+            strip_whitespace=True,
+            pattern=r"\d",
+            min_length=4,
+            max_length=64,
         ),
     ]
-    sample_type: Annotated[str | None, StringConstraints()]
+    sample_type: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     water_control: Annotated[bool | None, Field()]
     collection_date: Annotated[datetime.datetime | None, Field()]
-    collection_location: Annotated[str | None, StringConstraints()]
-    notes: Annotated[str | None, StringConstraints()]
+    collection_location: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    notes: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]

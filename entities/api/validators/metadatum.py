@@ -18,8 +18,18 @@ class MetadatumCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     sample_id: Annotated[uuid.UUID, Field()]
-    field_name: Annotated[str, StringConstraints()]
-    value: Annotated[str, StringConstraints()]
+    field_name: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    value: Annotated[
+        str,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
         int,
@@ -32,4 +42,9 @@ class MetadatumCreateInputValidator(BaseModel):
 class MetadatumUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    value: Annotated[str | None, StringConstraints()]
+    value: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
