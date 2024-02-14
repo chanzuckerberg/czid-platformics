@@ -64,9 +64,15 @@ class Taxon(Entity):
     tax_superkingdom_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     tax_superkingdom: Mapped["Taxon"] = relationship("Taxon", foreign_keys=tax_superkingdom_id)
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
-        "ConsensusGenome", back_populates="taxon", uselist=True, foreign_keys="ConsensusGenome.taxon_id"
+        "ConsensusGenome",
+        back_populates="taxon",
+        uselist=True,
+        foreign_keys="ConsensusGenome.taxon_id",
     )
     sequencing_reads: Mapped[list[SequencingRead]] = relationship(
-        "SequencingRead", back_populates="taxon", uselist=True, foreign_keys="SequencingRead.taxon_id"
+        "SequencingRead",
+        back_populates="taxon",
+        uselist=True,
+        foreign_keys="SequencingRead.taxon_id",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

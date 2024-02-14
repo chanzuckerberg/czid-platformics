@@ -214,7 +214,6 @@ class UpstreamDatabaseOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -304,7 +303,6 @@ class UpstreamDatabaseCountColumns(enum.Enum):
     collection_id = "collection_id"
     created_at = "created_at"
     updated_at = "updated_at"
-    deleted_at = "deleted_at"
 
 
 """

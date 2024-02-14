@@ -22,7 +22,6 @@ class AccessionCountColumns(sgqlc.types.Enum):
         "collection_id",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "entity_id",
         "id",
         "owner_user_id",
@@ -40,7 +39,6 @@ class BulkDownloadCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "download_type",
         "entity_id",
         "file",
@@ -62,7 +60,6 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
         "accession",
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "id",
         "intermediate_outputs",
@@ -98,7 +95,6 @@ class GenomicRangeCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "file",
         "id",
@@ -124,7 +120,6 @@ class HostOrganismCountColumns(sgqlc.types.Enum):
         "category",
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "id",
         "indexes",
@@ -147,7 +142,6 @@ class IndexFileCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "file",
         "host_organism",
@@ -199,7 +193,6 @@ class MetadatumCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "field_name",
         "id",
@@ -222,7 +215,6 @@ class MetricConsensusGenomeCountColumns(sgqlc.types.Enum):
         "coverage_total_length",
         "coverage_viz",
         "created_at",
-        "deleted_at",
         "entity_id",
         "gc_percent",
         "id",
@@ -251,7 +243,6 @@ class PhylogeneticTreeCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "format",
         "id",
@@ -273,7 +264,6 @@ class ReferenceGenomeCountColumns(sgqlc.types.Enum):
         "collection_id",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "entity_id",
         "file",
         "id",
@@ -291,7 +281,6 @@ class SampleCountColumns(sgqlc.types.Enum):
         "collection_id",
         "collection_location",
         "created_at",
-        "deleted_at",
         "entity_id",
         "host_organism",
         "id",
@@ -333,7 +322,6 @@ class SequencingReadCountColumns(sgqlc.types.Enum):
         "collection_id",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "entity_id",
         "id",
         "medaka_model",
@@ -366,7 +354,6 @@ class TaxonCountColumns(sgqlc.types.Enum):
         "common_name",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "description",
         "entity_id",
         "id",
@@ -418,7 +405,6 @@ class UpstreamDatabaseCountColumns(sgqlc.types.Enum):
         "accessions",
         "collection_id",
         "created_at",
-        "deleted_at",
         "entity_id",
         "id",
         "indexes",
@@ -459,7 +445,6 @@ class AccessionOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     accession_id = sgqlc.types.Field(orderBy, graphql_name="accessionId")
     accession_name = sgqlc.types.Field(orderBy, graphql_name="accessionName")
@@ -470,7 +455,6 @@ class AccessionOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class AccessionUpdateInput(sgqlc.types.Input):
@@ -542,7 +526,6 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     download_type = sgqlc.types.Field(orderBy, graphql_name="downloadType")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
@@ -551,7 +534,6 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class BulkDownloadTypeEnumComparators(sgqlc.types.Input):
@@ -628,7 +610,6 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     taxon = sgqlc.types.Field("TaxonOrderByClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadOrderByClause", graphql_name="sequenceRead")
@@ -641,7 +622,6 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class ConsensusGenomeUpdateInput(sgqlc.types.Input):
@@ -802,22 +782,13 @@ class GenomicRangeCreateInput(sgqlc.types.Input):
 
 class GenomicRangeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class GenomicRangeUpdateInput(sgqlc.types.Input):
@@ -881,7 +852,6 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     version = sgqlc.types.Field(orderBy, graphql_name="version")
@@ -893,7 +863,6 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class HostOrganismUpdateInput(sgqlc.types.Input):
@@ -963,7 +932,6 @@ class IndexFileOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     version = sgqlc.types.Field(orderBy, graphql_name="version")
@@ -975,7 +943,6 @@ class IndexFileOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class IndexFileUpdateInput(sgqlc.types.Input):
@@ -1066,7 +1033,6 @@ class MetadatumOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sample = sgqlc.types.Field("SampleOrderByClause", graphql_name="sample")
     field_name = sgqlc.types.Field(orderBy, graphql_name="fieldName")
@@ -1077,7 +1043,6 @@ class MetadatumOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class MetadatumUpdateInput(sgqlc.types.Input):
@@ -1175,7 +1140,6 @@ class MetricConsensusGenomeOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     consensus_genome = sgqlc.types.Field(ConsensusGenomeOrderByClause, graphql_name="consensusGenome")
     reference_genome_length = sgqlc.types.Field(orderBy, graphql_name="referenceGenomeLength")
@@ -1199,7 +1163,6 @@ class MetricConsensusGenomeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class MetricConsensusGenomeUpdateInput(sgqlc.types.Input):
@@ -1333,16 +1296,7 @@ class PhylogeneticTreeFormatEnumComparators(sgqlc.types.Input):
 
 class PhylogeneticTreeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "format",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("format", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     format = sgqlc.types.Field(orderBy, graphql_name="format")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1350,7 +1304,6 @@ class PhylogeneticTreeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class PhylogeneticTreeUpdateInput(sgqlc.types.Input):
@@ -1387,16 +1340,7 @@ class ReferenceGenomeCreateInput(sgqlc.types.Input):
 
 class ReferenceGenomeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "name",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("name", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1404,7 +1348,6 @@ class ReferenceGenomeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class ReferenceGenomeUpdateInput(sgqlc.types.Input):
@@ -1473,7 +1416,6 @@ class SampleOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     rails_sample_id = sgqlc.types.Field(orderBy, graphql_name="railsSampleId")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
@@ -1489,7 +1431,6 @@ class SampleOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class SampleUpdateInput(sgqlc.types.Input):
@@ -1615,7 +1556,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sample = sgqlc.types.Field(SampleOrderByClause, graphql_name="sample")
     protocol = sgqlc.types.Field(orderBy, graphql_name="protocol")
@@ -1631,7 +1571,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class SequencingReadUpdateInput(sgqlc.types.Input):
@@ -1821,7 +1760,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     wikipedia_id = sgqlc.types.Field(orderBy, graphql_name="wikipediaId")
     description = sgqlc.types.Field(orderBy, graphql_name="description")
@@ -1847,7 +1785,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class TaxonUpdateInput(sgqlc.types.Input):
@@ -1936,16 +1873,7 @@ class UpstreamDatabaseCreateInput(sgqlc.types.Input):
 
 class UpstreamDatabaseOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "name",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("name", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1953,7 +1881,6 @@ class UpstreamDatabaseOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class UpstreamDatabaseUpdateInput(sgqlc.types.Input):

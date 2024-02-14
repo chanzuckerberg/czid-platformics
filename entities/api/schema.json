@@ -6862,15 +6862,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -7523,15 +7514,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -8066,15 +8048,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -8170,15 +8143,6 @@
             {
               "defaultValue": null,
               "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -8605,15 +8569,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -8673,15 +8628,6 @@
             {
               "defaultValue": null,
               "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -8943,9 +8889,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -9057,15 +9000,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -9134,15 +9068,6 @@
             {
               "defaultValue": null,
               "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -9234,15 +9159,6 @@
             {
               "defaultValue": null,
               "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -9451,15 +9367,6 @@
             {
               "defaultValue": null,
               "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -9700,9 +9607,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -10750,9 +10654,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -10850,15 +10751,6 @@
             {
               "defaultValue": null,
               "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -11102,9 +10994,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -11431,9 +11320,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -11823,9 +11709,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -12143,15 +12026,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -12393,9 +12267,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -12775,15 +12646,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -13158,15 +13020,6 @@
                 "name": "orderBy",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": null,
-              "name": "deletedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
@@ -13387,9 +13240,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -13624,9 +13474,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -13882,9 +13729,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -14401,9 +14245,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -14641,9 +14482,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -14866,9 +14704,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,
@@ -15091,9 +14926,6 @@
             },
             {
               "name": "updated_at"
-            },
-            {
-              "name": "deleted_at"
             }
           ],
           "fields": null,

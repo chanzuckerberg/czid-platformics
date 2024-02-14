@@ -36,6 +36,9 @@ class Accession(Entity):
         "UpstreamDatabase", back_populates="accessions", foreign_keys=upstream_database_id
     )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
-        "ConsensusGenome", back_populates="accession", uselist=True, foreign_keys="ConsensusGenome.accession_id"
+        "ConsensusGenome",
+        back_populates="accession",
+        uselist=True,
+        foreign_keys="ConsensusGenome.accession_id",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

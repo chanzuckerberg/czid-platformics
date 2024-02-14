@@ -62,7 +62,6 @@ enum AccessionCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input AccessionCreateInput {
@@ -105,7 +104,6 @@ input AccessionOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input AccessionUpdateInput {
@@ -178,7 +176,6 @@ enum BulkDownloadCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input BulkDownloadCreateInput {
@@ -207,7 +204,6 @@ input BulkDownloadOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 enum BulkDownloadType {
@@ -301,7 +297,6 @@ enum ConsensusGenomeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input ConsensusGenomeCreateInput {
@@ -348,7 +343,6 @@ input ConsensusGenomeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input ConsensusGenomeUpdateInput {
@@ -544,7 +538,6 @@ enum GenomicRangeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input GenomicRangeCreateInput {
@@ -571,7 +564,6 @@ input GenomicRangeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input GenomicRangeUpdateInput {
@@ -693,7 +685,6 @@ enum HostOrganismCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input HostOrganismCreateInput {
@@ -730,7 +721,6 @@ input HostOrganismOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input HostOrganismUpdateInput {
@@ -810,7 +800,6 @@ enum IndexFileCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input IndexFileCreateInput {
@@ -855,7 +844,6 @@ input IndexFileOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input IndexFileUpdateInput {
@@ -980,7 +968,6 @@ enum MetadatumCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input MetadatumCreateInput {
@@ -1023,7 +1010,6 @@ input MetadatumOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input MetadatumUpdateInput {
@@ -1110,7 +1096,6 @@ enum MetricConsensusGenomeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input MetricConsensusGenomeCreateInput {
@@ -1196,7 +1181,6 @@ input MetricConsensusGenomeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input MetricConsensusGenomeUpdateInput {
@@ -1383,7 +1367,6 @@ enum PhylogeneticTreeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input PhylogeneticTreeCreateInput {
@@ -1430,7 +1413,6 @@ input PhylogeneticTreeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input PhylogeneticTreeUpdateInput {
@@ -1545,7 +1527,6 @@ enum ReferenceGenomeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input ReferenceGenomeCreateInput {
@@ -1575,7 +1556,6 @@ input ReferenceGenomeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input ReferenceGenomeUpdateInput {
@@ -1689,7 +1669,6 @@ enum SampleCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input SampleCreateInput {
@@ -1747,7 +1726,6 @@ input SampleOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input SampleUpdateInput {
@@ -1890,7 +1868,6 @@ enum SequencingReadCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input SequencingReadCreateInput {
@@ -1944,7 +1921,6 @@ input SequencingReadOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input SequencingReadUpdateInput {
@@ -2128,7 +2104,6 @@ enum TaxonCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input TaxonCreateInput {
@@ -2218,7 +2193,6 @@ input TaxonOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input TaxonUpdateInput {
@@ -2354,7 +2328,6 @@ enum UpstreamDatabaseCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input UpstreamDatabaseCreateInput {
@@ -2383,7 +2356,6 @@ input UpstreamDatabaseOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input UpstreamDatabaseUpdateInput {
