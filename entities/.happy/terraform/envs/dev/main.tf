@@ -11,6 +11,9 @@ module "stack" {
   deployment_stage = "dev"
   services = {
     entities = {
+      aws_iam = {
+        policy_json = data.aws_iam_policy_document.entities.json,
+      }
       cpu               = "2"
       health_check_path = "/graphql"
       init_containers = {
