@@ -7,7 +7,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password_postgres
-      - POSTGRES_DB=entities
+      - POSTGRES_DB=platformicsentities
       # The postgres image declares a mounted volume at /var/lib/postgresql/data
       # by default, which means that the data in that directory is difficult to
       # snapshot and export. Here, we're telling Postgres to use this (non-mounted)
@@ -42,7 +42,8 @@ services:
       - PLATFORMICS_DATABASE_PORT=5432
       - PLATFORMICS_DATABASE_USER=postgres
       - PLATFORMICS_DATABASE_PASSWORD=password_postgres
-      - PLATFORMICS_DATABASE_NAME=entities
+      - PLATFORMICS_DATABASE_NAME=platformics
+      - SERVICE_NAME=entities
       - DEFAULT_UPLOAD_BUCKET=local-bucket
       - DEFAULT_UPLOAD_PROTOCOL=s3
       - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000

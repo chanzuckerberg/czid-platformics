@@ -47,7 +47,7 @@ module "stack" {
     CERBOS_URL                                      = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET                           = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL                         = "s3"
-    ENTITY_SERVICE_URL                              = "http://entities-entities:8080"
+    ENTITY_SERVICE_URL                              = "http://entities-entities:8008"
     ENTITY_SERVICE_AUTH_TOKEN                       = "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6InU2cDh2eTZCLVZMLUxqRmptUzg2N0N2cWtkLV9pcFJGM2pJR2tHakh6eWU3b3Q2SkQzUWQ5YTM0Nk5feU40d2oiLCJ5IjoiRkdWb1VPOUJhQXRScU1sR3g1NWlCblU2MEQxeHJSZXVJRDFOa25zQnYyRTJLNnVLTUMwU2xsSTdPYVFHZXd6NSJ9LCJraWQiOiItQmx2bF9wVk5LU2JRQ2N5dGV4UzNfMk5MaHBia2J6LVk5VFFjbkY5S1drIiwidHlwIjoiSldFIn0..i3Rq4DgR5HCWzzIegXt0qg.EmsK8VO2h9MG4wIFc8UNDs2eeMna7G9l-vaALVzZe5WKs4zRQz0k9K4PD96oMUxdHDvmOXnWMIfK8RYxcu_fIy4DFCdhHbsu7FBODK5fA3yJXYVBzIpcDFEKhxhaNrPaxos2neOD8cB5XFEl958t4aAR5zPXR_DUsTErfdo7SLsT3jAYm6hGqL8qZrdzGhoMaqk4tHfKM_ItXg-V5yfRvyK4CQLu_TquMMeh4mfWUH4wFHMTgSS5b8m2TcHQYt_HahSld6RyY07Fm9wrBPb83MI1tdyQJo1jik-h-8tG2-4uzasoOxosXz-PalGarvYmC8PtfyUdoDKaA5waF--OYD3z7ahPrBup9DCL_h8H3oQq9qd6B3DBq077LTfJ2o2Fq9_MZc0u-JAKuRrxmjtyCUjpUHG-YsBe-GNGdDVzVx5xvYGRE4ZSRSNkmnim7fFRmV0C711iZOl1w60Ke8iDcOr6N5eMEyIs65CLLD7koWrCkPFIYvf_V88miwtvNrsba9ISBu_fhmOy7Bsop5uw-k6Atg2QSlkcjWEqONEHYf115tENOYxciGr_z69OD9W8.dg4WmTnBm3RLaoJ8Ga1OxthzcKW03EoXeTGfIMyrK34"
     JWK_PRIVATE_KEY_FILE                            = "/workflows/test_infra/fixtures/private_key.pem"
     JWK_PUBLIC_KEY_FILE                             = "/workflows/test_infra/fixtures/public_key.pem"
