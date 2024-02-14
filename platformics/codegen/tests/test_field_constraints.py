@@ -28,6 +28,8 @@ from platformics.database.connect import SyncDB
     ("noStringChecks", [], ["", "aasdfasdfasd", "  lorem ipsum !@#$%^&*()  "]),
     ("noIntChecks", [], [65, 0, 400, 7]),
     ("noFloatChecks", [], [-65.50, .00001, 400.6, 7]),
+    ("boolField", [], [True, False]),
+    ("enumField", [], ["RNA", "DNA"]),
   ]
 )
 async def test_create_validation(
@@ -42,9 +44,11 @@ async def test_create_validation(
     user_id = 12345
     project_ids = [333]
     def get_query(field_name: str, value: Any) -> str:
+        if "enum" not in field_name:
+            value = json.dumps(value)
         query = f"""
             mutation MyMutation {{
-              createConstraintCheckedType(input: {{collectionId: {project_ids[0]}, {field_name}: {json.dumps(value)} }}) {{
+              createConstraintCheckedType(input: {{collectionId: {project_ids[0]}, {field_name}: {value} }}) {{
                 collectionId
                 {field_name}
               }}
@@ -80,6 +84,8 @@ async def test_create_validation(
     ("noStringChecks", [], ["", "aasdfasdfasd", "  lorem ipsum !@#$%^&*()  "]),
     ("noIntChecks", [], [65, 0, 400, 7]),
     ("noFloatChecks", [], [-65.50, .00001, 400.6, 7]),
+    ("boolField", [], [True, False]),
+    ("enumField", [], ["RNA", "DNA"]),
   ]
 )
 async def test_update_validation(
@@ -99,9 +105,11 @@ async def test_update_validation(
     user_id = 12345
     project_ids = [333]
     def get_query(id: uuid.UUID, field_name: str, value: Any) -> str:
+        if "enum" not in field_name:
+            value = json.dumps(value)
         query = f"""
             mutation MyMutation {{
-              updateConstraintCheckedType(where: {{id: {{_eq: "{id}" }} }}, input: {{ {field_name}: {json.dumps(value)} }}) {{
+              updateConstraintCheckedType(where: {{id: {{_eq: "{id}" }} }}, input: {{ {field_name}: {value} }}) {{
                 collectionId
                 {field_name}
               }}

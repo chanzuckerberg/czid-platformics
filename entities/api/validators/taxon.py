@@ -52,7 +52,6 @@ class TaxonCreateInputValidator(BaseModel):
         ),
     ]
     level: Annotated[TaxonLevel, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     tax_parent_id: Annotated[uuid.UUID | None, Field()]
     tax_subspecies_id: Annotated[uuid.UUID | None, Field()]
     tax_species_id: Annotated[uuid.UUID | None, Field()]
@@ -95,7 +94,6 @@ class TaxonUpdateInputValidator(BaseModel):
     ]
     is_phage: Annotated[bool | None, Field()]
     level: Annotated[TaxonLevel | None, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     tax_parent_id: Annotated[uuid.UUID | None, Field()]
     tax_subspecies_id: Annotated[uuid.UUID | None, Field()]
     tax_species_id: Annotated[uuid.UUID | None, Field()]

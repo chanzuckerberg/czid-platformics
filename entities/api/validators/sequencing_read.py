@@ -21,11 +21,8 @@ class SequencingReadCreateInputValidator(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     sample_id: Annotated[uuid.UUID | None, Field()]
     protocol: Annotated[SequencingProtocol | None, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     technology: Annotated[SequencingTechnology, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     nucleic_acid: Annotated[NucleicAcid, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     clearlabs_export: Annotated[bool, Field()]
     medaka_model: Annotated[
         str | None,
@@ -48,7 +45,6 @@ class SequencingReadUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     nucleic_acid: Annotated[NucleicAcid | None, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     clearlabs_export: Annotated[bool | None, Field()]
     medaka_model: Annotated[
         str | None,

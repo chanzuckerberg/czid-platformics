@@ -562,7 +562,7 @@ async def update_sequencing_read(
     # Update DB
     for entity in entities:
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

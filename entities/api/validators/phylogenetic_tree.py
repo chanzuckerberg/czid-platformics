@@ -20,7 +20,6 @@ class PhylogeneticTreeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     format: Annotated[PhylogeneticTreeFormat, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
         int,
@@ -34,6 +33,3 @@ class PhylogeneticTreeUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     format: Annotated[PhylogeneticTreeFormat | None, Field()]
-
-
-# GraphQL Query validation takes care of bools for us, but this is here for completeness?

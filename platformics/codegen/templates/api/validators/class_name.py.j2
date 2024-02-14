@@ -65,10 +65,8 @@ from typing_extensions import Annotated
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "int", attr.required) }}, Field({{getNumericConstraints(attr)}})]
         {%- elif attr.type == "float" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "float", attr.required) }}, Field({{getNumericConstraints(attr)}})]
-# GraphQL Query validation takes care of bools for us, but this is here for completeness?
         {%- elif attr.is_enum %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, attr.type, attr.required) }}, Field()]
-# GraphQL Query validation takes care of bools for us, but this is here for completeness?
         {%- elif attr.type == "boolean" %}
     {{ attr.name }}: Annotated[{{ getTypeValidation(action, "bool", attr.required) }}, Field()]
         {%- elif attr.type == "date" %}

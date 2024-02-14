@@ -32,7 +32,6 @@ class HostOrganismCreateInputValidator(BaseModel):
         ),
     ]
     category: Annotated[HostOrganismCategory, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     is_deuterostome: Annotated[bool, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
@@ -59,5 +58,4 @@ class HostOrganismUpdateInputValidator(BaseModel):
         ),
     ]
     category: Annotated[HostOrganismCategory | None, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     is_deuterostome: Annotated[bool | None, Field()]

@@ -323,6 +323,10 @@ classes:
       min_value_0:
         range: integer
         minimum_value: 0
+      enum_field:
+        range: NucleicAcid
+      bool_field:
+        range: boolean
       max_value_9:
         range: integer
         maximum_value: 9

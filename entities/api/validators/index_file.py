@@ -20,7 +20,6 @@ class IndexFileCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     name: Annotated[IndexTypes, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     version: Annotated[
         str,
         StringConstraints(
@@ -42,7 +41,6 @@ class IndexFileUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     name: Annotated[IndexTypes | None, Field()]
-    # GraphQL Query validation takes care of bools for us, but this is here for completeness?
     version: Annotated[
         str | None,
         StringConstraints(
