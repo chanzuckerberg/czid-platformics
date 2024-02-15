@@ -107,7 +107,6 @@ class MetadatumWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
-    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -126,7 +125,6 @@ class MetadatumOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -145,7 +143,6 @@ class Metadatum(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
-    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -185,7 +182,6 @@ class MetadatumMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
-    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -204,7 +200,6 @@ class MetadatumCountColumns(enum.Enum):
     collection_id = "collection_id"
     created_at = "created_at"
     updated_at = "updated_at"
-    deleted_at = "deleted_at"
 
 
 """
