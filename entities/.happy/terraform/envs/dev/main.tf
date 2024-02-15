@@ -22,6 +22,9 @@ module "stack" {
           image = "{entities}"
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
         }
+        private_key = {
+          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "dev"]
+        }
       }
       memory                = "1000Mi"
       name                  = "entities"
@@ -46,8 +49,8 @@ module "stack" {
     CERBOS_URL              = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET   = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL = "s3"
-    JWK_PRIVATE_KEY_FILE    = "/czid-platformics/entities/test_infra/fixtures/private_key.pem"
-    JWK_PUBLIC_KEY_FILE     = "/czid-platformics/entities/test_infra/fixtures/public_key.pem"
+    JWK_PRIVATE_KEY_FILE    = "/tmp/private_key.pem"
+    JWK_PUBLIC_KEY_FILE     = "/tmp/public_key.pem"
     WORKERS                 = "2"
   }
   create_dashboard = false

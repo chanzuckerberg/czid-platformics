@@ -46,8 +46,8 @@ module "stack" {
     CERBOS_URL              = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET   = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL = "s3"
-    JWK_PRIVATE_KEY_FILE    = "/czid-platformics/entities/test_infra/fixtures/private_key.pem"
-    JWK_PUBLIC_KEY_FILE     = "/czid-platformics/entities/test_infra/fixtures/public_key.pem"
+    JWK_PRIVATE_KEY_FILE    = "/tmp/private_key.pem"
+    JWK_PUBLIC_KEY_FILE     = "/tmp/public_key.pem"
     WORKERS                 = "2"
   }
   create_dashboard = false
