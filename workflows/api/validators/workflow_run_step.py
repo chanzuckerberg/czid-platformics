@@ -8,36 +8,31 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
-
 from support.enums import WorkflowRunStepStatus
 
-import typing
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated
-
-
-
-
-
-
-
-
-
 
 
 class WorkflowRunStepCreateInputValidator(BaseModel):
     # Pydantic stuff
-    model_config = ConfigDict(from_attributes=True) 
-    workflow_run_id: Annotated[ uuid.UUID | None, Field()]
-    ended_at: Annotated[ datetime.datetime | None, Field()]
-    status: Annotated[ WorkflowRunStepStatus | None, Field()]
-    collection_id: Annotated[ int, Field(
-    ge=0,)]
+    model_config = ConfigDict(from_attributes=True)
+    workflow_run_id: Annotated[uuid.UUID | None, Field()]
+    ended_at: Annotated[datetime.datetime | None, Field()]
+    status: Annotated[WorkflowRunStepStatus | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            ge=0,
+        ),
+    ]
+
+
 class WorkflowRunStepUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    ended_at: Annotated[ datetime.datetime | None, Field()]
-    status: Annotated[ WorkflowRunStepStatus | None, Field()]
+    ended_at: Annotated[datetime.datetime | None, Field()]
+    status: Annotated[WorkflowRunStepStatus | None, Field()]

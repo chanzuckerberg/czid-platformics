@@ -8,36 +8,57 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
-
-
-import typing
-import datetime
-import uuid
-
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
-
-
-
-
-
-
-
-
-
 
 
 class WorkflowCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    default_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    minimum_supported_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    collection_id: Annotated[ int, Field(
-    ge=0,)]
+    name: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    default_version: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    minimum_supported_version: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    collection_id: Annotated[
+        int,
+        Field(
+            ge=0,
+        ),
+    ]
+
+
 class WorkflowUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    name: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    default_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    minimum_supported_version: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
+    name: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    default_version: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    minimum_supported_version: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]

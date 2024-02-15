@@ -8,10 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
-
 from support.enums import WorkflowRunStatus
 
-import typing
 import datetime
 import uuid
 
@@ -19,34 +17,66 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
 
-
-
-
-
-
-
-
-
-
 class WorkflowRunCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    ended_at: Annotated[ datetime.datetime | None, Field()]
-    execution_id: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    outputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    workflow_runner_inputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    status: Annotated[ WorkflowRunStatus | None, Field()] 
-    workflow_version_id: Annotated[ uuid.UUID | None, Field()]
-    raw_inputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)] 
-    deprecated_by_id: Annotated[ uuid.UUID | None, Field()]
-    collection_id: Annotated[ int, Field(
-    ge=0,)]
+    ended_at: Annotated[datetime.datetime | None, Field()]
+    execution_id: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    outputs_json: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    workflow_runner_inputs_json: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    status: Annotated[WorkflowRunStatus | None, Field()]
+    workflow_version_id: Annotated[uuid.UUID | None, Field()]
+    raw_inputs_json: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    deprecated_by_id: Annotated[uuid.UUID | None, Field()]
+    collection_id: Annotated[
+        int,
+        Field(
+            ge=0,
+        ),
+    ]
+
+
 class WorkflowRunUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    ended_at: Annotated[ datetime.datetime | None, Field()]
-    execution_id: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    outputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    workflow_runner_inputs_json: Annotated[ str | None, StringConstraints(strip_whitespace=True,)]
-    status: Annotated[ WorkflowRunStatus | None, Field()] 
-    deprecated_by_id: Annotated[ uuid.UUID | None, Field()]
+    ended_at: Annotated[datetime.datetime | None, Field()]
+    execution_id: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    outputs_json: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    workflow_runner_inputs_json: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
+    status: Annotated[WorkflowRunStatus | None, Field()]
+    deprecated_by_id: Annotated[uuid.UUID | None, Field()]

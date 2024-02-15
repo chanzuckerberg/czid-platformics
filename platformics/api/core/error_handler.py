@@ -5,33 +5,29 @@ from graphql.error import GraphQLError
 from platformics.api.core.errors import PlatformicsException
 from pydantic import ValidationError
 from strawberry.extensions.base_extension import SchemaExtension
+from abc import ABC
 
+class ExceptionHandler(ABC):
+    def convert_exception(self, err: Any) -> list[Any]:
+        raise NotImplementedError
 
-@strawberry.type
-class PlatformicsValidationError(GraphQLError):
-    message: str
-    nodes: Any
-    stack: Optional[Any] = None
-    source: Optional[Any] = None
-    positions: Optional[Any] = None  # type: Optional[Any]
-    path: Union[List[Union[int, str]], List[str], None] = None
-    extensions: Optional[Dict[str, Any]] = None
-    original_error: Optional[Exception] = None
-
-
-class NoOpHandler:
-    def convert_exception(self, err: PlatformicsException) -> PlatformicsException:
+class NoOpHandler(ExceptionHandler):
+    def convert_exception(self, err: PlatformicsException) -> list[PlatformicsException]:
         return [err]
 
 
-class ValidationExceptionHandler:
-    def convert_exception(self, err: GraphQLError) -> PlatformicsValidationError:
-        validation_error = err.original_error
-        errors = []
+class ValidationExceptionHandler(ExceptionHandler):
+    def convert_exception(self, err: GraphQLError) -> list[GraphQLError]:
+        validation_error: ValidationError | None = err.original_error  # type: ignore
+        errors: list[GraphQLError] = []
+        if not validation_error:
+            return []
+        if not validation_error.errors():
+            return errors
         for field_err in validation_error.errors():
             errors.append(
                 GraphQLError(
-                    message=f"Validation Error: {'.'.join(field_err['loc'])} - {field_err['msg']}",
+                    message=f"Validation Error: {'.'.join(field_err['loc'])} - {field_err['msg']}",  # type: ignore
                     nodes=err.nodes,
                     source=err.source,
                     positions=err.positions,
@@ -42,10 +38,10 @@ class ValidationExceptionHandler:
         return errors
 
 
-class DefaultExceptionHandler:
+class DefaultExceptionHandler(ExceptionHandler):
     error_message: str = "Unexpected error."
 
-    def convert_exception(self, err: GraphQLError) -> list[GraphQLError]:
+    def convert_exception(self, err: Any) -> list[GraphQLError]:
         return [
             GraphQLError(
                 message=self.error_message,
@@ -59,14 +55,14 @@ class DefaultExceptionHandler:
 
 
 class HandleErrors(SchemaExtension):
-    def __init__(self):
-        self.handlers = {
+    def __init__(self) -> None:
+        self.handlers: dict[type, ExceptionHandler] = {
             ValidationError: ValidationExceptionHandler(),
             PlatformicsException: NoOpHandler(),
         }
         self.default_handler = DefaultExceptionHandler()
 
-    def process_error(self, error: GraphQLError) -> GraphQLError:
+    def process_error(self, error: GraphQLError) -> list[GraphQLError]:
         handler = self.handlers.get(type(error.original_error), self.default_handler)
         return handler.convert_exception(error)
 

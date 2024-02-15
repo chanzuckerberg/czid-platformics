@@ -90,7 +90,7 @@ local-swipe-plugin-deploy-mock: local-swipe-plugin-clean ## Deploy SWIPE onto mo
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock ## Run SWIPE plugin tests
 	$(docker_compose) exec $(FOLDER) sh -c 'pytest terraform_test/'
 
-DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
+DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/ api/validators
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
