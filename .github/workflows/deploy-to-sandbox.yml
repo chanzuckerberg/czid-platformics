@@ -1,0 +1,38 @@
+name: Deploy to Sandbox
+on:
+  workflow_dispatch:
+    inputs: 
+      service: 
+        type: choice
+        description: Which service to deploy
+        options:
+        - workflows
+        - entities
+
+jobs:
+  run-deploy:
+    runs-on: [ARM64, self-hosted, Linux]
+    environment: sandbox
+    permissions:
+      id-token: write
+      contents: read
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Assume happy-api deployment role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}  
+          role-duration-seconds: 1200 
+          role-session-name: core-sandbox-deploy 
+      - name: Install happy
+        uses: chanzuckerberg/github-actions/.github/actions/install-happy@main
+      - name: Update sandbox
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
+        with:
+          tfe-token: ${{ secrets.TFE_TOKEN }} 
+          env: ${{ vars.HAPPY_ENV }} 
+          create-tag: true
+          stack-name: ${{ secrets.HAPPY_STACK_NAME }} 
+          working-directory: ${{ github.event.inputs.service }}
