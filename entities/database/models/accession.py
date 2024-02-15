@@ -30,7 +30,7 @@ class Accession(Entity):
     accession_id: Mapped[str] = mapped_column(String, nullable=False)
     accession_name: Mapped[str] = mapped_column(String, nullable=False)
     upstream_database_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("upstream_database.entity_id"), nullable=False
+        UUID, ForeignKey("upstream_database.entity_id"), nullable=False, index=True
     )
     upstream_database: Mapped["UpstreamDatabase"] = relationship(
         "UpstreamDatabase", back_populates="accessions", foreign_keys=upstream_database_id

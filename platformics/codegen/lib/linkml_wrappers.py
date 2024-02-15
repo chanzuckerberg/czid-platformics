@@ -58,6 +58,12 @@ class FieldWrapper:
         return None
 
     @cached_property
+    def indexed(self) -> bool:
+        if "indexed" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["indexed"].value
+        return False
+
+    @cached_property
     def minimum_length(self) -> int | None:
         if "minimum_length" in self.wrapped_field.annotations:
             return self.wrapped_field.annotations["minimum_length"].value
