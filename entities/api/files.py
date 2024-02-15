@@ -4,38 +4,40 @@ GraphQL types, queries, and mutations for files.
 
 import gzip
 import json
-import typing
-import database.models as db
-import strawberry
 import tempfile
+import typing
 import uuid
+
+import database.models as db
 import uuid6
-from fastapi import Depends
-from typing_extensions import TypedDict
-from mypy_boto3_s3.client import S3Client
-from mypy_boto3_sts.client import STSClient
-from platformics.api.core.deps import get_s3_client
-from platformics.api.core.strawberry_extensions import DependencyExtension
-from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
-from strawberry.scalars import JSON
-from strawberry.types import Info
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
-from sqlalchemy import inspect
-from sqlalchemy.ext.asyncio import AsyncSession
-from support.format_handlers import get_validator
-from support.enums import FileStatus, FileAccessProtocol
-from platformics.api.core.helpers import get_db_rows
-from api.types.entities import Entity
-from platformics.settings import APISettings
-from platformics.security.authorization import CerbosAction, get_resource_query
+from fastapi import Depends
+from mypy_boto3_s3.client import S3Client
+from mypy_boto3_sts.client import STSClient
 from platformics.api.core.deps import (
     get_cerbos_client,
     get_db_session,
-    require_auth_principal,
+    get_s3_client,
     get_settings,
     get_sts_client,
+    require_auth_principal,
 )
+from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
+from platformics.api.core.helpers import get_db_rows
+from platformics.api.core.strawberry_extensions import DependencyExtension
+from platformics.security.authorization import CerbosAction, get_resource_query
+from platformics.settings import APISettings
+from platformics.support.format_handlers import get_validator
+from sqlalchemy import inspect
+from sqlalchemy.ext.asyncio import AsyncSession
+from support.enums import FileAccessProtocol, FileStatus
+from typing_extensions import TypedDict
+
+import strawberry
+from api.types.entities import Entity
+from strawberry.scalars import JSON
+from strawberry.types import Info
 
 FILE_CONCATENATION_MAX = 200
 FILE_CONCATENATION_MAX_SIZE = 50e3  # SARS-CoV-2 genome is ~30kbp

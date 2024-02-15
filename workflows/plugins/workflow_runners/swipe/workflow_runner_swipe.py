@@ -45,7 +45,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
 
         """
         runner_id = str(uuid4())
-        exc_response = self.sfn.start_execution(
+        result = self.sfn.start_execution(
             stateMachineArn=self.state_machine_arn,
             name=runner_id,
             input=json.dumps(
@@ -56,11 +56,5 @@ class SwipeWorkflowRunner(WorkflowRunner):
                 }
             ),
         )
-        return json.dumps(
-            {
-                "runner_id": runner_id,
-                "response": exc_response,
-            },
-            sort_keys=True,
-            default=str,
-        )
+        arn = result["executionArn"]
+        return arn

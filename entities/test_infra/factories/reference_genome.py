@@ -34,5 +34,4 @@ class ReferenceGenomeFactory(CommonFactory):
         entity_field_name="file",
         file_format="fastq",
     )
-    accession_id = fuzzy.FuzzyText()
-    accession_name = fuzzy.FuzzyText()
+    name = fuzzy.FuzzyText()

@@ -8,7 +8,6 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-strawberry-sqlalchemy-mapper = "^0.1.1"
 fastapi = "^0.100.0"
 rich = "^13.4.2"
 typer = "^0.9.0"
@@ -43,6 +42,8 @@ linkml = "^1.5.7"
 strcase = "^1.0.0"
 linkml-runtime = "^1.6.0"
 faker-enum = "^0.0.2"
+strawberry-graphql = "0.209.8"
+pytest-asyncio = "^0.23.5"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -60,7 +61,14 @@ explicit_package_bases = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
 implicit_reexport = true
-exclude = ['gql_schema\.py$', '^platformics/thirdparty', '^platformics/codegen', '^platformics/api/core/helpers.py'] # TODO: fix helper types and remove
+exclude = [
+    'gql_schema\.py$',
+    '^platformics/thirdparty',
+    '^platformics/codegen',
+    '^platformics/client',
+    '^platformics/api/core/helpers.py',
+    "terraform_test/.terraform/",
+] # TODO: fix helper types and remove
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.

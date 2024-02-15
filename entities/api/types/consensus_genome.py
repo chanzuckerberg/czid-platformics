@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
@@ -20,10 +21,11 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
+    DatetimeComparators,
     IntComparators,
     UUIDComparators,
 )
@@ -42,6 +44,8 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
     from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
+    from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
+    from api.types.accession import AccessionOrderByClause, AccessionWhereClause, Accession
     from api.types.metric_consensus_genome import (
         MetricConsensusGenomeOrderByClause,
         MetricConsensusGenomeWhereClause,
@@ -56,6 +60,12 @@ else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     SequencingReadOrderByClause = "SequencingReadOrderByClause"
+    ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
+    ReferenceGenome = "ReferenceGenome"
+    ReferenceGenomeOrderByClause = "ReferenceGenomeOrderByClause"
+    AccessionWhereClause = "AccessionWhereClause"
+    Accession = "Accession"
+    AccessionOrderByClause = "AccessionOrderByClause"
     MetricConsensusGenomeWhereClause = "MetricConsensusGenomeWhereClause"
     MetricConsensusGenome = "MetricConsensusGenome"
     MetricConsensusGenomeOrderByClause = "MetricConsensusGenomeOrderByClause"
@@ -96,6 +106,34 @@ async def load_sequencing_read_rows(
     mapper = inspect(db.ConsensusGenome)
     relationship = mapper.relationships["sequence_read"]
     return await dataloader.loader_for(relationship, where, order_by).load(root.sequence_read_id)  # type:ignore
+
+
+@strawberry.field
+async def load_reference_genome_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")] | None = None,
+    order_by: Optional[
+        list[Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]]
+    ] = [],
+) -> Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["reference_genome"]
+    return await dataloader.loader_for(relationship, where, order_by).load(root.reference_genome_id)  # type:ignore
+
+
+@strawberry.field
+async def load_accession_rows(
+    root: "ConsensusGenome",
+    info: Info,
+    where: Annotated["AccessionWhereClause", strawberry.lazy("api.types.accession")] | None = None,
+    order_by: Optional[list[Annotated["AccessionOrderByClause", strawberry.lazy("api.types.accession")]]] = [],
+) -> Optional[Annotated["Accession", strawberry.lazy("api.types.accession")]]:
+    dataloader = info.context["sqlalchemy_loader"]
+    mapper = inspect(db.ConsensusGenome)
+    relationship = mapper.relationships["accession"]
+    return await dataloader.loader_for(relationship, where, order_by).load(root.accession_id)  # type:ignore
 
 
 @strawberry.field
@@ -163,15 +201,22 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class ConsensusGenomeWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     sequence_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    reference_genome: Optional[
+        Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
+    ] | None
+    accession: Optional[Annotated["AccessionWhereClause", strawberry.lazy("api.types.accession")]] | None
     metrics: Optional[
         Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -185,6 +230,10 @@ class ConsensusGenomeOrderByClause(TypedDict):
     sequence_read: Optional[
         Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
+    reference_genome: Optional[
+        Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]
+    ] | None
+    accession: Optional[Annotated["AccessionOrderByClause", strawberry.lazy("api.types.accession")]] | None
     metrics: Optional[
         Annotated["MetricConsensusGenomeOrderByClause", strawberry.lazy("api.types.metric_consensus_genome")]
     ] | None
@@ -204,14 +253,16 @@ Define ConsensusGenome type
 
 @strawberry.type
 class ConsensusGenome(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
     sequence_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
+    reference_genome: Optional[
+        Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
+    ] = load_reference_genome_rows  # type:ignore
+    accession: Optional[
+        Annotated["Accession", strawberry.lazy("api.types.accession")]
+    ] = load_accession_rows  # type:ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
     metrics: Optional[
@@ -219,6 +270,13 @@ class ConsensusGenome(EntityInterface):
     ] = load_metric_consensus_genome_rows  # type:ignore
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
+    id: strawberry.ID
+    producing_run_id: strawberry.ID
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -242,7 +300,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class ConsensusGenomeNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -254,9 +311,11 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class ConsensusGenomeMinMaxColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -268,10 +327,11 @@ Define enum of all columns to support count and count(distinct) aggregations
 class ConsensusGenomeCountColumns(enum.Enum):
     taxon = "taxon"
     sequence_read = "sequence_read"
+    reference_genome = "reference_genome"
+    accession = "accession"
     sequence = "sequence"
     metrics = "metrics"
     intermediate_outputs = "intermediate_outputs"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
@@ -323,22 +383,12 @@ Mutation types
 
 @strawberry.input()
 class ConsensusGenomeCreateInput:
-    collection_id: int
-    taxon_id: strawberry.ID
-    sequence_read_id: strawberry.ID
-    sequence_id: Optional[strawberry.ID] = None
-    metrics_id: Optional[strawberry.ID] = None
-    intermediate_outputs_id: Optional[strawberry.ID] = None
-
-
-@strawberry.input()
-class ConsensusGenomeUpdateInput:
-    collection_id: Optional[int] = None
     taxon_id: Optional[strawberry.ID] = None
     sequence_read_id: Optional[strawberry.ID] = None
-    sequence_id: Optional[strawberry.ID] = None
-    metrics_id: Optional[strawberry.ID] = None
-    intermediate_outputs_id: Optional[strawberry.ID] = None
+    reference_genome_id: Optional[strawberry.ID] = None
+    accession_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[strawberry.ID] = None
+    collection_id: Optional[int] = None
 
 
 """
@@ -410,17 +460,64 @@ async def create_consensus_genome(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new ConsensusGenome object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        input.producing_run_id = None
+    # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.ConsensusGenome.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # Check that taxon relationship is accessible.
+    if input.taxon_id:
+        taxon = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": input.taxon_id}}, [], CerbosAction.VIEW
+        )
+        if not taxon:
+            raise PlatformicsException("Unauthorized: taxon does not exist")
+    # Check that sequence_read relationship is accessible.
+    if input.sequence_read_id:
+        sequence_read = await get_db_rows(
+            db.SequencingRead,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": input.sequence_read_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not sequence_read:
+            raise PlatformicsException("Unauthorized: sequence_read does not exist")
+    # Check that reference_genome relationship is accessible.
+    if input.reference_genome_id:
+        reference_genome = await get_db_rows(
+            db.ReferenceGenome,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": input.reference_genome_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not reference_genome:
+            raise PlatformicsException("Unauthorized: reference_genome does not exist")
+    # Check that accession relationship is accessible.
+    if input.accession_id:
+        accession = await get_db_rows(
+            db.Accession, session, cerbos_client, principal, {"id": {"_eq": input.accession_id}}, [], CerbosAction.VIEW
+        )
+        if not accession:
+            raise PlatformicsException("Unauthorized: accession does not exist")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -428,45 +525,6 @@ async def create_consensus_genome(
     session.add(new_entity)
     await session.commit()
     return new_entity
-
-
-@strawberry.mutation(extensions=[DependencyExtension()])
-async def update_consensus_genome(
-    input: ConsensusGenomeUpdateInput,
-    where: ConsensusGenomeWhereClauseMutations,
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-) -> Sequence[db.Entity]:
-    """
-    Update ConsensusGenome objects. Used for mutations (see api/mutations.py).
-    """
-    params = input.__dict__
-
-    # Need at least one thing to update
-    num_params = len([x for x in params if params[x] is not None])
-    if num_params == 0:
-        raise PlatformicsException("No fields to update")
-
-    # Fetch entities for update, if we have access to them
-    entities = await get_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
-    if len(entities) == 0:
-        raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.ConsensusGenome.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
-
-    # Update DB
-    for entity in entities:
-        for key in params:
-            if params[key]:
-                setattr(entity, key, params[key])
-    await session.commit()
-    return entities
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

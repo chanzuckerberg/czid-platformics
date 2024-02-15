@@ -22,7 +22,7 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
@@ -175,10 +175,6 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class SampleWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     rails_sample_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
     sample_type: Optional[StrComparators] | None
@@ -191,6 +187,13 @@ class SampleWhereClause(TypedDict):
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     metadatas: Optional[Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")]] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -224,10 +227,6 @@ Define Sample type
 
 @strawberry.type
 class Sample(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     rails_sample_id: Optional[int] = None
     name: str
     sample_type: str
@@ -250,6 +249,13 @@ class Sample(EntityInterface):
     metadatas_aggregate: Optional[
         Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]
     ] = load_metadatum_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    producing_run_id: strawberry.ID
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -273,10 +279,9 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class SampleNumericalColumns:
-    producing_run_id: Optional[int] = None
+    rails_sample_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
-    rails_sample_id: Optional[int] = None
 
 
 """
@@ -286,15 +291,17 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class SampleMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     rails_sample_id: Optional[int] = None
     name: Optional[str] = None
     sample_type: Optional[str] = None
     collection_date: Optional[datetime.datetime] = None
     collection_location: Optional[str] = None
     notes: Optional[str] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -314,7 +321,6 @@ class SampleCountColumns(enum.Enum):
     host_organism = "host_organism"
     sequencing_reads = "sequencing_reads"
     metadatas = "metadatas"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
@@ -364,20 +370,6 @@ Mutation types
 
 @strawberry.input()
 class SampleCreateInput:
-    collection_id: int
-    rails_sample_id: Optional[int] = None
-    name: str
-    sample_type: str
-    water_control: bool
-    collection_date: datetime.datetime
-    collection_location: str
-    notes: Optional[str] = None
-    host_organism_id: Optional[strawberry.ID] = None
-
-
-@strawberry.input()
-class SampleUpdateInput:
-    collection_id: Optional[int] = None
     rails_sample_id: Optional[int] = None
     name: Optional[str] = None
     sample_type: Optional[str] = None
@@ -386,6 +378,18 @@ class SampleUpdateInput:
     collection_location: Optional[str] = None
     notes: Optional[str] = None
     host_organism_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[strawberry.ID] = None
+    collection_id: Optional[int] = None
+
+
+@strawberry.input()
+class SampleUpdateInput:
+    name: Optional[str] = None
+    sample_type: Optional[str] = None
+    water_control: Optional[bool] = None
+    collection_date: Optional[datetime.datetime] = None
+    collection_location: Optional[str] = None
+    notes: Optional[str] = None
 
 
 """
@@ -457,17 +461,38 @@ async def create_sample(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new Sample object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        input.rails_sample_id = None
+        input.producing_run_id = None
+    # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Sample.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # Check that host_organism relationship is accessible.
+    if input.host_organism_id:
+        host_organism = await get_db_rows(
+            db.HostOrganism,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": input.host_organism_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not host_organism:
+            raise PlatformicsException("Unauthorized: host_organism does not exist")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -484,6 +509,7 @@ async def update_sample(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update Sample objects. Used for mutations (see api/mutations.py).
@@ -495,17 +521,12 @@ async def update_sample(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Sample, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.Sample.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

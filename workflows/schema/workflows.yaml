@@ -50,22 +50,34 @@ classes:
       id:
         identifier: true
         range: uuid
+        readonly: true # The API handles generating the values for these fields
+        required: true
       producing_run_id:
-        range: int
-        minimum_value: 0
+        range: uuid
+        required: true
+        annotations:
+          hidden: true # This field shouldn't exist but we're living with it for now since it's part of the base Entity class.
       owner_user_id:
         range: int
         minimum_value: 0
+        readonly: true # The API handles generating the values for these fields
+        required: true
       collection_id:
         range: int
         minimum_value: 0
+        required: true
+        annotations:
+          mutable: false
       created_at:
         range: date
         required: true
+        readonly: true
       updated_at:
         range: date
+        readonly: true
       deleted_at:
         range: date
+        readonly: true
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -73,6 +85,7 @@ classes:
     # pluralization can be added to the core spec in the future.
     annotations:
       plural: Entities
+
   WorkflowRun:
     is_a: Entity
     mixins:
@@ -80,19 +93,32 @@ classes:
     attributes:
       started_at:
         range: date
+        readonly: true
       ended_at:
         range: date
+        annotations:
+          system_writable_only: true
       execution_id:
         range: string
+        annotations:
+          system_writable_only: true
       outputs_json:
         range: string
+        annotations:
+          system_writable_only: true
       workflow_runner_inputs_json: 
         range: string
+        annotations:
+          system_writable_only: true
       status: 
         range: WorkflowRunStatus 
+        annotations:
+          system_writable_only: true
       workflow_version:
         range: WorkflowVersion
         inverse: WorkflowVersion.runs
+        annotations:
+          mutable: false
       steps:
         range: WorkflowRunStep
         multivalued: true
@@ -103,6 +129,8 @@ classes:
         inverse: RunEntityInput.workflow_run
       raw_inputs_json:
         range: string
+        annotations:
+          mutable: false
       # If a workflow is re-run the new run id is stored here. The presence a run here indicates that
       # the run id deprecated and maintains a history of previous runs that are considered re-runs of
       # each other.
@@ -128,6 +156,7 @@ classes:
         inverse: WorkflowVersion.workflow
     annotations:
       plural: Workflows
+      system_writable_only: true
 
   WorkflowRunStep:
     is_a: Entity
@@ -137,12 +166,19 @@ classes:
       workflow_run:
         range: WorkflowRun
         inverse: WorkflowRun.steps
+        annotations:
+          mutable: false
       started_at:
         range: date 
+        readonly: true
       ended_at:
         range: date
+        annotations:
+          system_writable_only:: true
       status: 
         range: WorkflowRunStepStatus
+        annotations:
+          system_writable_only:: true
     annotations:
       plural: WorkflowRunSteps
 
@@ -155,11 +191,14 @@ classes:
         range: uuid
       field_name: 
         range: string
+      entity_type:
+        range: string
       workflow_run: 
         range: WorkflowRun
         inverse: WorkflowRun.entity_inputs
     annotations:
       plural: WorkflowRunEntityInputs
+      mutable: false
 
   WorkflowVersion:
     is_a: Entity
@@ -183,6 +222,8 @@ classes:
         inverse: WorkflowRun.workflow_version
     annotations:
       plural: WorkflowVersions
+      mutable: false
+      system_writable_only: true
 
   EntityMixin:
     mixin: true
@@ -193,4 +234,6 @@ classes:
         range: uuid
         identifier: true
         inverse: entity.id
+        annotations:
+          hidden: true
 

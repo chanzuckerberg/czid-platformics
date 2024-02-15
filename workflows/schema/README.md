@@ -2,7 +2,7 @@
 erDiagram
 Entity {
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -19,7 +19,7 @@ WorkflowRun {
     string raw_inputs_json  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -32,7 +32,7 @@ Workflow {
     string minimum_supported_version  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -45,7 +45,7 @@ WorkflowRunStep {
     WorkflowRunStepStatus status  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -55,9 +55,10 @@ WorkflowRunStep {
 WorkflowRunEntityInput {
     uuid input_entity_id  
     string field_name  
+    string entity_type  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  
@@ -71,7 +72,7 @@ WorkflowVersion {
     string manifest  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
+    uuid producing_run_id  
     int owner_user_id  
     int collection_id  
     date created_at  

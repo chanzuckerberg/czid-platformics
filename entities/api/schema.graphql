@@ -1,3 +1,139 @@
+type Accession implements EntityInterface & Node {
+  """The Globally Unique ID of this object"""
+  _id: GlobalID!
+  id: ID!
+  accessionId: String!
+  accessionName: String!
+  upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+    orderBy: [ConsensusGenomeOrderByClause!] = []
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
+}
+
+type AccessionAggregate {
+  aggregate: AccessionAggregateFunctions
+}
+
+type AccessionAggregateFunctions {
+  sum: AccessionNumericalColumns
+  avg: AccessionNumericalColumns
+  min: AccessionMinMaxColumns
+  max: AccessionMinMaxColumns
+  stddev: AccessionNumericalColumns
+  variance: AccessionNumericalColumns
+  count(distinct: Boolean = false, columns: AccessionCountColumns = null): Int
+}
+
+"""A connection to a list of items."""
+type AccessionConnection {
+  """Pagination data for this connection"""
+  pageInfo: PageInfo!
+
+  """Contains the nodes in this connection"""
+  edges: [AccessionEdge!]!
+}
+
+enum AccessionCountColumns {
+  accession_id
+  accession_name
+  upstream_database
+  consensus_genomes
+  id
+  producing_run_id
+  owner_user_id
+  collection_id
+  created_at
+  updated_at
+  deleted_at
+}
+
+input AccessionCreateInput {
+  accessionId: String = null
+  accessionName: String = null
+  upstreamDatabaseId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
+}
+
+"""An edge in a connection."""
+type AccessionEdge {
+  """A cursor for use in pagination"""
+  cursor: String!
+
+  """The item at the end of the edge"""
+  node: Accession!
+}
+
+type AccessionMinMaxColumns {
+  accessionId: String
+  accessionName: String
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
+}
+
+type AccessionNumericalColumns {
+  ownerUserId: Int
+  collectionId: Int
+}
+
+input AccessionOrderByClause {
+  accessionId: orderBy
+  accessionName: orderBy
+  upstreamDatabase: UpstreamDatabaseOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
+input AccessionUpdateInput {
+  accessionName: String = null
+}
+
+input AccessionWhereClause {
+  accessionId: StrComparators
+  accessionName: StrComparators
+  upstreamDatabase: UpstreamDatabaseWhereClause
+  consensusGenomes: ConsensusGenomeWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
+}
+
+input AccessionWhereClauseMutations {
+  id: UUIDComparators
+}
+
 input BoolComparators {
   _eq: Int
   _neq: Int
@@ -14,12 +150,15 @@ type BulkDownload implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   downloadType: BulkDownloadType!
   fileId: ID
   file(where: FileWhereClause = null): File
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type BulkDownloadAggregate {
@@ -39,7 +178,6 @@ type BulkDownloadAggregateFunctions {
 enum BulkDownloadCountColumns {
   download_type
   file
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -50,19 +188,20 @@ enum BulkDownloadCountColumns {
 }
 
 input BulkDownloadCreateInput {
-  collectionId: Int!
-  downloadType: BulkDownloadType!
-  fileId: ID = null
+  downloadType: BulkDownloadType = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 type BulkDownloadMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type BulkDownloadNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -95,18 +234,15 @@ input BulkDownloadTypeEnumComparators {
   _is_null: BulkDownloadType
 }
 
-input BulkDownloadUpdateInput {
-  collectionId: Int = null
-  downloadType: BulkDownloadType = null
-  fileId: ID = null
-}
-
 input BulkDownloadWhereClause {
+  downloadType: BulkDownloadTypeEnumComparators
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  downloadType: BulkDownloadTypeEnumComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input BulkDownloadWhereClauseMutations {
@@ -117,16 +253,21 @@ type ConsensusGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
   sequenceRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
+  referenceGenome(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
+  accession(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): Accession
   sequenceId: ID
   sequence(where: FileWhereClause = null): File
   metrics(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): MetricConsensusGenome
   intermediateOutputsId: ID
   intermediateOutputs(where: FileWhereClause = null): File
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type ConsensusGenomeAggregate {
@@ -155,10 +296,11 @@ type ConsensusGenomeConnection {
 enum ConsensusGenomeCountColumns {
   taxon
   sequence_read
+  reference_genome
+  accession
   sequence
   metrics
   intermediate_outputs
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -169,12 +311,12 @@ enum ConsensusGenomeCountColumns {
 }
 
 input ConsensusGenomeCreateInput {
-  collectionId: Int!
-  taxonId: ID!
-  sequenceReadId: ID!
-  sequenceId: ID = null
-  metricsId: ID = null
-  intermediateOutputsId: ID = null
+  taxonId: ID = null
+  sequenceReadId: ID = null
+  referenceGenomeId: ID = null
+  accessionId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -187,13 +329,14 @@ type ConsensusGenomeEdge {
 }
 
 type ConsensusGenomeMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type ConsensusGenomeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -201,6 +344,8 @@ type ConsensusGenomeNumericalColumns {
 input ConsensusGenomeOrderByClause {
   taxon: TaxonOrderByClause
   sequenceRead: SequencingReadOrderByClause
+  referenceGenome: ReferenceGenomeOrderByClause
+  accession: AccessionOrderByClause
   metrics: MetricConsensusGenomeOrderByClause
   id: orderBy
   producingRunId: orderBy
@@ -211,23 +356,19 @@ input ConsensusGenomeOrderByClause {
   deletedAt: orderBy
 }
 
-input ConsensusGenomeUpdateInput {
-  collectionId: Int = null
-  taxonId: ID = null
-  sequenceReadId: ID = null
-  sequenceId: ID = null
-  metricsId: ID = null
-  intermediateOutputsId: ID = null
-}
-
 input ConsensusGenomeWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   taxon: TaxonWhereClause
   sequenceRead: SequencingReadWhereClause
+  referenceGenome: ReferenceGenomeWhereClause
+  accession: AccessionWhereClause
   metrics: MetricConsensusGenomeWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input ConsensusGenomeWhereClauseMutations {
@@ -352,9 +493,6 @@ type GenomicRange implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   fileId: ID
   file(where: FileWhereClause = null): File
   sequencingReads(
@@ -374,6 +512,12 @@ type GenomicRange implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type GenomicRangeAggregate {
@@ -393,7 +537,6 @@ type GenomicRangeAggregateFunctions {
 enum GenomicRangeCountColumns {
   file
   sequencing_reads
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -404,18 +547,19 @@ enum GenomicRangeCountColumns {
 }
 
 input GenomicRangeCreateInput {
-  collectionId: Int!
-  fileId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 type GenomicRangeMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type GenomicRangeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -430,17 +574,15 @@ input GenomicRangeOrderByClause {
   deletedAt: orderBy
 }
 
-input GenomicRangeUpdateInput {
-  collectionId: Int = null
-  fileId: ID = null
-}
-
 input GenomicRangeWhereClause {
+  sequencingReads: SequencingReadWhereClause
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  sequencingReads: SequencingReadWhereClause
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input GenomicRangeWhereClauseMutations {
@@ -456,9 +598,6 @@ type HostOrganism implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   name: String!
   version: String!
   category: HostOrganismCategory!
@@ -499,6 +638,12 @@ type HostOrganism implements EntityInterface & Node {
     last: Int = null
   ): SampleConnection!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type HostOrganismAggregate {
@@ -542,7 +687,6 @@ enum HostOrganismCountColumns {
   indexes
   sequence
   samples
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -553,24 +697,25 @@ enum HostOrganismCountColumns {
 }
 
 input HostOrganismCreateInput {
-  collectionId: Int!
-  name: String!
-  version: String!
-  category: HostOrganismCategory!
-  isDeuterostome: Boolean!
-  sequenceId: ID = null
+  name: String = null
+  version: String = null
+  category: HostOrganismCategory = null
+  isDeuterostome: Boolean = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 type HostOrganismMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
   name: String
   version: String
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type HostOrganismNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -590,25 +735,26 @@ input HostOrganismOrderByClause {
 }
 
 input HostOrganismUpdateInput {
-  collectionId: Int = null
   name: String = null
   version: String = null
   category: HostOrganismCategory = null
   isDeuterostome: Boolean = null
-  sequenceId: ID = null
 }
 
 input HostOrganismWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: StrComparators
   version: StrComparators
   category: HostOrganismCategoryEnumComparators
   isDeuterostome: BoolComparators
   indexes: IndexFileWhereClause
   samples: SampleWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input HostOrganismWhereClauseMutations {
@@ -619,15 +765,18 @@ type IndexFile implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   name: IndexTypes!
   version: String!
   fileId: ID
   file(where: FileWhereClause = null): File
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
   hostOrganism(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): HostOrganism
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type IndexFileAggregate {
@@ -659,7 +808,6 @@ enum IndexFileCountColumns {
   file
   upstream_database
   host_organism
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -670,12 +818,12 @@ enum IndexFileCountColumns {
 }
 
 input IndexFileCreateInput {
-  collectionId: Int!
-  name: IndexTypes!
-  version: String!
-  fileId: ID!
+  name: IndexTypes = null
+  version: String = null
   upstreamDatabaseId: ID = null
   hostOrganismId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -688,14 +836,15 @@ type IndexFileEdge {
 }
 
 type IndexFileMinMaxColumns {
-  producingRunId: Int
+  version: String
   ownerUserId: Int
   collectionId: Int
-  version: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type IndexFileNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -715,23 +864,22 @@ input IndexFileOrderByClause {
 }
 
 input IndexFileUpdateInput {
-  collectionId: Int = null
   name: IndexTypes = null
   version: String = null
-  fileId: ID = null
-  upstreamDatabaseId: ID = null
-  hostOrganismId: ID = null
 }
 
 input IndexFileWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: IndexTypesEnumComparators
   version: StrComparators
   upstreamDatabase: UpstreamDatabaseWhereClause
   hostOrganism: HostOrganismWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input IndexFileWhereClauseMutations {
@@ -794,12 +942,15 @@ type Metadatum implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   sample(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): Sample
   fieldName: String!
   value: String!
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type MetadatumAggregate {
@@ -829,7 +980,6 @@ enum MetadatumCountColumns {
   sample
   field_name
   value
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -840,10 +990,11 @@ enum MetadatumCountColumns {
 }
 
 input MetadatumCreateInput {
-  collectionId: Int!
-  sampleId: ID!
-  fieldName: String!
-  value: String!
+  sampleId: ID = null
+  fieldName: String = null
+  value: String = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -856,15 +1007,16 @@ type MetadatumEdge {
 }
 
 type MetadatumMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
   fieldName: String
   value: String
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type MetadatumNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -883,20 +1035,20 @@ input MetadatumOrderByClause {
 }
 
 input MetadatumUpdateInput {
-  collectionId: Int = null
-  sampleId: ID = null
-  fieldName: String = null
   value: String = null
 }
 
 input MetadatumWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   sample: SampleWhereClause
   fieldName: StrComparators
   value: StrComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input MetadatumWhereClauseMutations {
@@ -907,9 +1059,6 @@ type MetricConsensusGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   consensusGenome(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = []): ConsensusGenome
   referenceGenomeLength: Float
   percentGenomeCalled: Float
@@ -926,6 +1075,12 @@ type MetricConsensusGenome implements EntityInterface & Node {
   coverageBinSize: Float
   coverageTotalLength: Int
   coverageViz: [[Int!]!]
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type MetricConsensusGenomeAggregate {
@@ -959,7 +1114,6 @@ enum MetricConsensusGenomeCountColumns {
   coverage_bin_size
   coverage_total_length
   coverage_viz
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -970,8 +1124,7 @@ enum MetricConsensusGenomeCountColumns {
 }
 
 input MetricConsensusGenomeCreateInput {
-  collectionId: Int!
-  consensusGenomeId: ID!
+  consensusGenomeId: ID = null
   referenceGenomeLength: Float = null
   percentGenomeCalled: Float = null
   percentIdentity: Float = null
@@ -987,12 +1140,11 @@ input MetricConsensusGenomeCreateInput {
   coverageBinSize: Float = null
   coverageTotalLength: Int = null
   coverageViz: [[Int!]!] = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 type MetricConsensusGenomeMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
   referenceGenomeLength: Float
   percentGenomeCalled: Float
   percentIdentity: Float
@@ -1007,12 +1159,14 @@ type MetricConsensusGenomeMinMaxColumns {
   coverageBreadth: Float
   coverageBinSize: Float
   coverageTotalLength: Int
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type MetricConsensusGenomeNumericalColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
   referenceGenomeLength: Float
   percentGenomeCalled: Float
   percentIdentity: Float
@@ -1027,6 +1181,8 @@ type MetricConsensusGenomeNumericalColumns {
   coverageBreadth: Float
   coverageBinSize: Float
   coverageTotalLength: Int
+  ownerUserId: Int
+  collectionId: Int
 }
 
 input MetricConsensusGenomeOrderByClause {
@@ -1055,31 +1211,7 @@ input MetricConsensusGenomeOrderByClause {
   deletedAt: orderBy
 }
 
-input MetricConsensusGenomeUpdateInput {
-  collectionId: Int = null
-  consensusGenomeId: ID = null
-  referenceGenomeLength: Float = null
-  percentGenomeCalled: Float = null
-  percentIdentity: Float = null
-  gcPercent: Float = null
-  totalReads: Int = null
-  mappedReads: Int = null
-  refSnps: Int = null
-  nActg: Int = null
-  nMissing: Int = null
-  nAmbiguous: Int = null
-  coverageDepth: Float = null
-  coverageBreadth: Float = null
-  coverageBinSize: Float = null
-  coverageTotalLength: Int = null
-  coverageViz: [[Int!]!] = null
-}
-
 input MetricConsensusGenomeWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   consensusGenome: ConsensusGenomeWhereClause
   referenceGenomeLength: FloatComparators
   percentGenomeCalled: FloatComparators
@@ -1095,6 +1227,13 @@ input MetricConsensusGenomeWhereClause {
   coverageBreadth: FloatComparators
   coverageBinSize: FloatComparators
   coverageTotalLength: IntComparators
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input MetricConsensusGenomeWhereClauseMutations {
@@ -1128,11 +1267,13 @@ type Mutation {
   updateSequencingRead(input: SequencingReadUpdateInput!, where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
   deleteSequencingRead(where: SequencingReadWhereClauseMutations!): [SequencingRead!]!
   createGenomicRange(input: GenomicRangeCreateInput!): GenomicRange!
-  updateGenomicRange(input: GenomicRangeUpdateInput!, where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
   deleteGenomicRange(where: GenomicRangeWhereClauseMutations!): [GenomicRange!]!
   createReferenceGenome(input: ReferenceGenomeCreateInput!): ReferenceGenome!
   updateReferenceGenome(input: ReferenceGenomeUpdateInput!, where: ReferenceGenomeWhereClauseMutations!): [ReferenceGenome!]!
   deleteReferenceGenome(where: ReferenceGenomeWhereClauseMutations!): [ReferenceGenome!]!
+  createAccession(input: AccessionCreateInput!): Accession!
+  updateAccession(input: AccessionUpdateInput!, where: AccessionWhereClauseMutations!): [Accession!]!
+  deleteAccession(where: AccessionWhereClauseMutations!): [Accession!]!
   createHostOrganism(input: HostOrganismCreateInput!): HostOrganism!
   updateHostOrganism(input: HostOrganismUpdateInput!, where: HostOrganismWhereClauseMutations!): [HostOrganism!]!
   deleteHostOrganism(where: HostOrganismWhereClauseMutations!): [HostOrganism!]!
@@ -1140,10 +1281,8 @@ type Mutation {
   updateMetadatum(input: MetadatumUpdateInput!, where: MetadatumWhereClauseMutations!): [Metadatum!]!
   deleteMetadatum(where: MetadatumWhereClauseMutations!): [Metadatum!]!
   createConsensusGenome(input: ConsensusGenomeCreateInput!): ConsensusGenome!
-  updateConsensusGenome(input: ConsensusGenomeUpdateInput!, where: ConsensusGenomeWhereClauseMutations!): [ConsensusGenome!]!
   deleteConsensusGenome(where: ConsensusGenomeWhereClauseMutations!): [ConsensusGenome!]!
   createMetricConsensusGenome(input: MetricConsensusGenomeCreateInput!): MetricConsensusGenome!
-  updateMetricConsensusGenome(input: MetricConsensusGenomeUpdateInput!, where: MetricConsensusGenomeWhereClauseMutations!): [MetricConsensusGenome!]!
   deleteMetricConsensusGenome(where: MetricConsensusGenomeWhereClauseMutations!): [MetricConsensusGenome!]!
   createTaxon(input: TaxonCreateInput!): Taxon!
   updateTaxon(input: TaxonUpdateInput!, where: TaxonWhereClauseMutations!): [Taxon!]!
@@ -1158,7 +1297,6 @@ type Mutation {
   updatePhylogeneticTree(input: PhylogeneticTreeUpdateInput!, where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
   deletePhylogeneticTree(where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
   createBulkDownload(input: BulkDownloadCreateInput!): BulkDownload!
-  updateBulkDownload(input: BulkDownloadUpdateInput!, where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
   deleteBulkDownload(where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
 }
 
@@ -1204,12 +1342,15 @@ type PhylogeneticTree implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   treeId: ID
   tree(where: FileWhereClause = null): File
   format: PhylogeneticTreeFormat!
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type PhylogeneticTreeAggregate {
@@ -1229,7 +1370,6 @@ type PhylogeneticTreeAggregateFunctions {
 enum PhylogeneticTreeCountColumns {
   tree
   format
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -1240,9 +1380,9 @@ enum PhylogeneticTreeCountColumns {
 }
 
 input PhylogeneticTreeCreateInput {
-  collectionId: Int!
-  treeId: ID = null
-  format: PhylogeneticTreeFormat!
+  format: PhylogeneticTreeFormat = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 enum PhylogeneticTreeFormat {
@@ -1264,13 +1404,14 @@ input PhylogeneticTreeFormatEnumComparators {
 }
 
 type PhylogeneticTreeMinMaxColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type PhylogeneticTreeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1287,17 +1428,18 @@ input PhylogeneticTreeOrderByClause {
 }
 
 input PhylogeneticTreeUpdateInput {
-  collectionId: Int = null
-  treeId: ID = null
   format: PhylogeneticTreeFormat = null
 }
 
 input PhylogeneticTreeWhereClause {
+  format: PhylogeneticTreeFormatEnumComparators
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  format: PhylogeneticTreeFormatEnumComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input PhylogeneticTreeWhereClauseMutations {
@@ -1318,6 +1460,7 @@ type Query {
   sequencingReads(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): [SequencingRead!]!
   genomicRanges(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): [GenomicRange!]!
   referenceGenomes(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): [ReferenceGenome!]!
+  accessions(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): [Accession!]!
   hostOrganisms(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): [HostOrganism!]!
   metadatas(where: MetadatumWhereClause = null, orderBy: [MetadatumOrderByClause!] = []): [Metadatum!]!
   consensusGenomes(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = []): [ConsensusGenome!]!
@@ -1331,6 +1474,7 @@ type Query {
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
   genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate!
   referenceGenomesAggregate(where: ReferenceGenomeWhereClause = null): ReferenceGenomeAggregate!
+  accessionsAggregate(where: AccessionWhereClause = null): AccessionAggregate!
   hostOrganismsAggregate(where: HostOrganismWhereClause = null): HostOrganismAggregate!
   metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate!
@@ -1346,16 +1490,12 @@ type ReferenceGenome implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   fileId: ID
   file(where: FileWhereClause = null): File
-  accessionId: String
-  accessionName: String
-  sequencingReads(
-    where: SequencingReadWhereClause = null
-    orderBy: [SequencingReadOrderByClause!] = []
+  name: String!
+  consensusGenomes(
+    where: ConsensusGenomeWhereClause = null
+    orderBy: [ConsensusGenomeOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -1368,8 +1508,14 @@ type ReferenceGenome implements EntityInterface & Node {
 
     """Returns the items in the list that come after the specified cursor."""
     last: Int = null
-  ): SequencingReadConnection!
-  sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
+  ): ConsensusGenomeConnection!
+  consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type ReferenceGenomeAggregate {
@@ -1388,10 +1534,8 @@ type ReferenceGenomeAggregateFunctions {
 
 enum ReferenceGenomeCountColumns {
   file
-  accession_id
-  accession_name
-  sequencing_reads
-  entity_id
+  name
+  consensus_genomes
   id
   producing_run_id
   owner_user_id
@@ -1402,29 +1546,27 @@ enum ReferenceGenomeCountColumns {
 }
 
 input ReferenceGenomeCreateInput {
-  collectionId: Int!
-  fileId: ID = null
-  accessionId: String = null
-  accessionName: String = null
+  name: String = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 type ReferenceGenomeMinMaxColumns {
-  producingRunId: Int
+  name: String
   ownerUserId: Int
   collectionId: Int
-  accessionId: String
-  accessionName: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type ReferenceGenomeNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
 
 input ReferenceGenomeOrderByClause {
-  accessionId: orderBy
-  accessionName: orderBy
+  name: orderBy
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -1435,20 +1577,19 @@ input ReferenceGenomeOrderByClause {
 }
 
 input ReferenceGenomeUpdateInput {
-  collectionId: Int = null
-  fileId: ID = null
-  accessionId: String = null
-  accessionName: String = null
+  name: String = null
 }
 
 input ReferenceGenomeWhereClause {
+  name: StrComparators
+  consensusGenomes: ConsensusGenomeWhereClause
   id: UUIDComparators
-  producingRunId: IntComparators
+  producingRunId: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
-  accessionId: StrComparators
-  accessionName: StrComparators
-  sequencingReads: SequencingReadWhereClause
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input ReferenceGenomeWhereClauseMutations {
@@ -1459,9 +1600,6 @@ type Sample implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   railsSampleId: Int
   name: String!
   sampleType: String!
@@ -1504,6 +1642,12 @@ type Sample implements EntityInterface & Node {
     last: Int = null
   ): MetadatumConnection!
   metadatasAggregate(where: MetadatumWhereClause = null): MetadatumAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type SampleAggregate {
@@ -1540,7 +1684,6 @@ enum SampleCountColumns {
   host_organism
   sequencing_reads
   metadatas
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -1551,15 +1694,16 @@ enum SampleCountColumns {
 }
 
 input SampleCreateInput {
-  collectionId: Int!
   railsSampleId: Int = null
-  name: String!
-  sampleType: String!
-  waterControl: Boolean!
-  collectionDate: DateTime!
-  collectionLocation: String!
+  name: String = null
+  sampleType: String = null
+  waterControl: Boolean = null
+  collectionDate: DateTime = null
+  collectionLocation: String = null
   notes: String = null
   hostOrganismId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -1572,22 +1716,23 @@ type SampleEdge {
 }
 
 type SampleMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
   railsSampleId: Int
   name: String
   sampleType: String
   collectionDate: DateTime
   collectionLocation: String
   notes: String
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type SampleNumericalColumns {
-  producingRunId: Int
+  railsSampleId: Int
   ownerUserId: Int
   collectionId: Int
-  railsSampleId: Int
 }
 
 input SampleOrderByClause {
@@ -1609,22 +1754,15 @@ input SampleOrderByClause {
 }
 
 input SampleUpdateInput {
-  collectionId: Int = null
-  railsSampleId: Int = null
   name: String = null
   sampleType: String = null
   waterControl: Boolean = null
   collectionDate: DateTime = null
   collectionLocation: String = null
   notes: String = null
-  hostOrganismId: ID = null
 }
 
 input SampleWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   railsSampleId: IntComparators
   name: StrComparators
   sampleType: StrComparators
@@ -1635,6 +1773,13 @@ input SampleWhereClause {
   hostOrganism: HostOrganismWhereClause
   sequencingReads: SequencingReadWhereClause
   metadatas: MetadatumWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input SampleWhereClauseMutations {
@@ -1672,9 +1817,6 @@ type SequencingRead implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   sample(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): Sample
   protocol: SequencingProtocol
   r1FileId: ID
@@ -1687,7 +1829,6 @@ type SequencingRead implements EntityInterface & Node {
   medakaModel: String
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
   primerFile(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): GenomicRange
-  referenceSequence(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
     orderBy: [ConsensusGenomeOrderByClause!] = []
@@ -1705,6 +1846,12 @@ type SequencingRead implements EntityInterface & Node {
     last: Int = null
   ): ConsensusGenomeConnection!
   consensusGenomesAggregate(where: ConsensusGenomeWhereClause = null): ConsensusGenomeAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type SequencingReadAggregate {
@@ -1741,9 +1888,7 @@ enum SequencingReadCountColumns {
   medaka_model
   taxon
   primer_file
-  reference_sequence
   consensus_genomes
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -1754,18 +1899,16 @@ enum SequencingReadCountColumns {
 }
 
 input SequencingReadCreateInput {
-  collectionId: Int!
   sampleId: ID = null
   protocol: SequencingProtocol = null
-  r1FileId: ID = null
-  r2FileId: ID = null
-  technology: SequencingTechnology!
-  nucleicAcid: NucleicAcid!
-  clearlabsExport: Boolean!
+  technology: SequencingTechnology = null
+  nucleicAcid: NucleicAcid = null
+  clearlabsExport: Boolean = null
   medakaModel: String = null
   taxonId: ID = null
   primerFileId: ID = null
-  referenceSequenceId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -1778,14 +1921,15 @@ type SequencingReadEdge {
 }
 
 type SequencingReadMinMaxColumns {
-  producingRunId: Int
+  medakaModel: String
   ownerUserId: Int
   collectionId: Int
-  medakaModel: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type SequencingReadNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -1799,7 +1943,6 @@ input SequencingReadOrderByClause {
   medakaModel: orderBy
   taxon: TaxonOrderByClause
   primerFile: GenomicRangeOrderByClause
-  referenceSequence: ReferenceGenomeOrderByClause
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -1810,25 +1953,12 @@ input SequencingReadOrderByClause {
 }
 
 input SequencingReadUpdateInput {
-  collectionId: Int = null
-  sampleId: ID = null
-  protocol: SequencingProtocol = null
-  r1FileId: ID = null
-  r2FileId: ID = null
-  technology: SequencingTechnology = null
   nucleicAcid: NucleicAcid = null
   clearlabsExport: Boolean = null
   medakaModel: String = null
-  taxonId: ID = null
-  primerFileId: ID = null
-  referenceSequenceId: ID = null
 }
 
 input SequencingReadWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   sample: SampleWhereClause
   protocol: SequencingProtocolEnumComparators
   technology: SequencingTechnologyEnumComparators
@@ -1837,8 +1967,14 @@ input SequencingReadWhereClause {
   medakaModel: StrComparators
   taxon: TaxonWhereClause
   primerFile: GenomicRangeWhereClause
-  referenceSequence: ReferenceGenomeWhereClause
   consensusGenomes: ConsensusGenomeWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input SequencingReadWhereClauseMutations {
@@ -1894,9 +2030,6 @@ type Taxon implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   wikipediaId: String
   description: String
   commonName: String
@@ -1939,6 +2072,12 @@ type Taxon implements EntityInterface & Node {
     last: Int = null
   ): SequencingReadConnection!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type TaxonAggregate {
@@ -1985,7 +2124,6 @@ enum TaxonCountColumns {
   tax_superkingdom
   consensus_genomes
   sequencing_reads
-  entity_id
   id
   producing_run_id
   owner_user_id
@@ -1996,15 +2134,26 @@ enum TaxonCountColumns {
 }
 
 input TaxonCreateInput {
-  collectionId: Int!
   wikipediaId: String = null
   description: String = null
   commonName: String = null
-  name: String!
-  isPhage: Boolean!
-  upstreamDatabaseId: ID!
-  upstreamDatabaseIdentifier: String!
-  level: TaxonLevel!
+  name: String = null
+  isPhage: Boolean = null
+  upstreamDatabaseId: ID = null
+  upstreamDatabaseIdentifier: String = null
+  level: TaxonLevel = null
+  taxParentId: ID = null
+  taxSubspeciesId: ID = null
+  taxSpeciesId: ID = null
+  taxGenusId: ID = null
+  taxFamilyId: ID = null
+  taxOrderId: ID = null
+  taxClassId: ID = null
+  taxPhylumId: ID = null
+  taxKingdomId: ID = null
+  taxSuperkingdomId: ID = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 """An edge in a connection."""
@@ -2041,18 +2190,19 @@ input TaxonLevelEnumComparators {
 }
 
 type TaxonMinMaxColumns {
-  producingRunId: Int
-  ownerUserId: Int
-  collectionId: Int
   wikipediaId: String
   description: String
   commonName: String
   name: String
   upstreamDatabaseIdentifier: String
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type TaxonNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -2086,22 +2236,24 @@ input TaxonOrderByClause {
 }
 
 input TaxonUpdateInput {
-  collectionId: Int = null
   wikipediaId: String = null
   description: String = null
   commonName: String = null
-  name: String = null
   isPhage: Boolean = null
-  upstreamDatabaseId: ID = null
-  upstreamDatabaseIdentifier: String = null
   level: TaxonLevel = null
+  taxParentId: ID = null
+  taxSubspeciesId: ID = null
+  taxSpeciesId: ID = null
+  taxGenusId: ID = null
+  taxFamilyId: ID = null
+  taxOrderId: ID = null
+  taxClassId: ID = null
+  taxPhylumId: ID = null
+  taxKingdomId: ID = null
+  taxSuperkingdomId: ID = null
 }
 
 input TaxonWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   wikipediaId: StrComparators
   description: StrComparators
   commonName: StrComparators
@@ -2112,6 +2264,13 @@ input TaxonWhereClause {
   level: TaxonLevelEnumComparators
   consensusGenomes: ConsensusGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input TaxonWhereClauseMutations {
@@ -2135,9 +2294,6 @@ type UpstreamDatabase implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
-  producingRunId: Int
-  ownerUserId: Int!
-  collectionId: Int!
   name: String!
   taxa(
     where: TaxonWhereClause = null
@@ -2173,6 +2329,29 @@ type UpstreamDatabase implements EntityInterface & Node {
     last: Int = null
   ): IndexFileConnection!
   indexesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate
+  accessions(
+    where: AccessionWhereClause = null
+    orderBy: [AccessionOrderByClause!] = []
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    after: String = null
+
+    """Returns the first n items from the list."""
+    first: Int = null
+
+    """Returns the items in the list that come after the specified cursor."""
+    last: Int = null
+  ): AccessionConnection!
+  accessionsAggregate(where: AccessionWhereClause = null): AccessionAggregate
+  producingRunId: ID!
+  ownerUserId: Int!
+  collectionId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type UpstreamDatabaseAggregate {
@@ -2193,7 +2372,7 @@ enum UpstreamDatabaseCountColumns {
   name
   taxa
   indexes
-  entity_id
+  accessions
   id
   producing_run_id
   owner_user_id
@@ -2204,19 +2383,21 @@ enum UpstreamDatabaseCountColumns {
 }
 
 input UpstreamDatabaseCreateInput {
-  collectionId: Int!
-  name: String!
+  name: String = null
+  producingRunId: ID = null
+  collectionId: Int = null
 }
 
 type UpstreamDatabaseMinMaxColumns {
-  producingRunId: Int
+  name: String
   ownerUserId: Int
   collectionId: Int
-  name: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type UpstreamDatabaseNumericalColumns {
-  producingRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
@@ -2233,18 +2414,21 @@ input UpstreamDatabaseOrderByClause {
 }
 
 input UpstreamDatabaseUpdateInput {
-  collectionId: Int = null
   name: String = null
 }
 
 input UpstreamDatabaseWhereClause {
-  id: UUIDComparators
-  producingRunId: IntComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
   name: StrComparators
   taxa: TaxonWhereClause
   indexes: IndexFileWhereClause
+  accessions: AccessionWhereClause
+  id: UUIDComparators
+  producingRunId: UUIDComparators
+  ownerUserId: IntComparators
+  collectionId: IntComparators
+  createdAt: DatetimeComparators
+  updatedAt: DatetimeComparators
+  deletedAt: DatetimeComparators
 }
 
 input UpstreamDatabaseWhereClauseMutations {

@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.types.entities import EntityInterface
 from api.types.workflow_version import WorkflowVersionAggregate, format_workflow_version_aggregate_output
@@ -20,9 +21,11 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
+    DatetimeComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -41,12 +44,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.workflow_version import WorkflowVersionWhereClause, WorkflowVersion
+    from api.types.workflow_version import WorkflowVersionOrderByClause, WorkflowVersionWhereClause, WorkflowVersion
 
     pass
 else:
     WorkflowVersionWhereClause = "WorkflowVersionWhereClause"
     WorkflowVersion = "WorkflowVersion"
+    WorkflowVersionOrderByClause = "WorkflowVersionOrderByClause"
     pass
 
 
@@ -65,11 +69,14 @@ async def load_workflow_version_rows(
     root: "Workflow",
     info: Info,
     where: Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")] | None = None,
+    order_by: Optional[
+        list[Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]]
+    ] = [],
 ) -> Sequence[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Workflow)
     relationship = mapper.relationships["versions"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -113,14 +120,34 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class WorkflowWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     default_version: Optional[StrComparators] | None
     minimum_supported_version: Optional[StrComparators] | None
     versions: Optional[Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]] | None
+    id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class WorkflowOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    default_version: Optional[orderBy] | None
+    minimum_supported_version: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -130,10 +157,6 @@ Define Workflow type
 
 @strawberry.type
 class Workflow(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
@@ -143,6 +166,12 @@ class Workflow(EntityInterface):
     versions_aggregate: Optional[
         Annotated["WorkflowVersionAggregate", strawberry.lazy("api.types.workflow_version")]
     ] = load_workflow_version_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -166,7 +195,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class WorkflowNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -178,12 +206,14 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class WorkflowMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -197,9 +227,7 @@ class WorkflowCountColumns(enum.Enum):
     default_version = "default_version"
     minimum_supported_version = "minimum_supported_version"
     versions = "versions"
-    entity_id = "entity_id"
     id = "id"
-    producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
     created_at = "created_at"
@@ -247,18 +275,18 @@ Mutation types
 
 @strawberry.input()
 class WorkflowCreateInput:
-    collection_id: int
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
+    collection_id: Optional[int] = None
 
 
 @strawberry.input()
 class WorkflowUpdateInput:
-    collection_id: Optional[int] = None
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
+    producing_run_id: Optional[strawberry.ID] = None
 
 
 """
@@ -274,11 +302,12 @@ async def resolve_workflows(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowWhereClause] = None,
+    order_by: Optional[list[WorkflowOrderByClause]] = [],
 ) -> typing.Sequence[Workflow]:
     """
     Resolve Workflow objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.Workflow, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.Workflow, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_workflow_aggregate_output(query_results: RowMapping) -> WorkflowAggregateFunctions:
@@ -329,17 +358,24 @@ async def create_workflow(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new Workflow object. Used for mutations (see api/mutations.py).
     """
     params = input.__dict__
 
-    # Validate that user can create entity in this collection
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        raise PlatformicsException("Unauthorized: Workflow is not creatable")
+    # Validate that the user can create entities in this collection
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Workflow.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -356,6 +392,7 @@ async def update_workflow(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update Workflow objects. Used for mutations (see api/mutations.py).
@@ -367,17 +404,15 @@ async def update_workflow(
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        raise PlatformicsException("Unauthorized: Workflow is not mutable")
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Workflow, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.Workflow.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
 
     # Update DB
     for entity in entities:

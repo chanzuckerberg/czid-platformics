@@ -16,10 +16,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from database.models.file import File
-    from database.models.sequencing_read import SequencingRead
+    from database.models.consensus_genome import ConsensusGenome
 else:
     File = "File"
-    SequencingRead = "SequencingRead"
+    ConsensusGenome = "ConsensusGenome"
 
 
 class ReferenceGenome(Entity):
@@ -27,12 +27,11 @@ class ReferenceGenome(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
     file: Mapped["File"] = relationship("File", foreign_keys=file_id)
-    accession_id: Mapped[str] = mapped_column(String, nullable=True)
-    accession_name: Mapped[str] = mapped_column(String, nullable=True)
-    sequencing_reads: Mapped[list[SequencingRead]] = relationship(
-        "SequencingRead",
-        back_populates="reference_sequence",
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
+        "ConsensusGenome",
+        back_populates="reference_genome",
         uselist=True,
-        foreign_keys="SequencingRead.reference_sequence_id",
+        foreign_keys="ConsensusGenome.reference_genome_id",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

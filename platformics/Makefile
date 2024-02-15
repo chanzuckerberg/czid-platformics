@@ -82,11 +82,11 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run tests
-	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest"
+	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest --ignore platformics"
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose_run) $(FOLDER) ../platformics/cli/generate_token.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(pbcopy)
+	TOKEN=$$($(docker_compose_run) $(FOLDER) ../platformics/cli/generate_token.py auth generate-token 111 --project 444:admin --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(command -v pbcopy >/dev/null && pbcopy || xclip -selection clipboard)
 
 .PHONY: fix-lint
 fix-lint: ## Apply linting rules to the code in this directory.
