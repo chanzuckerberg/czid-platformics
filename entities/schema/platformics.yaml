@@ -14,6 +14,21 @@ types:
     base: int
     description: An integer
 
+  float:
+    uri: xsd:float
+    base: float
+    description: A float
+
+  boolean:
+    uri: xsd:boolean
+    base: bool
+    description: A boolean
+
+  date:
+    uri: xsd:date
+    base: XSDDate
+    description: A Date
+
   uuid:
     uri: xsd:string
     typeof: str
@@ -142,19 +157,23 @@ classes:
         range: uuid
         readonly: true # The API handles generating the values for these fields
         required: true
+      type:
+        range: string
+        designates_type: true
+        annotations:
+          hidden: true
       producing_run_id:
         range: uuid
-        required: true
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
       owner_user_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         readonly: true
       collection_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         annotations:
@@ -211,7 +230,7 @@ classes:
       compression_type:
         range: string
       size:
-        range: int
+        range: integer
         minimum_value: 0
       # Information about file upload (optional)
       upload_client:
@@ -233,7 +252,7 @@ classes:
     attributes:
       # If this Sample is a copy of what's in the Rails DB, store its ID here
       rails_sample_id:
-        range: int
+        range: integer
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
@@ -241,6 +260,9 @@ classes:
       name:
         range: string
         required: true
+        annotations:
+            minimum_length: 4
+            maximum_length: 64
       sample_type:
         range: string
         required: true
@@ -555,27 +577,29 @@ classes:
         annotations:
           mutable: false
       total_reads:
-        range: int
+        range: integer
+        minimum_value: 0
+        maximum_value: 999999999999
         annotations:
           mutable: false
       mapped_reads:
-        range: int
+        range: integer
         annotations:
           mutable: false
       ref_snps:
-        range: int
+        range: integer
         annotations:
           mutable: false
       n_actg:
-        range: int
+        range: integer
         annotations:
           mutable: false
       n_missing:
-        range: int
+        range: integer
         annotations:
           mutable: false
       n_ambiguous:
-        range: int
+        range: integer
         annotations:
           mutable: false
       coverage_depth:
@@ -591,7 +615,7 @@ classes:
         annotations:
           mutable: false
       coverage_total_length:
-        range: int
+        range: integer
         annotations:
           mutable: false
       coverage_viz:

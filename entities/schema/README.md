@@ -2,9 +2,10 @@
 erDiagram
 Entity {
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -18,12 +19,12 @@ File {
     string path  
     string file_format  
     string compression_type  
-    int size  
+    integer size  
     FileUploadClient upload_client  
     string upload_error  
 }
 Sample {
-    int rails_sample_id  
+    integer rails_sample_id  
     string name  
     string sample_type  
     boolean water_control  
@@ -32,9 +33,10 @@ Sample {
     string notes  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -47,9 +49,10 @@ SequencingRead {
     string medaka_model  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -57,9 +60,10 @@ SequencingRead {
 GenomicRange {
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -68,9 +72,10 @@ ReferenceGenome {
     string name  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -80,9 +85,10 @@ Accession {
     string accession_name  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -94,9 +100,10 @@ HostOrganism {
     boolean is_deuterostome  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -106,9 +113,10 @@ Metadatum {
     string value  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -116,9 +124,10 @@ Metadatum {
 ConsensusGenome {
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -128,22 +137,23 @@ MetricConsensusGenome {
     float percent_genome_called  
     float percent_identity  
     float gc_percent  
-    int total_reads  
-    int mapped_reads  
-    int ref_snps  
-    int n_actg  
-    int n_missing  
-    int n_ambiguous  
+    integer total_reads  
+    integer mapped_reads  
+    integer ref_snps  
+    integer n_actg  
+    integer n_missing  
+    integer n_ambiguous  
     float coverage_depth  
     float coverage_breadth  
     float coverage_bin_size  
-    int coverage_total_length  
+    integer coverage_total_length  
     Array2dInt coverage_viz  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -158,9 +168,10 @@ Taxon {
     TaxonLevel level  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -169,9 +180,10 @@ UpstreamDatabase {
     string name  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -181,9 +193,10 @@ IndexFile {
     string version  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -192,9 +205,10 @@ PhylogeneticTree {
     PhylogeneticTreeFormat format  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -203,9 +217,10 @@ BulkDownload {
     BulkDownloadType download_type  
     uuid entity_id  
     uuid id  
+    string type  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  

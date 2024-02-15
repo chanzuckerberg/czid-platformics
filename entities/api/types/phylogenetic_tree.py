@@ -15,6 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.phylogenetic_tree import PhylogeneticTreeCreateInputValidator, PhylogeneticTreeUpdateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
@@ -142,7 +143,7 @@ class PhylogeneticTree(EntityInterface):
     tree: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("tree")  # type: ignore
     format: PhylogeneticTreeFormat
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -163,7 +164,6 @@ PhylogeneticTree.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -224,10 +224,10 @@ class PhylogeneticTreeAggregateFunctions:
 
     sum: Optional[PhylogeneticTreeNumericalColumns] = None
     avg: Optional[PhylogeneticTreeNumericalColumns] = None
-    min: Optional[PhylogeneticTreeMinMaxColumns] = None
-    max: Optional[PhylogeneticTreeMinMaxColumns] = None
     stddev: Optional[PhylogeneticTreeNumericalColumns] = None
     variance: Optional[PhylogeneticTreeNumericalColumns] = None
+    min: Optional[PhylogeneticTreeMinMaxColumns] = None
+    max: Optional[PhylogeneticTreeMinMaxColumns] = None
 
 
 """
@@ -249,9 +249,9 @@ Mutation types
 
 @strawberry.input()
 class PhylogeneticTreeCreateInput:
-    format: Optional[PhylogeneticTreeFormat] = None
+    format: PhylogeneticTreeFormat
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()
@@ -333,14 +333,15 @@ async def create_phylogenetic_tree(
     """
     Create a new PhylogeneticTree object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = PhylogeneticTreeCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.producing_run_id = None
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.PhylogeneticTree.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
@@ -367,7 +368,8 @@ async def update_phylogenetic_tree(
     """
     Update PhylogeneticTree objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = PhylogeneticTreeUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
@@ -384,7 +386,7 @@ async def update_phylogenetic_tree(
     # Update DB
     for entity in entities:
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

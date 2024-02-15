@@ -2700,13 +2700,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -3205,13 +3201,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -3604,13 +3596,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -4089,13 +4077,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -4591,13 +4575,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -7754,13 +7734,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -8422,13 +8398,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -8916,13 +8888,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -9340,24 +9308,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SequencingReadMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SequencingReadMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -9371,6 +9321,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "SequencingReadNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadMinMaxColumns",
                 "ofType": null
               }
             },
@@ -10124,24 +10092,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ConsensusGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ConsensusGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -10155,6 +10105,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "ConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -10497,13 +10465,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -10771,13 +10735,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -11075,13 +11035,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -11201,24 +11157,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "TaxonMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "TaxonMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -11232,6 +11170,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "TaxonNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonMinMaxColumns",
                 "ofType": null
               }
             },
@@ -11640,24 +11596,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "IndexFileMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "IndexFileMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -11671,6 +11609,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "IndexFileNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "IndexFileMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "IndexFileMinMaxColumns",
                 "ofType": null
               }
             },
@@ -11969,24 +11925,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "AccessionMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "AccessionMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -12000,6 +11938,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "AccessionNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "AccessionMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "AccessionMinMaxColumns",
                 "ofType": null
               }
             },
@@ -12304,24 +12260,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SampleMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -12335,6 +12273,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "SampleNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleMinMaxColumns",
                 "ofType": null
               }
             },
@@ -12755,13 +12711,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -12981,24 +12933,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetadatumMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetadatumMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -13012,6 +12946,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "MetadatumNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumMinMaxColumns",
                 "ofType": null
               }
             },
@@ -13265,13 +13217,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -13713,13 +13661,9 @@
               "args": [],
               "name": "producingRunId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -14126,24 +14070,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "GenomicRangeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "GenomicRangeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -14157,6 +14083,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "GenomicRangeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -14357,24 +14301,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ReferenceGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "ReferenceGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -14388,6 +14314,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "ReferenceGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -14600,24 +14544,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "HostOrganismMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "HostOrganismMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -14631,6 +14557,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "HostOrganismNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "HostOrganismMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "HostOrganismMinMaxColumns",
                 "ofType": null
               }
             },
@@ -14864,24 +14808,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -14895,6 +14821,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "MetricConsensusGenomeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -15389,24 +15333,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "UpstreamDatabaseMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "UpstreamDatabaseMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -15420,6 +15346,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "UpstreamDatabaseNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseMinMaxColumns",
                 "ofType": null
               }
             },
@@ -15635,24 +15579,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -15666,6 +15592,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "PhylogeneticTreeNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PhylogeneticTreeMinMaxColumns",
                 "ofType": null
               }
             },
@@ -15866,24 +15810,6 @@
             },
             {
               "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "BulkDownloadMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "BulkDownloadMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "stddev",
               "type": {
                 "kind": "OBJECT",
@@ -15897,6 +15823,24 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "BulkDownloadNumericalColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "min",
+              "type": {
+                "kind": "OBJECT",
+                "name": "BulkDownloadMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "max",
+              "type": {
+                "kind": "OBJECT",
+                "name": "BulkDownloadMinMaxColumns",
                 "ofType": null
               }
             },
@@ -17874,48 +17818,68 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "sampleType",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "waterControl",
               "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionDate",
               "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionLocation",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -17946,12 +17910,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18066,30 +18034,42 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "technology",
               "type": {
-                "kind": "ENUM",
-                "name": "SequencingTechnology",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "SequencingTechnology",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "nucleicAcid",
               "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "NucleicAcid",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "clearlabsExport",
               "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18129,12 +18109,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18213,12 +18197,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18251,12 +18239,16 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18269,12 +18261,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18326,30 +18322,42 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "accessionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "accessionName",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "upstreamDatabaseId",
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18362,12 +18370,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18419,39 +18431,55 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "version",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "category",
               "type": {
-                "kind": "ENUM",
-                "name": "HostOrganismCategory",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "HostOrganismCategory",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "isDeuterostome",
               "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18464,12 +18492,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18548,30 +18580,42 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "sampleId",
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "fieldName",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "value",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18584,12 +18628,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18641,21 +18689,29 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "taxonId",
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "sequenceReadId",
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18686,12 +18742,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18724,12 +18784,16 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "consensusGenomeId",
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
               }
             },
             {
@@ -18893,12 +18957,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -18958,48 +19026,68 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "isPhage",
               "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "upstreamDatabaseId",
               "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "upstreamDatabaseIdentifier",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "level",
               "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "TaxonLevel",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19102,12 +19190,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -19285,12 +19377,16 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19303,12 +19399,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -19360,21 +19460,29 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "name",
               "type": {
-                "kind": "ENUM",
-                "name": "IndexTypes",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "IndexTypes",
+                  "ofType": null
+                }
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "version",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19405,12 +19513,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -19471,12 +19583,16 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "format",
               "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "PhylogeneticTreeFormat",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19489,12 +19605,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -19546,12 +19666,16 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "downloadType",
               "type": {
-                "kind": "ENUM",
-                "name": "BulkDownloadType",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "BulkDownloadType",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19564,12 +19688,16 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "name": "collectionId",
               "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
               }
             }
           ],

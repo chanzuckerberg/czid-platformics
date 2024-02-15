@@ -15,6 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.workflow_run import WorkflowRunCreateInputValidator, WorkflowRunUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.workflow_run_step import WorkflowRunStepAggregate, format_workflow_run_step_aggregate_output
 from api.types.workflow_run_entity_input import (
@@ -289,7 +290,6 @@ WorkflowRun.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -364,10 +364,10 @@ class WorkflowRunAggregateFunctions:
 
     sum: Optional[WorkflowRunNumericalColumns] = None
     avg: Optional[WorkflowRunNumericalColumns] = None
-    min: Optional[WorkflowRunMinMaxColumns] = None
-    max: Optional[WorkflowRunMinMaxColumns] = None
     stddev: Optional[WorkflowRunNumericalColumns] = None
     variance: Optional[WorkflowRunNumericalColumns] = None
+    min: Optional[WorkflowRunMinMaxColumns] = None
+    max: Optional[WorkflowRunMinMaxColumns] = None
 
 
 """
@@ -397,7 +397,7 @@ class WorkflowRunCreateInput:
     workflow_version_id: Optional[strawberry.ID] = None
     raw_inputs_json: Optional[str] = None
     deprecated_by_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()
@@ -408,7 +408,6 @@ class WorkflowRunUpdateInput:
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
     deprecated_by_id: Optional[strawberry.ID] = None
-    producing_run_id: Optional[strawberry.ID] = None
 
 
 """
@@ -485,44 +484,45 @@ async def create_workflow_run(
     """
     Create a new WorkflowRun object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = WorkflowRunCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.ended_at = None
-        input.execution_id = None
-        input.outputs_json = None
-        input.workflow_runner_inputs_json = None
-        input.status = None
+        del params["ended_at"]
+        del params["execution_id"]
+        del params["outputs_json"]
+        del params["workflow_runner_inputs_json"]
+        del params["status"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that workflow_version relationship is accessible.
-    if input.workflow_version_id:
+    if validated.workflow_version_id:
         workflow_version = await get_db_rows(
             db.WorkflowVersion,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.workflow_version_id}},
+            {"id": {"_eq": validated.workflow_version_id}},
             [],
             CerbosAction.VIEW,
         )
         if not workflow_version:
             raise PlatformicsException("Unauthorized: workflow_version does not exist")
     # Check that deprecated_by relationship is accessible.
-    if input.deprecated_by_id:
+    if validated.deprecated_by_id:
         deprecated_by = await get_db_rows(
             db.WorkflowRun,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.deprecated_by_id}},
+            {"id": {"_eq": validated.deprecated_by_id}},
             [],
             CerbosAction.VIEW,
         )
@@ -549,7 +549,8 @@ async def update_workflow_run(
     """
     Update WorkflowRun objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = WorkflowRunUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
@@ -558,13 +559,13 @@ async def update_workflow_run(
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that deprecated_by relationship is accessible.
-    if input.deprecated_by_id:
+    if validated.deprecated_by_id:
         deprecated_by = await get_db_rows(
             db.WorkflowRun,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.deprecated_by_id}},
+            {"id": {"_eq": validated.deprecated_by_id}},
             [],
             CerbosAction.VIEW,
         )
@@ -588,7 +589,7 @@ async def update_workflow_run(
     # Update DB
     for entity in entities:
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

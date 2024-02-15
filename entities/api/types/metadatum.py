@@ -15,6 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.metadatum import MetadatumCreateInputValidator, MetadatumUpdateInputValidator
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -139,7 +140,7 @@ class Metadatum(EntityInterface):
     field_name: str
     value: str
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -160,7 +161,6 @@ Metadatum.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -222,10 +222,10 @@ class MetadatumAggregateFunctions:
 
     sum: Optional[MetadatumNumericalColumns] = None
     avg: Optional[MetadatumNumericalColumns] = None
-    min: Optional[MetadatumMinMaxColumns] = None
-    max: Optional[MetadatumMinMaxColumns] = None
     stddev: Optional[MetadatumNumericalColumns] = None
     variance: Optional[MetadatumNumericalColumns] = None
+    min: Optional[MetadatumMinMaxColumns] = None
+    max: Optional[MetadatumMinMaxColumns] = None
 
 
 """
@@ -247,11 +247,11 @@ Mutation types
 
 @strawberry.input()
 class MetadatumCreateInput:
-    sample_id: Optional[strawberry.ID] = None
-    field_name: Optional[str] = None
-    value: Optional[str] = None
+    sample_id: strawberry.ID
+    field_name: str
+    value: str
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()
@@ -333,23 +333,24 @@ async def create_metadatum(
     """
     Create a new Metadatum object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = MetadatumCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.producing_run_id = None
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Metadatum.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that sample relationship is accessible.
-    if input.sample_id:
+    if validated.sample_id:
         sample = await get_db_rows(
-            db.Sample, session, cerbos_client, principal, {"id": {"_eq": input.sample_id}}, [], CerbosAction.VIEW
+            db.Sample, session, cerbos_client, principal, {"id": {"_eq": validated.sample_id}}, [], CerbosAction.VIEW
         )
         if not sample:
             raise PlatformicsException("Unauthorized: sample does not exist")
@@ -374,7 +375,8 @@ async def update_metadatum(
     """
     Update Metadatum objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = MetadatumUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
@@ -391,7 +393,7 @@ async def update_metadatum(
     # Update DB
     for entity in entities:
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

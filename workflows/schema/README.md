@@ -3,8 +3,8 @@ erDiagram
 Entity {
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -20,8 +20,8 @@ WorkflowRun {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -33,8 +33,8 @@ Workflow {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -46,8 +46,8 @@ WorkflowRunStep {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -59,8 +59,8 @@ WorkflowRunEntityInput {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  
@@ -73,8 +73,8 @@ WorkflowVersion {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
     date deleted_at  

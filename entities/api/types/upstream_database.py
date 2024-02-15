@@ -15,6 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.upstream_database import UpstreamDatabaseCreateInputValidator, UpstreamDatabaseUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.taxon import TaxonAggregate, format_taxon_aggregate_output
 from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
@@ -247,7 +248,7 @@ class UpstreamDatabase(EntityInterface):
         Annotated["AccessionAggregate", strawberry.lazy("api.types.accession")]
     ] = load_accession_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -268,7 +269,6 @@ UpstreamDatabase.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -332,10 +332,10 @@ class UpstreamDatabaseAggregateFunctions:
 
     sum: Optional[UpstreamDatabaseNumericalColumns] = None
     avg: Optional[UpstreamDatabaseNumericalColumns] = None
-    min: Optional[UpstreamDatabaseMinMaxColumns] = None
-    max: Optional[UpstreamDatabaseMinMaxColumns] = None
     stddev: Optional[UpstreamDatabaseNumericalColumns] = None
     variance: Optional[UpstreamDatabaseNumericalColumns] = None
+    min: Optional[UpstreamDatabaseMinMaxColumns] = None
+    max: Optional[UpstreamDatabaseMinMaxColumns] = None
 
 
 """
@@ -357,9 +357,9 @@ Mutation types
 
 @strawberry.input()
 class UpstreamDatabaseCreateInput:
-    name: Optional[str] = None
+    name: str
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 @strawberry.input()
@@ -441,14 +441,15 @@ async def create_upstream_database(
     """
     Create a new UpstreamDatabase object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = UpstreamDatabaseCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.producing_run_id = None
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.UpstreamDatabase.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
@@ -475,7 +476,8 @@ async def update_upstream_database(
     """
     Update UpstreamDatabase objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = UpstreamDatabaseUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
@@ -492,7 +494,7 @@ async def update_upstream_database(
     # Update DB
     for entity in entities:
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

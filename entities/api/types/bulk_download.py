@@ -15,6 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.bulk_download import BulkDownloadCreateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
@@ -142,7 +143,7 @@ class BulkDownload(EntityInterface):
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -163,7 +164,6 @@ BulkDownload.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -224,10 +224,10 @@ class BulkDownloadAggregateFunctions:
 
     sum: Optional[BulkDownloadNumericalColumns] = None
     avg: Optional[BulkDownloadNumericalColumns] = None
-    min: Optional[BulkDownloadMinMaxColumns] = None
-    max: Optional[BulkDownloadMinMaxColumns] = None
     stddev: Optional[BulkDownloadNumericalColumns] = None
     variance: Optional[BulkDownloadNumericalColumns] = None
+    min: Optional[BulkDownloadMinMaxColumns] = None
+    max: Optional[BulkDownloadMinMaxColumns] = None
 
 
 """
@@ -249,9 +249,9 @@ Mutation types
 
 @strawberry.input()
 class BulkDownloadCreateInput:
-    download_type: Optional[BulkDownloadType] = None
+    download_type: BulkDownloadType
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """
@@ -328,14 +328,15 @@ async def create_bulk_download(
     """
     Create a new BulkDownload object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = BulkDownloadCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.producing_run_id = None
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.BulkDownload.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")

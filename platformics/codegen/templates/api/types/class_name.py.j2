@@ -17,6 +17,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from platformics.api.core.input_validation import validate_input
+from api.validators.{{cls.snake_name}} import {{cls.name}}CreateInputValidator, {{cls.name}}UpdateInputValidator
 {%- if render_files %}
 from api.files import File, FileWhereClause
 {%- endif %}
@@ -191,7 +193,7 @@ class {{ cls.name }}WhereClause(TypedDict):
     {{ attr.name }}: Optional[StrComparators] | None
         {%- elif attr.is_enum %}
     {{ attr.name }}: Optional[EnumComparators[{{ attr.type }}]] | None
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{ attr.name }}: Optional[IntComparators] | None
         {%- elif attr.type == "float" %}
     {{ attr.name }}: Optional[FloatComparators] | None
@@ -240,7 +242,7 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: {{ getType("List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getType(attr.type, attr.required) }}
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", attr.required) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", attr.required) }}
@@ -273,18 +275,20 @@ Aggregation types
 ------------------------------------------------------------------------------
 """
 
+{%- if cls.numeric_fields %}
 """
 Define columns that support numerical aggregations
 """
 @strawberry.type
 class {{ cls.name }}NumericalColumns:
-    {%- for attr in cls.visible_fields %}
-        {%- if attr.type == "int" %}
+    {%- for attr in cls.numeric_fields %}
+        {%- if attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", False) }}
         {%- endif %}
     {%- endfor %}
+{%- endif %}
 
 """
 Define columns that support min/max aggregations
@@ -292,7 +296,7 @@ Define columns that support min/max aggregations
 @strawberry.type
 class {{ cls.name }}MinMaxColumns:
     {%- for attr in cls.visible_fields %}
-        {%- if attr.type == "int" %}
+        {%- if attr.type == "integer" %}
     {{ attr.name }}: {{ getType("int", False) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getType("float", False) }}
@@ -322,12 +326,14 @@ class {{ cls.name }}AggregateFunctions:
     def count(self, distinct: Optional[bool] = False, columns: Optional[{{ cls.name }}CountColumns] = None) -> Optional[int]:
         # Count gets set with the proper value in the resolver, so we just return it here
         return self.count # type: ignore
+    {%- if cls.numeric_fields %}
     sum: Optional[{{ cls.name }}NumericalColumns] = None
     avg: Optional[{{ cls.name }}NumericalColumns] = None
-    min: Optional[{{ cls.name }}MinMaxColumns] = None
-    max: Optional[{{ cls.name }}MinMaxColumns] = None
     stddev: Optional[{{ cls.name }}NumericalColumns] = None
     variance: Optional[{{ cls.name }}NumericalColumns] = None
+    {%- endif %}
+    min: Optional[{{ cls.name }}MinMaxColumns] = None
+    max: Optional[{{ cls.name }}MinMaxColumns] = None
 
 """
 Wrapper around {{ cls.name }}AggregateFunctions
@@ -348,7 +354,7 @@ Mutation types
     {%- endif %}
 {%- endmacro %}
 
-{% macro getInputFields(fields) -%}
+{% macro getInputFields(action, fields) -%}
     {%- for attr in fields %}
         {%- if attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
@@ -358,7 +364,7 @@ Mutation types
     {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
-        {%- elif attr.type == "int" %}
+        {%- elif attr.type == "integer" %}
     {{ attr.name }}: {{ getTypeMutation(action, "int", attr.required) }}
         {%- elif attr.type == "float" %}
     {{ attr.name }}: {{ getTypeMutation(action, "float", attr.required) }}
@@ -378,13 +384,13 @@ Mutation types
 {%- if cls.create_fields %}
 @strawberry.input()
 class {{ cls.name }}CreateInput:
-    {{- getInputFields(cls.create_fields) }}
+    {{- getInputFields("Create", cls.create_fields) }}
 {%- endif %}
 
 {%- if cls.mutable_fields %}
 @strawberry.input()
 class {{ cls.name }}UpdateInput:
-    {{- getInputFields(cls.mutable_fields) }}
+    {{- getInputFields("Update", cls.mutable_fields) }}
 {%- endif %}
 
 """
@@ -423,8 +429,10 @@ def format_{{ cls.snake_name }}_aggregate_output(query_results: RowMapping) -> {
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, {{ cls.name }}MinMaxColumns())
+                   {%- if cls.numeric_fields %}
                     else:
                         setattr(output, aggregator_fn, {{ cls.name }}NumericalColumns())
+                   {%- endif %}
                 setattr(getattr(output, aggregator_fn), col_name, value)
     return output
 
@@ -459,7 +467,8 @@ async def create_{{ cls.snake_name }}(
     """
     Create a new {{ cls.name }} object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = {{cls.name}}CreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     {%- if cls.system_only_create_fields %}
@@ -469,7 +478,7 @@ async def create_{{ cls.snake_name }}(
         raise PlatformicsException("Unauthorized: {{cls.name}} is not creatable")
         {%- else %}
             {%- for field in cls.system_only_create_fields %}
-        input.{{field.name}} = None
+	    del(params["{{field.name}}"])
             {%- endfor %}
         {%- endif %}
     {%- endif %}
@@ -478,7 +487,7 @@ async def create_{{ cls.snake_name }}(
     {%- for field in cls.create_fields %}
         {%- if field.name == "collection_id" %}
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
@@ -489,8 +498,8 @@ async def create_{{ cls.snake_name }}(
     {%- for field in cls.create_fields %}
         {%- if field.is_entity and not field.is_virtual_relationship %}
     # Check that {{field.name}} relationship is accessible.
-    if input.{{field.name}}_id:
-        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
+    if validated.{{field.name}}_id:
+        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": validated.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
         {%- endif %}
@@ -518,7 +527,8 @@ async def update_{{ cls.snake_name }}(
     """
     Update {{ cls.name }} objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = {{cls.name}}UpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
     
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
@@ -529,8 +539,8 @@ async def update_{{ cls.snake_name }}(
     {%- for field in cls.mutable_fields %}
         {%- if field.is_entity and not field.is_virtual_relationship %}
     # Check that {{field.name}} relationship is accessible.
-    if input.{{field.name}}_id:
-        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": input.{{field.name}}_id } }, [], CerbosAction.VIEW)
+    if validated.{{field.name}}_id:
+        {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": validated.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
         params["{{field.name}}"] = {{field.name}}[0]
@@ -558,8 +568,8 @@ async def update_{{ cls.snake_name }}(
     {%- for field in self.mutable_fields %}
         {%- if field.name == "collection_id" %}
     # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
+    if validated.collection_id:
+        attr = {"collection_id": validated.collection_id}
         resource = Resource(id="SOME_ID", kind=db.{{ cls.name }}.__tablename__, attr=attr)
         if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
             raise PlatformicsException("Unauthorized: Cannot access new collection")
@@ -569,7 +579,7 @@ async def update_{{ cls.snake_name }}(
     # Update DB
     for entity in entities:
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

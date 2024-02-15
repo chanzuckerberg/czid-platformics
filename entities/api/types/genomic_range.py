@@ -15,6 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.genomic_range import GenomicRangeCreateInputValidator
 from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
@@ -189,7 +190,7 @@ class GenomicRange(EntityInterface):
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
@@ -210,7 +211,6 @@ GenomicRange.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -271,10 +271,10 @@ class GenomicRangeAggregateFunctions:
 
     sum: Optional[GenomicRangeNumericalColumns] = None
     avg: Optional[GenomicRangeNumericalColumns] = None
-    min: Optional[GenomicRangeMinMaxColumns] = None
-    max: Optional[GenomicRangeMinMaxColumns] = None
     stddev: Optional[GenomicRangeNumericalColumns] = None
     variance: Optional[GenomicRangeNumericalColumns] = None
+    min: Optional[GenomicRangeMinMaxColumns] = None
+    max: Optional[GenomicRangeMinMaxColumns] = None
 
 
 """
@@ -297,7 +297,7 @@ Mutation types
 @strawberry.input()
 class GenomicRangeCreateInput:
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """
@@ -374,14 +374,15 @@ async def create_genomic_range(
     """
     Create a new GenomicRange object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = GenomicRangeCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.producing_run_id = None
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.GenomicRange.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
