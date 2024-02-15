@@ -1,13 +1,11 @@
 name: Deploy to Sandbox
 on:
-  push: 
-    branches:
-      - rlim/deploy-to-sandbox-job
   workflow_dispatch:
-    service: 
-      type: choice
-      description: Which service to deploy
-      options:
+    inputs: 
+      service: 
+        type: choice
+        description: Which service to deploy
+        options:
         - workflows
         - entities
 
@@ -27,14 +25,14 @@ jobs:
           aws-region: us-west-2
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}  
           role-duration-seconds: 1200 
-          role-session-name: core-sandbox-deploy # TODO
+          role-session-name: core-sandbox-deploy 
       - name: Install happy
         uses: chanzuckerberg/github-actions/.github/actions/install-happy@main
-      #- name: Update sandbox
-      #  uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
-      #  with:
-      #    tfe-token: ${{ secrets.TFE_TOKEN }} # TODO
-      #    env: ${{ vars.HAPPY_ENV }} # TODO
-      #    create-tag: true
-      #    stack-name: ${{ secrets.HAPPY_STACK_NAME }} # TODO
-      #    working-directory: ${{}}
+      - name: Update sandbox
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
+        with:
+          tfe-token: ${{ secrets.TFE_TOKEN }} 
+          env: ${{ vars.HAPPY_ENV }} 
+          create-tag: true
+          stack-name: ${{ secrets.HAPPY_STACK_NAME }} 
+          working-directory: ${{ github.event.inputs.service }}
