@@ -2,7 +2,7 @@ import json
 from jwcrypto.jwk import JWK
 from jwcrypto import jwe, jwt
 import time
-from typing import TypedDict
+from typing import TypedDict, Optional
 
 
 class ProjectRole(TypedDict):
@@ -27,6 +27,7 @@ def create_token(
     userid: int,
     project_claims: list[ProjectRole],
     expiration: int = 3600,
+    service_identity: Optional[str] = None,
 ) -> str:
     # Create a JWT that's signed by our private key. This proves *who wrote the message*
     jwt_payload = {
@@ -36,6 +37,7 @@ def create_token(
         "exp": int(time.time()) + expiration,
         "iss": "https://api.example.com",
         "projects": project_claims,
+        "service_identity": service_identity,
     }
     jwt_headers = {
         "alg": "ES384",

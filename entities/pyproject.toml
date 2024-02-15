@@ -8,7 +8,6 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-strawberry-sqlalchemy-mapper = "^0.1.1"
 fastapi = "^0.100.0"
 rich = "^13.4.2"
 typer = "^0.9.0"
@@ -45,6 +44,7 @@ linkml = "^1.5.7"
 strcase = "^1.0.0"
 linkml-runtime = "^1.6.0"
 sqlalchemy_utils = "^0.41.1"
+strawberry-graphql = "0.209.8"
 
 [build-system]
 requires = ["poetry-core"]

@@ -181,6 +181,23 @@
                     "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "workflowRuns",
@@ -211,6 +228,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "WorkflowWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -243,6 +277,23 @@
                     "name": "WorkflowRunStepWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunStepOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "workflowRunSteps",
@@ -274,6 +325,23 @@
                     "name": "WorkflowRunEntityInputWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunEntityInputOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "workflowRunEntityInputs",
@@ -304,6 +372,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "WorkflowVersionWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowVersionOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -537,41 +622,6 @@
             },
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "startedAt",
               "type": {
                 "kind": "SCALAR",
@@ -634,6 +684,23 @@
                     "name": "WorkflowVersionWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowVersionOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "workflowVersion",
@@ -652,6 +719,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "WorkflowRunStepWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunStepOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -733,6 +817,23 @@
                   }
                 },
                 {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunEntityInputOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
+                },
+                {
                   "defaultValue": "null",
                   "name": "before",
                   "type": {
@@ -805,6 +906,63 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
                 "ofType": null
               }
             }
@@ -896,15 +1054,6 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "SCALAR",
-          "name": "Int",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
           "name": "DateTime",
           "possibleTypes": null
         },
@@ -973,41 +1122,6 @@
             },
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "graphJson",
               "type": {
                 "kind": "SCALAR",
@@ -1052,6 +1166,23 @@
                     "name": "WorkflowWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "workflow",
@@ -1070,6 +1201,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "WorkflowRunWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -1138,6 +1286,63 @@
                 "name": "WorkflowRunAggregate",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -1188,41 +1393,6 @@
             },
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "name",
               "type": {
                 "kind": "SCALAR",
@@ -1257,6 +1427,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "WorkflowVersionWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowVersionOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 },
                 {
@@ -1323,6 +1510,63 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowVersionAggregate",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
                 "ofType": null
               }
             }
@@ -1493,42 +1737,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "graphJson",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -1580,11 +1788,353 @@
                 "name": "WorkflowRunWhereClause",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "WorkflowVersionWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_like",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nlike",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_ilike",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nilike",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_regex",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nregex",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_iregex",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_niregex",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "StrComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Int",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "defaultVersion",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "minimumSupportedVersion",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "versions",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowVersionWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowWhereClause",
           "possibleTypes": null
         },
         {
@@ -1810,403 +2360,6 @@
               "name": "_eq",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_neq",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_in",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nin",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_is_null",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gte",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lte",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_like",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nlike",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_ilike",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nilike",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_regex",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nregex",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_iregex",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_niregex",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "StrComparators",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "name",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "defaultVersion",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "minimumSupportedVersion",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "versions",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "WorkflowVersionWhereClause",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "WorkflowWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "startedAt",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "DatetimeComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "endedAt",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "DatetimeComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "executionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "outputsJson",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "workflowRunnerInputsJson",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "status",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "WorkflowRunStatusEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "workflowVersion",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "WorkflowVersionWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "steps",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "WorkflowRunStepWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityInputs",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "WorkflowRunEntityInputWhereClause",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "rawInputsJson",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "WorkflowRunWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "_eq",
-              "type": {
-                "kind": "SCALAR",
                 "name": "DateTime",
                 "ofType": null
               }
@@ -2303,6 +2456,160 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "DatetimeComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "startedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "endedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "executionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "outputsJson",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowRunnerInputsJson",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "status",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowRunStatusEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowVersion",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowVersionWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "steps",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowRunStepWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "entityInputs",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowRunEntityInputWhereClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowRunWhereClause",
           "possibleTypes": null
         },
         {
@@ -2418,42 +2725,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "workflowRun",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -2485,6 +2756,60 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "WorkflowRunStepStatusEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
                 "ofType": null
               }
             }
@@ -2626,42 +2951,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "inputEntityId",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -2695,11 +2984,293 @@
                 "name": "WorkflowRunWhereClause",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "DatetimeComparators",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "WorkflowRunEntityInputWhereClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "graphJson",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowUri",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "version",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "manifest",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflow",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowVersionOrderByClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "asc"
+            },
+            {
+              "name": "asc_nulls_first"
+            },
+            {
+              "name": "asc_nulls_last"
+            },
+            {
+              "name": "desc"
+            },
+            {
+              "name": "desc_nulls_first"
+            },
+            {
+              "name": "desc_nulls_last"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "orderBy",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "defaultVersion",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "minimumSupportedVersion",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowOrderByClause",
           "possibleTypes": null
         },
         {
@@ -2818,15 +3389,6 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -2853,33 +3415,6 @@
         {
           "enumValues": null,
           "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
             {
               "args": [],
               "name": "graphJson",
@@ -2915,6 +3450,51 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -2944,13 +3524,7 @@
               "name": "runs"
             },
             {
-              "name": "entity_id"
-            },
-            {
               "name": "id"
-            },
-            {
-              "name": "producing_run_id"
             },
             {
               "name": "owner_user_id"
@@ -3053,6 +3627,151 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "WorkflowRunEdge",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "startedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "endedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "executionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "outputsJson",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowRunnerInputsJson",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "status",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowVersion",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowVersionOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deprecatedBy",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowRunOrderByClause",
           "possibleTypes": null
         },
         {
@@ -3171,15 +3890,6 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -3206,33 +3916,6 @@
         {
           "enumValues": null,
           "fields": [
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
             {
               "args": [],
               "name": "startedAt",
@@ -3286,6 +3969,51 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -3330,13 +4058,7 @@
               "name": "deprecated_by"
             },
             {
-              "name": "entity_id"
-            },
-            {
               "name": "id"
-            },
-            {
-              "name": "producing_run_id"
             },
             {
               "name": "owner_user_id"
@@ -3471,41 +4193,6 @@
               }
             },
             {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "args": [
                 {
                   "defaultValue": "null",
@@ -3514,6 +4201,23 @@
                     "kind": "INPUT_OBJECT",
                     "name": "WorkflowRunWhereClause",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunOrderByClause",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -3550,6 +4254,63 @@
                 "name": "WorkflowRunStepStatus",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -3567,6 +4328,106 @@
           ],
           "kind": "OBJECT",
           "name": "WorkflowRunStep",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "workflowRun",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowRunOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "startedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "endedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "status",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowRunStepOrderByClause",
           "possibleTypes": null
         },
         {
@@ -3685,15 +4546,6 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -3722,10 +4574,19 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
+              "name": "startedAt",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "endedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
                 "ofType": null
               }
             },
@@ -3749,7 +4610,7 @@
             },
             {
               "args": [],
-              "name": "startedAt",
+              "name": "createdAt",
               "type": {
                 "kind": "SCALAR",
                 "name": "DateTime",
@@ -3758,7 +4619,16 @@
             },
             {
               "args": [],
-              "name": "endedAt",
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
               "type": {
                 "kind": "SCALAR",
                 "name": "DateTime",
@@ -3787,13 +4657,7 @@
               "name": "status"
             },
             {
-              "name": "entity_id"
-            },
-            {
               "name": "id"
-            },
-            {
-              "name": "producing_run_id"
             },
             {
               "name": "owner_user_id"
@@ -3929,41 +4793,6 @@
             },
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "inputEntityId",
               "type": {
                 "kind": "SCALAR",
@@ -3999,12 +4828,86 @@
                     "name": "WorkflowRunWhereClause",
                     "ofType": null
                   }
+                },
+                {
+                  "defaultValue": "[]",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "WorkflowRunOrderByClause",
+                        "ofType": null
+                      }
+                    }
+                  }
                 }
               ],
               "name": "workflowRun",
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowRun",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
                 "ofType": null
               }
             }
@@ -4024,6 +4927,106 @@
           ],
           "kind": "OBJECT",
           "name": "WorkflowRunEntityInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "inputEntityId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "fieldName",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "entityType",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowRun",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "WorkflowRunOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "id",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "ownerUserId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "collectionId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "createdAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "updatedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deletedAt",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "WorkflowRunEntityInputOrderByClause",
           "possibleTypes": null
         },
         {
@@ -4142,15 +5145,6 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -4179,10 +5173,19 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
+              "name": "fieldName",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "entityType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -4206,19 +5209,28 @@
             },
             {
               "args": [],
-              "name": "fieldName",
+              "name": "createdAt",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "DateTime",
                 "ofType": null
               }
             },
             {
               "args": [],
-              "name": "entityType",
+              "name": "updatedAt",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deletedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
                 "ofType": null
               }
             }
@@ -4244,13 +5256,7 @@
               "name": "workflow_run"
             },
             {
-              "name": "entity_id"
-            },
-            {
               "name": "id"
-            },
-            {
-              "name": "producing_run_id"
             },
             {
               "name": "owner_user_id"
@@ -4391,15 +5397,6 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -4428,10 +5425,28 @@
           "fields": [
             {
               "args": [],
-              "name": "producingRunId",
+              "name": "name",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "defaultVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "minimumSupportedVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -4455,28 +5470,28 @@
             },
             {
               "args": [],
-              "name": "name",
+              "name": "createdAt",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "DateTime",
                 "ofType": null
               }
             },
             {
               "args": [],
-              "name": "defaultVersion",
+              "name": "updatedAt",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "DateTime",
                 "ofType": null
               }
             },
             {
               "args": [],
-              "name": "minimumSupportedVersion",
+              "name": "deletedAt",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "DateTime",
                 "ofType": null
               }
             }
@@ -4502,13 +5517,7 @@
               "name": "versions"
             },
             {
-              "name": "entity_id"
-            },
-            {
               "name": "id"
-            },
-            {
-              "name": "producing_run_id"
             },
             {
               "name": "owner_user_id"
@@ -4897,54 +5906,6 @@
               "args": [
                 {
                   "defaultValue": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "WorkflowRunEntityInputUpdateInput",
-                      "ofType": null
-                    }
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "name": "where",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "WorkflowRunEntityInputWhereClauseMutations",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "updateWorkflowRunEntityInput",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "WorkflowRunEntityInput",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
                   "name": "where",
                   "type": {
                     "kind": "NON_NULL",
@@ -5000,54 +5961,6 @@
                   "kind": "OBJECT",
                   "name": "WorkflowVersion",
                   "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "WorkflowVersionUpdateInput",
-                      "ofType": null
-                    }
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "name": "where",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "WorkflowVersionWhereClauseMutations",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "updateWorkflowVersion",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "WorkflowVersion",
-                      "ofType": null
-                    }
-                  }
                 }
               }
             },
@@ -5125,28 +6038,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "startedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "endedAt",
               "type": {
@@ -5206,6 +6097,24 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "deprecatedById",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -5221,24 +6130,6 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "startedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "endedAt",
               "type": {
                 "kind": "SCALAR",
@@ -5284,7 +6175,7 @@
             },
             {
               "defaultValue": "null",
-              "name": "workflowVersionId",
+              "name": "deprecatedById",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -5293,10 +6184,10 @@
             },
             {
               "defaultValue": "null",
-              "name": "rawInputsJson",
+              "name": "producingRunId",
               "type": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "ID",
                 "ofType": null
               }
             }
@@ -5330,19 +6221,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "name",
               "type": {
@@ -5366,6 +6244,15 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -5381,15 +6268,6 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "name",
               "type": {
                 "kind": "SCALAR",
@@ -5412,6 +6290,15 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
                 "ofType": null
               }
             }
@@ -5445,33 +6332,11 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "workflowRunId",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "startedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
                 "ofType": null
               }
             },
@@ -5490,6 +6355,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             }
@@ -5505,33 +6379,6 @@
           "inputFields": [
             {
               "defaultValue": "null",
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "workflowRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "startedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
               "name": "endedAt",
               "type": {
                 "kind": "SCALAR",
@@ -5545,6 +6392,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
                 "ofType": null
               }
             }
@@ -5578,16 +6434,12 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
+              "defaultValue": "null",
+              "name": "inputEntityId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {
@@ -5616,17 +6468,7 @@
                 "name": "ID",
                 "ofType": null
               }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "WorkflowRunEntityInputCreateInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
+            },
             {
               "defaultValue": "null",
               "name": "collectionId",
@@ -5635,38 +6477,11 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": "null",
-              "name": "fieldName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "entityType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "workflowRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "WorkflowRunEntityInputUpdateInput",
+          "name": "WorkflowRunEntityInputCreateInput",
           "possibleTypes": null
         },
         {
@@ -5693,19 +6508,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "graphJson",
               "type": {
@@ -5749,17 +6551,7 @@
                 "name": "ID",
                 "ofType": null
               }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "WorkflowVersionCreateInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
+            },
             {
               "defaultValue": "null",
               "name": "collectionId",
@@ -5768,56 +6560,11 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            {
-              "defaultValue": "null",
-              "name": "graphJson",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "workflowUri",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "version",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "manifest",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "workflowId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "WorkflowVersionUpdateInput",
+          "name": "WorkflowVersionCreateInput",
           "possibleTypes": null
         },
         {

@@ -3,7 +3,7 @@ Validate that format handlers work as expected
 """
 
 import pytest
-from support.format_handlers import get_validator
+from platformics.support.format_handlers import get_validator
 
 CASES_VALID_FILES = {
     "fasta": [
