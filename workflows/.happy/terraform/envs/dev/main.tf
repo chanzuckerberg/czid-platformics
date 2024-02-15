@@ -27,6 +27,11 @@ module "stack" {
           cmd   = ["cp", "-r", "/workflows/cerbos/", "/var/policies/"]
           image = "{workflows}"
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
+        },
+        private-key = {
+          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "dev"]
+          image = "{entities}"
+          tag   = "${var.image_tag}"
         }
       }
       sidecars = {

@@ -21,6 +21,11 @@ module "stack" {
           cmd   = ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]
           image = "{entities}"
           tag   = "${var.image_tag}"
+        },
+        private-key = {
+          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "sandbox"]
+          image = "{entities}"
+          tag   = "${var.image_tag}"
         }
       }
       memory                = "1000Mi"
