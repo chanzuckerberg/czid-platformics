@@ -7,7 +7,6 @@ Entity {
     integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRun {
     date started_at  
@@ -24,7 +23,6 @@ WorkflowRun {
     integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 Workflow {
     string name  
@@ -37,7 +35,6 @@ Workflow {
     integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRunStep {
     date started_at  
@@ -50,7 +47,6 @@ WorkflowRunStep {
     integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRunEntityInput {
     uuid input_entity_id  
@@ -63,7 +59,6 @@ WorkflowRunEntityInput {
     integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowVersion {
     string graph_json  
@@ -77,7 +72,6 @@ WorkflowVersion {
     integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 EntityMixin {
     uuid entity_id  

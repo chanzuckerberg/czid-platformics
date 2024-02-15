@@ -28,6 +28,9 @@ class Workflow(Entity):
     default_version: Mapped[str] = mapped_column(String, nullable=True)
     minimum_supported_version: Mapped[str] = mapped_column(String, nullable=True)
     versions: Mapped[list[WorkflowVersion]] = relationship(
-        "WorkflowVersion", back_populates="workflow", uselist=True, foreign_keys="WorkflowVersion.workflow_id"
+        "WorkflowVersion",
+        back_populates="workflow",
+        uselist=True,
+        foreign_keys="WorkflowVersion.workflow_id",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
