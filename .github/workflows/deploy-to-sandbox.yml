@@ -32,7 +32,7 @@ jobs:
         uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }} 
-          env: sandbox #${{ vars.HAPPY_ENV }} 
+          env: ${{ vars.HAPPY_ENV }} 
           create-tag: true
           stack-name: ${{ github.event.inputs.service }} 
           working-directory: ${{ github.event.inputs.service }}
