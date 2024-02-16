@@ -19,7 +19,7 @@ setup(
         "czid.plugin.input_loader": [
             "sample = entities:SampleInputLoader",
             "sequencing_read = entities:SequencingReadInputLoader",
-            "index_file = entities:IndexFileInputLoader",
+            "ncbi_index = entities:IndexFileInputLoader",
         ],
     },
 )

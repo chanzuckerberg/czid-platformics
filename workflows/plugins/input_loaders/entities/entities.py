@@ -2,7 +2,7 @@ import typing
 from sgqlc.operation import Operation
 from database.models.workflow_version import WorkflowVersion
 from manifest.manifest import EntityInput
-from platformics.client.entities_schema import IndexFileWhereClause, Query, SampleWhereClause, SequencingReadWhereClause, UUIDComparators, StrComparators
+from platformics.client.entities_schema import IndexFileWhereClause, IndexTypesEnumComparators, Query, SampleWhereClause, SequencingReadWhereClause, UUIDComparators, StrComparators
 from plugins.plugin_types import InputLoader
 
 
@@ -35,16 +35,17 @@ class SequencingReadInputLoader(InputLoader):
         sequencing_read_input = entity_inputs["sequencing_read"]
         op = Operation(Query)
         sequencing_reads = op.sequencing_reads(where=SequencingReadWhereClause(id=UUIDComparators(_eq=sequencing_read_input.entity_id)))
-        self._fetch_file(sequencing_reads.r1_file().file())  # type: ignore
-        self._fetch_file(sequencing_reads.r2_file().file())  # type: ignore
-        w_o_r = [o for o in requested_outputs if o not in ["r1_file", "r2_file"]]
-        for output in w_o_r:
+        self._fetch_file(sequencing_reads.r1_file())  # type: ignore
+        self._fetch_file(sequencing_reads.r2_file())  # type: ignore
+        non_file_outputs = [o for o in requested_outputs if o not in ["r1_file", "r2_file"]]
+        for output in non_file_outputs:
             getattr(sequencing_reads, output)()
         resp = self._entities_gql(op)
-        sequencing_read = resp["data"]["sequencing_reads"][0]
+        sequencing_read = resp["data"]["sequencingReads"][0]
+        sequencing_read["r1_file"] = self._uri_file(sequencing_read["r1File"])
+        sequencing_read["r2_file"] = self._uri_file(sequencing_read["r2File"])
         outputs = {output: sequencing_read[output] for output in requested_outputs}
-        outputs["r1_file"] = self._uri_file(sequencing_read["r1_file"])
-        outputs["r2_file"] = self._uri_file(sequencing_read["r2_file"])
+        return outputs
 
 
 
@@ -59,11 +60,12 @@ class IndexFileInputLoader(InputLoader):
         ncbi_index_version = raw_inputs["ncbi_index_version"]
         op = Operation(Query)
         index_files = op.index_files(where=IndexFileWhereClause(
-            name=StrComparators(_in=requested_outputs),
+            name=IndexTypesEnumComparators(_in=requested_outputs),
             version=StrComparators(_eq=ncbi_index_version),
-        )
+        ))
+        index_files.name()
         self._fetch_file(index_files.file())  # type: ignore
         resp = self._entities_gql(op)
-        index_files = resp["data"]["index_files"]
+        index_files = resp["data"]["indexFiles"]
         return {index_file["name"]: self._uri_file(index_file["file"]) for index_file in index_files}
 

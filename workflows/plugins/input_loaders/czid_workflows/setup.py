@@ -10,13 +10,13 @@ setup(
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
-    py_modules=["consensus_gneome"],
+    py_modules=["consensus_gneome_input"],
     python_requires=">=3.6",
     setup_requires=[],
     reentry_register=True,
     entry_points={
         "czid.plugin.input_loader": [
-            "consensus_genome = consensus_genome:ConsensusGenomeInputLoader",
+            "consensus_genome = consensus_genome_input:ConsensusGenomeInputLoader",
         ],
     },
 )

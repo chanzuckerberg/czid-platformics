@@ -79,7 +79,7 @@ DateTime = sgqlc.types.datetime.DateTime
 
 class FileAccessProtocol(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("s3",)
+    __choices__ = ("https", "s3")
 
 
 class FileStatus(sgqlc.types.Enum):

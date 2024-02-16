@@ -1883,6 +1883,9 @@
           "enumValues": [
             {
               "name": "s3"
+            },
+            {
+              "name": "https"
             }
           ],
           "fields": null,

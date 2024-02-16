@@ -3,10 +3,11 @@ Module to define basic plugin types
 """
 
 import os
-from abc import ABC, abstractmethod
 import typing
+from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from typing import Any, Dict, List, Literal
+from urllib.parse import urlparse
 
 from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
@@ -129,6 +130,10 @@ class InputLoader(IOLoader):
 
 
 class OutputLoader(IOLoader):
+    def _parse_uri(self, uri: str) -> dict[str, str]:
+        parsed = urlparse(uri)
+        return {"protocol": parsed.scheme, "namespace": parsed.netloc, "path": parsed.path}
+
     @abstractmethod
     async def load(
         self,
