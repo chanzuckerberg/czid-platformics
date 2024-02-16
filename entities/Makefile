@@ -10,11 +10,12 @@ export docker_compose:=docker compose
 export docker_compose_run:=docker compose run --rm
 
 ### DATABASE VARIABLES #################################################
-LOCAL_DB_NAME = entities
+SERVICE_NAME = entities
+LOCAL_DB_NAME = platformics
 LOCAL_DB_SERVER = localhost:5432
 LOCAL_DB_USERNAME = postgres
 LOCAL_DB_PASSWORD = password_postgres
-LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)
+LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)$(SERVICE_NAME)
 
 ### HELPFUL #################################################
 

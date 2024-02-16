@@ -130,7 +130,7 @@ async def run_workflow_version(
 
     input_errors = list(manifest.validate_inputs(entity_inputs, raw_inputs))
     if input_errors:
-        raise PlatformicsException("Invalid input: {', '.join(input_errors)}")
+        raise PlatformicsException(f"Invalid input: {', '.join([str(input_error) for input_error in input_errors])}")
 
     raw_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:

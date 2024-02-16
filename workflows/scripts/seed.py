@@ -4,6 +4,7 @@ Imports manifests
 """
 
 import os
+import argparse
 
 import boto3
 from botocore.exceptions import ClientError
@@ -21,21 +22,17 @@ from test_infra.factories.workflow_run import WorkflowRunFactory
 
 TEST_USER_ID = "111"
 TEST_COLLECTION_ID = "444"
+TEST_BUCKET = "local-bucket"
 
 
-def import_manifest(session: Session) -> None:
+def upload_wdl() -> None:
     boto_endpoint_url = os.getenv("BOTO_ENDPOINT_URL")
     assert boto_endpoint_url is not None, "seed must be run with local AWS infrastructure"
 
-    manifest_file = "/workflows/manifest/test_manifests/simple.yaml"
-    with open(manifest_file) as f:
-        manifest_str = f.read()
-    manifest = Manifest.from_yaml(manifest_str)
-
     wdl_file = "/workflows/test_workflows/sample_name.wdl"
-    s3 = boto3.client("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
+    s3 = boto3.client("s3", endpoint_url=boto_endpoint_url)
     try:
-        s3.create_bucket(Bucket="local-bucket")
+        s3.create_bucket(Bucket=TEST_BUCKET)
     except ClientError as e:
         if e.response["Error"]["Code"] == "BucketAlreadyOwnedByYou":
             pass
@@ -43,7 +40,14 @@ def import_manifest(session: Session) -> None:
             pass
         else:
             raise e
-    s3.upload_file(wdl_file, "local-bucket", "sample_name.wdl")
+    s3.upload_file(wdl_file, TEST_BUCKET, "sample_name.wdl")
+
+
+def import_manifest(session: Session) -> None:
+    manifest_file = "/workflows/manifest/test_manifests/simple.yaml"
+    with open(manifest_file) as f:
+        manifest_str = f.read()
+    manifest = Manifest.from_yaml(manifest_str)
 
     workflow = session.query(Workflow).filter(Workflow.name == manifest.workflow_name).first()
 
@@ -70,11 +74,15 @@ def import_manifest(session: Session) -> None:
     session.commit()
 
 
-def use_factoryboy() -> None:
+def use_factoryboy(use_moto: bool = False) -> None:
     settings = APISettings.model_validate({})
     app_db = init_sync_db(settings.SYNC_DB_URI)
     session = app_db.session()
     SessionStorage.set_session(session)
+
+    # upload wdl
+    if use_moto:
+        upload_wdl()
 
     # import manifests
     import_manifest(session=session)
@@ -90,4 +98,8 @@ def use_factoryboy() -> None:
 
 
 if __name__ == "__main__":
-    use_factoryboy()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--use-moto", action="store_true", default=False, help="using moto as aws mock")
+    args = parser.parse_args()
+
+    use_factoryboy(args.use_moto)
