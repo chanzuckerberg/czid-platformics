@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -387,6 +387,18 @@ def format_host_organism_aggregate_output(query_results: RowMapping) -> HostOrga
                 setattr(getattr(output, aggregator_fn), col_name, value)
     return output
 
+def build_host_organism_group_by_output(group_object: Optional[HostOrganismGroupByOptions], keys: list[str], value: Any) -> HostOrganismGroupByOptions:
+    """
+    Given a list of group by keys, build a nested object to represent the group by clause
+    """
+    # keys = ["version"]
+    if not group_object:
+        group_object = HostOrganismGroupByOptions()
+    
+    key = keys.pop(0)
+    
+    setattr(group_object, key, value)
+    return group_object
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_host_organisms_aggregate(

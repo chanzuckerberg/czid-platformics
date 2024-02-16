@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
@@ -47,7 +47,7 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism, HostOrganismGroupByOptions
+    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism, HostOrganismGroupByOptions, HostOrganismGroupByClause, build_host_organism_group_by_output
     from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
     from api.types.metadatum import MetadatumOrderByClause, MetadatumWhereClause, Metadatum
 
@@ -329,6 +329,11 @@ class SampleCountColumns(enum.Enum):
 All supported aggregation functions
 """
 
+@strawberry.type
+class SampleGroupByOptions:
+    collection_id: Optional[int] = None
+    collection_location: Optional[str] = None
+    host_organism: Optional[Annotated["HostOrganismGroupByOptions", strawberry.lazy("api.types.host_organism")]] = None
 
 @strawberry.type
 class SampleAggregateFunctions:
@@ -344,6 +349,7 @@ class SampleAggregateFunctions:
     variance: Optional[SampleNumericalColumns] = None
     min: Optional[SampleMinMaxColumns] = None
     max: Optional[SampleMinMaxColumns] = None
+    groupBy: Optional[SampleGroupByOptions] = None
 
 
 """
@@ -351,19 +357,8 @@ Wrapper around SampleAggregateFunctions
 """
 
 @strawberry.type
-class SampleGroupByOptions:
-    collection_id: Optional[int] = None
-    collection_location: Optional[str] = None
-    host_organism: Optional[Annotated["HostOrganismGroupByOptions", strawberry.lazy("api.types.host_organism")]] | None
-
-@strawberry.type
 class SampleAggregate:
-    # TODO: need to convert groupBy to an input rather than part of the output type?
-    # if groupBy stays as part of the SampleAggregate, need to throw an error if
-    # user selected groupBy options without any aggregate functions
-    groupBy: Optional[SampleGroupByOptions] = None
-    # TODO: need up update output structure to support groupBy keys
-    aggregate: Optional[SampleAggregateFunctions] = None
+    aggregate: Optional[list[SampleAggregateFunctions]] = None
 
 
 """
@@ -418,30 +413,63 @@ async def resolve_samples(
     return await get_db_rows(db.Sample, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_sample_aggregate_output(query_results: RowMapping) -> SampleAggregateFunctions:
+def format_sample_aggregate_output(query_results: list[RowMapping]) -> SampleAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
-    output = SampleAggregateFunctions()
+    aggregate = []
     print(query_results)
     for row in query_results:
-    # TODO: update this to process groupBy keys and output in the proper grouped format
-        for aggregate_name, value in row.items():
+        aggregate.append(format_sample_aggregate_row(row))
+    return SampleAggregate(aggregate=aggregate)
+
+def format_sample_aggregate_row(row: RowMapping) -> SampleAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = SampleAggregateFunctions()
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", SampleGroupByOptions())
+
+            group = build_sample_group_by_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
+        else: 
+            aggregate_name = aggregate[0]
             if aggregate_name == "count":
                 output.count = value
             else:
-                aggregator_fn, col_name = aggregate_name.split("_", 1)
-                # Filter out the group_by key from the results if one was provided.
-                if aggregator_fn in aggregator_map.keys():
-                    if not getattr(output, aggregator_fn):
-                        if aggregate_name in ["min", "max"]:
-                            setattr(output, aggregator_fn, SampleMinMaxColumns())
-                        else:
-                            setattr(output, aggregator_fn, SampleNumericalColumns())
-                    setattr(getattr(output, aggregator_fn), col_name, value)
+                aggregate_fn, col_name = aggregate[0], aggregate[1]
+                if not getattr(output, aggregate_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregate_fn, SampleMinMaxColumns())
+                    else:
+                        setattr(output, aggregate_fn, SampleNumericalColumns())
+                setattr(getattr(output, aggregate_fn), col_name, value)
+
     return output
 
+def build_sample_group_by_output(group_object: Optional[SampleGroupByOptions], keys: list[str], value: Any) -> SampleGroupByOptions:
+    """
+    Given a list of group by keys, build a nested object to represent the group by clause
+    """
+    # keys = ["host_organism", "version"]
+    if not group_object:
+        group_object = SampleGroupByOptions()
+    
+    key = keys.pop(0)
+    if key == "host_organism":
+        value = build_host_organism_group_by_output(keys, value)
+    
+    setattr(group_object, key, value)
+    return group_object
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples_aggregate(
@@ -456,19 +484,15 @@ async def resolve_samples_aggregate(
     """
     # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    selections = info.selected_fields[0].selections
-    aggregate_selections = []
-    groupby_selections = []
-    for selection in selections:
-        if getattr(selection, "name") == "aggregate":
-            aggregate_selections = selection.selections
-        elif getattr(selection, "name") == "groupBy":
-            groupby_selections = selection.selections
+    selections = info.selected_fields[0].selections[0].selections
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
 
     rows = await get_aggregate_db_rows(db.Sample, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_sample_aggregate_output(rows)
-    return SampleAggregate(aggregate=aggregate_output)
-
+    print(aggregate_output)
+    return aggregate_output
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_sample(

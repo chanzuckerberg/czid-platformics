@@ -126,8 +126,11 @@ def convert_where_clauses_to_sql(
 
         # Add the subquery columns and subquery_group_by fields to the current query
         for item in subquery_group_by:
-            field_name = getattr(item, "key")
-            aliased_field_name = f"{strcase.to_lower_camel(join_field)}_{strcase.to_lower_camel(field_name)}"
+            if isinstance(item, str):
+                field_name = item
+            else:
+                field_name = getattr(item, "key")
+            aliased_field_name = f"{join_field}.{field_name}"
             field_to_match = getattr(subquery.c, field_name) # type: ignore
             query = query.add_columns(field_to_match.label(aliased_field_name))
             local_group_by.append(aliased_field_name)

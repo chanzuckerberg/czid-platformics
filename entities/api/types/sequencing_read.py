@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Any, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -49,7 +49,7 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample
+    from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample, SampleGroupByOptions, build_sample_group_by_output
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
     from api.types.genomic_range import GenomicRangeOrderByClause, GenomicRangeWhereClause, GenomicRange
     from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
@@ -346,6 +346,11 @@ class SequencingReadCountColumns(enum.Enum):
 All supported aggregation functions
 """
 
+@strawberry.type
+class SequencingReadGroupByOptions:
+    collection_id: Optional[int] = None
+    sample: Optional[Annotated["SampleGroupByOptions", strawberry.lazy("api.types.sample")]] = None
+
 
 @strawberry.type
 class SequencingReadAggregateFunctions:
@@ -363,6 +368,7 @@ class SequencingReadAggregateFunctions:
     variance: Optional[SequencingReadNumericalColumns] = None
     min: Optional[SequencingReadMinMaxColumns] = None
     max: Optional[SequencingReadMinMaxColumns] = None
+    groupBy: Optional[SequencingReadGroupByOptions] = None
 
 
 """
@@ -430,20 +436,37 @@ def format_sequencing_read_aggregate_output(query_results: RowMapping) -> Sequen
     format the results using the proper GraphQL types.
     """
     output = SequencingReadAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
-        else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
-                if not getattr(output, aggregator_fn):
-                    if aggregate_name in ["min", "max"]:
-                        setattr(output, aggregator_fn, SequencingReadMinMaxColumns())
-                    else:
-                        setattr(output, aggregator_fn, SequencingReadNumericalColumns())
-                setattr(getattr(output, aggregator_fn), col_name, value)
+    print(query_results)
+    for row in query_results:
+        for aggregate_name, value in query_results.items():
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate_name.split("_", 1)
+                # Filter out the group_by key from the results if one was provided.
+                if aggregator_fn in aggregator_map.keys():
+                    if not getattr(output, aggregator_fn):
+                        if aggregate_name in ["min", "max"]:
+                            setattr(output, aggregator_fn, SequencingReadMinMaxColumns())
+                        else:
+                            setattr(output, aggregator_fn, SequencingReadNumericalColumns())
+                    setattr(getattr(output, aggregator_fn), col_name, value)
     return output
+
+def build_sequencing_read_group_by_output(group_object: Optional[SequencingReadGroupByOptions], keys: list[str], value: Any) -> SequencingReadGroupByOptions:
+    """
+    Given a list of group by keys, build a nested object to represent the group by clause
+    """
+    # keys = ["sample", "host_organism", "version"]
+    if not group_object:
+        group_object = SequencingReadGroupByOptions()
+    
+    key = keys.pop(0)
+    if key == "sample":
+        value = build_sample_group_by_output(keys, value)
+    
+    setattr(group_object, key, value)
+    return group_object
 
 
 @strawberry.field(extensions=[DependencyExtension()])
@@ -457,11 +480,12 @@ async def resolve_sequencing_reads_aggregate(
     """
     Aggregate values for SequencingRead objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
-    # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.SequencingRead, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    rows = await get_aggregate_db_rows(db.SequencingRead, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_sequencing_read_aggregate_output(rows)
     return SequencingReadAggregate(aggregate=aggregate_output)
 
