@@ -25,6 +25,6 @@ class BulkDownload(Entity):
     __tablename__ = "bulk_download"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     download_type: Mapped[BulkDownloadType] = mapped_column(Enum(BulkDownloadType, native_enum=False), nullable=False)
-    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
     file: Mapped["File"] = relationship("File", foreign_keys=file_id)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

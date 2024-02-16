@@ -26,7 +26,7 @@ class MetricConsensusGenome(Entity):
     __tablename__ = "metric_consensus_genome"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     consensus_genome_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("consensus_genome.entity_id"), nullable=False
+        UUID, ForeignKey("consensus_genome.entity_id"), nullable=False, index=True
     )
     consensus_genome: Mapped["ConsensusGenome"] = relationship(
         "ConsensusGenome", back_populates="metrics", foreign_keys=consensus_genome_id

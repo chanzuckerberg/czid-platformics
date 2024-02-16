@@ -37,7 +37,7 @@ class HostOrganism(Entity):
     indexes: Mapped[list[IndexFile]] = relationship(
         "IndexFile", back_populates="host_organism", uselist=True, foreign_keys="IndexFile.host_organism_id"
     )
-    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
     samples: Mapped[list[Sample]] = relationship(
         "Sample", back_populates="host_organism", uselist=True, foreign_keys="Sample.host_organism_id"

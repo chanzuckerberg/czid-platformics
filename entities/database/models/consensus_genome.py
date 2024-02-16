@@ -33,23 +33,25 @@ else:
 class ConsensusGenome(Entity):
     __tablename__ = "consensus_genome"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False)
+    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False, index=True)
     taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="consensus_genomes", foreign_keys=taxon_id)
-    sequence_read_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("sequencing_read.entity_id"), nullable=False)
+    sequence_read_id: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("sequencing_read.entity_id"), nullable=False, index=True
+    )
     sequence_read: Mapped["SequencingRead"] = relationship(
         "SequencingRead", back_populates="consensus_genomes", foreign_keys=sequence_read_id
     )
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("reference_genome.entity_id"), nullable=True
+        UUID, ForeignKey("reference_genome.entity_id"), nullable=True, index=True
     )
     reference_genome: Mapped["ReferenceGenome"] = relationship(
         "ReferenceGenome", back_populates="consensus_genomes", foreign_keys=reference_genome_id
     )
-    accession_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("accession.entity_id"), nullable=True)
+    accession_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("accession.entity_id"), nullable=True, index=True)
     accession: Mapped["Accession"] = relationship(
         "Accession", back_populates="consensus_genomes", foreign_keys=accession_id
     )
-    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
     sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
     metrics: Mapped[MetricConsensusGenome] = relationship(
         "MetricConsensusGenome",
@@ -57,6 +59,6 @@ class ConsensusGenome(Entity):
         uselist=True,
         foreign_keys="MetricConsensusGenome.consensus_genome_id",
     )
-    intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
+    intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
     intermediate_outputs: Mapped["File"] = relationship("File", foreign_keys=intermediate_outputs_id)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
