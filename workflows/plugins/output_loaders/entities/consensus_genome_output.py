@@ -2,7 +2,7 @@ import typing
 from database.models.workflow_run import WorkflowRun
 from sgqlc.operation import Operation
 from manifest.manifest import EntityInput
-from platformics.client.entities_schema import Query, Mutation, ConsensusGenomeCreateInput, FileCreate, TaxonWhereClause
+from platformics.client.entities_schema import Query, Mutation, ConsensusGenomeCreateInput, FileCreate, TaxonWhereClause, StrComparators
 from plugins.plugin_types import OutputLoader
 
 
@@ -18,7 +18,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         if raw_inputs.get('sars_cov_2'):
             op = Operation(Query)
             # Get the taxon id for SARS-CoV-2
-            op.taxa(where=TaxonWhereClause(upstream_database_identifier="2697049"))
+            op.taxa(where=TaxonWhereClause(upstream_database_identifier=StrComparators(_eq="2697049")))
             res = self._entities_gql(op)
             taxon_id = res["data"]["taxa"][0]["id"]
         else:
