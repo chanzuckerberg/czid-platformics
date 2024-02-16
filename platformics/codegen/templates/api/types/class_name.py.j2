@@ -356,7 +356,8 @@ Mutation types
 
 {% macro getInputFields(action, fields) -%}
     {%- for attr in fields %}
-        {%- if attr.type == "string" %}
+	{%- if attr.is_virtual_relationship %} {# TODO FIXME this prevents ID fields from 1:1 relationships see entities/schema/platformics.yaml #}
+        {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
         {%- elif attr.type == "uuid" %}
     {{ attr.name }}: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}

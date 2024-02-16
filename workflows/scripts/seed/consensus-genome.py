@@ -1,7 +1,6 @@
 """
 Populate the database with mock data for local development
 """
-import json
 
 from database.models.workflow import Workflow
 from database.models.workflow_version import WorkflowVersion
@@ -28,14 +27,12 @@ def main() -> str:
     cg_workflow_version = session.create_or_fetch_entity(WorkflowVersion, version=version, workflow=cg_workflow)
     cg_workflow_version.workflow_uri = workflow_uri
     with TempCZIDWorkflowFile("manifest.yml", "consensus-genome", branch="tmorse-cg-manifest") as manifest_file:
-        bloop = manifest_file.read().decode()
-        print(bloop)
-        cg_workflow_version.manifest = bloop 
+        cg_workflow_version.manifest = manifest_file.read().decode()
     cg_workflow_version.workflow = cg_workflow
     session.add(cg_workflow_version)
     session.commit()
     return str(cg_workflow_version.entity_id)
-    
+
 
 if __name__ == "__main__":
     print("Seeding database")

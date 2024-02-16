@@ -14,6 +14,7 @@ from sgqlc.operation import Operation
 
 from database.models import WorkflowVersion, WorkflowRun
 from manifest.manifest import EntityInput
+from platformics.client.entities_schema import FileAccessProtocol
 
 from mypy_boto3_s3 import S3Client
 
@@ -130,9 +131,13 @@ class InputLoader(IOLoader):
 
 
 class OutputLoader(IOLoader):
-    def _parse_uri(self, uri: str) -> dict[str, str]:
+    def _parse_uri(self, uri: str) -> dict[str, typing.Any]:
         parsed = urlparse(uri)
-        return {"protocol": parsed.scheme, "namespace": parsed.netloc, "path": parsed.path}
+        return {
+            "protocol": getattr(FileAccessProtocol, parsed.scheme),
+            "namespace": parsed.netloc,
+            "path": parsed.path.lstrip("/"),
+        }
 
     @abstractmethod
     async def load(

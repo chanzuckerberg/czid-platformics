@@ -5,16 +5,14 @@ Plugin that runs a workflow locally using miniwdl
 import asyncio
 import json
 import os
-from os.path import basename
-import subprocess
 import sys
 import tempfile
-import threading
+import re
+from os.path import basename
 from typing import List
 from urllib.parse import urlparse
 from uuid import uuid4
 from pathlib import Path
-import re
 
 import boto3
 
@@ -42,6 +40,7 @@ class LocalWorkflowRunner(WorkflowRunner):
 
     def __init__(self, settings: LocalWorkflowRunnerSettings):
         self.s3_endpoint_url = settings.S3_ENDPOINT
+        self.s3 = boto3.client("s3", endpoint_url=self.s3_endpoint_url)
 
     def supported_workflow_types(self) -> List[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
@@ -118,6 +117,7 @@ allow_networks = ["czidnet"]"""
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
+
             # Read from stderr and stdout concurrently
             async def read_stream(stream, handler):
                 while True:
@@ -132,6 +132,7 @@ allow_networks = ["czidnet"]"""
                 print(line, file=sys.stderr)
 
             stdout = ""
+
             def stdout_handler(line):
                 nonlocal stdout
                 stdout += line
@@ -150,8 +151,19 @@ allow_networks = ["czidnet"]"""
                 return
             assert process.stdout
             outputs = json.loads(stdout)["outputs"]
-            await event_bus.send(WorkflowSucceededMessage(runner_id=runner_id, outputs=outputs))
 
+            def upload(e: dict | list | str) -> dict | list | str:
+                if isinstance(e, dict):
+                    return {k: upload(v) for k, v in e.items()}
+                elif isinstance(e, list):
+                    return [upload(v) for v in e]
+                elif isinstance(e, str):
+                    key = e.lstrip("/")
+                    s3.upload_file(e, "local-bucket", key)
+                    return f"s3://local-bucket/{key}"
+
+            outputs = upload(outputs)
+            await event_bus.send(WorkflowSucceededMessage(runner_id=runner_id, outputs=outputs))
 
     async def run_workflow(
         self,

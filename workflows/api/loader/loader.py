@@ -56,7 +56,6 @@ class LoaderDriver:
             output_loader = resolve_output_loader(output_loader_specifier.name, output_loader_specifier.version)
             if not output_loader:
                 raise Exception(f"Output loader {output_loader_specifier.name} not found")
-            print(f"Running loader {loader_raw_inputs}", file=sys.stderr)
             loader_futures.append(
                 output_loader.load(workflow_run, loader_entity_inputs, loader_raw_inputs, loader_workflow_outputs)
             )

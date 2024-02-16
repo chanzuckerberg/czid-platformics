@@ -12,6 +12,7 @@ class CZIDDockerInputLoader(InputLoader):
     """
     This loads docker images based on CZID's conventions
     """
+
     async def load(
         self,
         workflow_version: WorkflowVersion,
@@ -21,7 +22,7 @@ class CZIDDockerInputLoader(InputLoader):
     ) -> dict[str, str]:
         name = f"consensus-genome:v{str(workflow_version.version)}"
         if os.getenv("ENVIRONMENT") == "test":
-            return { "docker_image_id": name }
+            return {"docker_image_id": name}
         sts = boto3.client("sts")
         account_id = sts.get_caller_identity()["Account"]
         aws_region = "us-west-2"  # CZID publishes images to this region

@@ -17,7 +17,13 @@ from database.models.sequencing_read import SequencingRead
 from database.models.taxon import Taxon
 from database.models.upstream_database import UpstreamDatabase
 
-from platformics.util.seed_utils import TEST_USER_ID, TEST_COLLECTION_ID, LOCAL_BUCKET, SeedSession, TempCZIDWorkflowFile
+from platformics.util.seed_utils import (
+    TEST_USER_ID,
+    TEST_COLLECTION_ID,
+    LOCAL_BUCKET,
+    SeedSession,
+    TempCZIDWorkflowFile,
+)
 from platformics.database.models.base import Entity
 
 
@@ -42,7 +48,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
         return file
 
     def entity_input(name: str, entity_type: str, entity: Entity) -> tuple[dict[str, Any], Entity]:
-        return { "name": name, "entity_type": entity_type }, entity
+        return {"name": name, "entity_type": entity_type}, entity
 
     entity_inputs: list[tuple[dict[str, str], Entity]] = []
     raw_inputs = {}
@@ -57,7 +63,9 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     upstream_database = session.create_or_fetch_entity(UpstreamDatabase, name="ncbi")
 
     sars_cov2_accession = session.create_or_fetch_entity(Accession, accession_id="MN908947.3")
-    sars_cov2_accession.accession_name = "Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome"
+    sars_cov2_accession.accession_name = (
+        "Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome"
+    )
     upstream_database.accessions = [sars_cov2_accession]
     entity_inputs.append(entity_input("accession", "accession", sars_cov2_accession))
 
@@ -117,26 +125,32 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     session.add(sars_cov2_reference)
     session.commit()
 
-
     with TempCZIDWorkflowFile("integration_test/sample_sars-cov-2_paired_r1.fastq.gz", "consensus-genome") as temp_file:
-        session.s3_local.upload_file(temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz")
+        session.s3_local.upload_file(
+            temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz"
+        )
     with TempCZIDWorkflowFile("integration_test/sample_sars-cov-2_paired_r2.fastq.gz", "consensus-genome") as temp_file:
-        session.s3_local.upload_file(temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz")
+        session.s3_local.upload_file(
+            temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz"
+        )
 
     sars_cov2_paired_name = "sample_sars-cov-2_paired"
     sars_cov2_paired_sample = session.query(Sample).filter_by(name=sars_cov2_paired_name).first() or Sample()
-    sars_cov2_paired_sample.owner_user_id=TEST_USER_ID
-    sars_cov2_paired_sample.collection_id=TEST_COLLECTION_ID
-    sars_cov2_paired_sample.name=sars_cov2_paired_name
-    sars_cov2_paired_sample.sample_type="nasal"
-    sars_cov2_paired_sample.water_control=False
-    sars_cov2_paired_sample.collection_date=datetime(2021, 1, 1)
-    sars_cov2_paired_sample.collection_location="California, USA"
+    sars_cov2_paired_sample.owner_user_id = TEST_USER_ID
+    sars_cov2_paired_sample.collection_id = TEST_COLLECTION_ID
+    sars_cov2_paired_sample.name = sars_cov2_paired_name
+    sars_cov2_paired_sample.sample_type = "nasal"
+    sars_cov2_paired_sample.water_control = False
+    sars_cov2_paired_sample.collection_date = datetime(2021, 1, 1)
+    sars_cov2_paired_sample.collection_location = "California, USA"
     entity_inputs.append(entity_input("sample", "sample", sars_cov2_paired_sample))
 
     sars_cov2_paired_sequencing_read = SequencingRead()
     if sars_cov2_paired_sample.entity_id:
-        sars_cov2_paired_sequencing_read = session.session.query(SequencingRead).filter_by(sample_id=sars_cov2_paired_sample.entity_id).first() or SequencingRead()
+        sars_cov2_paired_sequencing_read = (
+            session.session.query(SequencingRead).filter_by(sample_id=sars_cov2_paired_sample.entity_id).first()
+            or SequencingRead()
+        )
     sars_cov2_paired_sequencing_read.owner_user_id = TEST_USER_ID
     sars_cov2_paired_sequencing_read.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_sequencing_read.protocol = "artic"
@@ -166,7 +180,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_genomic_range.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_genomic_range.file = uri_file(
         "https://czid-public-references.s3.amazonaws.com/consensus-genome/artic_v3_primers.bed",
-         sars_cov2_paired_genomic_range,
+        sars_cov2_paired_genomic_range,
         "file",
         "bed",
     )

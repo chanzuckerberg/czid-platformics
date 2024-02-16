@@ -2,7 +2,6 @@
 GraphQL web app runner
 """
 import json
-import sys
 import typing
 
 import database.models as db
@@ -153,8 +152,6 @@ async def run_workflow_version(
             if v in workflow_runner_inputs_json:
                 raise PlatformicsException(f"Duplicate raw input {v}")
             workflow_runner_inputs_json[v] = input_loader_outputs[k]
-
-    print(json.dumps(workflow_runner_inputs_json, indent=2), file=sys.stderr)
 
     status = "PENDING"
     execution_id = None

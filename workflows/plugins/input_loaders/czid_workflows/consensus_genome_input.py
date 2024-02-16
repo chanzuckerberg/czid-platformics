@@ -4,12 +4,17 @@ import typing
 from sgqlc.operation import Operation
 
 from database.models.workflow_version import WorkflowVersion
-from database.models.workflow_version import WorkflowVersion
 from manifest.manifest import EntityInput
-from platformics.client.entities_schema import AccessionWhereClause, Query, ReferenceGenomeWhereClause, SequencingReadWhereClause, UUIDComparators
+from platformics.client.entities_schema import (
+    AccessionWhereClause,
+    Query,
+    ReferenceGenomeWhereClause,
+    SequencingReadWhereClause,
+    UUIDComparators,
+)
 from plugins.plugin_types import InputLoader
 
-PUBLIC_REFERENCES_BUCKET = "czid-public-references"
+PUBLIC_REFERENCES_PREFIX = "s3://czid-public-references/consensus_genome"
 SARS_COV_2_ACCESSION_ID = "MN908947.3"
 NA_PRIMER_FILE = "na_primers.bed"
 
@@ -26,6 +31,7 @@ def nanopore_primer_set(protocol: str) -> str:
     if protocol == "varskip":
         return "NEB_VarSkip/V1a"
     raise ValueError(f"Unsupported protocol {protocol}")
+
 
 def illumina_primer_file(protocol: str) -> str:
     if protocol == "ampliseq":
@@ -67,7 +73,9 @@ class ConsensusGenomeInputLoader(InputLoader):
 
         sequencing_read_input = entity_inputs["sequencing_read"]
         op = Operation(Query)
-        sequencing_reads = op.sequencing_reads(where=SequencingReadWhereClause(id=UUIDComparators(_eq=sequencing_read_input.entity_id)))
+        sequencing_reads = op.sequencing_reads(
+            where=SequencingReadWhereClause(id=UUIDComparators(_eq=sequencing_read_input.entity_id))
+        )
         sequencing_reads.protocol()  # type: ignore
         sequencing_reads.technology()  # type: ignore
         sequencing_reads.clearlabs_export()  # type: ignore
@@ -81,7 +89,9 @@ class ConsensusGenomeInputLoader(InputLoader):
 
         reference_genome_input = entity_inputs.get("reference_genome")
         if reference_genome_input:
-            reference_genomes = op.reference_genomes(where=ReferenceGenomeWhereClause(id=UUIDComparators(_eq=reference_genome_input.entity_id)))
+            reference_genomes = op.reference_genomes(
+                where=ReferenceGenomeWhereClause(id=UUIDComparators(_eq=reference_genome_input.entity_id))
+            )
             self._fetch_file(reference_genomes.file())  # type: ignore
 
         resp = self._entities_gql(op)
@@ -95,55 +105,67 @@ class ConsensusGenomeInputLoader(InputLoader):
 
         inputs = {}
         if sars_cov_2:
-            inputs["ref_fasta"] = f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/{SARS_COV_2_ACCESSION_ID}.fa"
+            inputs["ref_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/{SARS_COV_2_ACCESSION_ID}.fa"
             if sequencing_read["technology"] == "Nanopore":
-                inputs.update({
-                    "apply_length_filter": not sequencing_read["clearlabs_export"],
-                    "medaka_model": sequencing_read["medaka_model"],
-                    # Remove ref_fasta once it's changed to an optional wdl input for ONT runs.
-                    "primer_set": nanopore_primer_set(sequencing_read["protocol"]),
-                    "primer_schemes": f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/artic-primer-schemes_v6.tar.gz",
-              })
+                inputs.update(
+                    {
+                        "apply_length_filter": not sequencing_read["clearlabs_export"],
+                        "medaka_model": sequencing_read["medaka_model"],
+                        # Remove ref_fasta once it's changed to an optional wdl input for ONT runs.
+                        "primer_set": nanopore_primer_set(sequencing_read["protocol"]),
+                        "primer_schemes": f"{PUBLIC_REFERENCES_PREFIX}/artic-primer-schemes_v6.tar.gz",
+                    }
+                )
             else:
-                inputs["primer_bed"] = f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/{illumina_primer_file(sequencing_read['protocol'])}"
+                inputs["primer_bed"] = f"{PUBLIC_REFERENCES_PREFIX}/{illumina_primer_file(sequencing_read['protocol'])}"
         else:
             accession = resp["data"]["accessions"][0]
             inputs["ref_accession_id"] = accession["accessionId"]
             assert sequencing_read["technology"] == "Illumina", "Nanopore only supports SARS-CoV-2"
 
-            if reference_genome_input: 
-                inputs.update({
-                    "ref_fasta": reference_fasta_uri,
-                    # Default to empty primer file if the user does not provide a primer bed file (optional input)
-                    "primer_bed": primer_bed_uri or f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/{NA_PRIMER_FILE}",
-                    # This option filters all except SARS-CoV-2 at the moment:
-                    "filter_reads": False,
-                    # signal to workflow that we want to include the refseq and bedfile in zipoutputs
-                    "output_refseq": True,
-                    "output_bed": bool(primer_bed_uri),
-                  })
+            if reference_genome_input:
+                inputs.update(
+                    {
+                        "ref_fasta": reference_fasta_uri,
+                        # Default to empty primer file if the user does not provide a primer bed file (optional input)
+                        "primer_bed": primer_bed_uri or f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}",
+                        # This option filters all except SARS-CoV-2 at the moment:
+                        "filter_reads": False,
+                        # signal to workflow that we want to include the refseq and bedfile in zipoutputs
+                        "output_refseq": True,
+                        "output_bed": bool(primer_bed_uri),
+                    }
+                )
             else:
-                inputs.update({
-                    # This option filters all except SARS-CoV-2 at the moment:
-                    "filter_reads": False,
-                    # Use empty primer file b/c the user does not specify a wetlab protocol when dispatching cg samples from an mngs report
-                    "primer_bed": f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/{NA_PRIMER_FILE}",
-                })
+                inputs.update(
+                    {
+                        # This option filters all except SARS-CoV-2 at the moment:
+                        "filter_reads": False,
+                        # Use empty primer file b/c the user does not specify a wetlab protocol when dispatching
+                        #   cg samples from an mngs report
+                        "primer_bed": f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}",
+                    }
+                )
 
-        inputs.update({
-            "ref_host": f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/hg38.fa.gz",
-            "ercc_fasta": f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/ercc_sequences.fasta",
-            "kraken2_db_tar_gz": f"s3://{PUBLIC_REFERENCES_BUCKET}/consensus-genome/kraken_coronavirus_db_only.tar.gz",
-        })
+        inputs.update(
+            {
+                "ref_host": f"{PUBLIC_REFERENCES_PREFIX}/hg38.fa.gz",
+                "ercc_fasta": f"{PUBLIC_REFERENCES_PREFIX}/ercc_sequences.fasta",
+                "kraken2_db_tar_gz": f"{PUBLIC_REFERENCES_PREFIX}/kraken_coronavirus_db_only.tar.gz",
+            }
+        )
 
         if os.getenv("ENVIRONMENT") == "test":
             # This is a smaller human host so host filtering will run faster for local testing
-            inputs["ref_host"] = "s3://czid-public-references/consensus-genome/human_chr1.fa"
+            inputs["ref_host"] = f"{PUBLIC_REFERENCES_PREFIX}/human_chr1.fa"
             for k, v in inputs.items():
                 if not isinstance(v, str):
                     continue
-                # Our test environment uses a local version of S3 for it's S3 downloads. This is good for samples but we don't want to copy over
-                #   some reference files we host publicly because they are way too big. So by using their http style paths we hit the real bucket
-                #   instead of the local one. It's a bit of a hack but it's a pretty clean way to handle this.
-                inputs[k] = v.replace("s3://czid-public-references", "https://czid-public-references.s3.amazonaws.com")
+                # Our test environment uses a local version of S3 for it's S3 downloads. This is good for samples but
+                #   we don't want to copy over some reference files we host publicly because they are way too big. So by
+                #   using their http style paths we hit the real bucket instead of the local one. It's a bit of a hack
+                #   but it's a pretty clean way to handle this.
+                inputs[k] = v.replace(
+                    PUBLIC_REFERENCES_PREFIX, "https://czid-public-references.s3.amazonaws.com/consensus_genome"
+                )
         return inputs

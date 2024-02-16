@@ -8,15 +8,33 @@ from abc import abstractmethod
 from Bio import SeqIO
 from typing import Protocol
 
+from mypy_boto3_s3 import S3Client
+
 
 class FileFormatHandler(Protocol):
     """
     Interface for a file format handler
     """
 
-    @classmethod
+    s3client: S3Client
+    bucket: str
+    key: str
+
+    def __init__(self, s3client: S3Client, bucket: str, key: str):
+        self.s3client = s3client
+        self.bucket = bucket
+        self.key = key
+
+    def contents(self) -> str:
+        """
+        Get the contents of the file
+        """
+        return (
+            self.s3client.get_object(Bucket=self.bucket, Key=self.key, Range="1-10000")["Body"].read().decode("utf-8")
+        )
+
     @abstractmethod
-    def validate(cls, contents: str) -> None:
+    def validate(self) -> None:
         raise NotImplementedError
 
 
@@ -26,10 +44,9 @@ class FastaHandler(FileFormatHandler):
     ">" is a valid FASTA file, and so is ">abc" (without a sequence).
     """
 
-    @classmethod
-    def validate(cls, contents: str) -> None:
+    def validate(self) -> None:
         sequences = 0
-        for _ in SeqIO.parse(io.StringIO(contents), "fasta"):
+        for _ in SeqIO.parse(io.StringIO(self.contents()), "fasta"):
             sequences += 1
         assert sequences > 0
 
@@ -40,10 +57,9 @@ class FastqHandler(FileFormatHandler):
     This removes truncated FASTQ records by assuming 1 read = 4 lines.
     """
 
-    @classmethod
-    def validate(cls, contents: str) -> None:
+    def validate(self) -> None:
         # Load file and only keep non-truncated FASTQ records (4 lines per record)
-        fastq = contents.split("\n")
+        fastq = self.contents().split("\n")
         fastq = fastq[: len(fastq) - (len(fastq) % 4)]
 
         # Validate it with SeqIO
@@ -58,10 +74,9 @@ class BedHandler(FileFormatHandler):
     Validate BED files using basic checks.
     """
 
-    @classmethod
-    def validate(cls, contents: str) -> None:
+    def validate(self) -> None:
         # Ignore last line since it could be truncated
-        records = contents.split("\n")[:-1]
+        records = self.contents().split("\n")[:-1]
         assert len(records) > 0
 
         # BED files must have at least 3 columns - error out if the file incorrectly uses spaces instead of tabs
@@ -80,9 +95,8 @@ class JsonHandler(FileFormatHandler):
     Validate JSON files
     """
 
-    @classmethod
-    def validate(cls, contents: str) -> None:
-        json.loads(contents)  # throws an exception for invalid JSON
+    def validate(self) -> None:
+        json.loads(self.contents())  # throws an exception for invalid JSON
 
 
 def get_validator(format: str) -> type[FileFormatHandler]:
