@@ -25,6 +25,7 @@ from platformics.util.seed_utils import (
     TempCZIDWorkflowFile,
 )
 from platformics.database.models.base import Entity
+from support.enums import HostOrganismCategory, SequencingTechnology, TaxonLevel
 
 
 def main() -> tuple[list[dict[str, str]], dict[str, str]]:
@@ -38,7 +39,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     def uri_file(uri: str, entity: Entity, entity_field_name: str, file_format: str) -> File:
         parsed = urlparse(uri)
         file = getattr(entity, entity_field_name) or File()
-        file.entity_id = entity.entity_id
+        file.entity_id = entity.id
         file.entity_field_name = entity_field_name
         file.status = "SUCCESS"
         file.protocol = parsed.scheme
@@ -72,7 +73,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_taxon = session.create_or_fetch_entity(Taxon, upstream_database_identifier="2697049")
     sars_cov2_taxon.name = "Severe acute respiratory syndrome coronavirus 2"
     sars_cov2_taxon.is_phage = False
-    sars_cov2_taxon.level = "level_subspecies"
+    sars_cov2_taxon.level = TaxonLevel.level_subspecies
     upstream_database.taxa = [sars_cov2_taxon]
     entity_inputs.append(entity_input("taxon", "taxon", sars_cov2_taxon))
 
@@ -105,7 +106,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
 
     human_host = session.create_or_fetch_entity(HostOrganism, name="human")
     human_host.version = "v1-hg38"
-    human_host.category = "human"
+    human_host.category = HostOrganismCategory.human
     human_host.is_deuterostome = True
     human_host.sequence = uri_file(
         "https://czid-public-references.s3.amazonaws.com/consensus-genome/hg38.fa.gz",
@@ -146,15 +147,15 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     entity_inputs.append(entity_input("sample", "sample", sars_cov2_paired_sample))
 
     sars_cov2_paired_sequencing_read = SequencingRead()
-    if sars_cov2_paired_sample.entity_id:
+    if sars_cov2_paired_sample.id:
         sars_cov2_paired_sequencing_read = (
-            session.session.query(SequencingRead).filter_by(sample_id=sars_cov2_paired_sample.entity_id).first()
+            session.session.query(SequencingRead).filter_by(sample_id=sars_cov2_paired_sample.id).first()
             or SequencingRead()
         )
     sars_cov2_paired_sequencing_read.owner_user_id = TEST_USER_ID
     sars_cov2_paired_sequencing_read.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_sequencing_read.protocol = "artic"
-    sars_cov2_paired_sequencing_read.technology = "Illumina"
+    sars_cov2_paired_sequencing_read.technology = SequencingTechnology.Illumina
     sars_cov2_paired_sequencing_read.nucleic_acid = "DNA"
     sars_cov2_paired_sequencing_read.clearlabs_export = False
     sars_cov2_paired_sequencing_read.medaka_model = "r941_min_high_g360"

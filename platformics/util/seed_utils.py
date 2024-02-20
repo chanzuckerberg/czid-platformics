@@ -3,7 +3,7 @@ import shutil
 import tempfile
 import urllib.request
 from os.path import join
-from typing import TypeVar
+from typing import Any, TypeVar
 from urllib.parse import urlparse
 
 from ..settings import CLISettings
@@ -13,8 +13,8 @@ from ..database.models.base import Entity
 import boto3
 from botocore.client import Config
 
-TEST_USER_ID = "111"
-TEST_COLLECTION_ID = "444"
+TEST_USER_ID = 111
+TEST_COLLECTION_ID = 444
 LOCAL_BUCKET = "local-bucket"
 
 DEFAULT_WORKFLOW_VERSIONS = {
@@ -34,10 +34,10 @@ class TempHTTPFile:
             shutil.copyfileobj(response, self.temp_file)
             self.temp_file.seek(0)
 
-    def __enter__(self):
+    def __enter__(self) -> tempfile._TemporaryFileWrapper:
         return self.temp_file
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         self.temp_file.__exit__(exc_type, exc_val, exc_tb)
 
 
@@ -59,7 +59,7 @@ class TempCZIDWorkflowFile(TempGitHubFile):
 
 
 class SeedSession:
-    def __init__(self):
+    def __init__(self) -> None:
         self.settings = CLISettings.model_validate({})
         self.app_db = init_sync_db(self.settings.SYNC_DB_URI)
         self.session = self.app_db.session()
@@ -70,7 +70,7 @@ class SeedSession:
         self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'}))
         self.upsert_bucket(LOCAL_BUCKET)
 
-    def upsert_bucket(self, bucket_name: str):
+    def upsert_bucket(self, bucket_name: str) -> None:
         if any(bucket["Name"] == bucket for bucket in self.s3_local.list_buckets().get("Buckets", [])):
             return
         self.s3_local.create_bucket(Bucket=bucket_name)
@@ -90,7 +90,7 @@ class SeedSession:
             self.s3_local.upload_file(f.name, bucket, key)
 
     T = TypeVar('T', bound=Entity)
-    def create_or_fetch_entity(self, entity_type: type[T], **kwargs) -> T:
+    def create_or_fetch_entity(self, entity_type: type[T], **kwargs: Any) -> T:
         entity = self.session.query(entity_type).filter_by(**kwargs).first() or entity_type()
         entity.owner_user_id = TEST_USER_ID
         entity.collection_id = TEST_COLLECTION_ID

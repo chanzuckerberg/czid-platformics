@@ -30,7 +30,7 @@ class FileFormatHandler(Protocol):
         Get the contents of the file
         """
         return (
-            self.s3client.get_object(Bucket=self.bucket, Key=self.key, Range="1-10000")["Body"].read().decode("utf-8")
+            self.s3client.get_object(Bucket=self.bucket, Key=self.key, Range="bytes=0-1000000")["Body"].read().decode("utf-8")
         )
 
     @abstractmethod
