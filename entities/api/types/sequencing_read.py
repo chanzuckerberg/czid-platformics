@@ -44,7 +44,7 @@ from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
-from api.groupby_helpers import build_sequencing_read_group_by_output
+from api.groupby_helpers import build_sequencing_read_group_by_output, SequencingReadGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -346,11 +346,6 @@ class SequencingReadCountColumns(enum.Enum):
 """
 All supported aggregation functions
 """
-
-@strawberry.type
-class SequencingReadGroupByOptions:
-    collection_id: Optional[int] = None
-    sample: Optional[Annotated["SampleGroupByOptions", strawberry.lazy("api.types.sample")]] = None
 
 
 @strawberry.type

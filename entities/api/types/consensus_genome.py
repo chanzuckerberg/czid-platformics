@@ -38,7 +38,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
-from api.groupby_helpers import build_consensus_genome_group_by_output
+from api.groupby_helpers import build_consensus_genome_group_by_output, ConsensusGenomeGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -46,7 +46,6 @@ T = typing.TypeVar("T")
 if TYPE_CHECKING:
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
     from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead, SequencingReadGroupByOptions
-    # from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead, SequencingReadGroupByOptions, build_sequencing_read_group_by_output
     from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.accession import AccessionOrderByClause, AccessionWhereClause, Accession
     from api.types.metric_consensus_genome import (
@@ -346,12 +345,6 @@ class ConsensusGenomeCountColumns(enum.Enum):
 All supported aggregation functions
 """
 
-@strawberry.type
-class ConsensusGenomeGroupByOptions:
-    collection_id: Optional[int] = None
-    created_at: Optional[datetime.datetime] = None
-    sequence_read: Optional[Annotated["SequencingReadGroupByOptions", strawberry.lazy("api.types.sequencing_read")]] = None
-
 
 @strawberry.type
 class ConsensusGenomeAggregateFunctions:
@@ -426,13 +419,10 @@ def format_consensus_genome_aggregate_output(query_results: list[RowMapping]) ->
     format the results using the proper GraphQL types.
     """
     aggregate = []
+    print(query_results)
     for row in query_results:
         group = format_consensus_genome_aggregate_row(row)
         aggregate.append(group)
-        print(aggregate[-1].groupBy.sequence_read.sample.collection_location)
-    print(aggregate)
-    print(aggregate[0].groupBy.sequence_read.sample.collection_location)
-    print(aggregate[1].groupBy.sequence_read.sample.collection_location)
 
     return ConsensusGenomeAggregate(aggregate=aggregate)
 

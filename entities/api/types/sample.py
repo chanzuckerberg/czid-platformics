@@ -42,13 +42,13 @@ from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
-from api.groupby_helpers import build_sample_group_by_output
+from api.groupby_helpers import build_sample_group_by_output, SampleGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism, HostOrganismGroupByOptions, HostOrganismGroupByClause, build_host_organism_group_by_output
+    from api.types.host_organism import HostOrganismOrderByClause, HostOrganismWhereClause, HostOrganism
     from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
     from api.types.metadatum import MetadatumOrderByClause, MetadatumWhereClause, Metadatum
 
@@ -329,12 +329,6 @@ class SampleCountColumns(enum.Enum):
 """
 All supported aggregation functions
 """
-
-@strawberry.type
-class SampleGroupByOptions:
-    collection_id: Optional[int] = None
-    collection_location: Optional[str] = None
-    host_organism: Optional[Annotated["HostOrganismGroupByOptions", strawberry.lazy("api.types.host_organism")]] = None
 
 @strawberry.type
 class SampleAggregateFunctions:
