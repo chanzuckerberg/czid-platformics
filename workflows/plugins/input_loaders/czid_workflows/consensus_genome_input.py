@@ -4,7 +4,7 @@ import typing
 from sgqlc.operation import Operation
 
 from database.models.workflow_version import WorkflowVersion
-from manifest.manifest import EntityInput
+from manifest.manifest import EntityInput, Primitive
 from platformics.client.entities_schema import (
     AccessionWhereClause,
     Query,
@@ -103,19 +103,15 @@ class ConsensusGenomeInputLoader(InputLoader):
             reference_genome = resp["data"]["referenceGenomes"][0]
             reference_fasta_uri = self._uri_file(reference_genome.get("file"))
 
-        inputs = {}
+        inputs: dict[str, Primitive] = {}
         if sars_cov_2:
             inputs["ref_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/{SARS_COV_2_ACCESSION_ID}.fa"
             if sequencing_read["technology"] == "Nanopore":
-                inputs.update(
-                    {
-                        "apply_length_filter": not sequencing_read["clearlabs_export"],
-                        "medaka_model": sequencing_read["medaka_model"],
-                        # Remove ref_fasta once it's changed to an optional wdl input for ONT runs.
-                        "primer_set": nanopore_primer_set(sequencing_read["protocol"]),
-                        "primer_schemes": f"{PUBLIC_REFERENCES_PREFIX}/artic-primer-schemes_v6.tar.gz",
-                    }
-                )
+                inputs["apply_length_filter"] = not sequencing_read["clearlabs_export"]
+                inputs["medaka_model"] = sequencing_read["medaka_model"]
+                # Remove ref_fasta once it's changed to an optional wdl input for ONT runs.
+                inputs["primer_set"] = nanopore_primer_set(sequencing_read["protocol"])
+                inputs["primer_schemes"] = f"{PUBLIC_REFERENCES_PREFIX}/artic-primer-schemes_v6.tar.gz"
             else:
                 inputs["primer_bed"] = f"{PUBLIC_REFERENCES_PREFIX}/{illumina_primer_file(sequencing_read['protocol'])}"
         else:
@@ -124,36 +120,25 @@ class ConsensusGenomeInputLoader(InputLoader):
             assert sequencing_read["technology"] == "Illumina", "Nanopore only supports SARS-CoV-2"
 
             if reference_genome_input:
-                inputs.update(
-                    {
-                        "ref_fasta": reference_fasta_uri,
-                        # Default to empty primer file if the user does not provide a primer bed file (optional input)
-                        "primer_bed": primer_bed_uri or f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}",
-                        # This option filters all except SARS-CoV-2 at the moment:
-                        "filter_reads": False,
-                        # signal to workflow that we want to include the refseq and bedfile in zipoutputs
-                        "output_refseq": True,
-                        "output_bed": bool(primer_bed_uri),
-                    }
-                )
+                if reference_fasta_uri:
+                    inputs["ref_fasta"] = reference_fasta_uri
+                # Default to empty primer file if the user does not provide a primer bed file (optional input)
+                inputs["primer_bed"] = primer_bed_uri or f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}"
+                # This option filters all except SARS-CoV-2 at the moment:
+                inputs["filter_reads"] = False
+                # signal to workflow that we want to include the refseq and bedfile in zipoutputs
+                inputs["output_refseq"] = True
+                inputs["output_bed"] = bool(primer_bed_uri)
             else:
-                inputs.update(
-                    {
-                        # This option filters all except SARS-CoV-2 at the moment:
-                        "filter_reads": False,
-                        # Use empty primer file b/c the user does not specify a wetlab protocol when dispatching
-                        #   cg samples from an mngs report
-                        "primer_bed": f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}",
-                    }
-                )
+                # This option filters all except SARS-CoV-2 at the moment:
+                inputs["filter_reads"] = False
+                # Use empty primer file b/c the user does not specify a wetlab protocol when dispatching
+                #   cg samples from an mngs report
+                inputs["primer_bed"] = f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}"
 
-        inputs.update(
-            {
-                "ref_host": f"{PUBLIC_REFERENCES_PREFIX}/hg38.fa.gz",
-                "ercc_fasta": f"{PUBLIC_REFERENCES_PREFIX}/ercc_sequences.fasta",
-                "kraken2_db_tar_gz": f"{PUBLIC_REFERENCES_PREFIX}/kraken_coronavirus_db_only.tar.gz",
-            }
-        )
+            inputs["ref_host"] = f"{PUBLIC_REFERENCES_PREFIX}/hg38.fa.gz"
+            inputs["ercc_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/ercc_sequences.fasta"
+            inputs["kraken2_db_tar_gz"] = f"{PUBLIC_REFERENCES_PREFIX}/kraken_coronavirus_db_only.tar.gz"
 
         if os.getenv("ENVIRONMENT") == "test":
             # This is a smaller human host so host filtering will run faster for local testing

@@ -35,7 +35,7 @@ class LoaderDriver:
         workflow_version: WorkflowVersion,
         workflow_run: WorkflowRun,
         entity_inputs: dict[str, EntityInput],
-        outputs: dict[str, str],
+        outputs: dict[str, str | list[str] | None],
     ) -> None:
         """
         After workflow completes run output loaders

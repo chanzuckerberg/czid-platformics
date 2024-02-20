@@ -190,7 +190,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     session.flush()
     session.commit()
 
-    return [dict(entity_id=str(entity.entity_id), **d) for d, entity in entity_inputs], raw_inputs
+    return [dict(entity_id=str(entity.id), **d) for d, entity in entity_inputs], raw_inputs
 
 
 if __name__ == "__main__":

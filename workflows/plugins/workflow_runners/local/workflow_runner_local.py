@@ -3,13 +3,14 @@ Plugin that runs a workflow locally using miniwdl
 """
 
 import asyncio
+from asyncio.streams import StreamReader
 import json
 import os
 import sys
 import tempfile
 import re
 from os.path import basename
-from typing import List
+from typing import Callable, List
 from urllib.parse import urlparse
 from uuid import uuid4
 from pathlib import Path
@@ -119,21 +120,20 @@ allow_networks = ["czidnet"]"""
             )
 
             # Read from stderr and stdout concurrently
-            async def read_stream(stream, handler):
-                while True:
+            async def read_stream(stream: StreamReader | None, handler: Callable[[str], None]) -> None:
+                while stream:
                     line = await stream.readline()
                     if line:
                         handler(line.decode())
                     else:
                         break
 
-            def stderr_handler(line):
+            def stderr_handler(line: str) -> None:
                 self._detect_task_output(line)
                 print(line, file=sys.stderr)
 
             stdout = ""
-
-            def stdout_handler(line):
+            def stdout_handler(line: str) -> None:
                 nonlocal stdout
                 stdout += line
 

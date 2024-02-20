@@ -45,7 +45,7 @@ CASES_INVALID_FILES = {
 
 @mock_s3
 @pytest.fixture
-def s3_init() -> Generator[tuple[S3Client, str], None, None]:
+def s3_info() -> Generator[tuple[S3Client, str], None, None]:
     s3 = boto3.client("s3", region_name="us-east-1")
     bucket = "mybucket"
     for name, values in CASES_VALID_FILES.items():

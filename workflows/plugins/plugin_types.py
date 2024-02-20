@@ -97,7 +97,7 @@ class IOLoader:
         gql_file.namespace()
         gql_file.path()
 
-    def _uri_file(self, file_result: Any):
+    def _uri_file(self, file_result: Any) -> str:
         if not file_result:
             return None
         return f"{file_result['protocol']}://{file_result['namespace']}/{file_result['path']}"

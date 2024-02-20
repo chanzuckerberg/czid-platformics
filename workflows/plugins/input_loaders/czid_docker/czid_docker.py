@@ -1,7 +1,7 @@
+import os
 import typing
 
 import boto3
-from boto3.compat import os
 
 from database.models.workflow_version import WorkflowVersion
 from manifest.manifest import EntityInput
