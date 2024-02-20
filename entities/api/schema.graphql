@@ -27,7 +27,6 @@ type Accession implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type AccessionAggregate {
@@ -64,7 +63,6 @@ enum AccessionCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input AccessionCreateInput {
@@ -91,7 +89,6 @@ type AccessionMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type AccessionNumericalColumns {
@@ -109,7 +106,6 @@ input AccessionOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input AccessionUpdateInput {
@@ -127,7 +123,6 @@ input AccessionWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input AccessionWhereClauseMutations {
@@ -158,7 +153,6 @@ type BulkDownload implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type BulkDownloadAggregate {
@@ -184,7 +178,6 @@ enum BulkDownloadCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input BulkDownloadCreateInput {
@@ -198,7 +191,6 @@ type BulkDownloadMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type BulkDownloadNumericalColumns {
@@ -214,7 +206,6 @@ input BulkDownloadOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 enum BulkDownloadType {
@@ -242,7 +233,6 @@ input BulkDownloadWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input BulkDownloadWhereClauseMutations {
@@ -267,7 +257,6 @@ type ConsensusGenome implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type ConsensusGenomeAggregate {
@@ -307,7 +296,6 @@ enum ConsensusGenomeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input ConsensusGenomeCreateInput {
@@ -333,7 +321,6 @@ type ConsensusGenomeMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type ConsensusGenomeNumericalColumns {
@@ -353,7 +340,6 @@ input ConsensusGenomeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input ConsensusGenomeWhereClause {
@@ -368,7 +354,6 @@ input ConsensusGenomeWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input ConsensusGenomeWhereClauseMutations {
@@ -517,7 +502,6 @@ type GenomicRange implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type GenomicRangeAggregate {
@@ -543,7 +527,6 @@ enum GenomicRangeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input GenomicRangeCreateInput {
@@ -556,7 +539,6 @@ type GenomicRangeMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type GenomicRangeNumericalColumns {
@@ -571,7 +553,6 @@ input GenomicRangeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input GenomicRangeWhereClause {
@@ -582,7 +563,6 @@ input GenomicRangeWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input GenomicRangeWhereClauseMutations {
@@ -643,7 +623,6 @@ type HostOrganism implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type HostOrganismAggregate {
@@ -693,7 +672,6 @@ enum HostOrganismCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input HostOrganismCreateInput {
@@ -712,7 +690,6 @@ type HostOrganismMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type HostOrganismNumericalColumns {
@@ -731,7 +708,6 @@ input HostOrganismOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input HostOrganismUpdateInput {
@@ -754,7 +730,6 @@ input HostOrganismWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input HostOrganismWhereClauseMutations {
@@ -776,7 +751,6 @@ type IndexFile implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type IndexFileAggregate {
@@ -814,7 +788,6 @@ enum IndexFileCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input IndexFileCreateInput {
@@ -841,7 +814,6 @@ type IndexFileMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type IndexFileNumericalColumns {
@@ -860,7 +832,6 @@ input IndexFileOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input IndexFileUpdateInput {
@@ -879,7 +850,6 @@ input IndexFileWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input IndexFileWhereClauseMutations {
@@ -950,7 +920,6 @@ type Metadatum implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type MetadatumAggregate {
@@ -986,7 +955,6 @@ enum MetadatumCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input MetadatumCreateInput {
@@ -1013,7 +981,6 @@ type MetadatumMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type MetadatumNumericalColumns {
@@ -1031,7 +998,6 @@ input MetadatumOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input MetadatumUpdateInput {
@@ -1048,7 +1014,6 @@ input MetadatumWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input MetadatumWhereClauseMutations {
@@ -1080,7 +1045,6 @@ type MetricConsensusGenome implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type MetricConsensusGenomeAggregate {
@@ -1120,7 +1084,6 @@ enum MetricConsensusGenomeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input MetricConsensusGenomeCreateInput {
@@ -1163,7 +1126,6 @@ type MetricConsensusGenomeMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type MetricConsensusGenomeNumericalColumns {
@@ -1208,7 +1170,6 @@ input MetricConsensusGenomeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input MetricConsensusGenomeWhereClause {
@@ -1233,7 +1194,6 @@ input MetricConsensusGenomeWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input MetricConsensusGenomeWhereClauseMutations {
@@ -1350,7 +1310,6 @@ type PhylogeneticTree implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type PhylogeneticTreeAggregate {
@@ -1376,7 +1335,6 @@ enum PhylogeneticTreeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input PhylogeneticTreeCreateInput {
@@ -1408,7 +1366,6 @@ type PhylogeneticTreeMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type PhylogeneticTreeNumericalColumns {
@@ -1424,7 +1381,6 @@ input PhylogeneticTreeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input PhylogeneticTreeUpdateInput {
@@ -1439,7 +1395,6 @@ input PhylogeneticTreeWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input PhylogeneticTreeWhereClauseMutations {
@@ -1515,7 +1470,6 @@ type ReferenceGenome implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type ReferenceGenomeAggregate {
@@ -1542,7 +1496,6 @@ enum ReferenceGenomeCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input ReferenceGenomeCreateInput {
@@ -1557,7 +1510,6 @@ type ReferenceGenomeMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type ReferenceGenomeNumericalColumns {
@@ -1573,7 +1525,6 @@ input ReferenceGenomeOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input ReferenceGenomeUpdateInput {
@@ -1589,7 +1540,6 @@ input ReferenceGenomeWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input ReferenceGenomeWhereClauseMutations {
@@ -1647,7 +1597,6 @@ type Sample implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type SampleAggregate {
@@ -1690,7 +1639,6 @@ enum SampleCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input SampleCreateInput {
@@ -1726,7 +1674,6 @@ type SampleMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type SampleNumericalColumns {
@@ -1750,7 +1697,6 @@ input SampleOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input SampleUpdateInput {
@@ -1779,7 +1725,6 @@ input SampleWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input SampleWhereClauseMutations {
@@ -1851,7 +1796,6 @@ type SequencingRead implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type SequencingReadAggregate {
@@ -1895,7 +1839,6 @@ enum SequencingReadCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input SequencingReadCreateInput {
@@ -1926,7 +1869,6 @@ type SequencingReadMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type SequencingReadNumericalColumns {
@@ -1949,7 +1891,6 @@ input SequencingReadOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input SequencingReadUpdateInput {
@@ -1974,7 +1915,6 @@ input SequencingReadWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input SequencingReadWhereClauseMutations {
@@ -2077,7 +2017,6 @@ type Taxon implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type TaxonAggregate {
@@ -2130,7 +2069,6 @@ enum TaxonCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input TaxonCreateInput {
@@ -2199,7 +2137,6 @@ type TaxonMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type TaxonNumericalColumns {
@@ -2232,7 +2169,6 @@ input TaxonOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input TaxonUpdateInput {
@@ -2270,7 +2206,6 @@ input TaxonWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input TaxonWhereClauseMutations {
@@ -2351,7 +2286,6 @@ type UpstreamDatabase implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type UpstreamDatabaseAggregate {
@@ -2379,7 +2313,6 @@ enum UpstreamDatabaseCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input UpstreamDatabaseCreateInput {
@@ -2394,7 +2327,6 @@ type UpstreamDatabaseMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type UpstreamDatabaseNumericalColumns {
@@ -2410,7 +2342,6 @@ input UpstreamDatabaseOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input UpstreamDatabaseUpdateInput {
@@ -2428,7 +2359,6 @@ input UpstreamDatabaseWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input UpstreamDatabaseWhereClauseMutations {

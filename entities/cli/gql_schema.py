@@ -22,7 +22,6 @@ class AccessionCountColumns(sgqlc.types.Enum):
         "collection_id",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "id",
         "owner_user_id",
         "producing_run_id",
@@ -39,7 +38,6 @@ class BulkDownloadCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "download_type",
         "file",
         "id",
@@ -60,7 +58,6 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
         "accession",
         "collection_id",
         "created_at",
-        "deleted_at",
         "id",
         "intermediate_outputs",
         "metrics",
@@ -95,7 +92,6 @@ class GenomicRangeCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "file",
         "id",
         "owner_user_id",
@@ -120,7 +116,6 @@ class HostOrganismCountColumns(sgqlc.types.Enum):
         "category",
         "collection_id",
         "created_at",
-        "deleted_at",
         "id",
         "indexes",
         "is_deuterostome",
@@ -142,7 +137,6 @@ class IndexFileCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "file",
         "host_organism",
         "id",
@@ -193,7 +187,6 @@ class MetadatumCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "field_name",
         "id",
         "owner_user_id",
@@ -215,7 +208,6 @@ class MetricConsensusGenomeCountColumns(sgqlc.types.Enum):
         "coverage_total_length",
         "coverage_viz",
         "created_at",
-        "deleted_at",
         "gc_percent",
         "id",
         "mapped_reads",
@@ -243,7 +235,6 @@ class PhylogeneticTreeCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
-        "deleted_at",
         "format",
         "id",
         "owner_user_id",
@@ -264,7 +255,6 @@ class ReferenceGenomeCountColumns(sgqlc.types.Enum):
         "collection_id",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "file",
         "id",
         "name",
@@ -281,7 +271,6 @@ class SampleCountColumns(sgqlc.types.Enum):
         "collection_id",
         "collection_location",
         "created_at",
-        "deleted_at",
         "host_organism",
         "id",
         "metadatas",
@@ -322,7 +311,6 @@ class SequencingReadCountColumns(sgqlc.types.Enum):
         "collection_id",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "id",
         "medaka_model",
         "nucleic_acid",
@@ -354,7 +342,6 @@ class TaxonCountColumns(sgqlc.types.Enum):
         "common_name",
         "consensus_genomes",
         "created_at",
-        "deleted_at",
         "description",
         "id",
         "is_phage",
@@ -405,7 +392,6 @@ class UpstreamDatabaseCountColumns(sgqlc.types.Enum):
         "accessions",
         "collection_id",
         "created_at",
-        "deleted_at",
         "id",
         "indexes",
         "name",
@@ -446,7 +432,6 @@ class AccessionOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     accession_id = sgqlc.types.Field(orderBy, graphql_name="accessionId")
     accession_name = sgqlc.types.Field(orderBy, graphql_name="accessionName")
@@ -457,7 +442,6 @@ class AccessionOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class AccessionUpdateInput(sgqlc.types.Input):
@@ -479,7 +463,6 @@ class AccessionWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     accession_id = sgqlc.types.Field("StrComparators", graphql_name="accessionId")
     accession_name = sgqlc.types.Field("StrComparators", graphql_name="accessionName")
@@ -491,7 +474,6 @@ class AccessionWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     created_at = sgqlc.types.Field("DatetimeComparators", graphql_name="createdAt")
     updated_at = sgqlc.types.Field("DatetimeComparators", graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field("DatetimeComparators", graphql_name="deletedAt")
 
 
 class AccessionWhereClauseMutations(sgqlc.types.Input):
@@ -532,7 +514,6 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     download_type = sgqlc.types.Field(orderBy, graphql_name="downloadType")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
@@ -541,7 +522,6 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class BulkDownloadTypeEnumComparators(sgqlc.types.Input):
@@ -568,7 +548,6 @@ class BulkDownloadWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     download_type = sgqlc.types.Field(BulkDownloadTypeEnumComparators, graphql_name="downloadType")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -577,7 +556,6 @@ class BulkDownloadWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     created_at = sgqlc.types.Field("DatetimeComparators", graphql_name="createdAt")
     updated_at = sgqlc.types.Field("DatetimeComparators", graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field("DatetimeComparators", graphql_name="deletedAt")
 
 
 class BulkDownloadWhereClauseMutations(sgqlc.types.Input):
@@ -618,7 +596,6 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     taxon = sgqlc.types.Field("TaxonOrderByClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadOrderByClause", graphql_name="sequenceRead")
@@ -631,7 +608,6 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class ConsensusGenomeWhereClause(sgqlc.types.Input):
@@ -648,7 +624,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
     sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
@@ -661,7 +636,6 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     created_at = sgqlc.types.Field("DatetimeComparators", graphql_name="createdAt")
     updated_at = sgqlc.types.Field("DatetimeComparators", graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field("DatetimeComparators", graphql_name="deletedAt")
 
 
 class ConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -776,22 +750,13 @@ class GenomicRangeCreateInput(sgqlc.types.Input):
 
 class GenomicRangeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class GenomicRangeWhereClause(sgqlc.types.Input):
@@ -804,7 +769,6 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
@@ -813,7 +777,6 @@ class GenomicRangeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class GenomicRangeWhereClauseMutations(sgqlc.types.Input):
@@ -860,7 +823,6 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     version = sgqlc.types.Field(orderBy, graphql_name="version")
@@ -872,7 +834,6 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class HostOrganismUpdateInput(sgqlc.types.Input):
@@ -899,7 +860,6 @@ class HostOrganismWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     version = sgqlc.types.Field("StrComparators", graphql_name="version")
@@ -913,7 +873,6 @@ class HostOrganismWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class HostOrganismWhereClauseMutations(sgqlc.types.Input):
@@ -953,7 +912,6 @@ class IndexFileOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     version = sgqlc.types.Field(orderBy, graphql_name="version")
@@ -965,7 +923,6 @@ class IndexFileOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class IndexFileUpdateInput(sgqlc.types.Input):
@@ -988,7 +945,6 @@ class IndexFileWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field("IndexTypesEnumComparators", graphql_name="name")
     version = sgqlc.types.Field("StrComparators", graphql_name="version")
@@ -1000,7 +956,6 @@ class IndexFileWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class IndexFileWhereClauseMutations(sgqlc.types.Input):
@@ -1059,7 +1014,6 @@ class MetadatumOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sample = sgqlc.types.Field("SampleOrderByClause", graphql_name="sample")
     field_name = sgqlc.types.Field(orderBy, graphql_name="fieldName")
@@ -1070,7 +1024,6 @@ class MetadatumOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class MetadatumUpdateInput(sgqlc.types.Input):
@@ -1091,7 +1044,6 @@ class MetadatumWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sample = sgqlc.types.Field("SampleWhereClause", graphql_name="sample")
     field_name = sgqlc.types.Field("StrComparators", graphql_name="fieldName")
@@ -1102,7 +1054,6 @@ class MetadatumWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class MetadatumWhereClauseMutations(sgqlc.types.Input):
@@ -1181,7 +1132,6 @@ class MetricConsensusGenomeOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     consensus_genome = sgqlc.types.Field(ConsensusGenomeOrderByClause, graphql_name="consensusGenome")
     reference_genome_length = sgqlc.types.Field(orderBy, graphql_name="referenceGenomeLength")
@@ -1205,7 +1155,6 @@ class MetricConsensusGenomeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
@@ -1232,7 +1181,6 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     consensus_genome = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenome")
     reference_genome_length = sgqlc.types.Field(FloatComparators, graphql_name="referenceGenomeLength")
@@ -1255,7 +1203,6 @@ class MetricConsensusGenomeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class MetricConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -1302,16 +1249,7 @@ class PhylogeneticTreeFormatEnumComparators(sgqlc.types.Input):
 
 class PhylogeneticTreeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "format",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("format", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     format = sgqlc.types.Field(orderBy, graphql_name="format")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1319,7 +1257,6 @@ class PhylogeneticTreeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class PhylogeneticTreeUpdateInput(sgqlc.types.Input):
@@ -1330,16 +1267,7 @@ class PhylogeneticTreeUpdateInput(sgqlc.types.Input):
 
 class PhylogeneticTreeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "format",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("format", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     format = sgqlc.types.Field(PhylogeneticTreeFormatEnumComparators, graphql_name="format")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
@@ -1347,7 +1275,6 @@ class PhylogeneticTreeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class PhylogeneticTreeWhereClauseMutations(sgqlc.types.Input):
@@ -1366,16 +1293,7 @@ class ReferenceGenomeCreateInput(sgqlc.types.Input):
 
 class ReferenceGenomeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "name",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("name", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1383,7 +1301,6 @@ class ReferenceGenomeOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class ReferenceGenomeUpdateInput(sgqlc.types.Input):
@@ -1403,7 +1320,6 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name="consensusGenomes")
@@ -1413,7 +1329,6 @@ class ReferenceGenomeWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class ReferenceGenomeWhereClauseMutations(sgqlc.types.Input):
@@ -1465,7 +1380,6 @@ class SampleOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     rails_sample_id = sgqlc.types.Field(orderBy, graphql_name="railsSampleId")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
@@ -1481,7 +1395,6 @@ class SampleOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class SampleUpdateInput(sgqlc.types.Input):
@@ -1514,7 +1427,6 @@ class SampleWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     rails_sample_id = sgqlc.types.Field(IntComparators, graphql_name="railsSampleId")
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
@@ -1532,7 +1444,6 @@ class SampleWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class SampleWhereClauseMutations(sgqlc.types.Input):
@@ -1598,7 +1509,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sample = sgqlc.types.Field(SampleOrderByClause, graphql_name="sample")
     protocol = sgqlc.types.Field(orderBy, graphql_name="protocol")
@@ -1614,7 +1524,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class SequencingReadUpdateInput(sgqlc.types.Input):
@@ -1643,7 +1552,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     sample = sgqlc.types.Field(SampleWhereClause, graphql_name="sample")
     protocol = sgqlc.types.Field(SequencingProtocolEnumComparators, graphql_name="protocol")
@@ -1660,7 +1568,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class SequencingReadWhereClauseMutations(sgqlc.types.Input):
@@ -1812,7 +1719,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     wikipedia_id = sgqlc.types.Field(orderBy, graphql_name="wikipediaId")
     description = sgqlc.types.Field(orderBy, graphql_name="description")
@@ -1838,7 +1744,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class TaxonUpdateInput(sgqlc.types.Input):
@@ -1896,7 +1801,6 @@ class TaxonWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     wikipedia_id = sgqlc.types.Field(StrComparators, graphql_name="wikipediaId")
     description = sgqlc.types.Field(StrComparators, graphql_name="description")
@@ -1914,7 +1818,6 @@ class TaxonWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class TaxonWhereClauseMutations(sgqlc.types.Input):
@@ -1946,16 +1849,7 @@ class UpstreamDatabaseCreateInput(sgqlc.types.Input):
 
 class UpstreamDatabaseOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "name",
-        "id",
-        "producing_run_id",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("name", "id", "producing_run_id", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1963,7 +1857,6 @@ class UpstreamDatabaseOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class UpstreamDatabaseUpdateInput(sgqlc.types.Input):
@@ -1985,7 +1878,6 @@ class UpstreamDatabaseWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     name = sgqlc.types.Field(StrComparators, graphql_name="name")
     taxa = sgqlc.types.Field(TaxonWhereClause, graphql_name="taxa")
@@ -1997,7 +1889,6 @@ class UpstreamDatabaseWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class UpstreamDatabaseWhereClauseMutations(sgqlc.types.Input):
@@ -2066,22 +1957,13 @@ class AccessionEdge(sgqlc.types.Type):
 
 class AccessionMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = (
-        "accession_id",
-        "accession_name",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("accession_id", "accession_name", "owner_user_id", "collection_id", "created_at", "updated_at")
     accession_id = sgqlc.types.Field(String, graphql_name="accessionId")
     accession_name = sgqlc.types.Field(String, graphql_name="accessionName")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class AccessionNumericalColumns(sgqlc.types.Type):
@@ -2120,12 +2002,11 @@ class BulkDownloadAggregateFunctions(sgqlc.types.Type):
 
 class BulkDownloadMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class BulkDownloadNumericalColumns(sgqlc.types.Type):
@@ -2180,12 +2061,11 @@ class ConsensusGenomeEdge(sgqlc.types.Type):
 
 class ConsensusGenomeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class ConsensusGenomeNumericalColumns(sgqlc.types.Type):
@@ -2276,12 +2156,11 @@ class GenomicRangeAggregateFunctions(sgqlc.types.Type):
 
 class GenomicRangeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class GenomicRangeNumericalColumns(sgqlc.types.Type):
@@ -2320,14 +2199,13 @@ class HostOrganismAggregateFunctions(sgqlc.types.Type):
 
 class HostOrganismMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("name", "version", "owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("name", "version", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(String, graphql_name="name")
     version = sgqlc.types.Field(String, graphql_name="version")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class HostOrganismNumericalColumns(sgqlc.types.Type):
@@ -2382,13 +2260,12 @@ class IndexFileEdge(sgqlc.types.Type):
 
 class IndexFileMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("version", "owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("version", "owner_user_id", "collection_id", "created_at", "updated_at")
     version = sgqlc.types.Field(String, graphql_name="version")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class IndexFileNumericalColumns(sgqlc.types.Type):
@@ -2443,22 +2320,13 @@ class MetadatumEdge(sgqlc.types.Type):
 
 class MetadatumMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = (
-        "field_name",
-        "value",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
+    __field_names__ = ("field_name", "value", "owner_user_id", "collection_id", "created_at", "updated_at")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
     value = sgqlc.types.Field(String, graphql_name="value")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class MetadatumNumericalColumns(sgqlc.types.Type):
@@ -2516,7 +2384,6 @@ class MetricConsensusGenomeMinMaxColumns(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     reference_genome_length = sgqlc.types.Field(Float, graphql_name="referenceGenomeLength")
     percent_genome_called = sgqlc.types.Field(Float, graphql_name="percentGenomeCalled")
@@ -2536,7 +2403,6 @@ class MetricConsensusGenomeMinMaxColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class MetricConsensusGenomeNumericalColumns(sgqlc.types.Type):
@@ -3292,12 +3158,11 @@ class PhylogeneticTreeAggregateFunctions(sgqlc.types.Type):
 
 class PhylogeneticTreeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class PhylogeneticTreeNumericalColumns(sgqlc.types.Type):
@@ -3733,13 +3598,12 @@ class ReferenceGenomeAggregateFunctions(sgqlc.types.Type):
 
 class ReferenceGenomeMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("name", "owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("name", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(String, graphql_name="name")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class ReferenceGenomeNumericalColumns(sgqlc.types.Type):
@@ -3805,7 +3669,6 @@ class SampleMinMaxColumns(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     rails_sample_id = sgqlc.types.Field(Int, graphql_name="railsSampleId")
     name = sgqlc.types.Field(String, graphql_name="name")
@@ -3817,7 +3680,6 @@ class SampleMinMaxColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class SampleNumericalColumns(sgqlc.types.Type):
@@ -3873,13 +3735,12 @@ class SequencingReadEdge(sgqlc.types.Type):
 
 class SequencingReadMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("medaka_model", "owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("medaka_model", "owner_user_id", "collection_id", "created_at", "updated_at")
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class SequencingReadNumericalColumns(sgqlc.types.Type):
@@ -3954,7 +3815,6 @@ class TaxonMinMaxColumns(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     wikipedia_id = sgqlc.types.Field(String, graphql_name="wikipediaId")
     description = sgqlc.types.Field(String, graphql_name="description")
@@ -3965,7 +3825,6 @@ class TaxonMinMaxColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class TaxonNumericalColumns(sgqlc.types.Type):
@@ -4004,13 +3863,12 @@ class UpstreamDatabaseAggregateFunctions(sgqlc.types.Type):
 
 class UpstreamDatabaseMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("name", "owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
+    __field_names__ = ("name", "owner_user_id", "collection_id", "created_at", "updated_at")
     name = sgqlc.types.Field(String, graphql_name="name")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class UpstreamDatabaseNumericalColumns(sgqlc.types.Type):
@@ -4034,7 +3892,6 @@ class Accession(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     accession_id = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionId")
@@ -4089,7 +3946,6 @@ class Accession(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
@@ -4104,7 +3960,6 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name="downloadType")
@@ -4119,7 +3974,6 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
@@ -4140,7 +3994,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     taxon = sgqlc.types.Field(
@@ -4245,7 +4098,6 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
@@ -4261,7 +4113,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
@@ -4303,7 +4154,6 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
@@ -4325,7 +4175,6 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
@@ -4397,7 +4246,6 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class IndexFile(sgqlc.types.Type, EntityInterface, Node):
@@ -4415,7 +4263,6 @@ class IndexFile(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(IndexTypes), graphql_name="name")
@@ -4465,7 +4312,6 @@ class IndexFile(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class Metadatum(sgqlc.types.Type, EntityInterface, Node):
@@ -4480,7 +4326,6 @@ class Metadatum(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     sample = sgqlc.types.Field(
@@ -4507,7 +4352,6 @@ class Metadatum(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
@@ -4535,7 +4379,6 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     consensus_genome = sgqlc.types.Field(
@@ -4578,7 +4421,6 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class PhylogeneticTree(sgqlc.types.Type, EntityInterface, Node):
@@ -4593,7 +4435,6 @@ class PhylogeneticTree(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     tree_id = sgqlc.types.Field(ID, graphql_name="treeId")
@@ -4608,7 +4449,6 @@ class PhylogeneticTree(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
@@ -4625,7 +4465,6 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
@@ -4668,7 +4507,6 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class Sample(sgqlc.types.Type, EntityInterface, Node):
@@ -4692,7 +4530,6 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     rails_sample_id = sgqlc.types.Field(Int, graphql_name="railsSampleId")
@@ -4780,7 +4617,6 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
@@ -4806,7 +4642,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     sample = sgqlc.types.Field(
@@ -4910,7 +4745,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class Taxon(sgqlc.types.Type, EntityInterface, Node):
@@ -4934,7 +4768,6 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     wikipedia_id = sgqlc.types.Field(String, graphql_name="wikipediaId")
@@ -5024,7 +4857,6 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
@@ -5043,7 +4875,6 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
-        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
@@ -5134,7 +4965,6 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
-    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 ########################################################################

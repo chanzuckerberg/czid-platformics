@@ -168,7 +168,6 @@ type Workflow implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowAggregate {
@@ -195,7 +194,6 @@ enum WorkflowCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input WorkflowCreateInput {
@@ -213,7 +211,6 @@ type WorkflowMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowNumericalColumns {
@@ -230,7 +227,6 @@ input WorkflowOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 type WorkflowRun implements EntityInterface & Node {
@@ -283,7 +279,6 @@ type WorkflowRun implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunAggregate {
@@ -326,7 +321,6 @@ enum WorkflowRunCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input WorkflowRunCreateInput {
@@ -362,7 +356,6 @@ type WorkflowRunEntityInput implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunEntityInputAggregate {
@@ -398,7 +391,6 @@ enum WorkflowRunEntityInputCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input WorkflowRunEntityInputCreateInput {
@@ -425,7 +417,6 @@ type WorkflowRunEntityInputMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunEntityInputNumericalColumns {
@@ -443,7 +434,6 @@ input WorkflowRunEntityInputOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input WorkflowRunEntityInputWhereClause {
@@ -456,7 +446,6 @@ input WorkflowRunEntityInputWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunEntityInputWhereClauseMutations {
@@ -474,7 +463,6 @@ type WorkflowRunMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunNumericalColumns {
@@ -497,7 +485,6 @@ input WorkflowRunOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 enum WorkflowRunStatus {
@@ -532,7 +519,6 @@ type WorkflowRunStep implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunStepAggregate {
@@ -568,7 +554,6 @@ enum WorkflowRunStepCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input WorkflowRunStepCreateInput {
@@ -594,7 +579,6 @@ type WorkflowRunStepMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunStepNumericalColumns {
@@ -612,7 +596,6 @@ input WorkflowRunStepOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 enum WorkflowRunStepStatus {
@@ -648,7 +631,6 @@ input WorkflowRunStepWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunStepWhereClauseMutations {
@@ -680,7 +662,6 @@ input WorkflowRunWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunWhereClauseMutations {
@@ -723,7 +704,6 @@ type WorkflowVersion implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowVersionAggregate {
@@ -761,7 +741,6 @@ enum WorkflowVersionCountColumns {
   collection_id
   created_at
   updated_at
-  deleted_at
 }
 
 input WorkflowVersionCreateInput {
@@ -791,7 +770,6 @@ type WorkflowVersionMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowVersionNumericalColumns {
@@ -810,7 +788,6 @@ input WorkflowVersionOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input WorkflowVersionWhereClause {
@@ -825,7 +802,6 @@ input WorkflowVersionWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowVersionWhereClauseMutations {
@@ -842,7 +818,6 @@ input WorkflowWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowWhereClauseMutations {

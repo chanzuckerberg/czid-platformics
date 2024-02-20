@@ -7,7 +7,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "20240215_171619"
-down_revision = "20240209_160613"
+down_revision = "20240215_134243"
 branch_labels = None
 depends_on = None
 

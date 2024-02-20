@@ -109,9 +109,6 @@ classes:
       updated_at:
         range: date
         readonly: true
-      deleted_at:
-        range: date
-        readonly: true
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -177,6 +174,8 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+        annotations:
+          cascade_delete: true
       system_mutable_field:
         range: string
         annotations:
@@ -200,9 +199,13 @@ classes:
       r1_file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       r2_file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       technology:
         range: SequencingTechnology
         required: true
@@ -214,6 +217,12 @@ classes:
         inverse: GenomicRange.sequencing_reads
         annotations:
           mutable: false
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.sequence_read
+        multivalued: true
+        annotations:
+          cascade_delete: true
       clearlabs_export:
         range: boolean
         required: true
@@ -224,6 +233,60 @@ classes:
           mutable: false
     annotations:
       plural: SequencingReads
+
+  ConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      sequence_read:
+        range: SequencingRead
+        required: true
+        inverse: SequencingRead.consensus_genomes
+        annotations:
+          mutable: false
+      sequence:
+        readonly: true
+        range: File
+        annotations:
+          cascade_delete: true
+      metrics:
+        range: MetricConsensusGenome
+        inverse: MetricConsensusGenome.consensus_genome
+        inlined: true
+        annotations:
+          cascade_delete: true
+      intermediate_outputs:
+        range: File
+        readonly: true
+        annotations:
+          cascade_delete: true
+    annotations:
+      plural: ConsensusGenomes
+
+  MetricConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      consensus_genome:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.metrics
+        required: true
+        annotations:
+          mutable: false
+      total_reads:
+        range: integer
+        minimum_value: 0
+        maximum_value: 999999999999
+        annotations:
+          mutable: false
+      mapped_reads:
+        range: integer
+        annotations:
+          mutable: false
+    annotations:
+      plural: MetricsConsensusGenomes
 
   GenomicRange:
     is_a: Entity

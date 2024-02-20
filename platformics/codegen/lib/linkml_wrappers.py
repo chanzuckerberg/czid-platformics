@@ -161,6 +161,12 @@ class FieldWrapper:
         return None
 
     @cached_property
+    def is_cascade_delete(self) -> bool:
+        if "cascade_delete" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["cascade_delete"].value
+        return False
+
+    @cached_property
     def is_virtual_relationship(self) -> bool | None:
         return self.wrapped_field.inlined or self.multivalued  # type: ignore
 

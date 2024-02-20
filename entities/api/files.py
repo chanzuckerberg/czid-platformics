@@ -43,6 +43,7 @@ FILE_CONCATENATION_MAX = 200
 FILE_CONCATENATION_MAX_SIZE = 50e3  # SARS-CoV-2 genome is ~30kbp
 FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
 FILE_CONTENTS_MAX_SIZE = 1e6  # 1MB
+UPLOADS_PREFIX = "uploads"
 
 # ------------------------------------------------------------------------------
 # Utility types/inputs
@@ -437,7 +438,7 @@ async def create_or_upload_file(
     if isinstance(file, FileUpload):
         file_protocol = settings.DEFAULT_UPLOAD_PROTOCOL
         file_namespace = settings.DEFAULT_UPLOAD_BUCKET
-        file_path = f"uploads/{file_id}/{file.name}"
+        file_path = f"{settings.OUTPUT_S3_PREFIX}/{UPLOADS_PREFIX}/{file_id}/{file.name}"
     else:
         file_protocol = file.protocol  # type: ignore
         file_namespace = file.namespace

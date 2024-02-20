@@ -33,32 +33,73 @@ else:
 class ConsensusGenome(Entity):
     __tablename__ = "consensus_genome"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    taxon_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=False, index=True)
-    taxon: Mapped["Taxon"] = relationship("Taxon", back_populates="consensus_genomes", foreign_keys=taxon_id)
+    taxon_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("taxon.entity_id"),
+        nullable=False,
+        index=True,
+    )
+    taxon: Mapped["Taxon"] = relationship(
+        "Taxon",
+        foreign_keys=taxon_id,
+        back_populates="consensus_genomes",
+    )
     sequence_read_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("sequencing_read.entity_id"), nullable=False, index=True
+        UUID,
+        ForeignKey("sequencing_read.entity_id"),
+        nullable=False,
+        index=True,
     )
     sequence_read: Mapped["SequencingRead"] = relationship(
-        "SequencingRead", back_populates="consensus_genomes", foreign_keys=sequence_read_id
+        "SequencingRead",
+        foreign_keys=sequence_read_id,
+        back_populates="consensus_genomes",
     )
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("reference_genome.entity_id"), nullable=True, index=True
+        UUID,
+        ForeignKey("reference_genome.entity_id"),
+        nullable=True,
+        index=True,
     )
     reference_genome: Mapped["ReferenceGenome"] = relationship(
-        "ReferenceGenome", back_populates="consensus_genomes", foreign_keys=reference_genome_id
+        "ReferenceGenome",
+        foreign_keys=reference_genome_id,
+        back_populates="consensus_genomes",
     )
-    accession_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("accession.entity_id"), nullable=True, index=True)
+    accession_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("accession.entity_id"),
+        nullable=True,
+        index=True,
+    )
     accession: Mapped["Accession"] = relationship(
-        "Accession", back_populates="consensus_genomes", foreign_keys=accession_id
+        "Accession",
+        foreign_keys=accession_id,
+        back_populates="consensus_genomes",
     )
-    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
-    sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
+    sequence_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("file.id"),
+        nullable=True,
+        index=True,
+    )
+    sequence: Mapped["File"] = relationship(
+        "File", foreign_keys=sequence_id, cascade="all, delete-orphan", single_parent=True, post_update=True
+    )
     metrics: Mapped[MetricConsensusGenome] = relationship(
         "MetricConsensusGenome",
         back_populates="consensus_genome",
         uselist=True,
         foreign_keys="MetricConsensusGenome.consensus_genome_id",
+        cascade="all, delete-orphan",
     )
-    intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
-    intermediate_outputs: Mapped["File"] = relationship("File", foreign_keys=intermediate_outputs_id)
+    intermediate_outputs_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("file.id"),
+        nullable=True,
+        index=True,
+    )
+    intermediate_outputs: Mapped["File"] = relationship(
+        "File", foreign_keys=intermediate_outputs_id, cascade="all, delete-orphan", single_parent=True, post_update=True
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
