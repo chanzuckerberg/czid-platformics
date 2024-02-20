@@ -34,5 +34,5 @@ jobs:
           tfe-token: ${{ secrets.TFE_TOKEN }} 
           env: ${{ vars.HAPPY_ENV }} 
           create-tag: true
-          stack-name: ${{ secrets.HAPPY_STACK_NAME }} 
+          stack-name: ${{ github.event.inputs.service }} 
           working-directory: ${{ github.event.inputs.service }}
