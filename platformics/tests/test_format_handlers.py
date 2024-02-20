@@ -2,12 +2,13 @@
 Validate that format handlers work as expected
 """
 
+import os
 from typing import Generator
 import pytest
 from platformics.support.format_handlers import get_validator
 
 import boto3
-from moto import mock_s3
+from boto3.session import Config
 from mypy_boto3_s3 import S3Client
 
 CASES_VALID_FILES = {
@@ -43,10 +44,14 @@ CASES_INVALID_FILES = {
     ],
 }
 
-@mock_s3
 @pytest.fixture
 def s3_info() -> Generator[tuple[S3Client, str], None, None]:
-    s3 = boto3.client("s3", region_name="us-east-1")
+    s3 = boto3.client(
+        "s3",
+        region_name="us-east-1",
+        endpoint=os.getenv("BOTO_ENDPOINT_URL"),
+        config=Config(s3={'addressing_style': 'path'}),
+    )
     bucket = "mybucket"
     for name, values in CASES_VALID_FILES.items():
         for i, value in enumerate(values):
@@ -57,7 +62,6 @@ def s3_info() -> Generator[tuple[S3Client, str], None, None]:
     yield s3, bucket
 
 
-@mock_s3
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_valid_files(format: str, s3_info: tuple[S3Client, str]) -> None:
     s3, bucket = s3_info
@@ -66,7 +70,6 @@ def test_validation_valid_files(format: str, s3_info: tuple[S3Client, str]) -> N
         validator.validate()
 
 
-@mock_s3
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_invalid_files(format: str, s3_info: tuple[S3Client, str]) -> None:
     s3, bucket = s3_info

@@ -133,6 +133,7 @@ allow_networks = ["czidnet"]"""
                 print(line, file=sys.stderr)
 
             stdout = ""
+
             def stdout_handler(line: str) -> None:
                 nonlocal stdout
                 stdout += line
