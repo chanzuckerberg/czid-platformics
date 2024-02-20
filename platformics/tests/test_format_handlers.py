@@ -2,11 +2,12 @@
 Validate that format handlers work as expected
 """
 
+from typing import Generator
 import pytest
 from platformics.support.format_handlers import get_validator
 
 import boto3
-from moto import mock_aws
+from moto import mock_s3
 from mypy_boto3_s3 import S3Client
 
 CASES_VALID_FILES = {
@@ -42,31 +43,34 @@ CASES_INVALID_FILES = {
     ],
 }
 
-@mock_aws
+@mock_s3
 @pytest.fixture
-def s3_init():
+def s3_init() -> Generator[tuple[S3Client, str], None, None]:
     s3 = boto3.client("s3", region_name="us-east-1")
     bucket = "mybucket"
-    for name, value in CASES_VALID_FILES.items():
-        s3.put_object(Bucket=bucket, Key=f"valid.{name}", Body=value)
-    for name, value in CASES_INVALID_FILES.items():
-        s3.put_object(Bucket=bucket, Key=f"invalid.{name}", Body=value)
+    for name, values in CASES_VALID_FILES.items():
+        for i, value in enumerate(values):
+            s3.put_object(Bucket=bucket, Key=f"valid-{i}.{name}", Body=value)
+    for name, values in CASES_INVALID_FILES.items():
+        for i, value in enumerate(values):
+            s3.put_object(Bucket=bucket, Key=f"invalid-{i}.{name}", Body=value)
     yield s3, bucket
 
 
-@mock_aws
+@mock_s3
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_valid_files(format: str, s3_info: tuple[S3Client, str]) -> None:
     s3, bucket = s3_info
-    validator = get_validator(format)(s3, bucket, f"valid.{format}")
-    for test_case in CASES_VALID_FILES[format]:
-        validator.validate(test_case)
+    for i, _ in enumerate(CASES_VALID_FILES[format]):
+        validator = get_validator(format)(s3, bucket, f"valid-{i}.{format}")
+        validator.validate()
 
 
+@mock_s3
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_invalid_files(format: str, s3_info: tuple[S3Client, str]) -> None:
     s3, bucket = s3_info
-    validator = get_validator(format)(s3, bucket, f"valid.{format}")
-    for test_case in CASES_INVALID_FILES[format]:
+    for i, _ in enumerate(CASES_INVALID_FILES[format]):
+        validator = get_validator(format)(s3, bucket, f"valid-{i}.{format}")
         with pytest.raises(Exception):
-            validator.validate(test_case)
+            validator.validate()
