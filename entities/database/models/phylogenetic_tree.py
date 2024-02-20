@@ -24,14 +24,8 @@ else:
 class PhylogeneticTree(Entity):
     __tablename__ = "phylogenetic_tree"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    tree_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("file.id"),
-        nullable=True,
-    )
-    tree: Mapped["File"] = relationship(
-        "File", foreign_keys=tree_id, cascade="all, delete-orphan", single_parent=True, post_update=True
-    )
+    tree_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
+    tree: Mapped["File"] = relationship("File", foreign_keys=tree_id)
     format: Mapped[PhylogeneticTreeFormat] = mapped_column(
         Enum(PhylogeneticTreeFormat, native_enum=False), nullable=False
     )

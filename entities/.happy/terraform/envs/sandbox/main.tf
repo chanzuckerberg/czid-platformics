@@ -8,7 +8,7 @@ module "stack" {
   image_tags       = jsondecode(var.image_tags)
   stack_prefix     = "/${var.stack_name}"
   app_name         = var.app
-  deployment_stage = "dev"
+  deployment_stage = "sandbox"
   services = {
     entities = {
       aws_iam = {
@@ -20,7 +20,7 @@ module "stack" {
         init = {
           cmd   = ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]
           image = "{entities}"
-          tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
+          tag   = "${var.image_tag}"
         }
       }
       memory                = "1000Mi"

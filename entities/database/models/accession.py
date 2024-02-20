@@ -30,19 +30,12 @@ class Accession(Entity):
     accession_id: Mapped[str] = mapped_column(String, nullable=False)
     accession_name: Mapped[str] = mapped_column(String, nullable=False)
     upstream_database_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("upstream_database.entity_id"),
-        nullable=False,
+        UUID, ForeignKey("upstream_database.entity_id"), nullable=False, index=True
     )
     upstream_database: Mapped["UpstreamDatabase"] = relationship(
-        "UpstreamDatabase",
-        foreign_keys=upstream_database_id,
-        back_populates="accessions",
+        "UpstreamDatabase", back_populates="accessions", foreign_keys=upstream_database_id
     )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
-        "ConsensusGenome",
-        back_populates="accession",
-        uselist=True,
-        foreign_keys="ConsensusGenome.accession_id",
+        "ConsensusGenome", back_populates="accession", uselist=True, foreign_keys="ConsensusGenome.accession_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

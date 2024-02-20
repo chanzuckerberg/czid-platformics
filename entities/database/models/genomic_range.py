@@ -25,18 +25,9 @@ else:
 class GenomicRange(Entity):
     __tablename__ = "genomic_range"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    file_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("file.id"),
-        nullable=True,
-    )
-    file: Mapped["File"] = relationship(
-        "File", foreign_keys=file_id, cascade="all, delete-orphan", single_parent=True, post_update=True
-    )
+    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
+    file: Mapped["File"] = relationship("File", foreign_keys=file_id)
     sequencing_reads: Mapped[list[SequencingRead]] = relationship(
-        "SequencingRead",
-        back_populates="primer_file",
-        uselist=True,
-        foreign_keys="SequencingRead.primer_file_id",
+        "SequencingRead", back_populates="primer_file", uselist=True, foreign_keys="SequencingRead.primer_file_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

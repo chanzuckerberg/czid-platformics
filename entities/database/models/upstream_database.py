@@ -28,7 +28,7 @@ else:
 class UpstreamDatabase(Entity):
     __tablename__ = "upstream_database"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False, index=True)
     taxa: Mapped[list[Taxon]] = relationship(
         "Taxon",
         back_populates="upstream_database",

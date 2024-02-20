@@ -35,23 +35,11 @@ class HostOrganism(Entity):
     )
     is_deuterostome: Mapped[bool] = mapped_column(Boolean, nullable=False)
     indexes: Mapped[list[IndexFile]] = relationship(
-        "IndexFile",
-        back_populates="host_organism",
-        uselist=True,
-        foreign_keys="IndexFile.host_organism_id",
+        "IndexFile", back_populates="host_organism", uselist=True, foreign_keys="IndexFile.host_organism_id"
     )
-    sequence_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("file.id"),
-        nullable=True,
-    )
-    sequence: Mapped["File"] = relationship(
-        "File", foreign_keys=sequence_id, cascade="all, delete-orphan", single_parent=True, post_update=True
-    )
+    sequence_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
+    sequence: Mapped["File"] = relationship("File", foreign_keys=sequence_id)
     samples: Mapped[list[Sample]] = relationship(
-        "Sample",
-        back_populates="host_organism",
-        uselist=True,
-        foreign_keys="Sample.host_organism_id",
+        "Sample", back_populates="host_organism", uselist=True, foreign_keys="Sample.host_organism_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

@@ -25,14 +25,8 @@ else:
 class ReferenceGenome(Entity):
     __tablename__ = "reference_genome"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    file_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("file.id"),
-        nullable=True,
-    )
-    file: Mapped["File"] = relationship(
-        "File", foreign_keys=file_id, cascade="all, delete-orphan", single_parent=True, post_update=True
-    )
+    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True, index=True)
+    file: Mapped["File"] = relationship("File", foreign_keys=file_id)
     name: Mapped[str] = mapped_column(String, nullable=False)
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome",

@@ -12,7 +12,7 @@ x-db-variables: &db-variables
   ? PLATFORMICS_DATABASE_PORT=5432
   ? PLATFORMICS_DATABASE_USER=postgres
   ? PLATFORMICS_DATABASE_PASSWORD=password_postgres
-  ? PLATFORMICS_DATABASE_NAME=workflows
+  ? PLATFORMICS_DATABASE_NAME=platformics
 
 x-webservice-variables: &webservice-variables
   ? WORKERS=2
@@ -36,6 +36,7 @@ x-workflow-variables: &workflow-variables
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX=s3://local-bucket/nextgen/
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN=arn:aws:states:us-east-1:123456789012:stateMachine:swipe-test-default-wdl
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__SFN_ENDPOINT=http://stepfunctions.czidnet:8083
+  ? SERVICE_NAME=workflows
 
 x-cerbos-variables: &cerbos-variables
   ? CERBOS_URL=http://wf-cerbos:3592
@@ -56,7 +57,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password_postgres
-      - POSTGRES_DB=workflows
+      - POSTGRES_DB=platformicsworkflows
       # The postgres image declares a mounted volume at /var/lib/postgresql/data
       # by default, which means that the data in that directory is difficult to
       # snapshot and export. Here, we're telling Postgres to use this (non-mounted)
@@ -102,9 +103,9 @@ services:
   wf-cerbos:
     image: ghcr.io/cerbos/cerbos:0.29.0
     volumes:
-      - ./cerbos:/workflows
+      - ./cerbos:/var/policies/cerbos/
     command:
-      ["server", "--config", "/workflows/config/config.yaml"]
+      ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
 networks:
   default:
     name: czidnet

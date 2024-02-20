@@ -501,9 +501,12 @@ classes:
         required: true
         annotations:
           mutable: false
+          indexed: true
       value:
         range: string
         required: true
+        annotations:
+          indexed: true
     annotations:
       plural: Metadatas
 
@@ -658,11 +661,14 @@ classes:
         range: string
       common_name:
         range: string
+        annotations:
+          indexed: true
       name:
         range: string
         required: true
         annotations:
           mutable: false
+          indexed: true
       is_phage:
         range: boolean
         required: true
@@ -719,6 +725,8 @@ classes:
       name:
         range: string
         required: true
+        annotations:
+          indexed: true
       taxa:
         range: Taxon
         inverse: Taxon.upstream_database

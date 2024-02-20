@@ -38,27 +38,15 @@ class Sample(Entity):
     collection_location: Mapped[str] = mapped_column(String, nullable=False)
     notes: Mapped[str] = mapped_column(String, nullable=True)
     host_organism_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("host_organism.entity_id"),
-        nullable=True,
+        UUID, ForeignKey("host_organism.entity_id"), nullable=True, index=True
     )
     host_organism: Mapped["HostOrganism"] = relationship(
-        "HostOrganism",
-        foreign_keys=host_organism_id,
-        back_populates="samples",
+        "HostOrganism", back_populates="samples", foreign_keys=host_organism_id
     )
     sequencing_reads: Mapped[list[SequencingRead]] = relationship(
-        "SequencingRead",
-        back_populates="sample",
-        uselist=True,
-        foreign_keys="SequencingRead.sample_id",
-        cascade="all, delete-orphan",
+        "SequencingRead", back_populates="sample", uselist=True, foreign_keys="SequencingRead.sample_id"
     )
     metadatas: Mapped[list[Metadatum]] = relationship(
-        "Metadatum",
-        back_populates="sample",
-        uselist=True,
-        foreign_keys="Metadatum.sample_id",
-        cascade="all, delete-orphan",
+        "Metadatum", back_populates="sample", uselist=True, foreign_keys="Metadatum.sample_id"
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
