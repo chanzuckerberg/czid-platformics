@@ -52,7 +52,7 @@ def s3_info() -> Generator[tuple[S3Client, str], None, None]:
         endpoint_url=os.getenv("BOTO_ENDPOINT_URL"),
         config=Config(s3={'addressing_style': 'path'}),
     )
-    bucket = "mybucket"
+    bucket = os.environ["DEFAULT_UPLOAD_BUCKET"]
     for name, values in CASES_VALID_FILES.items():
         for i, value in enumerate(values):
             s3.put_object(Bucket=bucket, Key=f"valid-{i}.{name}", Body=value)
