@@ -44,12 +44,13 @@ from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
 from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
+from api.groupby_helpers import build_sequencing_read_group_by_output
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample, SampleGroupByOptions, build_sample_group_by_output
+    from api.types.sample import SampleOrderByClause, SampleWhereClause, Sample, SampleGroupByOptions
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
     from api.types.genomic_range import GenomicRangeOrderByClause, GenomicRangeWhereClause, GenomicRange
     from api.types.consensus_genome import ConsensusGenomeOrderByClause, ConsensusGenomeWhereClause, ConsensusGenome
@@ -438,7 +439,7 @@ def format_sequencing_read_aggregate_output(query_results: RowMapping) -> Sequen
     output = SequencingReadAggregateFunctions()
     print(query_results)
     for row in query_results:
-        for aggregate_name, value in query_results.items():
+        for aggregate_name, value in row.items():
             if aggregate_name == "count":
                 output.count = value
             else:
@@ -452,22 +453,6 @@ def format_sequencing_read_aggregate_output(query_results: RowMapping) -> Sequen
                             setattr(output, aggregator_fn, SequencingReadNumericalColumns())
                     setattr(getattr(output, aggregator_fn), col_name, value)
     return output
-
-def build_sequencing_read_group_by_output(group_object: Optional[SequencingReadGroupByOptions], keys: list[str], value: Any) -> SequencingReadGroupByOptions:
-    """
-    Given a list of group by keys, build a nested object to represent the group by clause
-    """
-    # keys = ["sample", "host_organism", "version"]
-    if not group_object:
-        group_object = SequencingReadGroupByOptions()
-    
-    key = keys.pop(0)
-    if key == "sample":
-        value = build_sample_group_by_output(keys, value)
-    
-    setattr(group_object, key, value)
-    return group_object
-
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_sequencing_reads_aggregate(

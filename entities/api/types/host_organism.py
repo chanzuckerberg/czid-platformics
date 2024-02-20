@@ -44,6 +44,7 @@ from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
 from support.enums import HostOrganismCategory
+from api.groupby_helpers import HostOrganismGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -308,10 +309,10 @@ class HostOrganismAggregateFunctions:
 Wrapper around HostOrganismAggregateFunctions
 """
 
-@strawberry.type
-class HostOrganismGroupByOptions:
-    name: Optional[str] = None
-    version: Optional[str] = None
+# @strawberry.type
+# class HostOrganismGroupByOptions:
+#     name: Optional[str] = None
+#     version: Optional[str] = None
 
 
 @strawberry.type
@@ -372,33 +373,21 @@ def format_host_organism_aggregate_output(query_results: RowMapping) -> HostOrga
     format the results using the proper GraphQL types.
     """
     output = HostOrganismAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
-        else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
-                if not getattr(output, aggregator_fn):
-                    if aggregate_name in ["min", "max"]:
-                        setattr(output, aggregator_fn, HostOrganismMinMaxColumns())
-                    else:
-                        setattr(output, aggregator_fn, HostOrganismNumericalColumns())
-                setattr(getattr(output, aggregator_fn), col_name, value)
+    for row in query_results:
+        for aggregate_name, value in row.items():
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate_name.split("_", 1)
+                # Filter out the group_by key from the results if one was provided.
+                if aggregator_fn in aggregator_map.keys():
+                    if not getattr(output, aggregator_fn):
+                        if aggregate_name in ["min", "max"]:
+                            setattr(output, aggregator_fn, HostOrganismMinMaxColumns())
+                        else:
+                            setattr(output, aggregator_fn, HostOrganismNumericalColumns())
+                    setattr(getattr(output, aggregator_fn), col_name, value)
     return output
-
-def build_host_organism_group_by_output(group_object: Optional[HostOrganismGroupByOptions], keys: list[str], value: Any) -> HostOrganismGroupByOptions:
-    """
-    Given a list of group by keys, build a nested object to represent the group by clause
-    """
-    # keys = ["version"]
-    if not group_object:
-        group_object = HostOrganismGroupByOptions()
-    
-    key = keys.pop(0)
-    
-    setattr(group_object, key, value)
-    return group_object
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_host_organisms_aggregate(

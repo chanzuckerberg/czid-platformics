@@ -38,13 +38,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
+from api.groupby_helpers import build_consensus_genome_group_by_output
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
-    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead, SequencingReadGroupByOptions, build_sequencing_read_group_by_output
+    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead, SequencingReadGroupByOptions
+    # from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead, SequencingReadGroupByOptions, build_sequencing_read_group_by_output
     from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.accession import AccessionOrderByClause, AccessionWhereClause, Accession
     from api.types.metric_consensus_genome import (
@@ -61,6 +63,8 @@ else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     SequencingReadOrderByClause = "SequencingReadOrderByClause"
+    SequencingReadGroupByOptions = "SequencingReadGroupByOptions"
+    # build_sequencing_read_group_by_output = "build_sequencing_read_group_by_output"
     ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
     ReferenceGenome = "ReferenceGenome"
     ReferenceGenomeOrderByClause = "ReferenceGenomeOrderByClause"
@@ -345,6 +349,7 @@ All supported aggregation functions
 @strawberry.type
 class ConsensusGenomeGroupByOptions:
     collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
     sequence_read: Optional[Annotated["SequencingReadGroupByOptions", strawberry.lazy("api.types.sequencing_read")]] = None
 
 
@@ -421,9 +426,14 @@ def format_consensus_genome_aggregate_output(query_results: list[RowMapping]) ->
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    print(query_results)
     for row in query_results:
-        aggregate.append(format_consensus_genome_aggregate_row(row))
+        group = format_consensus_genome_aggregate_row(row)
+        aggregate.append(group)
+        print(aggregate[-1].groupBy.sequence_read.sample.collection_location)
+    print(aggregate)
+    print(aggregate[0].groupBy.sequence_read.sample.collection_location)
+    print(aggregate[1].groupBy.sequence_read.sample.collection_location)
+
     return ConsensusGenomeAggregate(aggregate=aggregate)
 
 def format_consensus_genome_aggregate_row(row: RowMapping) -> ConsensusGenomeAggregateFunctions:
@@ -456,25 +466,8 @@ def format_consensus_genome_aggregate_row(row: RowMapping) -> ConsensusGenomeAgg
                         setattr(output, aggregate_fn, ConsensusGenomeNumericalColumns())
                 setattr(getattr(output, aggregate_fn), col_name, value)
 
-    print(output)
+    # print(getattr(getattr(getattr(getattr(output, "groupBy"), "sequence_read"), "sample"), "collection_location"))
     return output
-
-def build_consensus_genome_group_by_output(group_object: Optional[ConsensusGenomeGroupByOptions], keys: list[str], value: Any) -> ConsensusGenomeGroupByOptions:
-    """
-    Given a list of group by keys, build a nested object to represent the group by clause
-    """
-    # keys = ["sequence_read", "sample", "host_organism", "version"]
-    if not group_object:
-        group_object = ConsensusGenomeGroupByOptions()
-    
-    key = keys.pop(0)
-    if key == "sequence_read":
-        # FIXME: getting NameError: name 'build_sequencing_read_group_by_output' is not defined
-        value = build_sequencing_read_group_by_output(keys, value)
-    # Add more cases for other nested 1:1 relationships
-    
-    setattr(group_object, key, value)
-    return group_object
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_consensus_genomes_aggregate(

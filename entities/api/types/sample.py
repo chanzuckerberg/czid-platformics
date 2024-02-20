@@ -42,6 +42,7 @@ from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
+from api.groupby_helpers import build_sample_group_by_output
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -419,9 +420,15 @@ def format_sample_aggregate_output(query_results: list[RowMapping]) -> SampleAgg
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    print(query_results)
     for row in query_results:
-        aggregate.append(format_sample_aggregate_row(row))
+        print("=====")
+        # if len(aggregate) > 0:
+        #     print(aggregate[0].groupBy.host_organism.name)
+        group = format_sample_aggregate_row(row)
+        # if len(aggregate) > 0:
+        #     print(aggregate[0].groupBy.host_organism.name)
+        # print(group.groupBy.host_organism.name)
+        aggregate.append(group)
     return SampleAggregate(aggregate=aggregate)
 
 def format_sample_aggregate_row(row: RowMapping) -> SampleAggregateFunctions:
@@ -456,21 +463,6 @@ def format_sample_aggregate_row(row: RowMapping) -> SampleAggregateFunctions:
 
     return output
 
-def build_sample_group_by_output(group_object: Optional[SampleGroupByOptions], keys: list[str], value: Any) -> SampleGroupByOptions:
-    """
-    Given a list of group by keys, build a nested object to represent the group by clause
-    """
-    # keys = ["host_organism", "version"]
-    if not group_object:
-        group_object = SampleGroupByOptions()
-    
-    key = keys.pop(0)
-    if key == "host_organism":
-        value = build_host_organism_group_by_output(keys, value)
-    
-    setattr(group_object, key, value)
-    return group_object
-
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples_aggregate(
     info: Info,
@@ -491,7 +483,6 @@ async def resolve_samples_aggregate(
 
     rows = await get_aggregate_db_rows(db.Sample, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_sample_aggregate_output(rows)
-    print(aggregate_output)
     return aggregate_output
 
 @strawberry.mutation(extensions=[DependencyExtension()])
