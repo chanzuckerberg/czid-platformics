@@ -8,7 +8,7 @@ import pytest
 from platformics.support.format_handlers import get_validator
 
 import boto3
-from boto3.session import Config
+from botocore.client import Config
 from mypy_boto3_s3 import S3Client
 
 CASES_VALID_FILES = {
@@ -49,7 +49,7 @@ def s3_info() -> Generator[tuple[S3Client, str], None, None]:
     s3 = boto3.client(
         "s3",
         region_name="us-east-1",
-        endpoint=os.getenv("BOTO_ENDPOINT_URL"),
+        endpoint_url=os.getenv("BOTO_ENDPOINT_URL"),
         config=Config(s3={'addressing_style': 'path'}),
     )
     bucket = "mybucket"
