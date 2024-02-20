@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+from types import TracebackType
 import urllib.request
 from os.path import join
 from typing import Any, TypeVar
@@ -37,7 +38,11 @@ class TempHTTPFile:
     def __enter__(self) -> tempfile._TemporaryFileWrapper:
         return self.temp_file
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         self.temp_file.__exit__(exc_type, exc_val, exc_tb)
 
 

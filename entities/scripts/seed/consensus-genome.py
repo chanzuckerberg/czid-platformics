@@ -25,7 +25,7 @@ from platformics.util.seed_utils import (
     TempCZIDWorkflowFile,
 )
 from platformics.database.models.base import Entity
-from support.enums import HostOrganismCategory, SequencingTechnology, TaxonLevel
+from support.enums import HostOrganismCategory, NucleicAcid, SequencingProtocol, SequencingTechnology, TaxonLevel
 
 
 def main() -> tuple[list[dict[str, str]], dict[str, str]]:
@@ -145,18 +145,18 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_sample.collection_date = datetime(2021, 1, 1)
     sars_cov2_paired_sample.collection_location = "California, USA"
     entity_inputs.append(entity_input("sample", "sample", sars_cov2_paired_sample))
+    session.add(sars_cov2_paired_sample)
+    session.commit()
 
-    sars_cov2_paired_sequencing_read = SequencingRead()
-    if sars_cov2_paired_sample.id:
-        sars_cov2_paired_sequencing_read = (
-            session.session.query(SequencingRead).filter_by(sample_id=sars_cov2_paired_sample.id).first()
-            or SequencingRead()
-        )
+    sars_cov2_paired_sequencing_read = (
+        session.session.query(SequencingRead).filter_by(sample_id=sars_cov2_paired_sample.id).first()
+        or SequencingRead()
+    )
     sars_cov2_paired_sequencing_read.owner_user_id = TEST_USER_ID
     sars_cov2_paired_sequencing_read.collection_id = TEST_COLLECTION_ID
-    sars_cov2_paired_sequencing_read.protocol = "artic"
+    sars_cov2_paired_sequencing_read.protocol = SequencingProtocol.artic
     sars_cov2_paired_sequencing_read.technology = SequencingTechnology.Illumina
-    sars_cov2_paired_sequencing_read.nucleic_acid = "DNA"
+    sars_cov2_paired_sequencing_read.nucleic_acid = NucleicAcid.DNA
     sars_cov2_paired_sequencing_read.clearlabs_export = False
     sars_cov2_paired_sequencing_read.medaka_model = "r941_min_high_g360"
     sars_cov2_paired_sequencing_read.taxon = sars_cov2_taxon
