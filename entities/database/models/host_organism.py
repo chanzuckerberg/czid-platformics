@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
 from sqlalchemy import ForeignKey, String, Enum, Boolean
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import HostOrganismCategory
 
@@ -39,15 +38,6 @@ class HostOrganism(Entity):
         back_populates="host_organism",
         uselist=True,
         foreign_keys="IndexFile.host_organism_id",
-    )
-    sequence_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("file.id"),
-        nullable=True,
-        index=True,
-    )
-    sequence: Mapped["File"] = relationship(
-        "File", foreign_keys=sequence_id, cascade="all, delete-orphan", single_parent=True, post_update=True
     )
     samples: Mapped[list[Sample]] = relationship(
         "Sample",

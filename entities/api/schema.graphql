@@ -146,6 +146,7 @@ type BulkDownload implements EntityInterface & Node {
   _id: GlobalID!
   id: ID!
   downloadType: BulkDownloadType!
+  downloadDisplayName: String!
   fileId: ID
   file(where: FileWhereClause = null): File
   producingRunId: ID
@@ -171,6 +172,7 @@ type BulkDownloadAggregateFunctions {
 
 enum BulkDownloadCountColumns {
   download_type
+  download_display_name
   file
   id
   producing_run_id
@@ -182,11 +184,13 @@ enum BulkDownloadCountColumns {
 
 input BulkDownloadCreateInput {
   downloadType: BulkDownloadType!
+  downloadDisplayName: String!
   producingRunId: ID = null
   collectionId: Int!
 }
 
 type BulkDownloadMinMaxColumns {
+  downloadDisplayName: String
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -200,6 +204,7 @@ type BulkDownloadNumericalColumns {
 
 input BulkDownloadOrderByClause {
   downloadType: orderBy
+  downloadDisplayName: orderBy
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -227,6 +232,7 @@ input BulkDownloadTypeEnumComparators {
 
 input BulkDownloadWhereClause {
   downloadType: BulkDownloadTypeEnumComparators
+  downloadDisplayName: StrComparators
   id: UUIDComparators
   producingRunId: UUIDComparators
   ownerUserId: IntComparators
@@ -244,7 +250,7 @@ type ConsensusGenome implements EntityInterface & Node {
   _id: GlobalID!
   id: ID!
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
-  sequenceRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
+  sequencingRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
   referenceGenome(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
   accession(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): Accession
   sequenceId: ID
@@ -284,7 +290,7 @@ type ConsensusGenomeConnection {
 
 enum ConsensusGenomeCountColumns {
   taxon
-  sequence_read
+  sequencing_read
   reference_genome
   accession
   sequence
@@ -300,7 +306,7 @@ enum ConsensusGenomeCountColumns {
 
 input ConsensusGenomeCreateInput {
   taxonId: ID!
-  sequenceReadId: ID!
+  sequencingReadId: ID!
   referenceGenomeId: ID = null
   accessionId: ID = null
   producingRunId: ID = null
@@ -330,7 +336,7 @@ type ConsensusGenomeNumericalColumns {
 
 input ConsensusGenomeOrderByClause {
   taxon: TaxonOrderByClause
-  sequenceRead: SequencingReadOrderByClause
+  sequencingRead: SequencingReadOrderByClause
   referenceGenome: ReferenceGenomeOrderByClause
   accession: AccessionOrderByClause
   metrics: MetricConsensusGenomeOrderByClause
@@ -344,7 +350,7 @@ input ConsensusGenomeOrderByClause {
 
 input ConsensusGenomeWhereClause {
   taxon: TaxonWhereClause
-  sequenceRead: SequencingReadWhereClause
+  sequencingRead: SequencingReadWhereClause
   referenceGenome: ReferenceGenomeWhereClause
   accession: AccessionWhereClause
   metrics: MetricConsensusGenomeWhereClause
@@ -599,8 +605,6 @@ type HostOrganism implements EntityInterface & Node {
     last: Int = null
   ): IndexFileConnection!
   indexesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate
-  sequenceId: ID
-  sequence(where: FileWhereClause = null): File
   samples(
     where: SampleWhereClause = null
     orderBy: [SampleOrderByClause!] = []
@@ -664,7 +668,6 @@ enum HostOrganismCountColumns {
   category
   is_deuterostome
   indexes
-  sequence
   samples
   id
   producing_run_id

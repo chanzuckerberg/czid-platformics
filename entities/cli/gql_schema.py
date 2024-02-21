@@ -38,6 +38,7 @@ class BulkDownloadCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collection_id",
         "created_at",
+        "download_display_name",
         "download_type",
         "file",
         "id",
@@ -65,7 +66,7 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
         "producing_run_id",
         "reference_genome",
         "sequence",
-        "sequence_read",
+        "sequencing_read",
         "taxon",
         "updated_at",
     )
@@ -123,7 +124,6 @@ class HostOrganismCountColumns(sgqlc.types.Enum):
         "owner_user_id",
         "producing_run_id",
         "samples",
-        "sequence",
         "updated_at",
         "version",
     )
@@ -498,8 +498,9 @@ class BoolComparators(sgqlc.types.Input):
 
 class BulkDownloadCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("download_type", "producing_run_id", "collection_id")
+    __field_names__ = ("download_type", "download_display_name", "producing_run_id", "collection_id")
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name="downloadType")
+    download_display_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="downloadDisplayName")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
@@ -508,6 +509,7 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "download_type",
+        "download_display_name",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -516,6 +518,7 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
         "updated_at",
     )
     download_type = sgqlc.types.Field(orderBy, graphql_name="downloadType")
+    download_display_name = sgqlc.types.Field(orderBy, graphql_name="downloadDisplayName")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
@@ -542,6 +545,7 @@ class BulkDownloadWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "download_type",
+        "download_display_name",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -550,6 +554,7 @@ class BulkDownloadWhereClause(sgqlc.types.Input):
         "updated_at",
     )
     download_type = sgqlc.types.Field(BulkDownloadTypeEnumComparators, graphql_name="downloadType")
+    download_display_name = sgqlc.types.Field("StrComparators", graphql_name="downloadDisplayName")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
@@ -568,14 +573,14 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "taxon_id",
-        "sequence_read_id",
+        "sequencing_read_id",
         "reference_genome_id",
         "accession_id",
         "producing_run_id",
         "collection_id",
     )
     taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="taxonId")
-    sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequenceReadId")
+    sequencing_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequencingReadId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     accession_id = sgqlc.types.Field(ID, graphql_name="accessionId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
@@ -586,7 +591,7 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "taxon",
-        "sequence_read",
+        "sequencing_read",
         "reference_genome",
         "accession",
         "metrics",
@@ -598,7 +603,7 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
         "updated_at",
     )
     taxon = sgqlc.types.Field("TaxonOrderByClause", graphql_name="taxon")
-    sequence_read = sgqlc.types.Field("SequencingReadOrderByClause", graphql_name="sequenceRead")
+    sequencing_read = sgqlc.types.Field("SequencingReadOrderByClause", graphql_name="sequencingRead")
     reference_genome = sgqlc.types.Field("ReferenceGenomeOrderByClause", graphql_name="referenceGenome")
     accession = sgqlc.types.Field(AccessionOrderByClause, graphql_name="accession")
     metrics = sgqlc.types.Field("MetricConsensusGenomeOrderByClause", graphql_name="metrics")
@@ -614,7 +619,7 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "taxon",
-        "sequence_read",
+        "sequencing_read",
         "reference_genome",
         "accession",
         "metrics",
@@ -626,7 +631,7 @@ class ConsensusGenomeWhereClause(sgqlc.types.Input):
         "updated_at",
     )
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
-    sequence_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequenceRead")
+    sequencing_read = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingRead")
     reference_genome = sgqlc.types.Field("ReferenceGenomeWhereClause", graphql_name="referenceGenome")
     accession = sgqlc.types.Field(AccessionWhereClause, graphql_name="accession")
     metrics = sgqlc.types.Field("MetricConsensusGenomeWhereClause", graphql_name="metrics")
@@ -2002,7 +2007,8 @@ class BulkDownloadAggregateFunctions(sgqlc.types.Type):
 
 class BulkDownloadMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at")
+    __field_names__ = ("download_display_name", "owner_user_id", "collection_id", "created_at", "updated_at")
+    download_display_name = sgqlc.types.Field(String, graphql_name="downloadDisplayName")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
@@ -3953,6 +3959,7 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     __field_names__ = (
         "id",
         "download_type",
+        "download_display_name",
         "file_id",
         "file",
         "producing_run_id",
@@ -3963,6 +3970,7 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name="downloadType")
+    download_display_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="downloadDisplayName")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     file = sgqlc.types.Field(
         File,
@@ -3981,7 +3989,7 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     __field_names__ = (
         "id",
         "taxon",
-        "sequence_read",
+        "sequencing_read",
         "reference_genome",
         "accession",
         "sequence_id",
@@ -4013,9 +4021,9 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
-    sequence_read = sgqlc.types.Field(
+    sequencing_read = sgqlc.types.Field(
         "SequencingRead",
-        graphql_name="sequenceRead",
+        graphql_name="sequencingRead",
         args=sgqlc.types.ArgDict(
             (
                 ("where", sgqlc.types.Arg(SequencingReadWhereClause, graphql_name="where", default=None)),
@@ -4166,8 +4174,6 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
         "is_deuterostome",
         "indexes",
         "indexes_aggregate",
-        "sequence_id",
-        "sequence",
         "samples",
         "samples_aggregate",
         "producing_run_id",
@@ -4208,12 +4214,6 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict(
             (("where", sgqlc.types.Arg(IndexFileWhereClause, graphql_name="where", default=None)),)
         ),
-    )
-    sequence_id = sgqlc.types.Field(ID, graphql_name="sequenceId")
-    sequence = sgqlc.types.Field(
-        File,
-        graphql_name="sequence",
-        args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     samples = sgqlc.types.Field(
         sgqlc.types.non_null(SampleConnection),

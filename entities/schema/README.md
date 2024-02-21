@@ -201,6 +201,7 @@ PhylogeneticTree {
 }
 BulkDownload {
     BulkDownloadType download_type  
+    string download_display_name  
     uuid entity_id  
     uuid id  
     string type  
@@ -231,11 +232,10 @@ ReferenceGenome ||--}o ConsensusGenome : "consensus_genomes"
 Accession ||--|| UpstreamDatabase : "upstream_database"
 Accession ||--}o ConsensusGenome : "consensus_genomes"
 HostOrganism ||--}o IndexFile : "indexes"
-HostOrganism ||--|o File : "sequence"
 HostOrganism ||--}o Sample : "samples"
 Metadatum ||--|| Sample : "sample"
 ConsensusGenome ||--|| Taxon : "taxon"
-ConsensusGenome ||--|| SequencingRead : "sequence_read"
+ConsensusGenome ||--|| SequencingRead : "sequencing_read"
 ConsensusGenome ||--|o ReferenceGenome : "reference_genome"
 ConsensusGenome ||--|o Accession : "accession"
 ConsensusGenome ||--|o File : "sequence"

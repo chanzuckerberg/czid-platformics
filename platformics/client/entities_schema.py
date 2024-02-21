@@ -24,7 +24,7 @@ Boolean = sgqlc.types.Boolean
 
 class BulkDownloadCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'created_at', 'download_type', 'file', 'id', 'owner_user_id', 'producing_run_id', 'updated_at')
+    __choices__ = ('collection_id', 'created_at', 'download_display_name', 'download_type', 'file', 'id', 'owner_user_id', 'producing_run_id', 'updated_at')
 
 
 class BulkDownloadType(sgqlc.types.Enum):
@@ -34,7 +34,7 @@ class BulkDownloadType(sgqlc.types.Enum):
 
 class ConsensusGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('accession', 'collection_id', 'created_at', 'id', 'intermediate_outputs', 'metrics', 'owner_user_id', 'producing_run_id', 'reference_genome', 'sequence', 'sequence_read', 'taxon', 'updated_at')
+    __choices__ = ('accession', 'collection_id', 'created_at', 'id', 'intermediate_outputs', 'metrics', 'owner_user_id', 'producing_run_id', 'reference_genome', 'sequence', 'sequencing_read', 'taxon', 'updated_at')
 
 
 DateTime = sgqlc.types.datetime.DateTime
@@ -67,7 +67,7 @@ class HostOrganismCategory(sgqlc.types.Enum):
 
 class HostOrganismCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('category', 'collection_id', 'created_at', 'id', 'indexes', 'is_deuterostome', 'name', 'owner_user_id', 'producing_run_id', 'samples', 'sequence', 'updated_at', 'version')
+    __choices__ = ('category', 'collection_id', 'created_at', 'id', 'indexes', 'is_deuterostome', 'name', 'owner_user_id', 'producing_run_id', 'samples', 'updated_at', 'version')
 
 
 ID = sgqlc.types.ID
@@ -235,16 +235,18 @@ class BoolComparators(sgqlc.types.Input):
 
 class BulkDownloadCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('download_type', 'producing_run_id', 'collection_id')
+    __field_names__ = ('download_type', 'download_display_name', 'producing_run_id', 'collection_id')
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name='downloadType')
+    download_display_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='downloadDisplayName')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name='collectionId')
 
 
 class BulkDownloadOrderByClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('download_type', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('download_type', 'download_display_name', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     download_type = sgqlc.types.Field(orderBy, graphql_name='downloadType')
+    download_display_name = sgqlc.types.Field(orderBy, graphql_name='downloadDisplayName')
     id = sgqlc.types.Field(orderBy, graphql_name='id')
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name='ownerUserId')
@@ -269,8 +271,9 @@ class BulkDownloadTypeEnumComparators(sgqlc.types.Input):
 
 class BulkDownloadWhereClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('download_type', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('download_type', 'download_display_name', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     download_type = sgqlc.types.Field(BulkDownloadTypeEnumComparators, graphql_name='downloadType')
+    download_display_name = sgqlc.types.Field('StrComparators', graphql_name='downloadDisplayName')
     id = sgqlc.types.Field('UUIDComparators', graphql_name='id')
     producing_run_id = sgqlc.types.Field('UUIDComparators', graphql_name='producingRunId')
     owner_user_id = sgqlc.types.Field('IntComparators', graphql_name='ownerUserId')
@@ -287,9 +290,9 @@ class BulkDownloadWhereClauseMutations(sgqlc.types.Input):
 
 class ConsensusGenomeCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('taxon_id', 'sequence_read_id', 'reference_genome_id', 'accession_id', 'producing_run_id', 'collection_id')
+    __field_names__ = ('taxon_id', 'sequencing_read_id', 'reference_genome_id', 'accession_id', 'producing_run_id', 'collection_id')
     taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='taxonId')
-    sequence_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='sequenceReadId')
+    sequencing_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='sequencingReadId')
     reference_genome_id = sgqlc.types.Field(ID, graphql_name='referenceGenomeId')
     accession_id = sgqlc.types.Field(ID, graphql_name='accessionId')
     producing_run_id = sgqlc.types.Field(ID, graphql_name='producingRunId')
@@ -298,9 +301,9 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
 
 class ConsensusGenomeOrderByClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('taxon', 'sequence_read', 'reference_genome', 'accession', 'metrics', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('taxon', 'sequencing_read', 'reference_genome', 'accession', 'metrics', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     taxon = sgqlc.types.Field('TaxonOrderByClause', graphql_name='taxon')
-    sequence_read = sgqlc.types.Field('SequencingReadOrderByClause', graphql_name='sequenceRead')
+    sequencing_read = sgqlc.types.Field('SequencingReadOrderByClause', graphql_name='sequencingRead')
     reference_genome = sgqlc.types.Field('ReferenceGenomeOrderByClause', graphql_name='referenceGenome')
     accession = sgqlc.types.Field(AccessionOrderByClause, graphql_name='accession')
     metrics = sgqlc.types.Field('MetricConsensusGenomeOrderByClause', graphql_name='metrics')
@@ -314,9 +317,9 @@ class ConsensusGenomeOrderByClause(sgqlc.types.Input):
 
 class ConsensusGenomeWhereClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('taxon', 'sequence_read', 'reference_genome', 'accession', 'metrics', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('taxon', 'sequencing_read', 'reference_genome', 'accession', 'metrics', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     taxon = sgqlc.types.Field('TaxonWhereClause', graphql_name='taxon')
-    sequence_read = sgqlc.types.Field('SequencingReadWhereClause', graphql_name='sequenceRead')
+    sequencing_read = sgqlc.types.Field('SequencingReadWhereClause', graphql_name='sequencingRead')
     reference_genome = sgqlc.types.Field('ReferenceGenomeWhereClause', graphql_name='referenceGenome')
     accession = sgqlc.types.Field(AccessionWhereClause, graphql_name='accession')
     metrics = sgqlc.types.Field('MetricConsensusGenomeWhereClause', graphql_name='metrics')
@@ -1318,7 +1321,8 @@ class BulkDownloadAggregateFunctions(sgqlc.types.Type):
 
 class BulkDownloadMinMaxColumns(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('download_display_name', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    download_display_name = sgqlc.types.Field(String, graphql_name='downloadDisplayName')
     owner_user_id = sgqlc.types.Field(Int, graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
     created_at = sgqlc.types.Field(DateTime, graphql_name='createdAt')
@@ -2356,9 +2360,10 @@ class Accession(sgqlc.types.Type, EntityInterface, Node):
 
 class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = entities_schema
-    __field_names__ = ('id', 'download_type', 'file_id', 'file', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('id', 'download_type', 'download_display_name', 'file_id', 'file', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='id')
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name='downloadType')
+    download_display_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='downloadDisplayName')
     file_id = sgqlc.types.Field(ID, graphql_name='fileId')
     file = sgqlc.types.Field(File, graphql_name='file', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(FileWhereClause, graphql_name='where', default=None)),
@@ -2373,14 +2378,14 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
 
 class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = entities_schema
-    __field_names__ = ('id', 'taxon', 'sequence_read', 'reference_genome', 'accession', 'sequence_id', 'sequence', 'metrics', 'intermediate_outputs_id', 'intermediate_outputs', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('id', 'taxon', 'sequencing_read', 'reference_genome', 'accession', 'sequence_id', 'sequence', 'metrics', 'intermediate_outputs_id', 'intermediate_outputs', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='id')
     taxon = sgqlc.types.Field('Taxon', graphql_name='taxon', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(TaxonWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(TaxonOrderByClause)), graphql_name='orderBy', default=())),
 ))
     )
-    sequence_read = sgqlc.types.Field('SequencingRead', graphql_name='sequenceRead', args=sgqlc.types.ArgDict((
+    sequencing_read = sgqlc.types.Field('SequencingRead', graphql_name='sequencingRead', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(SequencingReadWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(SequencingReadOrderByClause)), graphql_name='orderBy', default=())),
 ))
@@ -2448,7 +2453,7 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
 
 class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = entities_schema
-    __field_names__ = ('id', 'name', 'version', 'category', 'is_deuterostome', 'indexes', 'indexes_aggregate', 'sequence_id', 'sequence', 'samples', 'samples_aggregate', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('id', 'name', 'version', 'category', 'is_deuterostome', 'indexes', 'indexes_aggregate', 'samples', 'samples_aggregate', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='id')
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='version')
@@ -2465,11 +2470,6 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     )
     indexes_aggregate = sgqlc.types.Field(IndexFileAggregate, graphql_name='indexesAggregate', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(IndexFileWhereClause, graphql_name='where', default=None)),
-))
-    )
-    sequence_id = sgqlc.types.Field(ID, graphql_name='sequenceId')
-    sequence = sgqlc.types.Field(File, graphql_name='sequence', args=sgqlc.types.ArgDict((
-        ('where', sgqlc.types.Arg(FileWhereClause, graphql_name='where', default=None)),
 ))
     )
     samples = sgqlc.types.Field(sgqlc.types.non_null(SampleConnection), graphql_name='samples', args=sgqlc.types.ArgDict((

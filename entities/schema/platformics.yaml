@@ -360,7 +360,7 @@ classes:
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
-        inverse: ConsensusGenome.sequence_read
+        inverse: ConsensusGenome.sequencing_read
         multivalued: true
         annotations:
           cascade_delete: true
@@ -468,12 +468,6 @@ classes:
         range: IndexFile
         inverse: IndexFile.host_organism
         multivalued: true
-      # Original reference FASTA file used to generate indexes for this host; used for our record keeping
-      sequence:
-        range: File
-        readonly: true
-        annotations:
-          cascade_delete: true
       # Samples that obtained from this host organism
       samples:
         range: Sample
@@ -529,7 +523,7 @@ classes:
         annotations:
           mutable: false
       # Which SequencingRead this ConsensusGenome was created from
-      sequence_read:
+      sequencing_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
@@ -812,6 +806,11 @@ classes:
     attributes:
       download_type:
         range: BulkDownloadType
+        required: true
+        annotations:
+          mutable: false
+      download_display_name:
+        range: string
         required: true
         annotations:
           mutable: false

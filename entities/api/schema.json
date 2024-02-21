@@ -3066,34 +3066,6 @@
               }
             },
             {
-              "args": [],
-              "name": "sequenceId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "sequence",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
               "args": [
                 {
                   "defaultValue": "null",
@@ -5130,7 +5102,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceRead",
+              "name": "sequencingRead",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "SequencingReadWhereClause",
@@ -7397,7 +7369,7 @@
                   }
                 }
               ],
-              "name": "sequenceRead",
+              "name": "sequencingRead",
               "type": {
                 "kind": "OBJECT",
                 "name": "SequencingRead",
@@ -9302,7 +9274,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceRead",
+              "name": "sequencingRead",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "SequencingReadOrderByClause",
@@ -9959,7 +9931,7 @@
               "name": "taxon"
             },
             {
-              "name": "sequence_read"
+              "name": "sequencing_read"
             },
             {
               "name": "reference_genome"
@@ -13196,6 +13168,19 @@
             },
             {
               "args": [],
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
               "name": "fileId",
               "type": {
                 "kind": "SCALAR",
@@ -13323,6 +13308,15 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "BulkDownloadTypeEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
                 "ofType": null
               }
             },
@@ -13500,6 +13494,15 @@
             {
               "defaultValue": null,
               "name": "downloadType",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "downloadDisplayName",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -14235,9 +14238,6 @@
             },
             {
               "name": "indexes"
-            },
-            {
-              "name": "sequence"
             },
             {
               "name": "samples"
@@ -15378,6 +15378,15 @@
           "fields": [
             {
               "args": [],
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -15423,6 +15432,9 @@
           "enumValues": [
             {
               "name": "download_type"
+            },
+            {
+              "name": "download_display_name"
             },
             {
               "name": "file"
@@ -18157,7 +18169,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceReadId",
+              "name": "sequencingReadId",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -19128,6 +19140,19 @@
                 "ofType": {
                   "kind": "ENUM",
                   "name": "BulkDownloadType",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 }
               }

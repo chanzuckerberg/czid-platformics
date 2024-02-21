@@ -105,8 +105,8 @@ async def load_sequencing_read_rows(
 ) -> Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.ConsensusGenome)
-    relationship = mapper.relationships["sequence_read"]
-    return await dataloader.loader_for(relationship, where, order_by).load(root.sequence_read_id)  # type:ignore
+    relationship = mapper.relationships["sequencing_read"]
+    return await dataloader.loader_for(relationship, where, order_by).load(root.sequencing_read_id)  # type:ignore
 
 
 @strawberry.field
@@ -203,7 +203,9 @@ Supported WHERE clause attributes
 @strawberry.input
 class ConsensusGenomeWhereClause(TypedDict):
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
-    sequence_read: Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    sequencing_read: Optional[
+        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
+    ] | None
     reference_genome: Optional[
         Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
     ] | None
@@ -227,7 +229,7 @@ Supported ORDER BY clause attributes
 @strawberry.input
 class ConsensusGenomeOrderByClause(TypedDict):
     taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
-    sequence_read: Optional[
+    sequencing_read: Optional[
         Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
     reference_genome: Optional[
@@ -253,7 +255,7 @@ Define ConsensusGenome type
 @strawberry.type
 class ConsensusGenome(EntityInterface):
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    sequence_read: Optional[
+    sequencing_read: Optional[
         Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_rows  # type:ignore
     reference_genome: Optional[
@@ -322,7 +324,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class ConsensusGenomeCountColumns(enum.Enum):
     taxon = "taxon"
-    sequence_read = "sequence_read"
+    sequencing_read = "sequencing_read"
     reference_genome = "reference_genome"
     accession = "accession"
     sequence = "sequence"
@@ -379,7 +381,7 @@ Mutation types
 @strawberry.input()
 class ConsensusGenomeCreateInput:
     taxon_id: strawberry.ID
-    sequence_read_id: strawberry.ID
+    sequencing_read_id: strawberry.ID
     reference_genome_id: Optional[strawberry.ID] = None
     accession_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
@@ -481,19 +483,19 @@ async def create_consensus_genome(
         )
         if not taxon:
             raise PlatformicsException("Unauthorized: taxon does not exist")
-    # Check that sequence_read relationship is accessible.
-    if validated.sequence_read_id:
-        sequence_read = await get_db_rows(
+    # Check that sequencing_read relationship is accessible.
+    if validated.sequencing_read_id:
+        sequencing_read = await get_db_rows(
             db.SequencingRead,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": validated.sequence_read_id}},
+            {"id": {"_eq": validated.sequencing_read_id}},
             [],
             CerbosAction.VIEW,
         )
-        if not sequence_read:
-            raise PlatformicsException("Unauthorized: sequence_read does not exist")
+        if not sequencing_read:
+            raise PlatformicsException("Unauthorized: sequencing_read does not exist")
     # Check that reference_genome relationship is accessible.
     if validated.reference_genome_id:
         reference_genome = await get_db_rows(

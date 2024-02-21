@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/test_infra/factories/class_name.p
 
 import factory
 from database.models import HostOrganism
-from test_infra.factories.main import CommonFactory, FileFactory
+from test_infra.factories.main import CommonFactory
 from factory import Faker, fuzzy
 from faker_biology.bioseq import Bioseq
 from faker_biology.physiology import Organ
@@ -32,9 +32,3 @@ class HostOrganismFactory(CommonFactory):
     version = fuzzy.FuzzyText()
     category = fuzzy.FuzzyChoice(["human", "insect", "non_human_animal", "unknown"])
     is_deuterostome = factory.Faker("boolean")
-    sequence = factory.RelatedFactory(
-        FileFactory,
-        factory_related_name="entity",
-        entity_field_name="sequence",
-        file_format="fastq",
-    )
