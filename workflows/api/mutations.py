@@ -18,15 +18,9 @@ from api.types.workflow_run_step import (
 from api.types.workflow_run_entity_input import (
     WorkflowRunEntityInput,
     create_workflow_run_entity_input,
-    update_workflow_run_entity_input,
     delete_workflow_run_entity_input,
 )
-from api.types.workflow_version import (
-    WorkflowVersion,
-    create_workflow_version,
-    update_workflow_version,
-    delete_workflow_version,
-)
+from api.types.workflow_version import WorkflowVersion, create_workflow_version, delete_workflow_version
 
 
 @strawberry.type
@@ -48,10 +42,8 @@ class Mutation:
 
     # WorkflowRunEntityInput mutations
     create_workflow_run_entity_input: WorkflowRunEntityInput = create_workflow_run_entity_input
-    update_workflow_run_entity_input: Sequence[WorkflowRunEntityInput] = update_workflow_run_entity_input
     delete_workflow_run_entity_input: Sequence[WorkflowRunEntityInput] = delete_workflow_run_entity_input
 
     # WorkflowVersion mutations
     create_workflow_version: WorkflowVersion = create_workflow_version
-    update_workflow_version: Sequence[WorkflowVersion] = update_workflow_version
     delete_workflow_version: Sequence[WorkflowVersion] = delete_workflow_version

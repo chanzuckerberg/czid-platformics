@@ -13,7 +13,9 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.taxon import TaxonCreateInputValidator, TaxonUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
@@ -21,11 +23,12 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
+    DatetimeComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -179,10 +182,6 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class TaxonWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     wikipedia_id: Optional[StrComparators] | None
     description: Optional[StrComparators] | None
     common_name: Optional[StrComparators] | None
@@ -199,6 +198,12 @@ class TaxonWhereClause(TypedDict):
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
     ] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -234,7 +239,6 @@ class TaxonOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -244,10 +248,6 @@ Define Taxon type
 
 @strawberry.type
 class Taxon(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
@@ -270,6 +270,12 @@ class Taxon(EntityInterface):
     sequencing_reads_aggregate: Optional[
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
 
 
 """
@@ -285,7 +291,6 @@ Taxon.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -293,7 +298,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class TaxonNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -305,14 +309,15 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class TaxonMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
     name: Optional[str] = None
     upstream_database_identifier: Optional[str] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
 
 
 """
@@ -342,14 +347,12 @@ class TaxonCountColumns(enum.Enum):
     tax_superkingdom = "tax_superkingdom"
     consensus_genomes = "consensus_genomes"
     sequencing_reads = "sequencing_reads"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
     created_at = "created_at"
     updated_at = "updated_at"
-    deleted_at = "deleted_at"
 
 
 """
@@ -367,10 +370,10 @@ class TaxonAggregateFunctions:
 
     sum: Optional[TaxonNumericalColumns] = None
     avg: Optional[TaxonNumericalColumns] = None
-    min: Optional[TaxonMinMaxColumns] = None
-    max: Optional[TaxonMinMaxColumns] = None
     stddev: Optional[TaxonNumericalColumns] = None
     variance: Optional[TaxonNumericalColumns] = None
+    min: Optional[TaxonMinMaxColumns] = None
+    max: Optional[TaxonMinMaxColumns] = None
 
 
 """
@@ -392,7 +395,6 @@ Mutation types
 
 @strawberry.input()
 class TaxonCreateInput:
-    collection_id: int
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
@@ -401,19 +403,37 @@ class TaxonCreateInput:
     upstream_database_id: strawberry.ID
     upstream_database_identifier: str
     level: TaxonLevel
+    tax_parent_id: Optional[strawberry.ID] = None
+    tax_subspecies_id: Optional[strawberry.ID] = None
+    tax_species_id: Optional[strawberry.ID] = None
+    tax_genus_id: Optional[strawberry.ID] = None
+    tax_family_id: Optional[strawberry.ID] = None
+    tax_order_id: Optional[strawberry.ID] = None
+    tax_class_id: Optional[strawberry.ID] = None
+    tax_phylum_id: Optional[strawberry.ID] = None
+    tax_kingdom_id: Optional[strawberry.ID] = None
+    tax_superkingdom_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[strawberry.ID] = None
+    collection_id: int
 
 
 @strawberry.input()
 class TaxonUpdateInput:
-    collection_id: Optional[int] = None
     wikipedia_id: Optional[str] = None
     description: Optional[str] = None
     common_name: Optional[str] = None
-    name: Optional[str] = None
     is_phage: Optional[bool] = None
-    upstream_database_id: Optional[strawberry.ID] = None
-    upstream_database_identifier: Optional[str] = None
     level: Optional[TaxonLevel] = None
+    tax_parent_id: Optional[strawberry.ID] = None
+    tax_subspecies_id: Optional[strawberry.ID] = None
+    tax_species_id: Optional[strawberry.ID] = None
+    tax_genus_id: Optional[strawberry.ID] = None
+    tax_family_id: Optional[strawberry.ID] = None
+    tax_order_id: Optional[strawberry.ID] = None
+    tax_class_id: Optional[strawberry.ID] = None
+    tax_phylum_id: Optional[strawberry.ID] = None
+    tax_kingdom_id: Optional[strawberry.ID] = None
+    tax_superkingdom_id: Optional[strawberry.ID] = None
 
 
 """
@@ -485,17 +505,132 @@ async def create_taxon(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new Taxon object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = TaxonCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        del params["producing_run_id"]
+    # Validate that the user can create entities in this collection
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Taxon.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # Check that upstream_database relationship is accessible.
+    if validated.upstream_database_id:
+        upstream_database = await get_db_rows(
+            db.UpstreamDatabase,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.upstream_database_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not upstream_database:
+            raise PlatformicsException("Unauthorized: upstream_database does not exist")
+    # Check that tax_parent relationship is accessible.
+    if validated.tax_parent_id:
+        tax_parent = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_parent_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_parent:
+            raise PlatformicsException("Unauthorized: tax_parent does not exist")
+    # Check that tax_subspecies relationship is accessible.
+    if validated.tax_subspecies_id:
+        tax_subspecies = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_subspecies_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_subspecies:
+            raise PlatformicsException("Unauthorized: tax_subspecies does not exist")
+    # Check that tax_species relationship is accessible.
+    if validated.tax_species_id:
+        tax_species = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_species_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_species:
+            raise PlatformicsException("Unauthorized: tax_species does not exist")
+    # Check that tax_genus relationship is accessible.
+    if validated.tax_genus_id:
+        tax_genus = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_genus_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_genus:
+            raise PlatformicsException("Unauthorized: tax_genus does not exist")
+    # Check that tax_family relationship is accessible.
+    if validated.tax_family_id:
+        tax_family = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_family_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_family:
+            raise PlatformicsException("Unauthorized: tax_family does not exist")
+    # Check that tax_order relationship is accessible.
+    if validated.tax_order_id:
+        tax_order = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_order_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_order:
+            raise PlatformicsException("Unauthorized: tax_order does not exist")
+    # Check that tax_class relationship is accessible.
+    if validated.tax_class_id:
+        tax_class = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_class_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_class:
+            raise PlatformicsException("Unauthorized: tax_class does not exist")
+    # Check that tax_phylum relationship is accessible.
+    if validated.tax_phylum_id:
+        tax_phylum = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_phylum_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_phylum:
+            raise PlatformicsException("Unauthorized: tax_phylum does not exist")
+    # Check that tax_kingdom relationship is accessible.
+    if validated.tax_kingdom_id:
+        tax_kingdom = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_kingdom_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_kingdom:
+            raise PlatformicsException("Unauthorized: tax_kingdom does not exist")
+    # Check that tax_superkingdom relationship is accessible.
+    if validated.tax_superkingdom_id:
+        tax_superkingdom = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_superkingdom_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_superkingdom:
+            raise PlatformicsException("Unauthorized: tax_superkingdom does not exist")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -512,33 +647,146 @@ async def update_taxon(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update Taxon objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = TaxonUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+    # Check that tax_parent relationship is accessible.
+    if validated.tax_parent_id:
+        tax_parent = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_parent_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_parent:
+            raise PlatformicsException("Unauthorized: tax_parent does not exist")
+        params["tax_parent"] = tax_parent[0]
+        del params["tax_parent_id"]
+    # Check that tax_subspecies relationship is accessible.
+    if validated.tax_subspecies_id:
+        tax_subspecies = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_subspecies_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_subspecies:
+            raise PlatformicsException("Unauthorized: tax_subspecies does not exist")
+        params["tax_subspecies"] = tax_subspecies[0]
+        del params["tax_subspecies_id"]
+    # Check that tax_species relationship is accessible.
+    if validated.tax_species_id:
+        tax_species = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_species_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_species:
+            raise PlatformicsException("Unauthorized: tax_species does not exist")
+        params["tax_species"] = tax_species[0]
+        del params["tax_species_id"]
+    # Check that tax_genus relationship is accessible.
+    if validated.tax_genus_id:
+        tax_genus = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_genus_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_genus:
+            raise PlatformicsException("Unauthorized: tax_genus does not exist")
+        params["tax_genus"] = tax_genus[0]
+        del params["tax_genus_id"]
+    # Check that tax_family relationship is accessible.
+    if validated.tax_family_id:
+        tax_family = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_family_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_family:
+            raise PlatformicsException("Unauthorized: tax_family does not exist")
+        params["tax_family"] = tax_family[0]
+        del params["tax_family_id"]
+    # Check that tax_order relationship is accessible.
+    if validated.tax_order_id:
+        tax_order = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_order_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_order:
+            raise PlatformicsException("Unauthorized: tax_order does not exist")
+        params["tax_order"] = tax_order[0]
+        del params["tax_order_id"]
+    # Check that tax_class relationship is accessible.
+    if validated.tax_class_id:
+        tax_class = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_class_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_class:
+            raise PlatformicsException("Unauthorized: tax_class does not exist")
+        params["tax_class"] = tax_class[0]
+        del params["tax_class_id"]
+    # Check that tax_phylum relationship is accessible.
+    if validated.tax_phylum_id:
+        tax_phylum = await get_db_rows(
+            db.Taxon, session, cerbos_client, principal, {"id": {"_eq": validated.tax_phylum_id}}, [], CerbosAction.VIEW
+        )
+        if not tax_phylum:
+            raise PlatformicsException("Unauthorized: tax_phylum does not exist")
+        params["tax_phylum"] = tax_phylum[0]
+        del params["tax_phylum_id"]
+    # Check that tax_kingdom relationship is accessible.
+    if validated.tax_kingdom_id:
+        tax_kingdom = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_kingdom_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_kingdom:
+            raise PlatformicsException("Unauthorized: tax_kingdom does not exist")
+        params["tax_kingdom"] = tax_kingdom[0]
+        del params["tax_kingdom_id"]
+    # Check that tax_superkingdom relationship is accessible.
+    if validated.tax_superkingdom_id:
+        tax_superkingdom = await get_db_rows(
+            db.Taxon,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.tax_superkingdom_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not tax_superkingdom:
+            raise PlatformicsException("Unauthorized: tax_superkingdom does not exist")
+        params["tax_superkingdom"] = tax_superkingdom[0]
+        del params["tax_superkingdom_id"]
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Taxon, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
 
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.Taxon.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
-
     # Update DB
+    updated_at = datetime.datetime.now()
     for entity in entities:
+        entity.updated_at = updated_at
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities

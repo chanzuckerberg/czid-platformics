@@ -5,6 +5,7 @@ Loader functions
 import asyncio
 import json
 import sys
+from platformics.util.types_utils import JSONValue
 
 
 from sqlalchemy import select
@@ -35,7 +36,7 @@ class LoaderDriver:
         workflow_version: WorkflowVersion,
         workflow_run: WorkflowRun,
         entity_inputs: dict[str, EntityInput],
-        outputs: dict[str, str],
+        outputs: dict[str, JSONValue],
     ) -> None:
         """
         After workflow completes run output loaders

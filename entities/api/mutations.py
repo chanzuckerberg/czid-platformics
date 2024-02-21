@@ -11,6 +11,7 @@ from api.files import (
     File,
     create_file,
     upload_file,
+    upload_temporary_file,
     mark_upload_complete,
     concatenate_files,
     SignedURL,
@@ -23,7 +24,7 @@ from api.types.sequencing_read import (
     update_sequencing_read,
     delete_sequencing_read,
 )
-from api.types.genomic_range import GenomicRange, create_genomic_range, update_genomic_range, delete_genomic_range
+from api.types.genomic_range import GenomicRange, create_genomic_range, delete_genomic_range
 from api.types.reference_genome import (
     ReferenceGenome,
     create_reference_genome,
@@ -33,16 +34,10 @@ from api.types.reference_genome import (
 from api.types.accession import Accession, create_accession, update_accession, delete_accession
 from api.types.host_organism import HostOrganism, create_host_organism, update_host_organism, delete_host_organism
 from api.types.metadatum import Metadatum, create_metadatum, update_metadatum, delete_metadatum
-from api.types.consensus_genome import (
-    ConsensusGenome,
-    create_consensus_genome,
-    update_consensus_genome,
-    delete_consensus_genome,
-)
+from api.types.consensus_genome import ConsensusGenome, create_consensus_genome, delete_consensus_genome
 from api.types.metric_consensus_genome import (
     MetricConsensusGenome,
     create_metric_consensus_genome,
-    update_metric_consensus_genome,
     delete_metric_consensus_genome,
 )
 from api.types.taxon import Taxon, create_taxon, update_taxon, delete_taxon
@@ -53,13 +48,7 @@ from api.types.upstream_database import (
     delete_upstream_database,
 )
 from api.types.index_file import IndexFile, create_index_file, update_index_file, delete_index_file
-from api.types.phylogenetic_tree import (
-    PhylogeneticTree,
-    create_phylogenetic_tree,
-    update_phylogenetic_tree,
-    delete_phylogenetic_tree,
-)
-from api.types.bulk_download import BulkDownload, create_bulk_download, update_bulk_download, delete_bulk_download
+from api.types.bulk_download import BulkDownload, create_bulk_download, delete_bulk_download
 
 
 @strawberry.type
@@ -67,6 +56,7 @@ class Mutation:
     # File mutations
     create_file: File = create_file
     upload_file: MultipartUploadResponse = upload_file
+    upload_temporary_file: MultipartUploadResponse = upload_temporary_file
     mark_upload_complete: File = mark_upload_complete
     concatenate_files: SignedURL = concatenate_files
 
@@ -82,7 +72,6 @@ class Mutation:
 
     # GenomicRange mutations
     create_genomic_range: GenomicRange = create_genomic_range
-    update_genomic_range: Sequence[GenomicRange] = update_genomic_range
     delete_genomic_range: Sequence[GenomicRange] = delete_genomic_range
 
     # ReferenceGenome mutations
@@ -107,12 +96,10 @@ class Mutation:
 
     # ConsensusGenome mutations
     create_consensus_genome: ConsensusGenome = create_consensus_genome
-    update_consensus_genome: Sequence[ConsensusGenome] = update_consensus_genome
     delete_consensus_genome: Sequence[ConsensusGenome] = delete_consensus_genome
 
     # MetricConsensusGenome mutations
     create_metric_consensus_genome: MetricConsensusGenome = create_metric_consensus_genome
-    update_metric_consensus_genome: Sequence[MetricConsensusGenome] = update_metric_consensus_genome
     delete_metric_consensus_genome: Sequence[MetricConsensusGenome] = delete_metric_consensus_genome
 
     # Taxon mutations
@@ -130,12 +117,6 @@ class Mutation:
     update_index_file: Sequence[IndexFile] = update_index_file
     delete_index_file: Sequence[IndexFile] = delete_index_file
 
-    # PhylogeneticTree mutations
-    create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree
-    update_phylogenetic_tree: Sequence[PhylogeneticTree] = update_phylogenetic_tree
-    delete_phylogenetic_tree: Sequence[PhylogeneticTree] = delete_phylogenetic_tree
-
     # BulkDownload mutations
     create_bulk_download: BulkDownload = create_bulk_download
-    update_bulk_download: Sequence[BulkDownload] = update_bulk_download
     delete_bulk_download: Sequence[BulkDownload] = delete_bulk_download

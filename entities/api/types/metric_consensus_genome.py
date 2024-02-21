@@ -13,16 +13,21 @@ from typing import TYPE_CHECKING, Annotated, Optional, Sequence, List
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.metric_consensus_genome import (
+    MetricConsensusGenomeCreateInputValidator,
+)
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
+    DatetimeComparators,
     IntComparators,
     FloatComparators,
     UUIDComparators,
@@ -97,10 +102,6 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class MetricConsensusGenomeWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     consensus_genome: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None
@@ -118,6 +119,12 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     coverage_breadth: Optional[FloatComparators] | None
     coverage_bin_size: Optional[FloatComparators] | None
     coverage_total_length: Optional[IntComparators] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -151,7 +158,6 @@ class MetricConsensusGenomeOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -161,10 +167,6 @@ Define MetricConsensusGenome type
 
 @strawberry.type
 class MetricConsensusGenome(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     consensus_genome: Optional[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -183,6 +185,12 @@ class MetricConsensusGenome(EntityInterface):
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
+    id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
 
 
 """
@@ -198,7 +206,6 @@ MetricConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -206,9 +213,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class MetricConsensusGenomeNumericalColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -223,6 +227,8 @@ class MetricConsensusGenomeNumericalColumns:
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
 
 
 """
@@ -232,9 +238,6 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class MetricConsensusGenomeMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -249,6 +252,10 @@ class MetricConsensusGenomeMinMaxColumns:
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
 
 
 """
@@ -274,14 +281,12 @@ class MetricConsensusGenomeCountColumns(enum.Enum):
     coverage_bin_size = "coverage_bin_size"
     coverage_total_length = "coverage_total_length"
     coverage_viz = "coverage_viz"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
     created_at = "created_at"
     updated_at = "updated_at"
-    deleted_at = "deleted_at"
 
 
 """
@@ -301,10 +306,10 @@ class MetricConsensusGenomeAggregateFunctions:
 
     sum: Optional[MetricConsensusGenomeNumericalColumns] = None
     avg: Optional[MetricConsensusGenomeNumericalColumns] = None
-    min: Optional[MetricConsensusGenomeMinMaxColumns] = None
-    max: Optional[MetricConsensusGenomeMinMaxColumns] = None
     stddev: Optional[MetricConsensusGenomeNumericalColumns] = None
     variance: Optional[MetricConsensusGenomeNumericalColumns] = None
+    min: Optional[MetricConsensusGenomeMinMaxColumns] = None
+    max: Optional[MetricConsensusGenomeMinMaxColumns] = None
 
 
 """
@@ -326,7 +331,6 @@ Mutation types
 
 @strawberry.input()
 class MetricConsensusGenomeCreateInput:
-    collection_id: int
     consensus_genome_id: strawberry.ID
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
@@ -343,27 +347,8 @@ class MetricConsensusGenomeCreateInput:
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
-
-
-@strawberry.input()
-class MetricConsensusGenomeUpdateInput:
-    collection_id: Optional[int] = None
-    consensus_genome_id: Optional[strawberry.ID] = None
-    reference_genome_length: Optional[float] = None
-    percent_genome_called: Optional[float] = None
-    percent_identity: Optional[float] = None
-    gc_percent: Optional[float] = None
-    total_reads: Optional[int] = None
-    mapped_reads: Optional[int] = None
-    ref_snps: Optional[int] = None
-    n_actg: Optional[int] = None
-    n_missing: Optional[int] = None
-    n_ambiguous: Optional[int] = None
-    coverage_depth: Optional[float] = None
-    coverage_breadth: Optional[float] = None
-    coverage_bin_size: Optional[float] = None
-    coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[List[List[int]]] = None
+    producing_run_id: Optional[strawberry.ID] = None
+    collection_id: int
 
 
 """
@@ -437,17 +422,38 @@ async def create_metric_consensus_genome(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new MetricConsensusGenome object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = MetricConsensusGenomeCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        del params["producing_run_id"]
+    # Validate that the user can create entities in this collection
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # Check that consensus_genome relationship is accessible.
+    if validated.consensus_genome_id:
+        consensus_genome = await get_db_rows(
+            db.ConsensusGenome,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.consensus_genome_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not consensus_genome:
+            raise PlatformicsException("Unauthorized: consensus_genome does not exist")
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -455,47 +461,6 @@ async def create_metric_consensus_genome(
     session.add(new_entity)
     await session.commit()
     return new_entity
-
-
-@strawberry.mutation(extensions=[DependencyExtension()])
-async def update_metric_consensus_genome(
-    input: MetricConsensusGenomeUpdateInput,
-    where: MetricConsensusGenomeWhereClauseMutations,
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-) -> Sequence[db.Entity]:
-    """
-    Update MetricConsensusGenome objects. Used for mutations (see api/mutations.py).
-    """
-    params = input.__dict__
-
-    # Need at least one thing to update
-    num_params = len([x for x in params if params[x] is not None])
-    if num_params == 0:
-        raise PlatformicsException("No fields to update")
-
-    # Fetch entities for update, if we have access to them
-    entities = await get_db_rows(
-        db.MetricConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE
-    )
-    if len(entities) == 0:
-        raise PlatformicsException("Unauthorized: Cannot update entities")
-
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
-
-    # Update DB
-    for entity in entities:
-        for key in params:
-            if params[key]:
-                setattr(entity, key, params[key])
-    await session.commit()
-    return entities
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

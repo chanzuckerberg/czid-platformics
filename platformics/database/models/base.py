@@ -1,11 +1,12 @@
 import datetime
 import uuid
-import uuid6
 from typing import TYPE_CHECKING
-from sqlalchemy import MetaData, Column, Integer, String, DateTime
+
+import uuid6
+from sqlalchemy import Column, DateTime, Index, Integer, MetaData, String
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
-from sqlalchemy.dialects.postgresql import UUID
 
 if TYPE_CHECKING:
     from database.models.file import File
@@ -38,9 +39,12 @@ class Entity(Base):
     type: Mapped[str] = mapped_column(String, nullable=False)
 
     # Attributes for each entity
-    producing_run_id: Mapped[uuid.UUID] = mapped_column(Integer, nullable=True)
+    producing_run_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=True)
     owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
     collection_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
     updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
-    deleted_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+
+Index("entity_query_fields", Entity.collection_id, Entity.producing_run_id)

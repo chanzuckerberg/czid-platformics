@@ -5,11 +5,9 @@ import json
 import typing
 
 import database.models as db
-from api.types import workflow_run
 import strawberry
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
-from api.config import load_event_bus, load_workflow_runner, resolve_input_loader
 from fastapi import APIRouter, Depends, FastAPI, Request
 from manifest.manifest import EntityInput, Manifest
 from platformics.api.core.deps import (
@@ -20,20 +18,20 @@ from platformics.api.core.deps import (
     require_auth_principal,
 )
 from platformics.api.core.errors import PlatformicsException
-from settings import APISettings
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
+from plugins.plugin_types import EventBus, WorkflowRunner
+from settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
-from strawberry_sqlalchemy_mapper import StrawberrySQLAlchemyMapper
 from strawberry.schema.config import StrawberryConfig
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 
-from api.queries import Query
-from api.mutations import Mutation as CodegenMutation
-
+from api.config import load_event_bus, load_workflow_runner, resolve_input_loader
 from api.core.gql_loaders import WorkflowLoader
-from plugins.plugin_types import EventBus, WorkflowRunner
+from api.mutations import Mutation as CodegenMutation
+from api.queries import Query
+from api.types import workflow_run
 
 ###########
 # Plugins #
@@ -52,8 +50,6 @@ def get_workflow_runner(request: Request) -> WorkflowRunner:
 ######################
 # Strawberry-GraphQL #
 ######################
-
-strawberry_sqlalchemy_mapper: StrawberrySQLAlchemyMapper = StrawberrySQLAlchemyMapper()
 
 
 @strawberry.input
@@ -134,9 +130,9 @@ async def run_workflow_version(
 
     input_errors = list(manifest.validate_inputs(entity_inputs, raw_inputs))
     if input_errors:
-        raise PlatformicsException(f"Invalid input: {', '.join([str(input_error) for input_error in input_errors])}")
+        raise PlatformicsException(f"Invalid input: {', '.join(e.message() for e in input_errors)}")
 
-    raw_inputs_json = {}
+    workflow_runner_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:
         loader_entity_inputs = {
             k: entity_inputs[v] for k, v in input_loader_specifier.inputs.items() if v in entity_inputs
@@ -151,12 +147,11 @@ async def run_workflow_version(
         )
         for k, v in input_loader_specifier.outputs.items():
             if k not in input_loader_outputs:
-                loader_label = f"{input_loader_specifier.name} ({input_loader_specifier.version})"
-                raise PlatformicsException(f"Input loader  {loader_label}) did not produce output {k}")
+                continue
 
-            if v in entity_inputs:
+            if v in workflow_runner_inputs_json:
                 raise PlatformicsException(f"Duplicate raw input {v}")
-            raw_inputs_json[v] = input_loader_outputs[k]
+            workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
     status = "PENDING"
     execution_id = None
@@ -164,7 +159,7 @@ async def run_workflow_version(
         execution_id = await workflow_runner.run_workflow(
             event_bus=event_bus,
             workflow_path=workflow_version.workflow_uri,
-            inputs=raw_inputs_json,
+            inputs=workflow_runner_inputs_json,
         )
     except Exception:
         status = "FAILED"
@@ -175,7 +170,8 @@ async def run_workflow_version(
         workflow_version_id=workflow_version.id,
         status=status,
         execution_id=execution_id,
-        raw_inputs_json=json.dumps(raw_inputs_json),
+        raw_inputs_json=json.dumps(raw_inputs),
+        workflow_runner_inputs_json=json.dumps(workflow_runner_inputs_json),
         entity_inputs=[
             db.WorkflowRunEntityInput(
                 owner_user_id=int(principal.id),
@@ -210,12 +206,6 @@ def get_app() -> FastAPI:
     event_bus = load_event_bus(settings)
     workflow_runner = load_workflow_runner(settings)
 
-    # call finalize() before using the schema:
-    # (note that models that are related to models that are in the schema
-    # are automatically mapped at this stage
-    strawberry_sqlalchemy_mapper.finalize()
-    # only needed if you have polymorphic types
-    list(strawberry_sqlalchemy_mapper.mapped_types.values())
     # strawberry graphql schema
     # start server with strawberry server app
     _app = FastAPI()

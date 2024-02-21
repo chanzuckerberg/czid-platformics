@@ -38,13 +38,20 @@ class WorkflowRun(Entity):
     workflow_runner_inputs_json: Mapped[str] = mapped_column(String, nullable=True)
     status: Mapped[WorkflowRunStatus] = mapped_column(Enum(WorkflowRunStatus, native_enum=False), nullable=True)
     workflow_version_id: Mapped[uuid.UUID] = mapped_column(
-        UUID, ForeignKey("workflow_version.entity_id"), nullable=True
+        UUID,
+        ForeignKey("workflow_version.entity_id"),
+        nullable=True,
     )
     workflow_version: Mapped["WorkflowVersion"] = relationship(
-        "WorkflowVersion", back_populates="runs", foreign_keys=workflow_version_id
+        "WorkflowVersion",
+        foreign_keys=workflow_version_id,
+        back_populates="runs",
     )
     steps: Mapped[list[WorkflowRunStep]] = relationship(
-        "WorkflowRunStep", back_populates="workflow_run", uselist=True, foreign_keys="WorkflowRunStep.workflow_run_id"
+        "WorkflowRunStep",
+        back_populates="workflow_run",
+        uselist=True,
+        foreign_keys="WorkflowRunStep.workflow_run_id",
     )
     entity_inputs: Mapped[list[WorkflowRunEntityInput]] = relationship(
         "WorkflowRunEntityInput",
@@ -53,6 +60,13 @@ class WorkflowRun(Entity):
         foreign_keys="WorkflowRunEntityInput.workflow_run_id",
     )
     raw_inputs_json: Mapped[str] = mapped_column(String, nullable=True)
-    deprecated_by_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("workflow_run.entity_id"), nullable=True)
-    deprecated_by: Mapped["WorkflowRun"] = relationship("WorkflowRun", foreign_keys=deprecated_by_id)
+    deprecated_by_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("workflow_run.entity_id"),
+        nullable=True,
+    )
+    deprecated_by: Mapped["WorkflowRun"] = relationship(
+        "WorkflowRun",
+        foreign_keys=deprecated_by_id,
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

@@ -63,6 +63,9 @@ local-clean: local-stop ## Remove everything related to the local dev environmen
 local-seed: ## Seed the dev db with a reasonable set of starting data.
 	$(docker_compose) exec $(FOLDER) python3 scripts/seed.py
 
+local-seed-%: ## Seed the dev db with a reasonable set of starting data.
+	$(docker_compose) exec $(FOLDER) python3 scripts/seed/$*.py
+
 .PHONY: local-logs
 local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=backend
 	$(docker_compose) logs -f $(CONTAINER)
@@ -82,7 +85,7 @@ local-update-backend-deps: ## Update poetry.lock to reflect pyproject.toml file 
 
 .PHONY: local-tests
 local-tests: ## Run tests
-	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest"
+	$(docker_compose_run) $(FOLDER) bash -c "poetry run pytest --ignore platformics"
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard

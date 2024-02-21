@@ -24,7 +24,7 @@ help: shared-help ## display help for this makefile
 .PHONY: help
 
 .PHONY: shared-help
-shared-help: 
+shared-help:
 	$(MAKE) -f platformics/Makefile help
 
 .PHONY: rm-pycache
@@ -44,7 +44,7 @@ local-start: ## Start a local dev environment that's been stopped.
 	$(docker_compose) up -d
 
 .PHONY: local-init
-local-init: local-start local-setup 
+local-init: local-start local-setup
 
 .PHONY: local-pgconsole
 local-pgconsole: ## Connect to the local postgres database.
@@ -52,9 +52,14 @@ local-pgconsole: ## Connect to the local postgres database.
 
 .PHONY: local-tests
 local-tests: ## Run entities tests
-	$(MAKE) codegen-test-schema
-	$(docker_compose_run) entities bash -c "poetry run pytest -s"
+	$(docker_compose_run) entities bash -c "poetry run pytest -s --ignore platformics"
 	$(MAKE) cerbos-tests
+	$(MAKE) codegen-tests
+
+.PHONY: codegen-tests
+codegen-tests: codegen-test-schema
+	$(docker_compose) --profile codegen-tests up -d
+	$(docker_compose) --profile codegen-tests run codegen-tests pytest -vvv -s
 
 DIR_LINT_CODEGEN_TEST = platformics/codegen/tests/output/
 .PHONY: codegen-test-schema
@@ -63,12 +68,30 @@ codegen-test-schema:  ## Run codegen on the test schema
 	cp platformics/codegen/templates/api/queries.py.j2 platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
 	# Add a little bit of extra code to the base Query class so we can use it in our tests
 	cat platformics/codegen/tests/test_schemas/overrides/api/extra_test_code.py.j2 >> platformics/codegen/tests/test_schemas/overrides/api/queries.py.j2
+	# TODO FIXME these need to be owned by one module or the other! This is a crappy hack!!
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)api/types
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)database/models
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)test_infra/factories
+	mkdir -p $(DIR_LINT_CODEGEN_TEST)cerbos/policies
 	# Make sure the codegen CLI has a `template-override-dir` argument so it uses our modified template for queries.py
 	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --template-override-paths platformics/codegen/tests/test_schemas/overrides --output-prefix $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) ruff check --fix  $(DIR_LINT_CODEGEN_TEST)
+	# TODO FIXME these need to be owned by one module or the other! This is a crappy hack!!
+	cp conftest.py $(DIR_LINT_CODEGEN_TEST)
+	cp api/main.py $(DIR_LINT_CODEGEN_TEST)api/
+	cp api/files.py $(DIR_LINT_CODEGEN_TEST)api/
+	cp api/conftest.py $(DIR_LINT_CODEGEN_TEST)api/
+	cp api/types/entities.py $(DIR_LINT_CODEGEN_TEST)api/types/
+	cp database/models/file.py $(DIR_LINT_CODEGEN_TEST)database/models/
+	cp test_infra/factories/main.py $(DIR_LINT_CODEGEN_TEST)test_infra/factories/
+	cp -r test_infra/fixtures $(DIR_LINT_CODEGEN_TEST)test_infra/
+	cp -r cerbos/config $(DIR_LINT_CODEGEN_TEST)cerbos/
+	cp -r cerbos/policies/derived_roles_common.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
+	cp -r cerbos/policies/entity.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
+	cp -r cerbos/policies/file.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
 
-DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
+DIR_LINT_CODEGEN = database/models/ api/types/ api/validators/ api/{queries,mutations}.py test_infra/factories/ api/validators
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
@@ -90,7 +113,7 @@ cerbos-tests:
 	$(docker_compose_run) cerbos compile --tests=/var/policies/cerbos/test/ /var/policies/cerbos/policies
 
 ### SHARED MAKEFILE #############################################
-%: 
+%:
 	$(MAKE) -f platformics/Makefile $@ \
 		FOLDER=$(FOLDER) \
 		CONTAINER=$(CONTAINER) \

@@ -2,12 +2,11 @@
 erDiagram
 Entity {
     uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    uuid producing_run_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRun {
     date started_at  
@@ -19,12 +18,11 @@ WorkflowRun {
     string raw_inputs_json  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    uuid producing_run_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 Workflow {
     string name  
@@ -32,12 +30,11 @@ Workflow {
     string minimum_supported_version  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    uuid producing_run_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRunStep {
     date started_at  
@@ -45,12 +42,11 @@ WorkflowRunStep {
     WorkflowRunStepStatus status  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    uuid producing_run_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRunEntityInput {
     uuid input_entity_id  
@@ -58,12 +54,11 @@ WorkflowRunEntityInput {
     string entity_type  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    uuid producing_run_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowVersion {
     string graph_json  
@@ -72,12 +67,11 @@ WorkflowVersion {
     string manifest  
     uuid entity_id  
     uuid id  
-    int producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    uuid producing_run_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 EntityMixin {
     uuid entity_id  

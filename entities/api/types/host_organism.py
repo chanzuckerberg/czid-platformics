@@ -9,12 +9,13 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
+import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from api.files import File, FileWhereClause
+from api.validators.host_organism import HostOrganismCreateInputValidator, HostOrganismUpdateInputValidator
 from api.types.entities import EntityInterface
 from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
 from api.types.sample import SampleAggregate, format_sample_aggregate_output
@@ -22,11 +23,12 @@ from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
 from fastapi import Depends
 from platformics.api.core.errors import PlatformicsException
-from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
+from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal, is_system_user
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
     orderBy,
     EnumComparators,
+    DatetimeComparators,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -135,31 +137,6 @@ async def load_sample_aggregate_rows(
 
 """
 ------------------------------------------------------------------------------
-Dataloader for File object
-------------------------------------------------------------------------------
-"""
-
-
-def load_files_from(attr_name: str) -> Callable:
-    @strawberry.field
-    async def load_files(
-        root: "HostOrganism",
-        info: Info,
-        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
-    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
-        """
-        Given a list of HostOrganism IDs for a certain file type, return related Files
-        """
-        dataloader = info.context["sqlalchemy_loader"]
-        mapper = inspect(db.HostOrganism)
-        relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
-
-    return load_files
-
-
-"""
-------------------------------------------------------------------------------
 Define Strawberry GQL types
 ------------------------------------------------------------------------------
 """
@@ -182,16 +159,18 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class HostOrganismWhereClause(TypedDict):
-    id: UUIDComparators | None
-    producing_run_id: IntComparators | None
-    owner_user_id: IntComparators | None
-    collection_id: IntComparators | None
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
     category: Optional[EnumComparators[HostOrganismCategory]] | None
     is_deuterostome: Optional[BoolComparators] | None
     indexes: Optional[Annotated["IndexFileWhereClause", strawberry.lazy("api.types.index_file")]] | None
     samples: Optional[Annotated["SampleWhereClause", strawberry.lazy("api.types.sample")]] | None
+    id: Optional[UUIDComparators] | None
+    producing_run_id: Optional[UUIDComparators] | None
+    owner_user_id: Optional[IntComparators] | None
+    collection_id: Optional[IntComparators] | None
+    created_at: Optional[DatetimeComparators] | None
+    updated_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -211,7 +190,6 @@ class HostOrganismOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -221,10 +199,6 @@ Define HostOrganism type
 
 @strawberry.type
 class HostOrganism(EntityInterface):
-    id: strawberry.ID
-    producing_run_id: Optional[int]
-    owner_user_id: int
-    collection_id: int
     name: str
     version: str
     category: HostOrganismCategory
@@ -235,12 +209,16 @@ class HostOrganism(EntityInterface):
     indexes_aggregate: Optional[
         Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]
     ] = load_index_file_aggregate_rows  # type:ignore
-    sequence_id: Optional[strawberry.ID]
-    sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
     samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     samples_aggregate: Optional[
         Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
     ] = load_sample_aggregate_rows  # type:ignore
+    id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
+    owner_user_id: int
+    collection_id: int
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
 
 
 """
@@ -256,7 +234,6 @@ HostOrganism.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -264,7 +241,6 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class HostOrganismNumericalColumns:
-    producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -276,11 +252,12 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class HostOrganismMinMaxColumns:
-    producing_run_id: Optional[int] = None
-    owner_user_id: Optional[int] = None
-    collection_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
+    owner_user_id: Optional[int] = None
+    collection_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    updated_at: Optional[datetime.datetime] = None
 
 
 """
@@ -295,16 +272,13 @@ class HostOrganismCountColumns(enum.Enum):
     category = "category"
     is_deuterostome = "is_deuterostome"
     indexes = "indexes"
-    sequence = "sequence"
     samples = "samples"
-    entity_id = "entity_id"
     id = "id"
     producing_run_id = "producing_run_id"
     owner_user_id = "owner_user_id"
     collection_id = "collection_id"
     created_at = "created_at"
     updated_at = "updated_at"
-    deleted_at = "deleted_at"
 
 
 """
@@ -324,10 +298,10 @@ class HostOrganismAggregateFunctions:
 
     sum: Optional[HostOrganismNumericalColumns] = None
     avg: Optional[HostOrganismNumericalColumns] = None
-    min: Optional[HostOrganismMinMaxColumns] = None
-    max: Optional[HostOrganismMinMaxColumns] = None
     stddev: Optional[HostOrganismNumericalColumns] = None
     variance: Optional[HostOrganismNumericalColumns] = None
+    min: Optional[HostOrganismMinMaxColumns] = None
+    max: Optional[HostOrganismMinMaxColumns] = None
 
 
 """
@@ -349,22 +323,20 @@ Mutation types
 
 @strawberry.input()
 class HostOrganismCreateInput:
-    collection_id: int
     name: str
     version: str
     category: HostOrganismCategory
     is_deuterostome: bool
-    sequence_id: Optional[strawberry.ID] = None
+    producing_run_id: Optional[strawberry.ID] = None
+    collection_id: int
 
 
 @strawberry.input()
 class HostOrganismUpdateInput:
-    collection_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
     category: Optional[HostOrganismCategory] = None
     is_deuterostome: Optional[bool] = None
-    sequence_id: Optional[strawberry.ID] = None
 
 
 """
@@ -436,17 +408,25 @@ async def create_host_organism(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> db.Entity:
     """
     Create a new HostOrganism object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = HostOrganismCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
-    # Validate that user can create entity in this collection
-    attr = {"collection_id": input.collection_id}
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        del params["producing_run_id"]
+    # Validate that the user can create entities in this collection
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.HostOrganism.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
+
+    # Validate that the user can read all of the entities they're linking to.
 
     # Save to DB
     params["owner_user_id"] = int(principal.id)
@@ -463,33 +443,32 @@ async def update_host_organism(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
 ) -> Sequence[db.Entity]:
     """
     Update HostOrganism objects. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = HostOrganismUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Need at least one thing to update
     num_params = len([x for x in params if params[x] is not None])
     if num_params == 0:
         raise PlatformicsException("No fields to update")
 
+    # Validate that the user can read all of the entities they're linking to.
+
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
     if len(entities) == 0:
         raise PlatformicsException("Unauthorized: Cannot update entities")
 
-    # Validate that the user has access to the new collection ID
-    if input.collection_id:
-        attr = {"collection_id": input.collection_id}
-        resource = Resource(id="SOME_ID", kind=db.HostOrganism.__tablename__, attr=attr)
-        if not cerbos_client.is_allowed(CerbosAction.UPDATE, principal, resource):
-            raise PlatformicsException("Unauthorized: Cannot access new collection")
-
     # Update DB
+    updated_at = datetime.datetime.now()
     for entity in entities:
+        entity.updated_at = updated_at
         for key in params:
-            if params[key]:
+            if params[key] is not None:
                 setattr(entity, key, params[key])
     await session.commit()
     return entities
