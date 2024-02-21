@@ -108,13 +108,6 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     human_host.version = "v1-hg38"
     human_host.category = HostOrganismCategory.human
     human_host.is_deuterostome = True
-
-    human_host.sequence = uri_file(
-        "https://czid-public-references.s3.amazonaws.com/consensus-genome/hg38.fa.gz",
-        human_host,
-        "sequence",
-        "fasta",
-    )
     session.add(human_host)
 
     sars_cov2_reference = session.create_or_fetch_entity(ReferenceGenome, name="MN908947.3")
