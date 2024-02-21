@@ -13,11 +13,13 @@ setup(
     py_modules=["sample"],
     python_requires=">=3.6",
     setup_requires=[],
-    install_requires=["miniwdl"],
+    install_requires=["sgqlc"],
     reentry_register=True,
     entry_points={
         "czid.plugin.input_loader": [
-            "sample = sample:SampleInputLoader",
+            "sample = entities:SampleInputLoader",
+            "sequencing_read = entities:SequencingReadInputLoader",
+            "ncbi_index = entities:IndexFileInputLoader",
         ],
     },
 )
