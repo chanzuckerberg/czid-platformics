@@ -188,17 +188,6 @@ IndexFile {
     date created_at  
     date updated_at  
 }
-PhylogeneticTree {
-    PhylogeneticTreeFormat format  
-    uuid entity_id  
-    uuid id  
-    string type  
-    uuid producing_run_id  
-    integer owner_user_id  
-    integer collection_id  
-    date created_at  
-    date updated_at  
-}
 BulkDownload {
     BulkDownloadType download_type  
     string download_display_name  
@@ -261,7 +250,6 @@ UpstreamDatabase ||--}o Accession : "accessions"
 IndexFile ||--|| File : "file"
 IndexFile ||--|o UpstreamDatabase : "upstream_database"
 IndexFile ||--|o HostOrganism : "host_organism"
-PhylogeneticTree ||--|o File : "tree"
 BulkDownload ||--|o File : "file"
 
 ```

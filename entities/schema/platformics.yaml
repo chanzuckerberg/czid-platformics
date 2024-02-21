@@ -109,11 +109,6 @@ enums:
       level_phylum:
       level_kingdom:
       level_superkingdom:
-  PhylogeneticTreeFormat:
-    permissible_values:
-      newick:
-      auspice_v1:
-      auspice_v2:
   BulkDownloadType:
     permissible_values:
       concatenate:
@@ -776,24 +771,6 @@ classes:
       plural: IndexFiles
 
 
-  # ----------------------------------------------------------------------------
-  # Phylogenetic tree
-  # ----------------------------------------------------------------------------
-  PhylogeneticTree:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      tree:
-        range: File
-        readonly: true
-        annotations:
-          cascade_delete: true
-      format:
-        range: PhylogeneticTreeFormat
-        required: true
-    annotations:
-      plural: PhylogeneticTrees
 
 
   # ----------------------------------------------------------------------------
