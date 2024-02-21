@@ -45,25 +45,27 @@ CASES_INVALID_FILES = {
 
 BUCKET = "local-bucket"
 
+@mock_s3
 @pytest.fixture()
 def moto_client() -> Generator[S3Client, None, None]:
-    with mock_s3():
-        client = boto3.client("s3")
-        client.create_bucket(Bucket="local-bucket")
-        yield client 
+    client = boto3.client("s3")
+    client.create_bucket(Bucket="local-bucket")
+    yield client 
 
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_valid_files(format: str, moto_client: S3Client) -> None:
     for i, value in enumerate(CASES_VALID_FILES[format]):
-        moto_client.put_object(Bucket=BUCKET, Key=f"valid-{i}.{format}", Body=value)
-        validator = get_validator(format)(moto_client, BUCKET, f"valid.{format}")
+        key = f"valid-{i}.{format}"
+        moto_client.put_object(Bucket=BUCKET, Key=key, Body=value)
+        validator = get_validator(format)(moto_client, BUCKET, key)
         validator.validate()
 
 
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_invalid_files(format: str, moto_client: S3Client) -> None:
     for i, value in enumerate(CASES_INVALID_FILES[format]):
-        moto_client.put_object(Bucket=BUCKET, Key=f"invalid-{i}.{format}", Body=value)
-        validator = get_validator(format)(moto_client, BUCKET, f"invalid-{i}.{format}")
+        key = f"invalid-{i}.{format}"
+        moto_client.put_object(Bucket=BUCKET, Key=key, Body=value)
+        validator = get_validator(format)(moto_client, BUCKET, key)
         with pytest.raises(Exception):
             validator.validate()
