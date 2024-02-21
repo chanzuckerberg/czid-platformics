@@ -495,7 +495,7 @@ async def upload_temporary_file(
     require_system_user(principal)
     new_file = db.File(namespace=settings.DEFAULT_UPLOAD_BUCKET, path=f"{FILE_TEMPORARY_PREFIX}/{uuid6.uuid7()}")
     return MultipartUploadResponse(
-        file=new_file,
+        file=new_file,  # type: ignore
         credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
     )
 
