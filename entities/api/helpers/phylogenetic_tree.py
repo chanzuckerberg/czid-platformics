@@ -6,13 +6,12 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
-
 from typing import Any, Optional
 import strawberry
 import datetime
-import enum
 import uuid
 from support.enums import PhylogeneticTreeFormat
+
 
 @strawberry.type
 class PhylogeneticTreeGroupByOptions:
@@ -37,6 +36,6 @@ def build_phylogenetic_tree_groupby_output(
     key = keys.pop(0)
     match key:
         case _:
-            pass # TODO: log warning/error if key is not recognized
+            pass  # TODO: log warning/error if key is not recognized
     setattr(group_object, key, value)
     return group_object

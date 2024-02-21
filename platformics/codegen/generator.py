@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 from platformics.codegen.lib.linkml_wrappers import ViewWrapper
 
-DIR_CODEGEN = ["support", "api/types", "api/validators", "database/models", "cerbos/policies", "test_infra/factories"]
+DIR_CODEGEN = ["support", "api/types", "api/validators", "api/helpers", "database/models", "cerbos/policies", "test_infra/factories"]
 
 
 @click.group()
