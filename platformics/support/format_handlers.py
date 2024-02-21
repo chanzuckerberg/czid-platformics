@@ -2,6 +2,7 @@
 Logic to validate that a file of a certain format is valid
 """
 
+import gzip
 import io
 import json
 from abc import abstractmethod
@@ -29,9 +30,11 @@ class FileFormatHandler(Protocol):
         """
         Get the contents of the file
         """
-        return (
-            self.s3client.get_object(Bucket=self.bucket, Key=self.key, Range="bytes=0-1000000")["Body"].read().decode("utf-8")
-        )
+        body = self.s3client.get_object(Bucket=self.bucket, Key=self.key, Range="bytes=0-1000000")["Body"]
+        if self.key.endswith(".gz"):
+            with gzip.GzipFile(fileobj=body) as fp:
+                return fp.read().decode("utf-8")
+        return body.read().decode("utf-8")
 
     @abstractmethod
     def validate(self) -> None:

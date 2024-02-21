@@ -4,7 +4,10 @@ Validate that format handlers work as expected
 
 import pytest
 from platformics.support.format_handlers import get_validator
+from typing import Generator
 
+import boto3
+from moto import mock_s3
 from mypy_boto3_s3 import S3Client
 
 CASES_VALID_FILES = {
@@ -41,6 +44,13 @@ CASES_INVALID_FILES = {
 }
 
 BUCKET = "local-bucket"
+
+@mock_s3
+@pytest.fixture()
+def moto_client() -> Generator[S3Client, None, None]:
+    client = boto3.client("s3")
+    client.create_bucket(Bucket="local-bucket")
+    yield client 
 
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_valid_files(format: str, moto_client: S3Client) -> None:
