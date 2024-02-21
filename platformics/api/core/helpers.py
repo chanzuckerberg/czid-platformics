@@ -4,7 +4,7 @@ Helper functions for working with the database.
 
 import typing
 from collections import defaultdict
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Sequence
 
 import database.models as db
 import strcase
@@ -52,9 +52,9 @@ def convert_where_clauses_to_sql(
     sa_model: Base,
     whereClause: dict[str, Any],
     order_by: Optional[list[indexedOrderByClause]],
-    group_by: Optional[ColumnElement[Any]],
+    group_by: Optional[ColumnElement[Any]] | Optional[list[Any]],
     depth: int,
-) -> Tuple[Select, list[Any]]:
+) -> Tuple[Select, list[Any], list[Any]]:
     """
     Convert a query with a where clause clause to a SQLAlchemy query.
     If order_by is provided, also return a list of order_by fields that need to be applied.
@@ -90,7 +90,7 @@ def convert_where_clauses_to_sql(
             all_joins[col]["where"] = v
         else:
             local_where_clauses[col] = v
-    for group in group_by:
+    for group in group_by: # type: ignore
         col = strcase.to_snake(group.name)
         if col in mapper.relationships: # type: ignore
             all_joins[col]["group_by"] = getattr(group, "selections")
@@ -99,7 +99,7 @@ def convert_where_clauses_to_sql(
 
     # Add the local_group_by fields to the query
     for col in local_group_by:
-        query = query.add_columns(col)
+        query = query.add_columns(col) # type: ignore
 
     # Handle related fields
     for join_field, join_info in all_joins.items():
@@ -204,10 +204,10 @@ def get_aggregate_db_query(
     principal: Principal,
     where: dict[str, Any],
     aggregate: Any,
-    group_by: Optional[ColumnElement[Any]] = None,
+    group_by: Optional[ColumnElement[Any]] | Optional[list[Any]] = None,
     depth: Optional[int] = None,
     remote: Optional[ColumnElement[Any]] = None,
-) -> Select:
+) -> Tuple[Select, list[Any]]:
     """
     Given a model class, a where clause, and an aggregate clause,
     return a SQLAlchemy query that performs the aggregations, with results
@@ -260,9 +260,9 @@ async def get_aggregate_db_rows(
     where: Any,
     aggregate: Any,
     order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
-    group_by: Optional[ColumnElement[Any]] = None,
+    group_by: Optional[ColumnElement[Any]] | Optional[list[Any]] = None,
     action: CerbosAction = CerbosAction.VIEW,
-) -> RowMapping:
+) -> Sequence[RowMapping]:
     """
     Retrieve aggregate rows from the database, filtered by the where clause and the user's permissions.
     """

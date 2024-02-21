@@ -105,7 +105,7 @@ class EntityLoader:
             self._loaders[(relationship, input_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
             return self._loaders[(relationship, input_hash)]  # type: ignore
         
-    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, selections: Optional[Any] = None) -> DataLoader:
+    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, selections: Optional[Any] = []) -> DataLoader:
         """
         Retrieve or create a DataLoader that aggregates data for the given relationship
         """
@@ -127,9 +127,13 @@ class EntityLoader:
                 if relationship.order_by:
                     order_by = [relationship.order_by]
 
-                aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
-                groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
-                groupby_selections = groupby_selections[0].selections if groupby_selections else []
+                if selections:
+                    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+                    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+                    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+                else:
+                    aggregate_selections = []
+                    groupby_selections = []
                 if not aggregate_selections:
                     raise Exception("No aggregate functions selected")
                 
