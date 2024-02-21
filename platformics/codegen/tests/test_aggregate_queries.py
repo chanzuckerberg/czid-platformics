@@ -103,7 +103,6 @@ async def test_nested_aggregate_query(
         }
     """
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    print(results)
     assert results["data"]["samples"][0]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 2
     assert results["data"]["samples"][1]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 3
 
