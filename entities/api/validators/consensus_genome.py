@@ -18,7 +18,7 @@ class ConsensusGenomeCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     taxon_id: Annotated[uuid.UUID, Field()]
-    sequence_read_id: Annotated[uuid.UUID, Field()]
+    sequencing_read_id: Annotated[uuid.UUID, Field()]
     reference_genome_id: Annotated[uuid.UUID | None, Field()]
     accession_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]

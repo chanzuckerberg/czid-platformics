@@ -44,15 +44,15 @@ class ConsensusGenome(Entity):
         foreign_keys=taxon_id,
         back_populates="consensus_genomes",
     )
-    sequence_read_id: Mapped[uuid.UUID] = mapped_column(
+    sequencing_read_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("sequencing_read.entity_id"),
         nullable=False,
         index=True,
     )
-    sequence_read: Mapped["SequencingRead"] = relationship(
+    sequencing_read: Mapped["SequencingRead"] = relationship(
         "SequencingRead",
-        foreign_keys=sequence_read_id,
+        foreign_keys=sequencing_read_id,
         back_populates="consensus_genomes",
     )
     reference_genome_id: Mapped[uuid.UUID] = mapped_column(

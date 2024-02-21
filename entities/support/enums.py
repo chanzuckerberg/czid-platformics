@@ -71,13 +71,6 @@ class TaxonLevel(enum.Enum):
 
 
 @strawberry.enum
-class PhylogeneticTreeFormat(enum.Enum):
-    newick = "newick"
-    auspice_v1 = "auspice_v1"
-    auspice_v2 = "auspice_v2"
-
-
-@strawberry.enum
 class BulkDownloadType(enum.Enum):
     concatenate = "concatenate"
     zip = "zip"
