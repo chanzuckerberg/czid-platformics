@@ -41,9 +41,10 @@ from api.types.entities import Entity
 from strawberry.scalars import JSON
 from strawberry.types import Info
 
+FILE_TEMPORARY_PREFIX = "tmp"
 FILE_CONCATENATION_MAX = 200
 FILE_CONCATENATION_MAX_SIZE = 50e3  # SARS-CoV-2 genome is ~30kbp
-FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
+FILE_CONCATENATION_PREFIX = f"{FILE_TEMPORARY_PREFIX}/concatenated-files"
 FILE_CONTENTS_MAX_SIZE = 1e6  # 1MB
 UPLOADS_PREFIX = "uploads"
 
@@ -479,6 +480,24 @@ async def create_or_upload_file(
             file=new_file,  # type: ignore
             credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
         )
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def upload_temporary_file(
+    expiration: int = 3600,
+    principal: Principal = Depends(require_auth_principal),
+    sts_client: STSClient = Depends(get_sts_client),
+    settings: APISettings = Depends(get_settings),
+) -> MultipartUploadResponse:
+    """
+    Generate upload tokens to upload files to S3 for temporary use. Only system users can do this.
+    """
+    require_system_user(principal)
+    new_file = db.File(namespace=settings.DEFAULT_UPLOAD_BUCKET, path=f"{FILE_TEMPORARY_PREFIX}/{uuid6.uuid7()}")
+    return MultipartUploadResponse(
+        file=new_file,
+        credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
+    )
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

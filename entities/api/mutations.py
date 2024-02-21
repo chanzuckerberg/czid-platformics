@@ -11,6 +11,7 @@ from api.files import (
     File,
     create_file,
     upload_file,
+    upload_temporary_file,
     mark_upload_complete,
     concatenate_files,
     SignedURL,
@@ -55,6 +56,7 @@ class Mutation:
     # File mutations
     create_file: File = create_file
     upload_file: MultipartUploadResponse = upload_file
+    upload_temporary_file: MultipartUploadResponse = upload_temporary_file
     mark_upload_complete: File = mark_upload_complete
     concatenate_files: SignedURL = concatenate_files
 
