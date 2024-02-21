@@ -1,10 +1,9 @@
 import os
-import typing
 
 from sgqlc.operation import Operation
 
 from database.models.workflow_version import WorkflowVersion
-from manifest.manifest import EntityInput, Primitive
+from manifest.manifest import EntityInput
 from platformics.client.entities_schema import (
     AccessionWhereClause,
     Query,
@@ -12,6 +11,7 @@ from platformics.client.entities_schema import (
     SequencingReadWhereClause,
     UUIDComparators,
 )
+from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import InputLoader
 
 PUBLIC_REFERENCES_PREFIX = "s3://czid-public-references/consensus_genome"
@@ -66,9 +66,9 @@ class ConsensusGenomeInputLoader(InputLoader):
         self,
         workflow_version: WorkflowVersion,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
+        raw_inputs: dict[str, JSONValue],
         requested_outputs: list[str] = [],
-    ) -> dict[str, str]:
+    ) -> dict[str, JSONValue]:
         sars_cov_2 = raw_inputs.get("sars_cov_2", False)
 
         sequencing_read_input = entity_inputs["sequencing_read"]
@@ -103,7 +103,7 @@ class ConsensusGenomeInputLoader(InputLoader):
             reference_genome = resp["data"]["referenceGenomes"][0]
             reference_fasta_uri = self._uri_file(reference_genome.get("file"))
 
-        inputs: dict[str, Primitive] = {}
+        inputs: dict[str, JSONValue] = {}
         if sars_cov_2:
             inputs["ref_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/{SARS_COV_2_ACCESSION_ID}.fa"
             if sequencing_read["technology"] == "Nanopore":

@@ -1,4 +1,3 @@
-import typing
 from database.models.workflow_run import WorkflowRun
 from sgqlc.operation import Operation
 from manifest.manifest import EntityInput
@@ -12,6 +11,7 @@ from platformics.client.entities_schema import (
     StrComparators,
     ID,
 )
+from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import OutputLoader
 
 
@@ -24,8 +24,8 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         self,
         workflow_run: WorkflowRun,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
-        workflow_outputs: dict[str, str],
+        raw_inputs: dict[str, JSONValue],
+        workflow_outputs: dict[str, JSONValue],
     ) -> None:
         if raw_inputs.get("sars_cov_2"):
             op = Operation(Query)
@@ -58,6 +58,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         consensus_genome_id = res["data"]["createConsensusGenome"]["id"]
         op = Operation(Mutation)
         sequence_path = workflow_outputs["sequence"]
+        assert isinstance(sequence_path, str)
         sequence_file = op.create_file(
             entity_id=consensus_genome_id,
             entity_field_name="sequence",
@@ -67,6 +68,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         self._entities_gql(op)
         op = Operation(Mutation)
         intermediate_outputs_path = workflow_outputs["intermediate_outputs"]
+        assert isinstance(intermediate_outputs_path, str)
         intermediate_outputs = op.create_file(
             entity_id=consensus_genome_id,
             entity_field_name="intermediate_outputs",

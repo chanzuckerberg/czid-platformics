@@ -1,4 +1,3 @@
-import typing
 from sgqlc.operation import Operation
 from database.models.workflow_version import WorkflowVersion
 from manifest.manifest import EntityInput
@@ -11,6 +10,7 @@ from platformics.client.entities_schema import (
     UUIDComparators,
     StrComparators,
 )
+from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import InputLoader
 
 
@@ -19,9 +19,9 @@ class SampleInputLoader(InputLoader):
         self,
         workflow_version: WorkflowVersion,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
+        raw_inputs: dict[str, JSONValue],
         requested_outputs: list[str] = [],
-    ) -> dict[str, str]:
+    ) -> dict[str, JSONValue]:
         sample_input = entity_inputs["sample"]
         op = Operation(Query)
         samples = op.samples(where=SampleWhereClause(id=UUIDComparators(_eq=sample_input.entity_id)))
@@ -37,9 +37,9 @@ class SequencingReadInputLoader(InputLoader):
         self,
         workflow_version: WorkflowVersion,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
+        raw_inputs: dict[str, JSONValue],
         requested_outputs: list[str] = [],
-    ) -> dict[str, str]:
+    ) -> dict[str, JSONValue]:
         sequencing_read_input = entity_inputs["sequencing_read"]
         op = Operation(Query)
         sequencing_reads = op.sequencing_reads(
@@ -63,9 +63,9 @@ class IndexFileInputLoader(InputLoader):
         self,
         workflow_version: WorkflowVersion,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
+        raw_inputs: dict[str, JSONValue],
         requested_outputs: list[str] = [],
-    ) -> dict[str, str]:
+    ) -> dict[str, JSONValue]:
         ncbi_index_version = raw_inputs["ncbi_index_version"]
         op = Operation(Query)
         index_files = op.index_files(

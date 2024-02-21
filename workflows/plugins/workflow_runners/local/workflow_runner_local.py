@@ -17,6 +17,7 @@ from pathlib import Path
 
 import boto3
 
+from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import (
     EventBus,
     WorkflowFailedMessage,
@@ -80,7 +81,7 @@ allow_networks = ["czidnet"]"""
         self,
         event_bus: EventBus,
         workflow_path: str,
-        inputs: dict,
+        inputs: dict[str, JSONValue],
         runner_id: str,
     ) -> None:
         """Run miniwdl workflows locally"""

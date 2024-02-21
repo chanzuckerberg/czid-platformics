@@ -3,10 +3,9 @@ Module to define basic plugin types
 """
 
 import os
-import typing
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
-from typing import Any, Dict, List, Literal
+from typing import Any, Literal
 from urllib.parse import urlparse
 
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -15,6 +14,7 @@ from sgqlc.operation import Operation
 from database.models import WorkflowVersion, WorkflowRun
 from manifest.manifest import EntityInput
 from platformics.client.entities_schema import FileAccessProtocol
+from platformics.util.types_utils import JSONValue
 
 from mypy_boto3_s3 import S3Client
 
@@ -36,7 +36,7 @@ class WorkflowStartedMessage(WorkflowStatusMessage):
 
 class WorkflowSucceededMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_SUCCESS"] = "WORKFLOW_SUCCESS"
-    outputs: Dict[str, str | list[str] | None] = {}
+    outputs: dict[str, JSONValue] = {}
 
 
 class WorkflowFailedMessage(WorkflowStatusMessage):
@@ -64,7 +64,7 @@ class EventBus(ABC):
         pass
 
     @abstractmethod
-    async def poll(self) -> List[WorkflowStatusMessage]:
+    async def poll(self) -> list[WorkflowStatusMessage]:
         """Poll for new messages"""
         pass
 
@@ -73,7 +73,7 @@ class WorkflowRunner(ABC):
     """Abstract class that defines the WorkflowRunner plugins"""
 
     @abstractmethod
-    def supported_workflow_types(self) -> List[str]:
+    def supported_workflow_types(self) -> list[str]:
         """Returns the supported workflow types, ie ["WDL"]"""
         raise NotImplementedError()
 
@@ -83,7 +83,7 @@ class WorkflowRunner(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def run_workflow(self, event_bus: EventBus, workflow_path: str, inputs: dict) -> str:
+    async def run_workflow(self, event_bus: EventBus, workflow_path: str, inputs: dict[str, JSONValue]) -> str:
         """Runs a workflow"""
         raise NotImplementedError()
 
@@ -97,7 +97,7 @@ class IOLoader:
         gql_file.namespace()
         gql_file.path()
 
-    def _uri_file(self, file_result: Any) -> str:
+    def _uri_file(self, file_result: Any) -> str | None:
         if not file_result:
             return None
         return f"{file_result['protocol']}://{file_result['namespace']}/{file_result['path']}"
@@ -119,9 +119,9 @@ class InputLoader(IOLoader):
         self,
         workflow_version: WorkflowVersion,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
+        raw_inputs: dict[str, JSONValue],
         requested_outputs: list[str] = [],
-    ) -> dict[str, str]:
+    ) -> dict[str, JSONValue]:
         """Processes workflow output specified by the type constraints in
         worrkflow_output_types and returns a list of lists of entities.
         The outer list represents the order the entities
@@ -131,7 +131,7 @@ class InputLoader(IOLoader):
 
 
 class OutputLoader(IOLoader):
-    def _parse_uri(self, uri: str) -> dict[str, typing.Any]:
+    def _parse_uri(self, uri: str) -> dict[str, FileAccessProtocol | str]:
         parsed = urlparse(uri)
         return {
             "protocol": getattr(FileAccessProtocol, parsed.scheme),
@@ -144,8 +144,8 @@ class OutputLoader(IOLoader):
         self,
         workflow_run: WorkflowRun,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
-        workflow_outputs: dict[str, str],
+        raw_inputs: dict[str, JSONValue],
+        workflow_outputs: dict[str, JSONValue],
     ) -> None:
         """Processes workflow output specified by the type constraints
         in workflow_output_types and returns a list of lists of entities.

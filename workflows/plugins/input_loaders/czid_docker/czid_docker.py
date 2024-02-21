@@ -1,10 +1,10 @@
 import os
-import typing
 
 import boto3
 
 from database.models.workflow_version import WorkflowVersion
 from manifest.manifest import EntityInput
+from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import InputLoader
 
 
@@ -17,9 +17,9 @@ class CZIDDockerInputLoader(InputLoader):
         self,
         workflow_version: WorkflowVersion,
         entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, typing.Any],
+        raw_inputs: dict[str, JSONValue],
         requested_outputs: list[str] = [],
-    ) -> dict[str, str]:
+    ) -> dict[str, JSONValue]:
         name = f"consensus-genome:v{str(workflow_version.version)}"
         if os.getenv("ENVIRONMENT") == "test":
             return {"docker_image_id": name}
