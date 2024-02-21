@@ -63,6 +63,9 @@ local-clean: local-stop ## Remove everything related to the local dev environmen
 local-seed: ## Seed the dev db with a reasonable set of starting data.
 	$(docker_compose) exec $(FOLDER) python3 scripts/seed.py
 
+local-seed-%: ## Seed the dev db with a reasonable set of starting data.
+	$(docker_compose) exec $(FOLDER) python3 scripts/seed/$*.py
+
 .PHONY: local-logs
 local-logs: ## Tail the logs of the dev env containers. ex: make local-logs CONTAINER=backend
 	$(docker_compose) logs -f $(CONTAINER)

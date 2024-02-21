@@ -420,6 +420,7 @@ type File {
 
 enum FileAccessProtocol {
   s3
+  https
 }
 
 input FileCreate {
