@@ -385,14 +385,16 @@ async def resolve_upstream_databases(
     return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_upstream_database_aggregate_output(query_results: list[RowMapping]) -> UpstreamDatabaseAggregate:
+def format_upstream_database_aggregate_output(
+    query_results: Sequence[RowMapping] | RowMapping,
+) -> UpstreamDatabaseAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
     aggregate = []
     if type(query_results) is not list:
-        query_results = [query_results]
+        query_results = [query_results]  # type: ignore
     for row in query_results:
         aggregate.append(format_upstream_database_aggregate_row(row))
     return UpstreamDatabaseAggregate(aggregate=aggregate)

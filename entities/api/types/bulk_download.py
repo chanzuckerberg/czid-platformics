@@ -279,14 +279,14 @@ async def resolve_bulk_downloads(
     return await get_db_rows(db.BulkDownload, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_bulk_download_aggregate_output(query_results: list[RowMapping]) -> BulkDownloadAggregate:
+def format_bulk_download_aggregate_output(query_results: Sequence[RowMapping] | RowMapping) -> BulkDownloadAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
     aggregate = []
     if type(query_results) is not list:
-        query_results = [query_results]
+        query_results = [query_results]  # type: ignore
     for row in query_results:
         aggregate.append(format_bulk_download_aggregate_row(row))
     return BulkDownloadAggregate(aggregate=aggregate)

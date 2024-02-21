@@ -410,14 +410,14 @@ async def resolve_samples(
     return await get_db_rows(db.Sample, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_sample_aggregate_output(query_results: list[RowMapping]) -> SampleAggregate:
+def format_sample_aggregate_output(query_results: Sequence[RowMapping] | RowMapping) -> SampleAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
     aggregate = []
     if type(query_results) is not list:
-        query_results = [query_results]
+        query_results = [query_results]  # type: ignore
     for row in query_results:
         aggregate.append(format_sample_aggregate_row(row))
     return SampleAggregate(aggregate=aggregate)

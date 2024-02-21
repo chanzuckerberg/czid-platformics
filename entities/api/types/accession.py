@@ -335,14 +335,14 @@ async def resolve_accessions(
     return await get_db_rows(db.Accession, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_accession_aggregate_output(query_results: list[RowMapping]) -> AccessionAggregate:
+def format_accession_aggregate_output(query_results: Sequence[RowMapping] | RowMapping) -> AccessionAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
     aggregate = []
     if type(query_results) is not list:
-        query_results = [query_results]
+        query_results = [query_results]  # type: ignore
     for row in query_results:
         aggregate.append(format_accession_aggregate_row(row))
     return AccessionAggregate(aggregate=aggregate)
