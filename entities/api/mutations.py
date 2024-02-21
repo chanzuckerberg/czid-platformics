@@ -11,6 +11,7 @@ from api.files import (
     File,
     create_file,
     upload_file,
+    upload_temporary_file,
     mark_upload_complete,
     concatenate_files,
     SignedURL,
@@ -47,12 +48,6 @@ from api.types.upstream_database import (
     delete_upstream_database,
 )
 from api.types.index_file import IndexFile, create_index_file, update_index_file, delete_index_file
-from api.types.phylogenetic_tree import (
-    PhylogeneticTree,
-    create_phylogenetic_tree,
-    update_phylogenetic_tree,
-    delete_phylogenetic_tree,
-)
 from api.types.bulk_download import BulkDownload, create_bulk_download, delete_bulk_download
 
 
@@ -61,6 +56,7 @@ class Mutation:
     # File mutations
     create_file: File = create_file
     upload_file: MultipartUploadResponse = upload_file
+    upload_temporary_file: MultipartUploadResponse = upload_temporary_file
     mark_upload_complete: File = mark_upload_complete
     concatenate_files: SignedURL = concatenate_files
 
@@ -120,11 +116,6 @@ class Mutation:
     create_index_file: IndexFile = create_index_file
     update_index_file: Sequence[IndexFile] = update_index_file
     delete_index_file: Sequence[IndexFile] = delete_index_file
-
-    # PhylogeneticTree mutations
-    create_phylogenetic_tree: PhylogeneticTree = create_phylogenetic_tree
-    update_phylogenetic_tree: Sequence[PhylogeneticTree] = update_phylogenetic_tree
-    delete_phylogenetic_tree: Sequence[PhylogeneticTree] = delete_phylogenetic_tree
 
     # BulkDownload mutations
     create_bulk_download: BulkDownload = create_bulk_download

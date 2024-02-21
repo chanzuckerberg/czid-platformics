@@ -164,9 +164,9 @@ class RawInputArgument(BaseInputArgument):
         return self
 
     def validate_input(self, raw_input: typing.Any) -> _InputValidationErrors:
-        if self.options and raw_input.value not in self.options:
+        if self.options and raw_input not in self.options:
             yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
-        if type(raw_input.value).__name__ != self.type:
+        if type(raw_input).__name__ != self.type:
             yield InputTypeInvalid(self.name, "raw", self.type, type(raw_input.value).__name__)
 
 

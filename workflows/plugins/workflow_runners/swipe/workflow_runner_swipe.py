@@ -9,6 +9,7 @@ from uuid import uuid4
 import boto3
 
 from settings import SWIPEWorkflowRunnerSettings
+from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import EventBus, WorkflowRunner
 
 
@@ -34,7 +35,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
         self,
         event_bus: EventBus,
         workflow_path: str,
-        inputs: dict,
+        inputs: JSONValue,
     ) -> str:
         """Formats the inputs into SWIPE format and kicks off the SFN execution
 

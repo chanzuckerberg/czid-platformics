@@ -432,7 +432,9 @@ async def update_reference_genome(
         raise PlatformicsException("Unauthorized: Cannot update entities")
 
     # Update DB
+    updated_at = datetime.datetime.now()
     for entity in entities:
+        entity.updated_at = updated_at
         for key in params:
             if params[key] is not None:
                 setattr(entity, key, params[key])

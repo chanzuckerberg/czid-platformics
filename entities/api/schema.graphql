@@ -146,6 +146,7 @@ type BulkDownload implements EntityInterface & Node {
   _id: GlobalID!
   id: ID!
   downloadType: BulkDownloadType!
+  downloadDisplayName: String!
   fileId: ID
   file(where: FileWhereClause = null): File
   producingRunId: ID
@@ -171,6 +172,7 @@ type BulkDownloadAggregateFunctions {
 
 enum BulkDownloadCountColumns {
   download_type
+  download_display_name
   file
   id
   producing_run_id
@@ -182,11 +184,13 @@ enum BulkDownloadCountColumns {
 
 input BulkDownloadCreateInput {
   downloadType: BulkDownloadType!
+  downloadDisplayName: String!
   producingRunId: ID = null
   collectionId: Int!
 }
 
 type BulkDownloadMinMaxColumns {
+  downloadDisplayName: String
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -200,6 +204,7 @@ type BulkDownloadNumericalColumns {
 
 input BulkDownloadOrderByClause {
   downloadType: orderBy
+  downloadDisplayName: orderBy
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -227,6 +232,7 @@ input BulkDownloadTypeEnumComparators {
 
 input BulkDownloadWhereClause {
   downloadType: BulkDownloadTypeEnumComparators
+  downloadDisplayName: StrComparators
   id: UUIDComparators
   producingRunId: UUIDComparators
   ownerUserId: IntComparators
@@ -244,7 +250,7 @@ type ConsensusGenome implements EntityInterface & Node {
   _id: GlobalID!
   id: ID!
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
-  sequenceRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
+  sequencingRead(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): SequencingRead
   referenceGenome(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): ReferenceGenome
   accession(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): Accession
   sequenceId: ID
@@ -284,7 +290,7 @@ type ConsensusGenomeConnection {
 
 enum ConsensusGenomeCountColumns {
   taxon
-  sequence_read
+  sequencing_read
   reference_genome
   accession
   sequence
@@ -300,7 +306,7 @@ enum ConsensusGenomeCountColumns {
 
 input ConsensusGenomeCreateInput {
   taxonId: ID!
-  sequenceReadId: ID!
+  sequencingReadId: ID!
   referenceGenomeId: ID = null
   accessionId: ID = null
   producingRunId: ID = null
@@ -330,7 +336,7 @@ type ConsensusGenomeNumericalColumns {
 
 input ConsensusGenomeOrderByClause {
   taxon: TaxonOrderByClause
-  sequenceRead: SequencingReadOrderByClause
+  sequencingRead: SequencingReadOrderByClause
   referenceGenome: ReferenceGenomeOrderByClause
   accession: AccessionOrderByClause
   metrics: MetricConsensusGenomeOrderByClause
@@ -344,7 +350,7 @@ input ConsensusGenomeOrderByClause {
 
 input ConsensusGenomeWhereClause {
   taxon: TaxonWhereClause
-  sequenceRead: SequencingReadWhereClause
+  sequencingRead: SequencingReadWhereClause
   referenceGenome: ReferenceGenomeWhereClause
   accession: AccessionWhereClause
   metrics: MetricConsensusGenomeWhereClause
@@ -414,6 +420,7 @@ type File {
 
 enum FileAccessProtocol {
   s3
+  https
 }
 
 input FileCreate {
@@ -599,8 +606,6 @@ type HostOrganism implements EntityInterface & Node {
     last: Int = null
   ): IndexFileConnection!
   indexesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate
-  sequenceId: ID
-  sequence(where: FileWhereClause = null): File
   samples(
     where: SampleWhereClause = null
     orderBy: [SampleOrderByClause!] = []
@@ -664,7 +669,6 @@ enum HostOrganismCountColumns {
   category
   is_deuterostome
   indexes
-  sequence
   samples
   id
   producing_run_id
@@ -1253,9 +1257,6 @@ type Mutation {
   createIndexFile(input: IndexFileCreateInput!): IndexFile!
   updateIndexFile(input: IndexFileUpdateInput!, where: IndexFileWhereClauseMutations!): [IndexFile!]!
   deleteIndexFile(where: IndexFileWhereClauseMutations!): [IndexFile!]!
-  createPhylogeneticTree(input: PhylogeneticTreeCreateInput!): PhylogeneticTree!
-  updatePhylogeneticTree(input: PhylogeneticTreeUpdateInput!, where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
-  deletePhylogeneticTree(where: PhylogeneticTreeWhereClauseMutations!): [PhylogeneticTree!]!
   createBulkDownload(input: BulkDownloadCreateInput!): BulkDownload!
   deleteBulkDownload(where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
 }
@@ -1298,109 +1299,6 @@ type PageInfo {
   endCursor: String
 }
 
-type PhylogeneticTree implements EntityInterface & Node {
-  """The Globally Unique ID of this object"""
-  _id: GlobalID!
-  id: ID!
-  treeId: ID
-  tree(where: FileWhereClause = null): File
-  format: PhylogeneticTreeFormat!
-  producingRunId: ID
-  ownerUserId: Int!
-  collectionId: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime
-}
-
-type PhylogeneticTreeAggregate {
-  aggregate: PhylogeneticTreeAggregateFunctions
-}
-
-type PhylogeneticTreeAggregateFunctions {
-  sum: PhylogeneticTreeNumericalColumns
-  avg: PhylogeneticTreeNumericalColumns
-  stddev: PhylogeneticTreeNumericalColumns
-  variance: PhylogeneticTreeNumericalColumns
-  min: PhylogeneticTreeMinMaxColumns
-  max: PhylogeneticTreeMinMaxColumns
-  count(distinct: Boolean = false, columns: PhylogeneticTreeCountColumns = null): Int
-}
-
-enum PhylogeneticTreeCountColumns {
-  tree
-  format
-  id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-}
-
-input PhylogeneticTreeCreateInput {
-  format: PhylogeneticTreeFormat!
-  producingRunId: ID = null
-  collectionId: Int!
-}
-
-enum PhylogeneticTreeFormat {
-  newick
-  auspice_v1
-  auspice_v2
-}
-
-input PhylogeneticTreeFormatEnumComparators {
-  _eq: PhylogeneticTreeFormat
-  _neq: PhylogeneticTreeFormat
-  _in: [PhylogeneticTreeFormat!]
-  _nin: [PhylogeneticTreeFormat!]
-  _gt: PhylogeneticTreeFormat
-  _gte: PhylogeneticTreeFormat
-  _lt: PhylogeneticTreeFormat
-  _lte: PhylogeneticTreeFormat
-  _is_null: PhylogeneticTreeFormat
-}
-
-type PhylogeneticTreeMinMaxColumns {
-  ownerUserId: Int
-  collectionId: Int
-  createdAt: DateTime
-  updatedAt: DateTime
-}
-
-type PhylogeneticTreeNumericalColumns {
-  ownerUserId: Int
-  collectionId: Int
-}
-
-input PhylogeneticTreeOrderByClause {
-  format: orderBy
-  id: orderBy
-  producingRunId: orderBy
-  ownerUserId: orderBy
-  collectionId: orderBy
-  createdAt: orderBy
-  updatedAt: orderBy
-}
-
-input PhylogeneticTreeUpdateInput {
-  format: PhylogeneticTreeFormat = null
-}
-
-input PhylogeneticTreeWhereClause {
-  format: PhylogeneticTreeFormatEnumComparators
-  id: UUIDComparators
-  producingRunId: UUIDComparators
-  ownerUserId: IntComparators
-  collectionId: IntComparators
-  createdAt: DatetimeComparators
-  updatedAt: DatetimeComparators
-}
-
-input PhylogeneticTreeWhereClauseMutations {
-  id: UUIDComparators
-}
-
 type Query {
   node(
     """The ID of the object."""
@@ -1423,7 +1321,6 @@ type Query {
   taxa(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): [Taxon!]!
   upstreamDatabases(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): [UpstreamDatabase!]!
   indexFiles(where: IndexFileWhereClause = null, orderBy: [IndexFileOrderByClause!] = []): [IndexFile!]!
-  phylogeneticTrees(where: PhylogeneticTreeWhereClause = null, orderBy: [PhylogeneticTreeOrderByClause!] = []): [PhylogeneticTree!]!
   bulkDownloads(where: BulkDownloadWhereClause = null, orderBy: [BulkDownloadOrderByClause!] = []): [BulkDownload!]!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
@@ -1437,7 +1334,6 @@ type Query {
   taxaAggregate(where: TaxonWhereClause = null): TaxonAggregate!
   upstreamDatabasesAggregate(where: UpstreamDatabaseWhereClause = null): UpstreamDatabaseAggregate!
   indexFilesAggregate(where: IndexFileWhereClause = null): IndexFileAggregate!
-  phylogeneticTreesAggregate(where: PhylogeneticTreeWhereClause = null): PhylogeneticTreeAggregate!
   bulkDownloadsAggregate(where: BulkDownloadWhereClause = null): BulkDownloadAggregate!
 }
 

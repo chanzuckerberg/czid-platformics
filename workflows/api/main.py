@@ -130,9 +130,9 @@ async def run_workflow_version(
 
     input_errors = list(manifest.validate_inputs(entity_inputs, raw_inputs))
     if input_errors:
-        raise PlatformicsException(f"Invalid input: {', '.join([str(input_error) for input_error in input_errors])}")
+        raise PlatformicsException(f"Invalid input: {', '.join(e.message() for e in input_errors)}")
 
-    raw_inputs_json = {}
+    workflow_runner_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:
         loader_entity_inputs = {
             k: entity_inputs[v] for k, v in input_loader_specifier.inputs.items() if v in entity_inputs
@@ -147,12 +147,11 @@ async def run_workflow_version(
         )
         for k, v in input_loader_specifier.outputs.items():
             if k not in input_loader_outputs:
-                loader_label = f"{input_loader_specifier.name} ({input_loader_specifier.version})"
-                raise PlatformicsException(f"Input loader  {loader_label}) did not produce output {k}")
+                continue
 
-            if v in entity_inputs:
+            if v in workflow_runner_inputs_json:
                 raise PlatformicsException(f"Duplicate raw input {v}")
-            raw_inputs_json[v] = input_loader_outputs[k]
+            workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
     status = "PENDING"
     execution_id = None
@@ -160,7 +159,7 @@ async def run_workflow_version(
         execution_id = await workflow_runner.run_workflow(
             event_bus=event_bus,
             workflow_path=workflow_version.workflow_uri,
-            inputs=raw_inputs_json,
+            inputs=workflow_runner_inputs_json,
         )
     except Exception:
         status = "FAILED"
@@ -171,7 +170,8 @@ async def run_workflow_version(
         workflow_version_id=workflow_version.id,
         status=status,
         execution_id=execution_id,
-        raw_inputs_json=json.dumps(raw_inputs_json),
+        raw_inputs_json=json.dumps(raw_inputs),
+        workflow_runner_inputs_json=json.dumps(workflow_runner_inputs_json),
         entity_inputs=[
             db.WorkflowRunEntityInput(
                 owner_user_id=int(principal.id),

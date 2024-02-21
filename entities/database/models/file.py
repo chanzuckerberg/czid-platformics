@@ -1,7 +1,9 @@
+import datetime
 import uuid
 import uuid6
 from platformics.database.models.base import Base, Entity
-from sqlalchemy import Column, ForeignKey, Integer, String, Enum, event
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Enum, event
+from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, Mapper, relationship
 from sqlalchemy.engine import Connection
@@ -32,6 +34,10 @@ class File(Base):
     size: Mapped[int] = mapped_column(Integer, nullable=True)
     upload_client: Mapped[FileUploadClient] = mapped_column(Enum(FileUploadClient, native_enum=False), nullable=True)
     upload_error: Mapped[str] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 @event.listens_for(File, "before_delete")

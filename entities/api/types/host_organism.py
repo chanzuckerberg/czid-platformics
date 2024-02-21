@@ -9,14 +9,13 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.host_organism import HostOrganismCreateInputValidator, HostOrganismUpdateInputValidator
-from api.files import File, FileWhereClause
 from api.types.entities import EntityInterface
 from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
 from api.types.sample import SampleAggregate, format_sample_aggregate_output
@@ -138,31 +137,6 @@ async def load_sample_aggregate_rows(
 
 """
 ------------------------------------------------------------------------------
-Dataloader for File object
-------------------------------------------------------------------------------
-"""
-
-
-def load_files_from(attr_name: str) -> Callable:
-    @strawberry.field
-    async def load_files(
-        root: "HostOrganism",
-        info: Info,
-        where: Annotated["FileWhereClause", strawberry.lazy("api.files")] | None = None,
-    ) -> Optional[Annotated["File", strawberry.lazy("api.files")]]:
-        """
-        Given a list of HostOrganism IDs for a certain file type, return related Files
-        """
-        dataloader = info.context["sqlalchemy_loader"]
-        mapper = inspect(db.HostOrganism)
-        relationship = mapper.relationships[attr_name]
-        return await dataloader.loader_for(relationship, where).load(getattr(root, f"{attr_name}_id"))  # type:ignore
-
-    return load_files
-
-
-"""
-------------------------------------------------------------------------------
 Define Strawberry GQL types
 ------------------------------------------------------------------------------
 """
@@ -235,8 +209,6 @@ class HostOrganism(EntityInterface):
     indexes_aggregate: Optional[
         Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]
     ] = load_index_file_aggregate_rows  # type:ignore
-    sequence_id: Optional[strawberry.ID]
-    sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
     samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
     samples_aggregate: Optional[
         Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
@@ -300,7 +272,6 @@ class HostOrganismCountColumns(enum.Enum):
     category = "category"
     is_deuterostome = "is_deuterostome"
     indexes = "indexes"
-    sequence = "sequence"
     samples = "samples"
     id = "id"
     producing_run_id = "producing_run_id"
@@ -493,7 +464,9 @@ async def update_host_organism(
         raise PlatformicsException("Unauthorized: Cannot update entities")
 
     # Update DB
+    updated_at = datetime.datetime.now()
     for entity in entities:
+        entity.updated_at = updated_at
         for key in params:
             if params[key] is not None:
                 setattr(entity, key, params[key])

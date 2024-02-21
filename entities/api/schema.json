@@ -785,54 +785,6 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PhylogeneticTreeWhereClause",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "[]",
-                  "name": "orderBy",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "INPUT_OBJECT",
-                        "name": "PhylogeneticTreeOrderByClause",
-                        "ofType": null
-                      }
-                    }
-                  }
-                }
-              ],
-              "name": "phylogeneticTrees",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "PhylogeneticTree",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
                     "name": "BulkDownloadWhereClause",
                     "ofType": null
                   }
@@ -1157,29 +1109,6 @@
                   "name": "where",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PhylogeneticTreeWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "phylogeneticTreesAggregate",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PhylogeneticTreeAggregate",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
                     "name": "BulkDownloadWhereClause",
                     "ofType": null
                   }
@@ -1283,11 +1212,6 @@
             {
               "kind": "OBJECT",
               "name": "Metadatum",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
-              "name": "PhylogeneticTree",
               "ofType": null
             },
             {
@@ -1883,6 +1807,9 @@
           "enumValues": [
             {
               "name": "s3"
+            },
+            {
+              "name": "https"
             }
           ],
           "fields": null,
@@ -2861,11 +2788,6 @@
             },
             {
               "kind": "OBJECT",
-              "name": "PhylogeneticTree",
-              "ofType": null
-            },
-            {
-              "kind": "OBJECT",
               "name": "BulkDownload",
               "ofType": null
             }
@@ -3062,34 +2984,6 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "IndexFileAggregate",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "sequenceId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "sequence",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
                 "ofType": null
               }
             },
@@ -5130,7 +5024,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceRead",
+              "name": "sequencingRead",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "SequencingReadWhereClause",
@@ -7397,7 +7291,7 @@
                   }
                 }
               ],
-              "name": "sequenceRead",
+              "name": "sequencingRead",
               "type": {
                 "kind": "OBJECT",
                 "name": "SequencingRead",
@@ -9302,7 +9196,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceRead",
+              "name": "sequencingRead",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "SequencingReadOrderByClause",
@@ -9959,7 +9853,7 @@
               "name": "taxon"
             },
             {
-              "name": "sequence_read"
+              "name": "sequencing_read"
             },
             {
               "name": "reference_genome"
@@ -12766,423 +12660,6 @@
             },
             {
               "args": [],
-              "name": "treeId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "null",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "FileWhereClause",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "tree",
-              "type": {
-                "kind": "OBJECT",
-                "name": "File",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "format",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "PhylogeneticTreeFormat",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "createdAt",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "DateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "updatedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [
-            {
-              "kind": "INTERFACE",
-              "name": "EntityInterface",
-              "ofType": null
-            },
-            {
-              "kind": "INTERFACE",
-              "name": "Node",
-              "ofType": null
-            }
-          ],
-          "kind": "OBJECT",
-          "name": "PhylogeneticTree",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "newick"
-            },
-            {
-              "name": "auspice_v1"
-            },
-            {
-              "name": "auspice_v2"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "PhylogeneticTreeFormat",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "format",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "PhylogeneticTreeFormatEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "IntComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "createdAt",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "DatetimeComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "updatedAt",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "DatetimeComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PhylogeneticTreeWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "_eq",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_neq",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_in",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "PhylogeneticTreeFormat",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nin",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "PhylogeneticTreeFormat",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gt",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gte",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lt",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lte",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_is_null",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PhylogeneticTreeFormatEnumComparators",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "format",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "producingRunId",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "ownerUserId",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "createdAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "updatedAt",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PhylogeneticTreeOrderByClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "_id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "GlobalID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "id",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "downloadType",
               "type": {
                 "kind": "NON_NULL",
@@ -13190,6 +12667,19 @@
                 "ofType": {
                   "kind": "ENUM",
                   "name": "BulkDownloadType",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 }
               }
@@ -13323,6 +12813,15 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "BulkDownloadTypeEnumComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
                 "ofType": null
               }
             },
@@ -13500,6 +12999,15 @@
             {
               "defaultValue": null,
               "name": "downloadType",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "downloadDisplayName",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -14235,9 +13743,6 @@
             },
             {
               "name": "indexes"
-            },
-            {
-              "name": "sequence"
             },
             {
               "name": "samples"
@@ -15023,225 +14528,6 @@
               "name": "aggregate",
               "type": {
                 "kind": "OBJECT",
-                "name": "PhylogeneticTreeAggregateFunctions",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "PhylogeneticTreeAggregate",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "sum",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "avg",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "stddev",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "variance",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeNumericalColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "min",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "max",
-              "type": {
-                "kind": "OBJECT",
-                "name": "PhylogeneticTreeMinMaxColumns",
-                "ofType": null
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": "false",
-                  "name": "distinct",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Boolean",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": "null",
-                  "name": "columns",
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "PhylogeneticTreeCountColumns",
-                    "ofType": null
-                  }
-                }
-              ],
-              "name": "count",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "PhylogeneticTreeAggregateFunctions",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "PhylogeneticTreeNumericalColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "ownerUserId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "createdAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "updatedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": null,
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "PhylogeneticTreeMinMaxColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "tree"
-            },
-            {
-              "name": "format"
-            },
-            {
-              "name": "id"
-            },
-            {
-              "name": "producing_run_id"
-            },
-            {
-              "name": "owner_user_id"
-            },
-            {
-              "name": "collection_id"
-            },
-            {
-              "name": "created_at"
-            },
-            {
-              "name": "updated_at"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "PhylogeneticTreeCountColumns",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": [
-            {
-              "args": [],
-              "name": "aggregate",
-              "type": {
-                "kind": "OBJECT",
                 "name": "BulkDownloadAggregateFunctions",
                 "ofType": null
               }
@@ -15378,6 +14664,15 @@
           "fields": [
             {
               "args": [],
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -15423,6 +14718,9 @@
           "enumValues": [
             {
               "name": "download_type"
+            },
+            {
+              "name": "download_display_name"
             },
             {
               "name": "file"
@@ -16823,116 +16121,6 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "PhylogeneticTreeCreateInput",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "createPhylogeneticTree",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PhylogeneticTree",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "PhylogeneticTreeUpdateInput",
-                      "ofType": null
-                    }
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "name": "where",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "PhylogeneticTreeWhereClauseMutations",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "updatePhylogeneticTree",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "PhylogeneticTree",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "where",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "PhylogeneticTreeWhereClauseMutations",
-                      "ofType": null
-                    }
-                  }
-                }
-              ],
-              "name": "deletePhylogeneticTree",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "OBJECT",
-                      "name": "PhylogeneticTree",
-                      "ofType": null
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "name": "input",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
                       "name": "BulkDownloadCreateInput",
                       "ofType": null
                     }
@@ -18157,7 +17345,7 @@
             },
             {
               "defaultValue": null,
-              "name": "sequenceReadId",
+              "name": "sequencingReadId",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -19038,89 +18226,6 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "name": "format",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "PhylogeneticTreeFormat",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "producingRunId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PhylogeneticTreeCreateInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "format",
-              "type": {
-                "kind": "ENUM",
-                "name": "PhylogeneticTreeFormat",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PhylogeneticTreeUpdateInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "id",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "UUIDComparators",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "PhylogeneticTreeWhereClauseMutations",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
               "name": "downloadType",
               "type": {
                 "kind": "NON_NULL",
@@ -19128,6 +18233,19 @@
                 "ofType": {
                   "kind": "ENUM",
                   "name": "BulkDownloadType",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 }
               }

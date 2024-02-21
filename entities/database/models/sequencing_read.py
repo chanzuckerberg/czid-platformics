@@ -92,9 +92,9 @@ class SequencingRead(Entity):
     )
     consensus_genomes: Mapped[list[ConsensusGenome]] = relationship(
         "ConsensusGenome",
-        back_populates="sequence_read",
+        back_populates="sequencing_read",
         uselist=True,
-        foreign_keys="ConsensusGenome.sequence_read_id",
+        foreign_keys="ConsensusGenome.sequencing_read_id",
         cascade="all, delete-orphan",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

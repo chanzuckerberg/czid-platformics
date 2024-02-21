@@ -212,5 +212,5 @@ async def test_create_file(
             }}
         }}
     """
-    output = await gql_client.query(mutation, member_projects=[123])
+    output = await gql_client.query(mutation, member_projects=[123], service_identity="workflows")
     assert output["data"]["createFile"]["size"] == file_size
