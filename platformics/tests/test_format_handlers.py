@@ -45,12 +45,12 @@ CASES_INVALID_FILES = {
 
 BUCKET = "local-bucket"
 
-@mock_s3
 @pytest.fixture()
 def moto_client() -> Generator[S3Client, None, None]:
-    client = boto3.client("s3")
-    client.create_bucket(Bucket="local-bucket")
-    yield client 
+    with mock_s3():
+        client = boto3.client("s3")
+        client.create_bucket(Bucket="local-bucket")
+        yield client 
 
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
 def test_validation_valid_files(format: str, moto_client: S3Client) -> None:
