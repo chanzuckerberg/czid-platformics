@@ -9,13 +9,14 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Any, Annotated, Optional, Sequence
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.sample import SampleCreateInputValidator, SampleUpdateInputValidator
+from api.helpers.sample import SampleGroupByOptions, build_sample_groupby_output
 from api.types.entities import EntityInterface
 from api.types.sequencing_read import SequencingReadAggregate, format_sequencing_read_aggregate_output
 from api.types.metadatum import MetadatumAggregate, format_metadatum_aggregate_output
@@ -42,7 +43,6 @@ from strawberry import relay
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
-from api.groupby_helpers import build_sample_group_by_output, SampleGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -330,6 +330,7 @@ class SampleCountColumns(enum.Enum):
 All supported aggregation functions
 """
 
+
 @strawberry.type
 class SampleAggregateFunctions:
     # This is a hack to accept "distinct" and "columns" as arguments to "count"
@@ -350,6 +351,7 @@ class SampleAggregateFunctions:
 """
 Wrapper around SampleAggregateFunctions
 """
+
 
 @strawberry.type
 class SampleAggregate:
@@ -415,15 +417,9 @@ def format_sample_aggregate_output(query_results: list[RowMapping]) -> SampleAgg
     """
     aggregate = []
     for row in query_results:
-        print("=====")
-        # if len(aggregate) > 0:
-        #     print(aggregate[0].groupBy.host_organism.name)
-        group = format_sample_aggregate_row(row)
-        # if len(aggregate) > 0:
-        #     print(aggregate[0].groupBy.host_organism.name)
-        # print(group.groupBy.host_organism.name)
-        aggregate.append(group)
+        aggregate.append(format_sample_aggregate_row(row))
     return SampleAggregate(aggregate=aggregate)
+
 
 def format_sample_aggregate_row(row: RowMapping) -> SampleAggregateFunctions:
     """
@@ -439,23 +435,22 @@ def format_sample_aggregate_row(row: RowMapping) -> SampleAggregateFunctions:
             # Turn list of groupby keys into nested objects
             if not getattr(output, "groupBy"):
                 setattr(output, "groupBy", SampleGroupByOptions())
-
-            group = build_sample_group_by_output(getattr(output, "groupBy"), group_keys, value)
+            group = build_sample_groupby_output(getattr(output, "groupBy"), group_keys, value)
             setattr(output, "groupBy", group)
-        else: 
+        else:
             aggregate_name = aggregate[0]
             if aggregate_name == "count":
                 output.count = value
             else:
-                aggregate_fn, col_name = aggregate[0], aggregate[1]
-                if not getattr(output, aggregate_fn):
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
+                if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
-                        setattr(output, aggregate_fn, SampleMinMaxColumns())
+                        setattr(output, aggregator_fn, SampleMinMaxColumns())
                     else:
-                        setattr(output, aggregate_fn, SampleNumericalColumns())
-                setattr(getattr(output, aggregate_fn), col_name, value)
-
+                        setattr(output, aggregator_fn, SampleNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
     return output
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_samples_aggregate(
@@ -464,7 +459,7 @@ async def resolve_samples_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[SampleWhereClause] = None,
-) -> list[RowMapping]:
+) -> SampleAggregate:
     """
     Aggregate values for Sample objects. Used for queries (see api/queries.py).
     """
@@ -475,9 +470,13 @@ async def resolve_samples_aggregate(
     groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
     groupby_selections = groupby_selections[0].selections if groupby_selections else []
 
+    if not aggregate_selections:
+        raise Exception("No aggregate functions selected")
+
     rows = await get_aggregate_db_rows(db.Sample, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_sample_aggregate_output(rows)
     return aggregate_output
+
 
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def create_sample(

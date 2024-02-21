@@ -9,7 +9,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Annotated, Any, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence, Callable
 
 import database.models as db
 import strawberry
@@ -17,6 +17,7 @@ import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.consensus_genome import ConsensusGenomeCreateInputValidator
 from api.files import File, FileWhereClause
+from api.helpers.consensus_genome import ConsensusGenomeGroupByOptions, build_consensus_genome_groupby_output
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -38,14 +39,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
-from api.groupby_helpers import build_consensus_genome_group_by_output, ConsensusGenomeGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
     from api.types.taxon import TaxonOrderByClause, TaxonWhereClause, Taxon
-    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead, SequencingReadGroupByOptions
+    from api.types.sequencing_read import SequencingReadOrderByClause, SequencingReadWhereClause, SequencingRead
     from api.types.reference_genome import ReferenceGenomeOrderByClause, ReferenceGenomeWhereClause, ReferenceGenome
     from api.types.accession import AccessionOrderByClause, AccessionWhereClause, Accession
     from api.types.metric_consensus_genome import (
@@ -62,8 +62,6 @@ else:
     SequencingReadWhereClause = "SequencingReadWhereClause"
     SequencingRead = "SequencingRead"
     SequencingReadOrderByClause = "SequencingReadOrderByClause"
-    SequencingReadGroupByOptions = "SequencingReadGroupByOptions"
-    # build_sequencing_read_group_by_output = "build_sequencing_read_group_by_output"
     ReferenceGenomeWhereClause = "ReferenceGenomeWhereClause"
     ReferenceGenome = "ReferenceGenome"
     ReferenceGenomeOrderByClause = "ReferenceGenomeOrderByClause"
@@ -415,16 +413,14 @@ async def resolve_consensus_genomes(
 
 def format_consensus_genome_aggregate_output(query_results: list[RowMapping]) -> ConsensusGenomeAggregate:
     """
-    Given rows from the DB containing the results of an aggregate query,
+    Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    print(query_results)
     for row in query_results:
-        group = format_consensus_genome_aggregate_row(row)
-        aggregate.append(group)
-
+        aggregate.append(format_consensus_genome_aggregate_row(row))
     return ConsensusGenomeAggregate(aggregate=aggregate)
+
 
 def format_consensus_genome_aggregate_row(row: RowMapping) -> ConsensusGenomeAggregateFunctions:
     """
@@ -440,24 +436,22 @@ def format_consensus_genome_aggregate_row(row: RowMapping) -> ConsensusGenomeAgg
             # Turn list of groupby keys into nested objects
             if not getattr(output, "groupBy"):
                 setattr(output, "groupBy", ConsensusGenomeGroupByOptions())
-
-            group = build_consensus_genome_group_by_output(getattr(output, "groupBy"), group_keys, value)
+            group = build_consensus_genome_groupby_output(getattr(output, "groupBy"), group_keys, value)
             setattr(output, "groupBy", group)
-        else: 
+        else:
             aggregate_name = aggregate[0]
             if aggregate_name == "count":
                 output.count = value
             else:
-                aggregate_fn, col_name = aggregate[0], aggregate[1]
-                if not getattr(output, aggregate_fn):
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
+                if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
-                        setattr(output, aggregate_fn, ConsensusGenomeMinMaxColumns())
+                        setattr(output, aggregator_fn, ConsensusGenomeMinMaxColumns())
                     else:
-                        setattr(output, aggregate_fn, ConsensusGenomeNumericalColumns())
-                setattr(getattr(output, aggregate_fn), col_name, value)
-
-    # print(getattr(getattr(getattr(getattr(output, "groupBy"), "sequence_read"), "sample"), "collection_location"))
+                        setattr(output, aggregator_fn, ConsensusGenomeNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
     return output
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_consensus_genomes_aggregate(
@@ -470,13 +464,15 @@ async def resolve_consensus_genomes_aggregate(
     """
     Aggregate values for ConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
     aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
     groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
     groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise Exception("No aggregate functions selected")
 
     rows = await get_aggregate_db_rows(db.ConsensusGenome, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_consensus_genome_aggregate_output(rows)

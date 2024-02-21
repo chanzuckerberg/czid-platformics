@@ -9,13 +9,14 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 
 import typing
-from typing import TYPE_CHECKING, Any, Annotated, Optional, Sequence, Callable
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.host_organism import HostOrganismCreateInputValidator, HostOrganismUpdateInputValidator
+from api.helpers.host_organism import HostOrganismGroupByOptions, build_host_organism_groupby_output
 from api.types.entities import EntityInterface
 from api.types.index_file import IndexFileAggregate, format_index_file_aggregate_output
 from api.types.sample import SampleAggregate, format_sample_aggregate_output
@@ -44,7 +45,6 @@ from strawberry.types import Info
 from typing_extensions import TypedDict
 import enum
 from support.enums import HostOrganismCategory
-from api.groupby_helpers import HostOrganismGroupByOptions
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -303,22 +303,17 @@ class HostOrganismAggregateFunctions:
     variance: Optional[HostOrganismNumericalColumns] = None
     min: Optional[HostOrganismMinMaxColumns] = None
     max: Optional[HostOrganismMinMaxColumns] = None
+    groupBy: Optional[HostOrganismGroupByOptions] = None
 
 
 """
 Wrapper around HostOrganismAggregateFunctions
 """
 
-# @strawberry.type
-# class HostOrganismGroupByOptions:
-#     name: Optional[str] = None
-#     version: Optional[str] = None
-
 
 @strawberry.type
 class HostOrganismAggregate:
-    aggregate: Optional[HostOrganismAggregateFunctions] = None
-    group_by: Optional[HostOrganismGroupByOptions] = None
+    aggregate: Optional[list[HostOrganismAggregateFunctions]] = None
 
 
 """
@@ -367,27 +362,47 @@ async def resolve_host_organisms(
     return await get_db_rows(db.HostOrganism, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_host_organism_aggregate_output(query_results: RowMapping) -> HostOrganismAggregateFunctions:
+def format_host_organism_aggregate_output(query_results: list[RowMapping]) -> HostOrganismAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
-    output = HostOrganismAggregateFunctions()
+    aggregate = []
     for row in query_results:
-        for aggregate_name, value in row.items():
+        aggregate.append(format_host_organism_aggregate_row(row))
+    return HostOrganismAggregate(aggregate=aggregate)
+
+
+def format_host_organism_aggregate_row(row: RowMapping) -> HostOrganismAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
+    output = HostOrganismAggregateFunctions()
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", HostOrganismGroupByOptions())
+            group = build_host_organism_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
+        else:
+            aggregate_name = aggregate[0]
             if aggregate_name == "count":
                 output.count = value
             else:
-                aggregator_fn, col_name = aggregate_name.split("_", 1)
-                # Filter out the group_by key from the results if one was provided.
-                if aggregator_fn in aggregator_map.keys():
-                    if not getattr(output, aggregator_fn):
-                        if aggregate_name in ["min", "max"]:
-                            setattr(output, aggregator_fn, HostOrganismMinMaxColumns())
-                        else:
-                            setattr(output, aggregator_fn, HostOrganismNumericalColumns())
-                    setattr(getattr(output, aggregator_fn), col_name, value)
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
+                if not getattr(output, aggregator_fn):
+                    if aggregate_name in ["min", "max"]:
+                        setattr(output, aggregator_fn, HostOrganismMinMaxColumns())
+                    else:
+                        setattr(output, aggregator_fn, HostOrganismNumericalColumns())
+                setattr(getattr(output, aggregator_fn), col_name, value)
     return output
+
 
 @strawberry.field(extensions=[DependencyExtension()])
 async def resolve_host_organisms_aggregate(
@@ -400,13 +415,19 @@ async def resolve_host_organisms_aggregate(
     """
     Aggregate values for HostOrganism objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.HostOrganism, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise Exception("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.HostOrganism, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_host_organism_aggregate_output(rows)
-    return HostOrganismAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

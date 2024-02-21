@@ -16,6 +16,7 @@ import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.metadatum import MetadatumCreateInputValidator, MetadatumUpdateInputValidator
+from api.helpers.metadatum import MetadatumGroupByOptions, build_metadatum_groupby_output
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -221,6 +222,7 @@ class MetadatumAggregateFunctions:
     variance: Optional[MetadatumNumericalColumns] = None
     min: Optional[MetadatumMinMaxColumns] = None
     max: Optional[MetadatumMinMaxColumns] = None
+    groupBy: Optional[MetadatumGroupByOptions] = None
 
 
 """
@@ -230,7 +232,7 @@ Wrapper around MetadatumAggregateFunctions
 
 @strawberry.type
 class MetadatumAggregate:
-    aggregate: Optional[MetadatumAggregateFunctions] = None
+    aggregate: Optional[list[MetadatumAggregateFunctions]] = None
 
 
 """
@@ -275,19 +277,39 @@ async def resolve_metadatas(
     return await get_db_rows(db.Metadatum, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_metadatum_aggregate_output(query_results: RowMapping) -> MetadatumAggregateFunctions:
+def format_metadatum_aggregate_output(query_results: list[RowMapping]) -> MetadatumAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
+    aggregate = []
+    for row in query_results:
+        aggregate.append(format_metadatum_aggregate_row(row))
+    return MetadatumAggregate(aggregate=aggregate)
+
+
+def format_metadatum_aggregate_row(row: RowMapping) -> MetadatumAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
     output = MetadatumAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", MetadatumGroupByOptions())
+            group = build_metadatum_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
         else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
+            aggregate_name = aggregate[0]
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, MetadatumMinMaxColumns())
@@ -308,13 +330,19 @@ async def resolve_metadatas_aggregate(
     """
     Aggregate values for Metadatum objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.Metadatum, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise Exception("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.Metadatum, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_metadatum_aggregate_output(rows)
-    return MetadatumAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
