@@ -53,6 +53,10 @@ def s3_info() -> Generator[tuple[S3Client, str], None, None]:
         config=Config(s3={'addressing_style': 'path'}),
     )
     bucket = os.environ["DEFAULT_UPLOAD_BUCKET"]
+    try:
+        s3.create_bucket(Bucket=bucket)
+    except Exception:
+        pass
     for name, values in CASES_VALID_FILES.items():
         for i, value in enumerate(values):
             s3.put_object(Bucket=bucket, Key=f"valid-{i}.{name}", Body=value)
