@@ -7,6 +7,8 @@ from platformics.database.connect import SyncDB
 from platformics.codegen.conftest import GQLTestClient, SessionStorage
 from platformics.codegen.tests.output.test_infra.factories.sample import SampleFactory
 from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
+from platformics.codegen.tests.output.test_infra.factories.upstream_database import UpstreamDatabaseFactory
+from platformics.codegen.tests.output.test_infra.factories.taxon import TaxonFactory
 
 
 @pytest.mark.asyncio
@@ -60,12 +62,12 @@ async def test_basic_aggregate_query(
         }
     """
     output = await gql_client.query(query, user_id=user_id, member_projects=[project_id, secondary_project_id])
-    avg_collectionId = output["data"]["samplesAggregate"]["aggregate"]["avg"]["collectionId"]
-    count = output["data"]["samplesAggregate"]["aggregate"]["count"]
-    max_collectionLocation = output["data"]["samplesAggregate"]["aggregate"]["max"]["collectionLocation"]
-    min_collectionLocation = output["data"]["samplesAggregate"]["aggregate"]["min"]["collectionLocation"]
-    stddev_collectionId = output["data"]["samplesAggregate"]["aggregate"]["stddev"]["collectionId"]
-    sum_ownerUserId = output["data"]["samplesAggregate"]["aggregate"]["sum"]["ownerUserId"]
+    avg_collectionId = output["data"]["samplesAggregate"]["aggregate"][0]["avg"]["collectionId"]
+    count = output["data"]["samplesAggregate"]["aggregate"][0]["count"]
+    max_collectionLocation = output["data"]["samplesAggregate"]["aggregate"][0]["max"]["collectionLocation"]
+    min_collectionLocation = output["data"]["samplesAggregate"]["aggregate"][0]["min"]["collectionLocation"]
+    stddev_collectionId = output["data"]["samplesAggregate"]["aggregate"][0]["stddev"]["collectionId"]
+    sum_ownerUserId = output["data"]["samplesAggregate"]["aggregate"][0]["sum"]["ownerUserId"]
     
     assert avg_collectionId == 189
     assert count == 5
@@ -101,8 +103,9 @@ async def test_nested_aggregate_query(
         }
     """
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    assert results["data"]["samples"][0]["sequencingReadsAggregate"]["aggregate"]["count"] == 2
-    assert results["data"]["samples"][1]["sequencingReadsAggregate"]["aggregate"]["count"] == 3
+    print(results)
+    assert results["data"]["samples"][0]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 2
+    assert results["data"]["samples"][1]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 3
 
 @pytest.mark.asyncio
 async def test_count_distinct_query(
@@ -129,7 +132,7 @@ async def test_count_distinct_query(
         }
     """
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    assert results["data"]["samplesAggregate"]["aggregate"]["count"] == 4
+    assert results["data"]["samplesAggregate"]["aggregate"][0]["count"] == 4
 
     query = """
         query MyQuery {
@@ -141,4 +144,122 @@ async def test_count_distinct_query(
         }
     """
     results = await gql_client.query(query, user_id=111, member_projects=[888])
-    assert results["data"]["samplesAggregate"]["aggregate"]["count"] == 2
+    assert results["data"]["samplesAggregate"]["aggregate"][0]["count"] == 2
+
+@pytest.mark.asyncio
+async def test_groupby_query(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Test that we can perform a groupby query
+    """
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        SampleFactory.create_batch(2, owner_user_id=111, collection_id=888, collection_location="San Francisco, CA")
+        SampleFactory.create_batch(3, owner_user_id=111, collection_id=888, collection_location="Mountain View, CA")
+
+    query = """
+        query MyQuery {
+            samplesAggregate {
+                aggregate {
+                    groupBy {
+                        collectionLocation
+                    }
+                    count
+                }
+            }
+        }
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    aggregate = results["data"]["samplesAggregate"]["aggregate"]
+    for group in aggregate:
+        if group["groupBy"]["collectionLocation"] == "San Francisco, CA":
+            assert group["count"] == 2
+        elif group["groupBy"]["collectionLocation"] == "Mountain View, CA":
+            assert group["count"] == 3
+
+@pytest.mark.asyncio
+async def test_groupby_query_with_nested_fields(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Test that we can perform a groupby query with nested fields
+    """
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        sample_1 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="San Francisco, CA")
+        sample_2 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="Mountain View, CA")
+        SequencingReadFactory.create_batch(2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id)
+        SequencingReadFactory.create_batch(3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id)
+
+    query = """
+        query MyQuery {
+            sequencingReadsAggregate {
+                aggregate {
+                    groupBy {
+                        sample {
+                            collectionLocation
+                        }
+                    }
+                    count
+                }
+            }
+        }
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    aggregate = results["data"]["sequencingReadsAggregate"]["aggregate"]
+    for group in aggregate:
+        if group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA":
+            assert group["count"] == 2
+        elif group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA":
+            assert group["count"] == 3
+
+@pytest.mark.asyncio
+async def test_deeply_nested_groupby_query(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Test that we can perform a deeply nested groupby query
+    """
+
+    user_id = 12345
+    project_id = 123
+
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        SessionStorage.set_session(session)
+        upstream_db_1 = UpstreamDatabaseFactory(owner_user_id=user_id, collection_id=project_id, name="NCBI")
+        upstream_db_2 = UpstreamDatabaseFactory(owner_user_id=user_id, collection_id=project_id, name="GTDB")
+        taxon_1 = TaxonFactory(owner_user_id=user_id, collection_id=project_id, upstream_database=upstream_db_1)
+        taxon_2 = TaxonFactory(owner_user_id=user_id, collection_id=project_id, upstream_database=upstream_db_2)
+        SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, taxon=taxon_1)
+        SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, taxon=taxon_1)
+        SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, taxon=taxon_2)
+        SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, taxon=taxon_2)
+
+    query = """
+        query MyQuery {
+            sequencingReadsAggregate {
+                aggregate {
+                    count
+                    groupBy {
+                        taxon {
+                            upstreamDatabase {
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    """
+    results = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
+    aggregate = results["data"]["sequencingReadsAggregate"]["aggregate"]
+    for group in aggregate:
+        if group["groupBy"]["taxon"]["upstreamDatabase"]["name"] == "NCBI":
+            assert group["count"] == 2
+        elif group["groupBy"]["taxon"]["upstreamDatabase"]["name"] == "GTDB":
+            assert group["count"] == 2

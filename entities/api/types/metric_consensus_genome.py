@@ -383,7 +383,7 @@ def format_metric_consensus_genome_aggregate_output(query_results: list[RowMappi
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    if query_results is not list:
+    if type(query_results) is not list:
         query_results = [query_results]
     for row in query_results:
         aggregate.append(format_metric_consensus_genome_aggregate_row(row))

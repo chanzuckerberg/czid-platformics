@@ -421,7 +421,7 @@ def format_{{ cls.snake_name }}_aggregate_output(query_results: list[RowMapping]
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    if not query_results is list:
+    if not type(query_results) is list:
         query_results = [query_results]
     for row in query_results:
         aggregate.append(format_{{ cls.snake_name }}_aggregate_row(row))

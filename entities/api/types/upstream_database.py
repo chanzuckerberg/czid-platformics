@@ -391,7 +391,7 @@ def format_upstream_database_aggregate_output(query_results: list[RowMapping]) -
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    if query_results is not list:
+    if type(query_results) is not list:
         query_results = [query_results]
     for row in query_results:
         aggregate.append(format_upstream_database_aggregate_row(row))

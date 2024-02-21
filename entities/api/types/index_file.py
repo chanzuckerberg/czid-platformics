@@ -346,7 +346,7 @@ def format_index_file_aggregate_output(query_results: list[RowMapping]) -> Index
     format the results using the proper GraphQL types.
     """
     aggregate = []
-    if query_results is not list:
+    if type(query_results) is not list:
         query_results = [query_results]
     for row in query_results:
         aggregate.append(format_index_file_aggregate_row(row))
