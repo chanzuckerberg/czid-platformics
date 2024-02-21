@@ -78,6 +78,6 @@ def test_validation_valid_files(format: str, s3_info: tuple[S3Client, str]) -> N
 def test_validation_invalid_files(format: str, s3_info: tuple[S3Client, str]) -> None:
     s3, bucket = s3_info
     for i, _ in enumerate(CASES_INVALID_FILES[format]):
-        validator = get_validator(format)(s3, bucket, f"valid-{i}.{format}")
+        validator = get_validator(format)(s3, bucket, f"invalid-{i}.{format}")
         with pytest.raises(Exception):
             validator.validate()
