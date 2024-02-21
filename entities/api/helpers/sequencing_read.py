@@ -93,7 +93,6 @@ def build_sequencing_read_groupby_output(
                     value,
                 )
         case _:
-            if key not in group_object.__annotations__:
-                raise Exception(f"Unknown groupby key: {key}")
+            pass
     setattr(group_object, key, value)
     return group_object

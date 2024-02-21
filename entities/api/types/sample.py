@@ -118,7 +118,7 @@ async def load_sequencing_read_aggregate_rows(
     # Aggregate queries always return a single row, so just grab the first one
     result = rows[0] if rows else None
     aggregate_output = format_sequencing_read_aggregate_output(result)
-    return SequencingReadAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @relay.connection(
@@ -150,7 +150,7 @@ async def load_metadatum_aggregate_rows(
     # Aggregate queries always return a single row, so just grab the first one
     result = rows[0] if rows else None
     aggregate_output = format_metadatum_aggregate_output(result)
-    return MetadatumAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 """
@@ -416,6 +416,8 @@ def format_sample_aggregate_output(query_results: list[RowMapping]) -> SampleAgg
     format the results using the proper GraphQL types.
     """
     aggregate = []
+    if query_results is not list:
+        query_results = [query_results]
     for row in query_results:
         aggregate.append(format_sample_aggregate_row(row))
     return SampleAggregate(aggregate=aggregate)

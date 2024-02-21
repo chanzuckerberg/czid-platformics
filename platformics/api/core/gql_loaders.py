@@ -105,7 +105,7 @@ class EntityLoader:
             self._loaders[(relationship, input_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
             return self._loaders[(relationship, input_hash)]  # type: ignore
         
-    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, aggregate: Optional[Any] = None) -> DataLoader:
+    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, selections: Optional[Any] = None) -> DataLoader:
         """
         Retrieve or create a DataLoader that aggregates data for the given relationship
         """
@@ -126,13 +126,22 @@ class EntityLoader:
                 order_by: list = []
                 if relationship.order_by:
                     order_by = [relationship.order_by]
-                query = get_aggregate_db_query(
-                    related_model, CerbosAction.VIEW, self.cerbos_client, self.principal, where, aggregate, remote  # type: ignore
+
+                aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+                groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+                groupby_selections = groupby_selections[0].selections if groupby_selections else []
+                if not aggregate_selections:
+                    raise Exception("No aggregate functions selected")
+                
+                query, group_by = get_aggregate_db_query(
+                    related_model, CerbosAction.VIEW, self.cerbos_client, self.principal, where, aggregate_selections, groupby_selections, None, remote  # type: ignore
                 )
                 for item in filters:
                     query = query.where(item)
                 for item in order_by:
                     query = query.order_by(item)
+                if group_by:
+                    query = query.group_by(*group_by) # type: ignore
                 db_session = self.engine.session()
                 rows = (await db_session.execute(query)).mappings().all()
                 await db_session.close()

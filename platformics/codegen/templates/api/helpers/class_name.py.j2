@@ -95,7 +95,6 @@ def build_{{ cls.snake_name }}_groupby_output(
     {%- endif %}
 {%- endfor %}
         case _:
-            if key not in group_object.__annotations__:
-                raise Exception(f"Unknown groupby key: {key}")
+            pass
     setattr(group_object, key, value)
     return group_object

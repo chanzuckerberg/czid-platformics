@@ -206,6 +206,7 @@ def get_aggregate_db_query(
     aggregate: Any,
     group_by: Optional[ColumnElement[Any]] = None,
     depth: Optional[int] = None,
+    remote: Optional[ColumnElement[Any]] = None,
 ) -> Select:
     """
     Given a model class, a where clause, and an aggregate clause,
@@ -221,6 +222,8 @@ def get_aggregate_db_query(
     query = get_resource_query(principal, cerbos_client, action, model_cls)
     # Deconstruct the aggregate dict and build mappings for the query
     aggregate_query_fields = []
+    if remote is not None:
+        aggregate_query_fields.append(remote)
     for aggregator in aggregate:
         agg_fn = aggregator_map[aggregator.name]
         if aggregator.name == "count":
@@ -244,6 +247,8 @@ def get_aggregate_db_query(
     query, _order_by, group_by = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, [], group_by, depth  # type: ignore
     )
+    if remote is not None:
+        query = query.group_by(remote)
     return query, group_by
 
 

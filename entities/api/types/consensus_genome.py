@@ -417,6 +417,8 @@ def format_consensus_genome_aggregate_output(query_results: list[RowMapping]) ->
     format the results using the proper GraphQL types.
     """
     aggregate = []
+    if query_results is not list:
+        query_results = [query_results]
     for row in query_results:
         aggregate.append(format_consensus_genome_aggregate_row(row))
     return ConsensusGenomeAggregate(aggregate=aggregate)

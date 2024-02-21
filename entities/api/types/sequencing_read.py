@@ -150,7 +150,7 @@ async def load_consensus_genome_aggregate_rows(
     # Aggregate queries always return a single row, so just grab the first one
     result = rows[0] if rows else None
     aggregate_output = format_consensus_genome_aggregate_output(result)
-    return ConsensusGenomeAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 """
@@ -432,6 +432,8 @@ def format_sequencing_read_aggregate_output(query_results: list[RowMapping]) -> 
     format the results using the proper GraphQL types.
     """
     aggregate = []
+    if query_results is not list:
+        query_results = [query_results]
     for row in query_results:
         aggregate.append(format_sequencing_read_aggregate_row(row))
     return SequencingReadAggregate(aggregate=aggregate)

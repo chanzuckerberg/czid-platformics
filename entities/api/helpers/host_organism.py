@@ -47,7 +47,6 @@ def build_host_organism_groupby_output(
     key = keys.pop(0)
     match key:
         case _:
-            if key not in group_object.__annotations__:
-                raise Exception(f"Unknown groupby key: {key}")
+            pass
     setattr(group_object, key, value)
     return group_object
