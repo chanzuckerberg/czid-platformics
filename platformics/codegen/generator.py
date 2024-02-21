@@ -134,6 +134,7 @@ def api_generate(
     generate_entity_subclass_files(
         output_prefix, "test_infra/factories/class_name.py", environment, wrapped_view, render_files=render_files
     )
+    # generate_entity_subclass_files(output_prefix, "api/helpers/class_name.py", environment, wrapped_view, render_files=render_files)
 
 
 if __name__ == "__main__":
