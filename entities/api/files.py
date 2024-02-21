@@ -22,6 +22,7 @@ from platformics.api.core.deps import (
     get_settings,
     get_sts_client,
     require_auth_principal,
+    require_system_user,
 )
 from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from platformics.api.core.helpers import get_db_rows
@@ -30,6 +31,7 @@ from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.settings import APISettings
 from platformics.support.format_handlers import get_validator
 from sqlalchemy import inspect
+from sqlalchemy.sql import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from support.enums import FileAccessProtocol, FileStatus
 from typing_extensions import TypedDict
@@ -267,6 +269,7 @@ async def validate_file(
         file.status = db.FileStatus.SUCCESS
         file.size = file_size
 
+    file.updated_at = func.now()
     await session.commit()
 
 
@@ -355,6 +358,8 @@ async def create_file(
     """
     Create a file object based on an existing S3 file (no upload).
     """
+    # Since user can specify an arbitrary path, make sure only a system user can do this.
+    require_system_user(principal)
     new_file = await create_or_upload_file(
         entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, sts_client, settings
     )
