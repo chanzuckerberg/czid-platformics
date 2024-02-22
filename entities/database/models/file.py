@@ -2,6 +2,8 @@ import datetime
 import uuid
 import uuid6
 from platformics.database.models.base import Base, Entity
+from platformics.api.core.deps import get_s3_client
+from platformics.support.settings_singleton import SettingsSingleton
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Enum, event
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
@@ -43,11 +45,33 @@ class File(Base):
 @event.listens_for(File, "before_delete")
 def before_delete(mapper: Mapper, connection: Connection, target: File) -> None:
     """
-    Before deleting a File object, make sure to scrub the foreign keys in the Entity it's associated with.
+    Before deleting a File object, check whether we need to delete it from S3, and
+    make sure to scrub the foreign keys in the Entity it's associated with.
     """
+    table_files = target.__table__
     table_entity = target.entity.__table__
-    values = {f"{target.entity_field_name}_id": None}
 
+    # Check if this is the only File object pointing to this file on S3
+    files_pointing_to_same_path = connection.execute(
+        table_files.select()
+        .where(table_files.c.id != target.id)
+        .where(table_files.c.protocol == target.protocol)
+        .where(table_files.c.namespace == target.namespace)
+        .where(table_files.c.path == target.path)
+    )
+
+    # If so, delete the file from S3
+    if len(list(files_pointing_to_same_path)) == 0:
+        print("ONLY FILE")
+        s3_client = get_s3_client(SettingsSingleton.get())
+        response = s3_client.delete_object(Bucket=target.namespace, Key=target.path)
+        if response["ResponseMetadata"]["HTTPStatusCode"] != 204:
+            raise Exception("Failed to delete file from S3")
+
+    d
+
+    # Finally, scrub the foreign keys in the related Entity
+    values = {f"{target.entity_field_name}_id": None}
     # Modifying the target.entity directly does not save changes, we need to use `connection`
     connection.execute(
         table_entity.update().where(table_entity.c.entity_id == target.entity_id).values(**values)  # type: ignore
