@@ -112,9 +112,14 @@ class EntityLoader:
         """
         if not where:
             where = {}
+        if not selections:
+            selections = []
+
         input_hash = get_input_hash(where)
+        str_selections = str(selections)
+
         try:
-            return self._aggregate_loaders[(relationship, input_hash)]  # type: ignore
+            return self._aggregate_loaders[(relationship, str_selections, input_hash)]  # type: ignore
         except KeyError:
             related_model = relationship.entity.entity
 
@@ -165,5 +170,5 @@ class EntityLoader:
                 else:
                     return [grouped_keys[key][0] if grouped_keys[key] else None for key in keys]
 
-            self._aggregate_loaders[(relationship, input_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
-            return self._aggregate_loaders[(relationship, input_hash)]  # type: ignore
+            self._aggregate_loaders[(relationship, str_selections, input_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
+            return self._aggregate_loaders[(relationship, str_selections, input_hash)]  # type: ignore
