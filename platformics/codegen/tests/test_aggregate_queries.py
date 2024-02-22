@@ -216,6 +216,50 @@ async def test_groupby_query_with_nested_fields(
             assert group["count"] == 3
 
 @pytest.mark.asyncio
+async def test_groupby_query_with_multiple_fields(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    """
+    Test that we can perform a groupby query with fields nested at multiple levels
+    """
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        sample_1 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="San Francisco, CA")
+        sample_2 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="Mountain View, CA")
+        SequencingReadFactory.create_batch(1, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id, technology="Illumina")
+        SequencingReadFactory.create_batch(2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id, technology="Nanopore")
+        SequencingReadFactory.create_batch(3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id, technology="Illumina")
+        SequencingReadFactory.create_batch(4, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id, technology="Nanopore")
+
+    query = """
+        query MyQuery {
+            sequencingReadsAggregate {
+                aggregate {
+                    groupBy {
+                        sample {
+                            collectionLocation
+                        }
+                        technology
+                    }
+                    count
+                }
+            }
+        }
+    """
+    results = await gql_client.query(query, user_id=111, member_projects=[888])
+    aggregate = results["data"]["sequencingReadsAggregate"]["aggregate"]
+    for group in aggregate:
+        if group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA" and group["groupBy"]["technology"] == "Illumina":
+            assert group["count"] == 1
+        elif group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA" and group["groupBy"]["technology"] == "Nanopore":
+            assert group["count"] == 2
+        elif group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA" and group["groupBy"]["technology"] == "Illumina":
+            assert group["count"] == 3
+        elif group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA" and group["groupBy"]["technology"] == "Nanopore":
+            assert group["count"] == 4
+
+@pytest.mark.asyncio
 async def test_deeply_nested_groupby_query(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
