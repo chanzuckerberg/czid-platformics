@@ -116,7 +116,7 @@ class SeedSession:
           self.s3_local.upload_file(f.name, LOCAL_BUCKET, key)
         return f"s3://{LOCAL_BUCKET}/{key}"
 
-    def remote_path(self, bucket: str, key: str):
+    def remote_path(self, bucket: str, key: str) -> str:
         """
         Returns a path to remote a remote S3 object
 
