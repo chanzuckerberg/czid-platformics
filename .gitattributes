@@ -13,6 +13,7 @@ entities/schema/README.md	linguist-generated=true
 entities/test_infra/factories/* linguist-generated=true
 entities/test_infra/factories/main.py linguist-generated=false
 workflows/cli/gql_schema.py	linguist-generated=true
+workflows/api/schema.graphql	linguist-generated=true
 workflows/api/types/*	linguist-generated=true
 workflows/api/helpers/*	linguist-generated=true
 workflows/api/validators/*	linguist-generated=true
