@@ -98,9 +98,7 @@ async def load_index_file_aggregate_rows(
     mapper = inspect(db.HostOrganism)
     relationship = mapper.relationships["indexes"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_index_file_aggregate_output(result)
+    aggregate_output = format_index_file_aggregate_output(rows)
     return aggregate_output
 
 
@@ -130,9 +128,7 @@ async def load_sample_aggregate_rows(
     mapper = inspect(db.HostOrganism)
     relationship = mapper.relationships["samples"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_sample_aggregate_output(result)
+    aggregate_output = format_sample_aggregate_output(rows)
     return aggregate_output
 
 

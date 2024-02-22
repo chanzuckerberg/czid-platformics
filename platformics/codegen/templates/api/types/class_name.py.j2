@@ -132,9 +132,7 @@ async def load_{{ related_field.related_class.snake_name }}_aggregate_rows(
     mapper = inspect(db.{{ cls.name }})
     relationship = mapper.relationships["{{ related_field.name }}"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_{{ related_field.related_class.snake_name }}_aggregate_output(result)
+    aggregate_output = format_{{ related_field.related_class.snake_name }}_aggregate_output(rows)
     return aggregate_output
         {%- endif %}
 

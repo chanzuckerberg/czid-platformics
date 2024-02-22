@@ -93,9 +93,7 @@ async def load_consensus_genome_aggregate_rows(
     mapper = inspect(db.ReferenceGenome)
     relationship = mapper.relationships["consensus_genomes"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_consensus_genome_aggregate_output(result)
+    aggregate_output = format_consensus_genome_aggregate_output(rows)
     return aggregate_output
 
 
