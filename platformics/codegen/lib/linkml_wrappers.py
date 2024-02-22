@@ -35,6 +35,10 @@ class FieldWrapper:
     @cached_property
     def name(self) -> str:
         return self.wrapped_field.name
+    
+    @cached_property
+    def camel_name(self) -> str:
+        return strcase.to_lower_camel(self.wrapped_field.name)
 
     @cached_property
     def multivalued(self) -> str:
