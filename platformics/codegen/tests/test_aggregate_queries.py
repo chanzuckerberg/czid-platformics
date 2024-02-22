@@ -125,7 +125,7 @@ async def test_count_distinct_query(
         query MyQuery {
             samplesAggregate {
                 aggregate {
-                    count(columns: water_control)
+                    count(columns: waterControl)
                 }
             }
         }
@@ -137,7 +137,7 @@ async def test_count_distinct_query(
         query MyQuery {
             samplesAggregate {
                 aggregate {
-                    count(columns: water_control, distinct: true)
+                    count(columns: waterControl, distinct: true)
                 }
             }
         }
