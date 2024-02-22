@@ -123,11 +123,11 @@ def convert_where_clauses_to_sql(
             action,
             cerbos_query,
             related_cls,
-            join_info.get("where"),
+            join_info.get("where"), # type: ignore
             join_info.get("order_by"),
             join_info.get("group_by"),
             depth,
-        )  # type: ignore
+        )
         subquery = subquery.subquery()  # type: ignore
         query_alias = aliased(related_cls, subquery)  # type: ignore
         joincondition_a = [
@@ -191,11 +191,11 @@ def get_db_query(
         cerbos_client,
         action,
         query,
-        model_cls,
+        model_cls, # type: ignore
         where,
-        order_by,
+        order_by, # type: ignore
         [],
-        0,  # type: ignore
+        0,
     )
     # Sort the order_by fields by their index so that we can apply them in the correct order
     order_by.sort(key=lambda x: x["index"])
@@ -275,7 +275,7 @@ def get_aggregate_db_query(
         cerbos_client,
         action,
         query,
-        model_cls,
+        model_cls, # type: ignore
         where,
         [],
         group_by,
