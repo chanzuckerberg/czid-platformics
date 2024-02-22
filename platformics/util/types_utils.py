@@ -1,1 +1,2 @@
-JSONValue = None | bool | int | float | str | list['JSONValue'] | dict[str, 'JSONValue']
+Primitive = None | bool | int | float | str
+JSONValue = Primitive | list[Primitive] | dict[str, Primitive]

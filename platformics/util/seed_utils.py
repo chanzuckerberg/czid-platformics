@@ -72,10 +72,13 @@ class SeedSession:
         self.add = self.session.add
         self.commit = self.session.commit
         self.flush = self.session.flush
-        self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'}))
+        if os.getenv("BOTO_ENDPOINT_URL"):
+            self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'}))
         self.upsert_bucket(LOCAL_BUCKET)
 
     def upsert_bucket(self, bucket_name: str) -> None:
+        if not self.s3_local:
+            return
         if any(bucket["Name"] == bucket for bucket in self.s3_local.list_buckets().get("Buckets", [])):
             return
         self.s3_local.create_bucket(Bucket=bucket_name)
@@ -84,6 +87,8 @@ class SeedSession:
         """
         Transfers public S3 objects to the local bucket
         """
+        if not self.s3_local:
+            return
         parsed = urlparse(s3_path)
         bucket, key = parsed.netloc, parsed.path.lstrip("/")
         self.upsert_bucket(bucket)
@@ -105,7 +110,19 @@ class SeedSession:
 
     def transfer_wdl(self, wdl_name: str, workflow: str, version: str | None = None) -> str:
         key = f"{_workflow_tag(workflow, version)}/{wdl_name}"
+        if not self.s3_local:
+            return f"s3://idseq-workflows/{key}"
         with TempHTTPFile(f"https://idseq-workflows.s3.amazonaws.com/{key}") as f:
           self.s3_local.upload_file(f.name, LOCAL_BUCKET, key)
         return f"s3://{LOCAL_BUCKET}/{key}"
+
+    def remote_path(self, bucket: str, key: str) -> str:
+        """
+        Returns a path to remote a remote S3 object
+
+        If we are using local S3 it returns an https path to ensure you are using the remote object 
+        """
+        if not self.s3_local:
+            return f"s3://{bucket}/{key}"
+        return f"https://{bucket}.s3.amazonaws.com/{key}"
 
