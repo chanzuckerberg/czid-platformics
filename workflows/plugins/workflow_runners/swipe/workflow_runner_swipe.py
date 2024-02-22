@@ -35,7 +35,7 @@ class SwipeWorkflowRunner(WorkflowRunner):
         self,
         event_bus: EventBus,
         workflow_path: str,
-        inputs: JSONValue,
+        inputs: dict[str, JSONValue],
     ) -> str:
         """Formats the inputs into SWIPE format and kicks off the SFN execution
 

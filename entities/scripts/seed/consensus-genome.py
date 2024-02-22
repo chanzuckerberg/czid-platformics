@@ -95,7 +95,9 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
         # These are too large to transfer to moto's local S3, it crashes when attempted but they are downloaded
         #   via WDL so if they were S3 paths they would not be found. By using HTTP WDL will use the non-mocked
         #   http downloader. These objects are also public.
-        loc_path = f"https://czid-public-references.s3.amazonaws.com/ncbi-indexes-prod/2021-01-22/index-generation-2/{n_}_loc.marisa"
+        loc_path = session.remote_path(
+            "czid-public-references", f"ncbi-indexes-prod/2021-01-22/index-generation-2/{n_}_loc.marisa"
+        )
         loc_index_file = session.create_or_fetch_entity(IndexFile, name=f"{n_}_loc", version=ncbi_index_version)
         loc_index_file.file = uri_file(loc_path, loc_index_file, "file", "marisa")
         upstream_database.indexes.append(loc_index_file)
@@ -112,7 +114,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
 
     sars_cov2_reference = session.create_or_fetch_entity(ReferenceGenome, name="MN908947.3")
     sars_cov2_reference.file = uri_file(
-        "https://czid-public-references.s3.amazonaws.com/consensus-genome/MN908947.3.fa",
+        session.remote_path("czid-public-references", "consensus-genome/MN908947.3.fa"),
         sars_cov2_reference,
         "file",
         "fasta",
@@ -174,7 +176,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_genomic_range.owner_user_id = TEST_USER_ID
     sars_cov2_paired_genomic_range.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_genomic_range.file = uri_file(
-        "https://czid-public-references.s3.amazonaws.com/consensus-genome/artic_v3_primers.bed",
+        session.remote_path("czid-public-references", "consensus-genome/artic_v3_primers.bed"),
         sars_cov2_paired_genomic_range,
         "file",
         "bed",
