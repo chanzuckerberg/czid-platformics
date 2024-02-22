@@ -154,7 +154,7 @@ def get_db_query(
     # TODO it would be nicer if we could have the WhereClause classes inherit from a BaseWhereClause
     # so that these type checks could be smarter, but TypedDict doesn't support type checks like that
     where: dict[str, Any],
-    order_by: Optional[list[dict[str, Any]]] = [],
+    order_by: Optional[list[dict[str, Any]]] = None,
     depth: Optional[int] = None,
 ) -> Select:
     """
@@ -169,6 +169,8 @@ def get_db_query(
         raise Exception("Max filter depth exceeded")
     query = get_resource_query(principal, cerbos_client, action, model_cls)
     # Add indices to the order_by fields so that we can preserve the order of the fields
+    if order_by is None:
+        order_by = []
     order_by = [indexedOrderByClause({"field": x, "index": i}) for i, x in enumerate(order_by)] # type: ignore
     query, order_by, _group_by = convert_where_clauses_to_sql(
         principal, cerbos_client, action, query, model_cls, where, order_by, [], depth  # type: ignore
@@ -186,12 +188,14 @@ async def get_db_rows(
     cerbos_client: CerbosClient,
     principal: Principal,
     where: Any,
-    order_by: Optional[list[dict[str, Any]]] = [],
+    order_by: Optional[list[dict[str, Any]]] = None,
     action: CerbosAction = CerbosAction.VIEW,
 ) -> typing.Sequence[E]:
     """
     Retrieve rows from the database, filtered by the where clause and the user's permissions.
     """
+    if order_by is None:
+        order_by = []
     query = get_db_query(model_cls, action, cerbos_client, principal, where, order_by)
     result = await session.execute(query)
     return result.scalars().all()
@@ -259,7 +263,7 @@ async def get_aggregate_db_rows(
     principal: Principal,
     where: Any,
     aggregate: Any,
-    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = [],
+    order_by: Optional[list[tuple[ColumnElement[Any], ...]]] = None,
     group_by: Optional[ColumnElement[Any]] | Optional[list[Any]] = None,
     action: CerbosAction = CerbosAction.VIEW,
 ) -> Sequence[RowMapping]:

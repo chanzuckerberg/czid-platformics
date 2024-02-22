@@ -381,7 +381,7 @@ async def resolve_genomic_ranges_aggregate(
     groupby_selections = groupby_selections[0].selections if groupby_selections else []
 
     if not aggregate_selections:
-        raise Exception("No aggregate functions selected")
+        raise PlatformicsException("No aggregate functions selected")
 
     rows = await get_aggregate_db_rows(db.GenomicRange, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_genomic_range_aggregate_output(rows)

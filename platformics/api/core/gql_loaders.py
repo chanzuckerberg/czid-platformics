@@ -11,6 +11,7 @@ from sqlalchemy.orm import RelationshipProperty
 from strawberry.dataloader import DataLoader
 from platformics.security.authorization import CerbosAction
 from platformics.api.core.helpers import get_db_query, get_db_rows, get_aggregate_db_query
+from platformics.api.core.errors import PlatformicsException
 
 E = typing.TypeVar("E", db.File, db.Entity)  # type: ignore
 T = typing.TypeVar("T")
@@ -105,7 +106,7 @@ class EntityLoader:
             self._loaders[(relationship, input_hash)] = DataLoader(load_fn=load_fn)  # type: ignore
             return self._loaders[(relationship, input_hash)]  # type: ignore
         
-    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, selections: Optional[Any] = []) -> DataLoader:
+    def aggregate_loader_for(self, relationship: RelationshipProperty, where: Optional[Any] = None, selections: Optional[Any] = None) -> DataLoader:
         """
         Retrieve or create a DataLoader that aggregates data for the given relationship
         """
@@ -135,7 +136,7 @@ class EntityLoader:
                     aggregate_selections = []
                     groupby_selections = []
                 if not aggregate_selections:
-                    raise Exception("No aggregate functions selected")
+                    raise PlatformicsException("No aggregate functions selected")
                 
                 query, group_by = get_aggregate_db_query(
                     related_model, CerbosAction.VIEW, self.cerbos_client, self.principal, where, aggregate_selections, groupby_selections, None, remote  # type: ignore
