@@ -17,14 +17,14 @@ entities_schema -= sgqlc.types.relay.PageInfo
 ########################################################################
 class AccessionCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('accession_id', 'accession_name', 'collection_id', 'consensus_genomes', 'created_at', 'id', 'owner_user_id', 'producing_run_id', 'updated_at', 'upstream_database')
+    __choices__ = ('accessionId', 'accessionName', 'collectionId', 'consensusGenomes', 'createdAt', 'id', 'ownerUserId', 'producingRunId', 'updatedAt', 'upstreamDatabase')
 
 
 Boolean = sgqlc.types.Boolean
 
 class BulkDownloadCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'created_at', 'download_display_name', 'download_type', 'file', 'id', 'owner_user_id', 'producing_run_id', 'updated_at')
+    __choices__ = ('collectionId', 'createdAt', 'downloadDisplayName', 'downloadType', 'file', 'id', 'ownerUserId', 'producingRunId', 'updatedAt')
 
 
 class BulkDownloadType(sgqlc.types.Enum):
@@ -34,7 +34,7 @@ class BulkDownloadType(sgqlc.types.Enum):
 
 class ConsensusGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('accession', 'collection_id', 'created_at', 'id', 'intermediate_outputs', 'metrics', 'owner_user_id', 'producing_run_id', 'reference_genome', 'sequence', 'sequencing_read', 'taxon', 'updated_at')
+    __choices__ = ('accession', 'collectionId', 'createdAt', 'id', 'intermediateOutputs', 'metrics', 'ownerUserId', 'producingRunId', 'referenceGenome', 'sequence', 'sequencingRead', 'taxon', 'updatedAt')
 
 
 DateTime = sgqlc.types.datetime.DateTime
@@ -53,7 +53,7 @@ Float = sgqlc.types.Float
 
 class GenomicRangeCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'created_at', 'file', 'id', 'owner_user_id', 'producing_run_id', 'sequencing_reads', 'updated_at')
+    __choices__ = ('collectionId', 'createdAt', 'file', 'id', 'ownerUserId', 'producingRunId', 'sequencingReads', 'updatedAt')
 
 
 class GlobalID(sgqlc.types.Scalar):
@@ -67,14 +67,14 @@ class HostOrganismCategory(sgqlc.types.Enum):
 
 class HostOrganismCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('category', 'collection_id', 'created_at', 'id', 'indexes', 'is_deuterostome', 'name', 'owner_user_id', 'producing_run_id', 'samples', 'updated_at', 'version')
+    __choices__ = ('category', 'collectionId', 'createdAt', 'id', 'indexes', 'isDeuterostome', 'name', 'ownerUserId', 'producingRunId', 'samples', 'updatedAt', 'version')
 
 
 ID = sgqlc.types.ID
 
 class IndexFileCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'created_at', 'file', 'host_organism', 'id', 'name', 'owner_user_id', 'producing_run_id', 'updated_at', 'upstream_database', 'version')
+    __choices__ = ('collectionId', 'createdAt', 'file', 'hostOrganism', 'id', 'name', 'ownerUserId', 'producingRunId', 'updatedAt', 'upstreamDatabase', 'version')
 
 
 class IndexTypes(sgqlc.types.Enum):
@@ -90,12 +90,12 @@ class JSON(sgqlc.types.Scalar):
 
 class MetadatumCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'created_at', 'field_name', 'id', 'owner_user_id', 'producing_run_id', 'sample', 'updated_at', 'value')
+    __choices__ = ('collectionId', 'createdAt', 'fieldName', 'id', 'ownerUserId', 'producingRunId', 'sample', 'updatedAt', 'value')
 
 
 class MetricConsensusGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'consensus_genome', 'coverage_bin_size', 'coverage_breadth', 'coverage_depth', 'coverage_total_length', 'coverage_viz', 'created_at', 'gc_percent', 'id', 'mapped_reads', 'n_actg', 'n_ambiguous', 'n_missing', 'owner_user_id', 'percent_genome_called', 'percent_identity', 'producing_run_id', 'ref_snps', 'reference_genome_length', 'total_reads', 'updated_at')
+    __choices__ = ('collectionId', 'consensusGenome', 'coverageBinSize', 'coverageBreadth', 'coverageDepth', 'coverageTotalLength', 'coverageViz', 'createdAt', 'gcPercent', 'id', 'mappedReads', 'nActg', 'nAmbiguous', 'nMissing', 'ownerUserId', 'percentGenomeCalled', 'percentIdentity', 'producingRunId', 'refSnps', 'referenceGenomeLength', 'totalReads', 'updatedAt')
 
 
 class NucleicAcid(sgqlc.types.Enum):
@@ -105,12 +105,12 @@ class NucleicAcid(sgqlc.types.Enum):
 
 class ReferenceGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'consensus_genomes', 'created_at', 'file', 'id', 'name', 'owner_user_id', 'producing_run_id', 'updated_at')
+    __choices__ = ('collectionId', 'consensusGenomes', 'createdAt', 'file', 'id', 'name', 'ownerUserId', 'producingRunId', 'updatedAt')
 
 
 class SampleCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_date', 'collection_id', 'collection_location', 'created_at', 'host_organism', 'id', 'metadatas', 'name', 'notes', 'owner_user_id', 'producing_run_id', 'rails_sample_id', 'sample_type', 'sequencing_reads', 'updated_at', 'water_control')
+    __choices__ = ('collectionDate', 'collectionId', 'collectionLocation', 'createdAt', 'hostOrganism', 'id', 'metadatas', 'name', 'notes', 'ownerUserId', 'producingRunId', 'railsSampleId', 'sampleType', 'sequencingReads', 'updatedAt', 'waterControl')
 
 
 class SequencingProtocol(sgqlc.types.Enum):
@@ -120,7 +120,7 @@ class SequencingProtocol(sgqlc.types.Enum):
 
 class SequencingReadCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('clearlabs_export', 'collection_id', 'consensus_genomes', 'created_at', 'id', 'medaka_model', 'nucleic_acid', 'owner_user_id', 'primer_file', 'producing_run_id', 'protocol', 'r1_file', 'r2_file', 'sample', 'taxon', 'technology', 'updated_at')
+    __choices__ = ('clearlabsExport', 'collectionId', 'consensusGenomes', 'createdAt', 'id', 'medakaModel', 'nucleicAcid', 'ownerUserId', 'primerFile', 'producingRunId', 'protocol', 'r1File', 'r2File', 'sample', 'taxon', 'technology', 'updatedAt')
 
 
 class SequencingTechnology(sgqlc.types.Enum):
@@ -132,7 +132,7 @@ String = sgqlc.types.String
 
 class TaxonCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collection_id', 'common_name', 'consensus_genomes', 'created_at', 'description', 'id', 'is_phage', 'level', 'name', 'owner_user_id', 'producing_run_id', 'sequencing_reads', 'tax_class', 'tax_family', 'tax_genus', 'tax_kingdom', 'tax_order', 'tax_parent', 'tax_phylum', 'tax_species', 'tax_subspecies', 'tax_superkingdom', 'updated_at', 'upstream_database', 'upstream_database_identifier', 'wikipedia_id')
+    __choices__ = ('collectionId', 'commonName', 'consensusGenomes', 'createdAt', 'description', 'id', 'isPhage', 'level', 'name', 'ownerUserId', 'producingRunId', 'sequencingReads', 'taxClass', 'taxFamily', 'taxGenus', 'taxKingdom', 'taxOrder', 'taxParent', 'taxPhylum', 'taxSpecies', 'taxSubspecies', 'taxSuperkingdom', 'updatedAt', 'upstreamDatabase', 'upstreamDatabaseIdentifier', 'wikipediaId')
 
 
 class TaxonLevel(sgqlc.types.Enum):
@@ -146,7 +146,7 @@ class UUID(sgqlc.types.Scalar):
 
 class UpstreamDatabaseCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('accessions', 'collection_id', 'created_at', 'id', 'indexes', 'name', 'owner_user_id', 'producing_run_id', 'taxa', 'updated_at')
+    __choices__ = ('accessions', 'collectionId', 'createdAt', 'id', 'indexes', 'name', 'ownerUserId', 'producingRunId', 'taxa', 'updatedAt')
 
 
 class orderBy(sgqlc.types.Enum):

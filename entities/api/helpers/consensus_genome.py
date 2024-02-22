@@ -6,7 +6,6 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
-
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -20,6 +19,7 @@ from api.helpers.accession import AccessionGroupByOptions, build_accession_group
 Define groupby options for ConsensusGenome type.
 These are only used in aggregate queries.
 """
+
 
 @strawberry.type
 class ConsensusGenomeGroupByOptions:

@@ -312,7 +312,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class {{ cls.name }}CountColumns(enum.Enum):
     {%- for attr in cls.visible_fields %}
-    {{ attr.name }} = "{{ attr.name }}"
+    {{ attr.camel_name }} = "{{ attr.name }}"
     {%- endfor %}
 
 """

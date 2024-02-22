@@ -258,7 +258,7 @@ def get_aggregate_db_query(
             col = model_cls.id
             count_fn = agg_fn(model_cls.id)  # type: ignore
             if aggregator.arguments:
-                if colname := aggregator.arguments.get("columns"):
+                if colname := strcase.to_snake(aggregator.arguments.get("columns")):
                     col = getattr(model_cls, colname)
                 if aggregator.arguments.get("distinct"):
                     count_fn = agg_fn(distinct(col))  # type: ignore

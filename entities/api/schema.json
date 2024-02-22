@@ -9881,49 +9881,49 @@
               "name": "protocol"
             },
             {
-              "name": "r1_file"
+              "name": "r1File"
             },
             {
-              "name": "r2_file"
+              "name": "r2File"
             },
             {
               "name": "technology"
             },
             {
-              "name": "nucleic_acid"
+              "name": "nucleicAcid"
             },
             {
-              "name": "clearlabs_export"
+              "name": "clearlabsExport"
             },
             {
-              "name": "medaka_model"
+              "name": "medakaModel"
             },
             {
               "name": "taxon"
             },
             {
-              "name": "primer_file"
+              "name": "primerFile"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -10886,10 +10886,10 @@
               "name": "taxon"
             },
             {
-              "name": "sequencing_read"
+              "name": "sequencingRead"
             },
             {
-              "name": "reference_genome"
+              "name": "referenceGenome"
             },
             {
               "name": "accession"
@@ -10901,25 +10901,25 @@
               "name": "metrics"
             },
             {
-              "name": "intermediate_outputs"
+              "name": "intermediateOutputs"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -11971,82 +11971,82 @@
         {
           "enumValues": [
             {
-              "name": "wikipedia_id"
+              "name": "wikipediaId"
             },
             {
               "name": "description"
             },
             {
-              "name": "common_name"
+              "name": "commonName"
             },
             {
               "name": "name"
             },
             {
-              "name": "is_phage"
+              "name": "isPhage"
             },
             {
-              "name": "upstream_database"
+              "name": "upstreamDatabase"
             },
             {
-              "name": "upstream_database_identifier"
+              "name": "upstreamDatabaseIdentifier"
             },
             {
               "name": "level"
             },
             {
-              "name": "tax_parent"
+              "name": "taxParent"
             },
             {
-              "name": "tax_subspecies"
+              "name": "taxSubspecies"
             },
             {
-              "name": "tax_species"
+              "name": "taxSpecies"
             },
             {
-              "name": "tax_genus"
+              "name": "taxGenus"
             },
             {
-              "name": "tax_family"
+              "name": "taxFamily"
             },
             {
-              "name": "tax_order"
+              "name": "taxOrder"
             },
             {
-              "name": "tax_class"
+              "name": "taxClass"
             },
             {
-              "name": "tax_phylum"
+              "name": "taxPhylum"
             },
             {
-              "name": "tax_kingdom"
+              "name": "taxKingdom"
             },
             {
-              "name": "tax_superkingdom"
+              "name": "taxSuperkingdom"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
-              "name": "sequencing_reads"
+              "name": "sequencingReads"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -12479,28 +12479,28 @@
               "name": "file"
             },
             {
-              "name": "upstream_database"
+              "name": "upstreamDatabase"
             },
             {
-              "name": "host_organism"
+              "name": "hostOrganism"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -12813,34 +12813,34 @@
         {
           "enumValues": [
             {
-              "name": "accession_id"
+              "name": "accessionId"
             },
             {
-              "name": "accession_name"
+              "name": "accessionName"
             },
             {
-              "name": "upstream_database"
+              "name": "upstreamDatabase"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -13198,31 +13198,31 @@
         {
           "enumValues": [
             {
-              "name": "rails_sample_id"
+              "name": "railsSampleId"
             },
             {
               "name": "name"
             },
             {
-              "name": "sample_type"
+              "name": "sampleType"
             },
             {
-              "name": "water_control"
+              "name": "waterControl"
             },
             {
-              "name": "collection_date"
+              "name": "collectionDate"
             },
             {
-              "name": "collection_location"
+              "name": "collectionLocation"
             },
             {
               "name": "notes"
             },
             {
-              "name": "host_organism"
+              "name": "hostOrganism"
             },
             {
-              "name": "sequencing_reads"
+              "name": "sequencingReads"
             },
             {
               "name": "metadatas"
@@ -13231,19 +13231,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -13907,7 +13907,7 @@
               "name": "sample"
             },
             {
-              "name": "field_name"
+              "name": "fieldName"
             },
             {
               "name": "value"
@@ -13916,19 +13916,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -14591,25 +14591,25 @@
               "name": "file"
             },
             {
-              "name": "sequencing_reads"
+              "name": "sequencingReads"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -14839,25 +14839,25 @@
               "name": "name"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -15099,7 +15099,7 @@
               "name": "category"
             },
             {
-              "name": "is_deuterostome"
+              "name": "isDeuterostome"
             },
             {
               "name": "indexes"
@@ -15111,19 +15111,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -15814,70 +15814,70 @@
         {
           "enumValues": [
             {
-              "name": "consensus_genome"
+              "name": "consensusGenome"
             },
             {
-              "name": "reference_genome_length"
+              "name": "referenceGenomeLength"
             },
             {
-              "name": "percent_genome_called"
+              "name": "percentGenomeCalled"
             },
             {
-              "name": "percent_identity"
+              "name": "percentIdentity"
             },
             {
-              "name": "gc_percent"
+              "name": "gcPercent"
             },
             {
-              "name": "total_reads"
+              "name": "totalReads"
             },
             {
-              "name": "mapped_reads"
+              "name": "mappedReads"
             },
             {
-              "name": "ref_snps"
+              "name": "refSnps"
             },
             {
-              "name": "n_actg"
+              "name": "nActg"
             },
             {
-              "name": "n_missing"
+              "name": "nMissing"
             },
             {
-              "name": "n_ambiguous"
+              "name": "nAmbiguous"
             },
             {
-              "name": "coverage_depth"
+              "name": "coverageDepth"
             },
             {
-              "name": "coverage_breadth"
+              "name": "coverageBreadth"
             },
             {
-              "name": "coverage_bin_size"
+              "name": "coverageBinSize"
             },
             {
-              "name": "coverage_total_length"
+              "name": "coverageTotalLength"
             },
             {
-              "name": "coverage_viz"
+              "name": "coverageViz"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -16116,19 +16116,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -16434,10 +16434,10 @@
         {
           "enumValues": [
             {
-              "name": "download_type"
+              "name": "downloadType"
             },
             {
-              "name": "download_display_name"
+              "name": "downloadDisplayName"
             },
             {
               "name": "file"
@@ -16446,19 +16446,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,

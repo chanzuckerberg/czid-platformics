@@ -54,16 +54,16 @@ type AccessionConnection {
 }
 
 enum AccessionCountColumns {
-  accession_id
-  accession_name
-  upstream_database
-  consensus_genomes
+  accessionId
+  accessionName
+  upstreamDatabase
+  consensusGenomes
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input AccessionCreateInput {
@@ -185,15 +185,15 @@ type BulkDownloadAggregateFunctions {
 }
 
 enum BulkDownloadCountColumns {
-  download_type
-  download_display_name
+  downloadType
+  downloadDisplayName
   file
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input BulkDownloadCreateInput {
@@ -316,18 +316,18 @@ type ConsensusGenomeConnection {
 
 enum ConsensusGenomeCountColumns {
   taxon
-  sequencing_read
-  reference_genome
+  sequencingRead
+  referenceGenome
   accession
   sequence
   metrics
-  intermediate_outputs
+  intermediateOutputs
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input ConsensusGenomeCreateInput {
@@ -567,13 +567,13 @@ type GenomicRangeAggregateFunctions {
 
 enum GenomicRangeCountColumns {
   file
-  sequencing_reads
+  sequencingReads
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input GenomicRangeCreateInput {
@@ -717,15 +717,15 @@ enum HostOrganismCountColumns {
   name
   version
   category
-  is_deuterostome
+  isDeuterostome
   indexes
   samples
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input HostOrganismCreateInput {
@@ -848,14 +848,14 @@ enum IndexFileCountColumns {
   name
   version
   file
-  upstream_database
-  host_organism
+  upstreamDatabase
+  hostOrganism
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input IndexFileCreateInput {
@@ -1029,14 +1029,14 @@ type MetadatumConnection {
 
 enum MetadatumCountColumns {
   sample
-  field_name
+  fieldName
   value
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input MetadatumCreateInput {
@@ -1157,28 +1157,28 @@ type MetricConsensusGenomeAggregateFunctions {
 }
 
 enum MetricConsensusGenomeCountColumns {
-  consensus_genome
-  reference_genome_length
-  percent_genome_called
-  percent_identity
-  gc_percent
-  total_reads
-  mapped_reads
-  ref_snps
-  n_actg
-  n_missing
-  n_ambiguous
-  coverage_depth
-  coverage_breadth
-  coverage_bin_size
-  coverage_total_length
-  coverage_viz
+  consensusGenome
+  referenceGenomeLength
+  percentGenomeCalled
+  percentIdentity
+  gcPercent
+  totalReads
+  mappedReads
+  refSnps
+  nActg
+  nMissing
+  nAmbiguous
+  coverageDepth
+  coverageBreadth
+  coverageBinSize
+  coverageTotalLength
+  coverageViz
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input MetricConsensusGenomeCreateInput {
@@ -1503,13 +1503,13 @@ type ReferenceGenomeAggregateFunctions {
 enum ReferenceGenomeCountColumns {
   file
   name
-  consensus_genomes
+  consensusGenomes
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input ReferenceGenomeCreateInput {
@@ -1648,22 +1648,22 @@ type SampleConnection {
 }
 
 enum SampleCountColumns {
-  rails_sample_id
+  railsSampleId
   name
-  sample_type
-  water_control
-  collection_date
-  collection_location
+  sampleType
+  waterControl
+  collectionDate
+  collectionLocation
   notes
-  host_organism
-  sequencing_reads
+  hostOrganism
+  sequencingReads
   metadatas
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input SampleCreateInput {
@@ -1867,21 +1867,21 @@ type SequencingReadConnection {
 enum SequencingReadCountColumns {
   sample
   protocol
-  r1_file
-  r2_file
+  r1File
+  r2File
   technology
-  nucleic_acid
-  clearlabs_export
-  medaka_model
+  nucleicAcid
+  clearlabsExport
+  medakaModel
   taxon
-  primer_file
-  consensus_genomes
+  primerFile
+  consensusGenomes
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input SequencingReadCreateInput {
@@ -2104,32 +2104,32 @@ type TaxonConnection {
 }
 
 enum TaxonCountColumns {
-  wikipedia_id
+  wikipediaId
   description
-  common_name
+  commonName
   name
-  is_phage
-  upstream_database
-  upstream_database_identifier
+  isPhage
+  upstreamDatabase
+  upstreamDatabaseIdentifier
   level
-  tax_parent
-  tax_subspecies
-  tax_species
-  tax_genus
-  tax_family
-  tax_order
-  tax_class
-  tax_phylum
-  tax_kingdom
-  tax_superkingdom
-  consensus_genomes
-  sequencing_reads
+  taxParent
+  taxSubspecies
+  taxSpecies
+  taxGenus
+  taxFamily
+  taxOrder
+  taxClass
+  taxPhylum
+  taxKingdom
+  taxSuperkingdom
+  consensusGenomes
+  sequencingReads
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input TaxonCreateInput {
@@ -2397,11 +2397,11 @@ enum UpstreamDatabaseCountColumns {
   indexes
   accessions
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input UpstreamDatabaseCreateInput {

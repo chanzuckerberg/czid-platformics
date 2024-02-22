@@ -17,16 +17,16 @@ gql_schema -= sgqlc.types.relay.PageInfo
 class AccessionCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "accession_id",
-        "accession_name",
-        "collection_id",
-        "consensus_genomes",
-        "created_at",
+        "accessionId",
+        "accessionName",
+        "collectionId",
+        "consensusGenomes",
+        "createdAt",
         "id",
-        "owner_user_id",
-        "producing_run_id",
-        "updated_at",
-        "upstream_database",
+        "ownerUserId",
+        "producingRunId",
+        "updatedAt",
+        "upstreamDatabase",
     )
 
 
@@ -36,15 +36,15 @@ Boolean = sgqlc.types.Boolean
 class BulkDownloadCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "created_at",
-        "download_display_name",
-        "download_type",
+        "collectionId",
+        "createdAt",
+        "downloadDisplayName",
+        "downloadType",
         "file",
         "id",
-        "owner_user_id",
-        "producing_run_id",
-        "updated_at",
+        "ownerUserId",
+        "producingRunId",
+        "updatedAt",
     )
 
 
@@ -57,18 +57,18 @@ class ConsensusGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "accession",
-        "collection_id",
-        "created_at",
+        "collectionId",
+        "createdAt",
         "id",
-        "intermediate_outputs",
+        "intermediateOutputs",
         "metrics",
-        "owner_user_id",
-        "producing_run_id",
-        "reference_genome",
+        "ownerUserId",
+        "producingRunId",
+        "referenceGenome",
         "sequence",
-        "sequencing_read",
+        "sequencingRead",
         "taxon",
-        "updated_at",
+        "updatedAt",
     )
 
 
@@ -91,14 +91,14 @@ Float = sgqlc.types.Float
 class GenomicRangeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "created_at",
+        "collectionId",
+        "createdAt",
         "file",
         "id",
-        "owner_user_id",
-        "producing_run_id",
-        "sequencing_reads",
-        "updated_at",
+        "ownerUserId",
+        "producingRunId",
+        "sequencingReads",
+        "updatedAt",
     )
 
 
@@ -115,16 +115,16 @@ class HostOrganismCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "category",
-        "collection_id",
-        "created_at",
+        "collectionId",
+        "createdAt",
         "id",
         "indexes",
-        "is_deuterostome",
+        "isDeuterostome",
         "name",
-        "owner_user_id",
-        "producing_run_id",
+        "ownerUserId",
+        "producingRunId",
         "samples",
-        "updated_at",
+        "updatedAt",
         "version",
     )
 
@@ -135,16 +135,16 @@ ID = sgqlc.types.ID
 class IndexFileCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "created_at",
+        "collectionId",
+        "createdAt",
         "file",
-        "host_organism",
+        "hostOrganism",
         "id",
         "name",
-        "owner_user_id",
-        "producing_run_id",
-        "updated_at",
-        "upstream_database",
+        "ownerUserId",
+        "producingRunId",
+        "updatedAt",
+        "upstreamDatabase",
         "version",
     )
 
@@ -185,14 +185,14 @@ class JSON(sgqlc.types.Scalar):
 class MetadatumCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "created_at",
-        "field_name",
+        "collectionId",
+        "createdAt",
+        "fieldName",
         "id",
-        "owner_user_id",
-        "producing_run_id",
+        "ownerUserId",
+        "producingRunId",
         "sample",
-        "updated_at",
+        "updatedAt",
         "value",
     )
 
@@ -200,28 +200,28 @@ class MetadatumCountColumns(sgqlc.types.Enum):
 class MetricConsensusGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "consensus_genome",
-        "coverage_bin_size",
-        "coverage_breadth",
-        "coverage_depth",
-        "coverage_total_length",
-        "coverage_viz",
-        "created_at",
-        "gc_percent",
+        "collectionId",
+        "consensusGenome",
+        "coverageBinSize",
+        "coverageBreadth",
+        "coverageDepth",
+        "coverageTotalLength",
+        "coverageViz",
+        "createdAt",
+        "gcPercent",
         "id",
-        "mapped_reads",
-        "n_actg",
-        "n_ambiguous",
-        "n_missing",
-        "owner_user_id",
-        "percent_genome_called",
-        "percent_identity",
-        "producing_run_id",
-        "ref_snps",
-        "reference_genome_length",
-        "total_reads",
-        "updated_at",
+        "mappedReads",
+        "nActg",
+        "nAmbiguous",
+        "nMissing",
+        "ownerUserId",
+        "percentGenomeCalled",
+        "percentIdentity",
+        "producingRunId",
+        "refSnps",
+        "referenceGenomeLength",
+        "totalReads",
+        "updatedAt",
     )
 
 
@@ -233,37 +233,37 @@ class NucleicAcid(sgqlc.types.Enum):
 class ReferenceGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "consensus_genomes",
-        "created_at",
+        "collectionId",
+        "consensusGenomes",
+        "createdAt",
         "file",
         "id",
         "name",
-        "owner_user_id",
-        "producing_run_id",
-        "updated_at",
+        "ownerUserId",
+        "producingRunId",
+        "updatedAt",
     )
 
 
 class SampleCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_date",
-        "collection_id",
-        "collection_location",
-        "created_at",
-        "host_organism",
+        "collectionDate",
+        "collectionId",
+        "collectionLocation",
+        "createdAt",
+        "hostOrganism",
         "id",
         "metadatas",
         "name",
         "notes",
-        "owner_user_id",
-        "producing_run_id",
-        "rails_sample_id",
-        "sample_type",
-        "sequencing_reads",
-        "updated_at",
-        "water_control",
+        "ownerUserId",
+        "producingRunId",
+        "railsSampleId",
+        "sampleType",
+        "sequencingReads",
+        "updatedAt",
+        "waterControl",
     )
 
 
@@ -288,23 +288,23 @@ class SequencingProtocol(sgqlc.types.Enum):
 class SequencingReadCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "clearlabs_export",
-        "collection_id",
-        "consensus_genomes",
-        "created_at",
+        "clearlabsExport",
+        "collectionId",
+        "consensusGenomes",
+        "createdAt",
         "id",
-        "medaka_model",
-        "nucleic_acid",
-        "owner_user_id",
-        "primer_file",
-        "producing_run_id",
+        "medakaModel",
+        "nucleicAcid",
+        "ownerUserId",
+        "primerFile",
+        "producingRunId",
         "protocol",
-        "r1_file",
-        "r2_file",
+        "r1File",
+        "r2File",
         "sample",
         "taxon",
         "technology",
-        "updated_at",
+        "updatedAt",
     )
 
 
@@ -319,32 +319,32 @@ String = sgqlc.types.String
 class TaxonCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collection_id",
-        "common_name",
-        "consensus_genomes",
-        "created_at",
+        "collectionId",
+        "commonName",
+        "consensusGenomes",
+        "createdAt",
         "description",
         "id",
-        "is_phage",
+        "isPhage",
         "level",
         "name",
-        "owner_user_id",
-        "producing_run_id",
-        "sequencing_reads",
-        "tax_class",
-        "tax_family",
-        "tax_genus",
-        "tax_kingdom",
-        "tax_order",
-        "tax_parent",
-        "tax_phylum",
-        "tax_species",
-        "tax_subspecies",
-        "tax_superkingdom",
-        "updated_at",
-        "upstream_database",
-        "upstream_database_identifier",
-        "wikipedia_id",
+        "ownerUserId",
+        "producingRunId",
+        "sequencingReads",
+        "taxClass",
+        "taxFamily",
+        "taxGenus",
+        "taxKingdom",
+        "taxOrder",
+        "taxParent",
+        "taxPhylum",
+        "taxSpecies",
+        "taxSubspecies",
+        "taxSuperkingdom",
+        "updatedAt",
+        "upstreamDatabase",
+        "upstreamDatabaseIdentifier",
+        "wikipediaId",
     )
 
 
@@ -371,15 +371,15 @@ class UpstreamDatabaseCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
         "accessions",
-        "collection_id",
-        "created_at",
+        "collectionId",
+        "createdAt",
         "id",
         "indexes",
         "name",
-        "owner_user_id",
-        "producing_run_id",
+        "ownerUserId",
+        "producingRunId",
         "taxa",
-        "updated_at",
+        "updatedAt",
     )
 
 

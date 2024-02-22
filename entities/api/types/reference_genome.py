@@ -245,13 +245,13 @@ Define enum of all columns to support count and count(distinct) aggregations
 class ReferenceGenomeCountColumns(enum.Enum):
     file = "file"
     name = "name"
-    consensus_genomes = "consensus_genomes"
+    consensusGenomes = "consensus_genomes"
     id = "id"
-    producing_run_id = "producing_run_id"
-    owner_user_id = "owner_user_id"
-    collection_id = "collection_id"
-    created_at = "created_at"
-    updated_at = "updated_at"
+    producingRunId = "producing_run_id"
+    ownerUserId = "owner_user_id"
+    collectionId = "collection_id"
+    createdAt = "created_at"
+    updatedAt = "updated_at"
 
 
 """
