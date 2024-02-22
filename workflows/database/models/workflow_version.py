@@ -35,6 +35,7 @@ class WorkflowVersion(Entity):
         UUID,
         ForeignKey("workflow.entity_id"),
         nullable=True,
+        index=True,
     )
     workflow: Mapped["Workflow"] = relationship(
         "Workflow",

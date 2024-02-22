@@ -31,6 +31,7 @@ class WorkflowRunStep(Entity):
         UUID,
         ForeignKey("workflow_run.entity_id"),
         nullable=True,
+        index=True,
     )
     workflow_run: Mapped["WorkflowRun"] = relationship(
         "WorkflowRun",
