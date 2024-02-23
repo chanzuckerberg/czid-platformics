@@ -4,9 +4,8 @@ data "aws_iam_policy_document" "entities" {
     actions = [
       "secretsmanager:GetSecretValue",
     ]
-    resources = ["arn:aws:ssm:us-west-2:${var.aws_account_id}:*"]
+    resources = ["arn:aws:secretsmanager:us-west-2:${var.aws_account_id}:secret:*"]
   }
-
   statement {
     effect = "Allow"
     actions = [
