@@ -22,6 +22,7 @@ from api.validators.{{cls.snake_name}} import {{cls.name}}CreateInputValidator, 
 {%- if render_files %}
 from api.files import File, FileWhereClause
 {%- endif %}
+from api.helpers.{{ cls.snake_name }} import {{ cls.name }}GroupByOptions, build_{{ cls.snake_name }}_groupby_output
 from api.types.entities import EntityInterface
 {%- for related_field in related_fields %}
     {%- if related_field.related_class.name not in ignored_fields and related_field.multivalued %}
@@ -131,10 +132,8 @@ async def load_{{ related_field.related_class.snake_name }}_aggregate_rows(
     mapper = inspect(db.{{ cls.name }})
     relationship = mapper.relationships["{{ related_field.name }}"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_{{ related_field.related_class.snake_name }}_aggregate_output(result)
-    return {{ related_field.related_class.name }}Aggregate(aggregate=aggregate_output)
+    aggregate_output = format_{{ related_field.related_class.snake_name }}_aggregate_output(rows)
+    return aggregate_output
         {%- endif %}
 
     {%- endif %}
@@ -313,7 +312,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class {{ cls.name }}CountColumns(enum.Enum):
     {%- for attr in cls.visible_fields %}
-    {{ attr.name }} = "{{ attr.name }}"
+    {{ attr.camel_name }} = "{{ attr.name }}"
     {%- endfor %}
 
 """
@@ -334,13 +333,14 @@ class {{ cls.name }}AggregateFunctions:
     {%- endif %}
     min: Optional[{{ cls.name }}MinMaxColumns] = None
     max: Optional[{{ cls.name }}MinMaxColumns] = None
+    groupBy: Optional[{{ cls.name }}GroupByOptions] = None
 
 """
 Wrapper around {{ cls.name }}AggregateFunctions
 """
 @strawberry.type
 class {{ cls.name }}Aggregate:
-    aggregate: Optional[{{ cls.name }}AggregateFunctions] = None
+    aggregate: Optional[list[{{ cls.name }}AggregateFunctions]] = None
 
 """
 ------------------------------------------------------------------------------
@@ -413,19 +413,40 @@ async def resolve_{{ cls.plural_snake_name }}(
     return await get_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_{{ cls.snake_name }}_aggregate_output(query_results: RowMapping) -> {{ cls.name }}AggregateFunctions:
+def format_{{ cls.snake_name }}_aggregate_output(query_results: Sequence[RowMapping] | RowMapping) -> {{ cls.name }}Aggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
+    aggregate = []
+    if not type(query_results) is list:
+        query_results = [query_results] # type: ignore
+    for row in query_results:
+        aggregate.append(format_{{ cls.snake_name }}_aggregate_row(row))
+    return {{ cls.name }}Aggregate(aggregate=aggregate)
+
+def format_{{ cls.snake_name }}_aggregate_row(row: RowMapping) -> {{ cls.name }}AggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
     output = {{ cls.name }}AggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", {{ cls.name }}GroupByOptions())
+            group = build_{{ cls.snake_name }}_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
         else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
+            aggregate_name = aggregate[0]
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, {{ cls.name }}MinMaxColumns())
@@ -447,13 +468,19 @@ async def resolve_{{ cls.plural_snake_name }}_aggregate(
     """
     Aggregate values for {{ cls.name }} objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise PlatformicsException("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.{{ cls.name }}, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_{{ cls.snake_name }}_aggregate_output(rows)
-    return {{ cls.name }}Aggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 {%- if cls.create_fields %}
 @strawberry.mutation(extensions=[DependencyExtension()])

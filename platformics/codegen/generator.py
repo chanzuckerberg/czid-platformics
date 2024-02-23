@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 from platformics.codegen.lib.linkml_wrappers import ViewWrapper
 
-DIR_CODEGEN = ["support", "api/types", "api/validators", "database/models", "cerbos/policies", "test_infra/factories"]
+DIR_CODEGEN = ["support", "api/types", "api/validators", "api/helpers", "database/models", "cerbos/policies", "test_infra/factories"]
 
 
 @click.group()
@@ -134,6 +134,7 @@ def api_generate(
     generate_entity_subclass_files(
         output_prefix, "test_infra/factories/class_name.py", environment, wrapped_view, render_files=render_files
     )
+    generate_entity_subclass_files(output_prefix, "api/helpers/class_name.py", environment, wrapped_view, render_files=render_files)
 
 
 if __name__ == "__main__":

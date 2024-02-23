@@ -3190,9 +3190,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "WorkflowVersionAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "WorkflowVersionAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -3256,6 +3264,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowVersionMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowVersionGroupByOptions",
                 "ofType": null
               }
             },
@@ -3405,12 +3422,194 @@
           "possibleTypes": null
         },
         {
-          "enumValues": [
+          "enumValues": null,
+          "fields": [
             {
-              "name": "graph_json"
+              "args": [],
+              "name": "graphJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             {
-              "name": "workflow_uri"
+              "args": [],
+              "name": "workflowUri",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "manifest",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "workflow",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "WorkflowVersionGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "defaultVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "minimumSupportedVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "WorkflowGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "graphJson"
+            },
+            {
+              "name": "workflowUri"
             },
             {
               "name": "version"
@@ -3428,16 +3627,16 @@
               "name": "id"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -3670,9 +3869,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "WorkflowRunAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "WorkflowRunAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -3736,6 +3943,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowRunMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowRunGroupByOptions",
                 "ofType": null
               }
             },
@@ -3903,54 +4119,190 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "startedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "endedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "executionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "outputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "workflowRunnerInputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "status",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStatus",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "workflowVersion",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowVersionGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "rawInputsJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deprecatedBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowRunGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "WorkflowRunGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
-              "name": "started_at"
+              "name": "startedAt"
             },
             {
-              "name": "ended_at"
+              "name": "endedAt"
             },
             {
-              "name": "execution_id"
+              "name": "executionId"
             },
             {
-              "name": "outputs_json"
+              "name": "outputsJson"
             },
             {
-              "name": "workflow_runner_inputs_json"
+              "name": "workflowRunnerInputsJson"
             },
             {
               "name": "status"
             },
             {
-              "name": "workflow_version"
+              "name": "workflowVersion"
             },
             {
               "name": "steps"
             },
             {
-              "name": "entity_inputs"
+              "name": "entityInputs"
             },
             {
-              "name": "raw_inputs_json"
+              "name": "rawInputsJson"
             },
             {
-              "name": "deprecated_by"
+              "name": "deprecatedBy"
             },
             {
               "name": "id"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -4296,9 +4648,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "WorkflowRunStepAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "WorkflowRunStepAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -4362,6 +4722,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowRunStepMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowRunStepGroupByOptions",
                 "ofType": null
               }
             },
@@ -4493,15 +4862,106 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "workflowRun",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowRunGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "startedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "endedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "status",
+              "type": {
+                "kind": "ENUM",
+                "name": "WorkflowRunStepStatus",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "WorkflowRunStepGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
-              "name": "workflow_run"
+              "name": "workflowRun"
             },
             {
-              "name": "started_at"
+              "name": "startedAt"
             },
             {
-              "name": "ended_at"
+              "name": "endedAt"
             },
             {
               "name": "status"
@@ -4510,16 +4970,16 @@
               "name": "id"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -4865,9 +5325,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "WorkflowRunEntityInputAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "WorkflowRunEntityInputAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -4931,6 +5399,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowRunEntityInputMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowRunEntityInputGroupByOptions",
                 "ofType": null
               }
             },
@@ -5062,33 +5539,124 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "inputEntityId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "fieldName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "entityType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "workflowRun",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowRunGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "WorkflowRunEntityInputGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
-              "name": "input_entity_id"
+              "name": "inputEntityId"
             },
             {
-              "name": "field_name"
+              "name": "fieldName"
             },
             {
-              "name": "entity_type"
+              "name": "entityType"
             },
             {
-              "name": "workflow_run"
+              "name": "workflowRun"
             },
             {
               "name": "id"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -5105,9 +5673,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "WorkflowAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "WorkflowAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -5171,6 +5747,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "WorkflowMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "WorkflowGroupByOptions",
                 "ofType": null
               }
             },
@@ -5316,10 +5901,10 @@
               "name": "name"
             },
             {
-              "name": "default_version"
+              "name": "defaultVersion"
             },
             {
-              "name": "minimum_supported_version"
+              "name": "minimumSupportedVersion"
             },
             {
               "name": "versions"
@@ -5328,16 +5913,16 @@
               "name": "id"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,

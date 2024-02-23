@@ -45,7 +45,7 @@ async def test_cascade_delete(
       }}
     """
     result = await gql_client.query(query, member_projects=[project_id])
-    assert result["data"]["sequencingReadsAggregate"]["aggregate"]["count"] == 0
+    assert result["data"]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 0
 
     # The second SequencingRead should still exist
     query = f"""
@@ -56,7 +56,7 @@ async def test_cascade_delete(
       }}
     """
     result = await gql_client.query(query, member_projects=[project_id])
-    assert result["data"]["sequencingReadsAggregate"]["aggregate"]["count"] == 1
+    assert result["data"]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 1
 
     # Files from the first SequencingRead should be deleted
     query = f"""

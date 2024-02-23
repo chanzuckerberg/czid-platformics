@@ -17,6 +17,7 @@ import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.sequencing_read import SequencingReadCreateInputValidator, SequencingReadUpdateInputValidator
 from api.files import File, FileWhereClause
+from api.helpers.sequencing_read import SequencingReadGroupByOptions, build_sequencing_read_groupby_output
 from api.types.entities import EntityInterface
 from api.types.consensus_genome import ConsensusGenomeAggregate, format_consensus_genome_aggregate_output
 from cerbos.sdk.client import CerbosClient
@@ -146,10 +147,8 @@ async def load_consensus_genome_aggregate_rows(
     mapper = inspect(db.SequencingRead)
     relationship = mapper.relationships["consensus_genomes"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_consensus_genome_aggregate_output(result)
-    return ConsensusGenomeAggregate(aggregate=aggregate_output)
+    aggregate_output = format_consensus_genome_aggregate_output(rows)
+    return aggregate_output
 
 
 """
@@ -325,21 +324,21 @@ Define enum of all columns to support count and count(distinct) aggregations
 class SequencingReadCountColumns(enum.Enum):
     sample = "sample"
     protocol = "protocol"
-    r1_file = "r1_file"
-    r2_file = "r2_file"
+    r1File = "r1_file"
+    r2File = "r2_file"
     technology = "technology"
-    nucleic_acid = "nucleic_acid"
-    clearlabs_export = "clearlabs_export"
-    medaka_model = "medaka_model"
+    nucleicAcid = "nucleic_acid"
+    clearlabsExport = "clearlabs_export"
+    medakaModel = "medaka_model"
     taxon = "taxon"
-    primer_file = "primer_file"
-    consensus_genomes = "consensus_genomes"
+    primerFile = "primer_file"
+    consensusGenomes = "consensus_genomes"
     id = "id"
-    producing_run_id = "producing_run_id"
-    owner_user_id = "owner_user_id"
-    collection_id = "collection_id"
-    created_at = "created_at"
-    updated_at = "updated_at"
+    producingRunId = "producing_run_id"
+    ownerUserId = "owner_user_id"
+    collectionId = "collection_id"
+    createdAt = "created_at"
+    updatedAt = "updated_at"
 
 
 """
@@ -363,6 +362,7 @@ class SequencingReadAggregateFunctions:
     variance: Optional[SequencingReadNumericalColumns] = None
     min: Optional[SequencingReadMinMaxColumns] = None
     max: Optional[SequencingReadMinMaxColumns] = None
+    groupBy: Optional[SequencingReadGroupByOptions] = None
 
 
 """
@@ -372,7 +372,7 @@ Wrapper around SequencingReadAggregateFunctions
 
 @strawberry.type
 class SequencingReadAggregate:
-    aggregate: Optional[SequencingReadAggregateFunctions] = None
+    aggregate: Optional[list[SequencingReadAggregateFunctions]] = None
 
 
 """
@@ -424,19 +424,43 @@ async def resolve_sequencing_reads(
     return await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_sequencing_read_aggregate_output(query_results: RowMapping) -> SequencingReadAggregateFunctions:
+def format_sequencing_read_aggregate_output(
+    query_results: Sequence[RowMapping] | RowMapping,
+) -> SequencingReadAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
+    aggregate = []
+    if type(query_results) is not list:
+        query_results = [query_results]  # type: ignore
+    for row in query_results:
+        aggregate.append(format_sequencing_read_aggregate_row(row))
+    return SequencingReadAggregate(aggregate=aggregate)
+
+
+def format_sequencing_read_aggregate_row(row: RowMapping) -> SequencingReadAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
     output = SequencingReadAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", SequencingReadGroupByOptions())
+            group = build_sequencing_read_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
         else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
+            aggregate_name = aggregate[0]
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, SequencingReadMinMaxColumns())
@@ -457,13 +481,19 @@ async def resolve_sequencing_reads_aggregate(
     """
     Aggregate values for SequencingRead objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.SequencingRead, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise PlatformicsException("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.SequencingRead, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_sequencing_read_aggregate_output(rows)
-    return SequencingReadAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
