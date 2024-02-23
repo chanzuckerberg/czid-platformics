@@ -27,6 +27,11 @@ module "stack" {
           cmd   = ["cp", "-r", "/workflows/cerbos/", "/var/policies/"]
           image = "{workflows}"
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
+        },
+        private-key = {
+          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "dev"]
+          image = "{entities}"
+          tag   = "${var.image_tag}"
         }
       }
       sidecars = {
@@ -49,8 +54,8 @@ module "stack" {
     DEFAULT_UPLOAD_PROTOCOL                         = "s3"
     ENTITY_SERVICE_URL                              = "http://ryan-test-entities:8008"
     ENTITY_SERVICE_AUTH_TOKEN                       = ""
-    JWK_PRIVATE_KEY_FILE                            = "/workflows/test_infra/fixtures/private_key.pem"
-    JWK_PUBLIC_KEY_FILE                             = "/workflows/test_infra/fixtures/public_key.pem"
+    JWK_PRIVATE_KEY_FILE                            = "/var/policies/private_key.pem"
+    JWK_PUBLIC_KEY_FILE                             = "/var/policies/public_key.pem"
     WORKERS                                         = "2"
     PLATFORMICS_WORKFLOW_RUNNER_PLUGIN              = "swipe"
     PLATFORMICS_EVENT_BUS_PLUGIN                    = "swipe"
