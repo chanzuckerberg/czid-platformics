@@ -28,8 +28,15 @@ class WorkflowRunEntityInput(Entity):
     input_entity_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=True, primary_key=False)
     field_name: Mapped[str] = mapped_column(String, nullable=True)
     entity_type: Mapped[str] = mapped_column(String, nullable=True)
-    workflow_run_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("workflow_run.entity_id"), nullable=True)
+    workflow_run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("workflow_run.entity_id"),
+        nullable=True,
+        index=True,
+    )
     workflow_run: Mapped["WorkflowRun"] = relationship(
-        "WorkflowRun", back_populates="entity_inputs", foreign_keys=workflow_run_id
+        "WorkflowRun",
+        foreign_keys=workflow_run_id,
+        back_populates="entity_inputs",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

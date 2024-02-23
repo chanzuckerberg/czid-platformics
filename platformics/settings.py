@@ -1,5 +1,5 @@
+import typing
 from functools import cached_property
-
 from jwcrypto import jwk
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
-    SERVICE_NAME: str = "Platformics Entities"
+    SERVICE_NAME: str = "entities"
 
     # Hardcoded vars"
     DB_DRIVER: str = "postgresql+asyncpg"
@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     PLATFORMICS_DATABASE_USER: str
     PLATFORMICS_DATABASE_PASSWORD: str
     PLATFORMICS_DATABASE_NAME: str
+    OUTPUT_S3_PREFIX: typing.Optional[str] = None
     JWK_PUBLIC_KEY_FILE: str
     JWK_PRIVATE_KEY_FILE: str
     DEFAULT_UPLOAD_BUCKET: str
@@ -63,24 +64,26 @@ class Settings(BaseSettings):
 
     @cached_property
     def DB_URI(self) -> str:
-        db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
+        db_uri = "{protocol}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}{service_name}".format(
             protocol=self.DB_DRIVER,
             db_host=self.PLATFORMICS_DATABASE_HOST,
             db_port=self.PLATFORMICS_DATABASE_PORT,
             db_user=self.PLATFORMICS_DATABASE_USER,
             db_pass=self.PLATFORMICS_DATABASE_PASSWORD,
             db_name=self.PLATFORMICS_DATABASE_NAME,
+            service_name=self.SERVICE_NAME,
         )
         return db_uri
 
     @cached_property
     def SYNC_DB_URI(self) -> str:
-        db_uri = "postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
+        db_uri = "postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}{service_name}".format(
             db_host=self.PLATFORMICS_DATABASE_HOST,
             db_port=self.PLATFORMICS_DATABASE_PORT,
             db_user=self.PLATFORMICS_DATABASE_USER,
             db_pass=self.PLATFORMICS_DATABASE_PASSWORD,
             db_name=self.PLATFORMICS_DATABASE_NAME,
+            service_name=self.SERVICE_NAME,
         )
         return db_uri
 

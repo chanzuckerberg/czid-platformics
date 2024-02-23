@@ -58,12 +58,12 @@ classes:
         annotations:
           hidden: true # This field shouldn't exist but we're living with it for now since it's part of the base Entity class.
       owner_user_id:
-        range: int
+        range: integer
         minimum_value: 0
         readonly: true # The API handles generating the values for these fields
         required: true
       collection_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         annotations:
@@ -73,9 +73,6 @@ classes:
         required: true
         readonly: true
       updated_at:
-        range: date
-        readonly: true
-      deleted_at:
         range: date
         readonly: true
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so

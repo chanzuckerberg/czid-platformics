@@ -37,7 +37,7 @@ class ConsensusGenomeFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
-    sequence_read = factory.SubFactory(
+    sequencing_read = factory.SubFactory(
         SequencingReadFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),

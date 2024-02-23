@@ -168,41 +168,51 @@ type Workflow implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowAggregate {
-  aggregate: WorkflowAggregateFunctions
+  aggregate: [WorkflowAggregateFunctions!]
 }
 
 type WorkflowAggregateFunctions {
   sum: WorkflowNumericalColumns
   avg: WorkflowNumericalColumns
-  min: WorkflowMinMaxColumns
-  max: WorkflowMinMaxColumns
   stddev: WorkflowNumericalColumns
   variance: WorkflowNumericalColumns
+  min: WorkflowMinMaxColumns
+  max: WorkflowMinMaxColumns
+  groupBy: WorkflowGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowCountColumns = null): Int
 }
 
 enum WorkflowCountColumns {
   name
-  default_version
-  minimum_supported_version
+  defaultVersion
+  minimumSupportedVersion
   versions
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowCreateInput {
   name: String = null
   defaultVersion: String = null
   minimumSupportedVersion: String = null
-  collectionId: Int = null
+  collectionId: Int!
+}
+
+type WorkflowGroupByOptions {
+  name: String
+  defaultVersion: String
+  minimumSupportedVersion: String
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowMinMaxColumns {
@@ -213,7 +223,6 @@ type WorkflowMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowNumericalColumns {
@@ -230,7 +239,6 @@ input WorkflowOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 type WorkflowRun implements EntityInterface & Node {
@@ -283,20 +291,20 @@ type WorkflowRun implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunAggregate {
-  aggregate: WorkflowRunAggregateFunctions
+  aggregate: [WorkflowRunAggregateFunctions!]
 }
 
 type WorkflowRunAggregateFunctions {
   sum: WorkflowRunNumericalColumns
   avg: WorkflowRunNumericalColumns
-  min: WorkflowRunMinMaxColumns
-  max: WorkflowRunMinMaxColumns
   stddev: WorkflowRunNumericalColumns
   variance: WorkflowRunNumericalColumns
+  min: WorkflowRunMinMaxColumns
+  max: WorkflowRunMinMaxColumns
+  groupBy: WorkflowRunGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowRunCountColumns = null): Int
 }
 
@@ -310,23 +318,22 @@ type WorkflowRunConnection {
 }
 
 enum WorkflowRunCountColumns {
-  started_at
-  ended_at
-  execution_id
-  outputs_json
-  workflow_runner_inputs_json
+  startedAt
+  endedAt
+  executionId
+  outputsJson
+  workflowRunnerInputsJson
   status
-  workflow_version
+  workflowVersion
   steps
-  entity_inputs
-  raw_inputs_json
-  deprecated_by
+  entityInputs
+  rawInputsJson
+  deprecatedBy
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowRunCreateInput {
@@ -338,7 +345,7 @@ input WorkflowRunCreateInput {
   workflowVersionId: ID = null
   rawInputsJson: String = null
   deprecatedById: ID = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -362,20 +369,20 @@ type WorkflowRunEntityInput implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunEntityInputAggregate {
-  aggregate: WorkflowRunEntityInputAggregateFunctions
+  aggregate: [WorkflowRunEntityInputAggregateFunctions!]
 }
 
 type WorkflowRunEntityInputAggregateFunctions {
   sum: WorkflowRunEntityInputNumericalColumns
   avg: WorkflowRunEntityInputNumericalColumns
-  min: WorkflowRunEntityInputMinMaxColumns
-  max: WorkflowRunEntityInputMinMaxColumns
   stddev: WorkflowRunEntityInputNumericalColumns
   variance: WorkflowRunEntityInputNumericalColumns
+  min: WorkflowRunEntityInputMinMaxColumns
+  max: WorkflowRunEntityInputMinMaxColumns
+  groupBy: WorkflowRunEntityInputGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowRunEntityInputCountColumns = null): Int
 }
 
@@ -389,16 +396,15 @@ type WorkflowRunEntityInputConnection {
 }
 
 enum WorkflowRunEntityInputCountColumns {
-  input_entity_id
-  field_name
-  entity_type
-  workflow_run
+  inputEntityId
+  fieldName
+  entityType
+  workflowRun
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowRunEntityInputCreateInput {
@@ -406,7 +412,7 @@ input WorkflowRunEntityInputCreateInput {
   fieldName: String = null
   entityType: String = null
   workflowRunId: ID = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -418,6 +424,18 @@ type WorkflowRunEntityInputEdge {
   node: WorkflowRunEntityInput!
 }
 
+type WorkflowRunEntityInputGroupByOptions {
+  inputEntityId: UUID
+  fieldName: String
+  entityType: String
+  workflowRun: WorkflowRunGroupByOptions
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
 type WorkflowRunEntityInputMinMaxColumns {
   fieldName: String
   entityType: String
@@ -425,7 +443,6 @@ type WorkflowRunEntityInputMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunEntityInputNumericalColumns {
@@ -443,7 +460,6 @@ input WorkflowRunEntityInputOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input WorkflowRunEntityInputWhereClause {
@@ -456,11 +472,27 @@ input WorkflowRunEntityInputWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunEntityInputWhereClauseMutations {
   id: UUIDComparators
+}
+
+type WorkflowRunGroupByOptions {
+  startedAt: DateTime
+  endedAt: DateTime
+  executionId: String
+  outputsJson: String
+  workflowRunnerInputsJson: String
+  status: WorkflowRunStatus
+  workflowVersion: WorkflowVersionGroupByOptions
+  rawInputsJson: String
+  deprecatedBy: WorkflowRunGroupByOptions
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowRunMinMaxColumns {
@@ -474,7 +506,6 @@ type WorkflowRunMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunNumericalColumns {
@@ -497,7 +528,6 @@ input WorkflowRunOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 enum WorkflowRunStatus {
@@ -532,20 +562,20 @@ type WorkflowRunStep implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunStepAggregate {
-  aggregate: WorkflowRunStepAggregateFunctions
+  aggregate: [WorkflowRunStepAggregateFunctions!]
 }
 
 type WorkflowRunStepAggregateFunctions {
   sum: WorkflowRunStepNumericalColumns
   avg: WorkflowRunStepNumericalColumns
-  min: WorkflowRunStepMinMaxColumns
-  max: WorkflowRunStepMinMaxColumns
   stddev: WorkflowRunStepNumericalColumns
   variance: WorkflowRunStepNumericalColumns
+  min: WorkflowRunStepMinMaxColumns
+  max: WorkflowRunStepMinMaxColumns
+  groupBy: WorkflowRunStepGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowRunStepCountColumns = null): Int
 }
 
@@ -559,23 +589,22 @@ type WorkflowRunStepConnection {
 }
 
 enum WorkflowRunStepCountColumns {
-  workflow_run
-  started_at
-  ended_at
+  workflowRun
+  startedAt
+  endedAt
   status
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowRunStepCreateInput {
   workflowRunId: ID = null
   endedAt: DateTime = null
   status: WorkflowRunStepStatus = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -587,6 +616,18 @@ type WorkflowRunStepEdge {
   node: WorkflowRunStep!
 }
 
+type WorkflowRunStepGroupByOptions {
+  workflowRun: WorkflowRunGroupByOptions
+  startedAt: DateTime
+  endedAt: DateTime
+  status: WorkflowRunStepStatus
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
 type WorkflowRunStepMinMaxColumns {
   startedAt: DateTime
   endedAt: DateTime
@@ -594,7 +635,6 @@ type WorkflowRunStepMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowRunStepNumericalColumns {
@@ -612,7 +652,6 @@ input WorkflowRunStepOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 enum WorkflowRunStepStatus {
@@ -636,7 +675,6 @@ input WorkflowRunStepStatusEnumComparators {
 input WorkflowRunStepUpdateInput {
   endedAt: DateTime = null
   status: WorkflowRunStepStatus = null
-  producingRunId: ID = null
 }
 
 input WorkflowRunStepWhereClause {
@@ -649,7 +687,6 @@ input WorkflowRunStepWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunStepWhereClauseMutations {
@@ -663,7 +700,6 @@ input WorkflowRunUpdateInput {
   workflowRunnerInputsJson: String = null
   status: WorkflowRunStatus = null
   deprecatedById: ID = null
-  producingRunId: ID = null
 }
 
 input WorkflowRunWhereClause {
@@ -682,7 +718,6 @@ input WorkflowRunWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowRunWhereClauseMutations {
@@ -693,7 +728,6 @@ input WorkflowUpdateInput {
   name: String = null
   defaultVersion: String = null
   minimumSupportedVersion: String = null
-  producingRunId: ID = null
 }
 
 type WorkflowVersion implements EntityInterface & Node {
@@ -726,20 +760,20 @@ type WorkflowVersion implements EntityInterface & Node {
   collectionId: Int!
   createdAt: DateTime!
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowVersionAggregate {
-  aggregate: WorkflowVersionAggregateFunctions
+  aggregate: [WorkflowVersionAggregateFunctions!]
 }
 
 type WorkflowVersionAggregateFunctions {
   sum: WorkflowVersionNumericalColumns
   avg: WorkflowVersionNumericalColumns
-  min: WorkflowVersionMinMaxColumns
-  max: WorkflowVersionMinMaxColumns
   stddev: WorkflowVersionNumericalColumns
   variance: WorkflowVersionNumericalColumns
+  min: WorkflowVersionMinMaxColumns
+  max: WorkflowVersionMinMaxColumns
+  groupBy: WorkflowVersionGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowVersionCountColumns = null): Int
 }
 
@@ -753,18 +787,17 @@ type WorkflowVersionConnection {
 }
 
 enum WorkflowVersionCountColumns {
-  graph_json
-  workflow_uri
+  graphJson
+  workflowUri
   version
   manifest
   workflow
   runs
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
-  deleted_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowVersionCreateInput {
@@ -773,7 +806,7 @@ input WorkflowVersionCreateInput {
   version: String = null
   manifest: String = null
   workflowId: ID = null
-  collectionId: Int = null
+  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -785,6 +818,19 @@ type WorkflowVersionEdge {
   node: WorkflowVersion!
 }
 
+type WorkflowVersionGroupByOptions {
+  graphJson: String
+  workflowUri: String
+  version: String
+  manifest: String
+  workflow: WorkflowGroupByOptions
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
 type WorkflowVersionMinMaxColumns {
   graphJson: String
   workflowUri: String
@@ -794,7 +840,6 @@ type WorkflowVersionMinMaxColumns {
   collectionId: Int
   createdAt: DateTime
   updatedAt: DateTime
-  deletedAt: DateTime
 }
 
 type WorkflowVersionNumericalColumns {
@@ -813,7 +858,6 @@ input WorkflowVersionOrderByClause {
   collectionId: orderBy
   createdAt: orderBy
   updatedAt: orderBy
-  deletedAt: orderBy
 }
 
 input WorkflowVersionWhereClause {
@@ -828,7 +872,6 @@ input WorkflowVersionWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowVersionWhereClauseMutations {
@@ -845,7 +888,6 @@ input WorkflowWhereClause {
   collectionId: IntComparators
   createdAt: DatetimeComparators
   updatedAt: DatetimeComparators
-  deletedAt: DatetimeComparators
 }
 
 input WorkflowWhereClauseMutations {

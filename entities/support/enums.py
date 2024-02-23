@@ -19,6 +19,7 @@ class FileStatus(enum.Enum):
 @strawberry.enum
 class FileAccessProtocol(enum.Enum):
     s3 = "s3"
+    https = "https"
 
 
 @strawberry.enum
@@ -68,13 +69,6 @@ class TaxonLevel(enum.Enum):
     level_phylum = "level_phylum"
     level_kingdom = "level_kingdom"
     level_superkingdom = "level_superkingdom"
-
-
-@strawberry.enum
-class PhylogeneticTreeFormat(enum.Enum):
-    newick = "newick"
-    auspice_v1 = "auspice_v1"
-    auspice_v2 = "auspice_v2"
 
 
 @strawberry.enum

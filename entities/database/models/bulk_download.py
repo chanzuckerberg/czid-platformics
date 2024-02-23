@@ -10,7 +10,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, Enum
+from sqlalchemy import ForeignKey, String, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import BulkDownloadType
@@ -25,6 +25,14 @@ class BulkDownload(Entity):
     __tablename__ = "bulk_download"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     download_type: Mapped[BulkDownloadType] = mapped_column(Enum(BulkDownloadType, native_enum=False), nullable=False)
-    file_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("file.id"), nullable=True)
-    file: Mapped["File"] = relationship("File", foreign_keys=file_id)
+    download_display_name: Mapped[str] = mapped_column(String, nullable=False)
+    file_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("file.id"),
+        nullable=True,
+        index=True,
+    )
+    file: Mapped["File"] = relationship(
+        "File", foreign_keys=file_id, cascade="all, delete-orphan", single_parent=True, post_update=True
+    )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

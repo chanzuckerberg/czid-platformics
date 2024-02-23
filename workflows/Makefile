@@ -15,11 +15,12 @@ export docker_compose:=docker compose --env-file .env.localdev
 export docker_compose_run:=docker compose --env-file .env.localdev run --rm
 
 ### DATABASE VARIABLES #################################################
-LOCAL_DB_NAME = workflows
+SERVICE_NAME = workflows
+LOCAL_DB_NAME = platformics
 LOCAL_DB_SERVER = localhost:5432
 LOCAL_DB_USERNAME = postgres
 LOCAL_DB_PASSWORD = password_postgres
-LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)
+LOCAL_DB_CONN_STRING = postgresql://$(LOCAL_DB_USERNAME):$(LOCAL_DB_PASSWORD)@$(LOCAL_DB_SERVER)/$(LOCAL_DB_NAME)$(SERVICE_NAME)
 
 
 ### HELPFUL #################################################
@@ -44,8 +45,10 @@ local-init: .env.localdev ## initialize service containers
 	while [ -z "$$($(docker_compose) exec -T postgres psql $(LOCAL_DB_CONN_STRING) -c 'select 1')" ]; do echo "waiting for db to start..."; sleep 1; done;
 	$(docker_compose_run) $(FOLDER) alembic upgrade head
 	$(MAKE) local-seed
-	$(MAKE) local-editable-plugins
 	
+.PHONY: local-seed
+local-seed: 
+	$(docker_compose) exec $(FOLDER) python3 scripts/seed.py --use-moto
 .PHONY: local-start
 local-start: .env.localdev ## Start a local dev environment that's been stopped.
 	$(docker_compose) up -d 
@@ -53,10 +56,6 @@ local-start: .env.localdev ## Start a local dev environment that's been stopped.
 .PHONY: local-pgconsole
 local-pgconsole: ## Connect to the local postgres database.
 	$(docker_compose) exec postgres psql "$(LOCAL_DB_CONN_STRING)"
-
-.PHONY: local-editable-plugins
-local-editable-plugins:
-	$(docker_compose) exec workflows bash -c 'for plugin in plugins/*/*; do pip install -e "$$plugin"; done'
 
 .PHONY: local-db-tests
 local-db-tests: ## Run workflow db tests
@@ -90,7 +89,7 @@ local-swipe-plugin-deploy-mock: local-swipe-plugin-clean ## Deploy SWIPE onto mo
 local-swipe-plugin-tests: local-swipe-plugin-deploy-mock ## Run SWIPE plugin tests
 	$(docker_compose) exec $(FOLDER) sh -c 'pytest terraform_test/'
 
-DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/
+DIR_LINT_CODEGEN = database/models/ api/types/ api/{queries,mutations}.py test_infra/factories/ api/validators
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI

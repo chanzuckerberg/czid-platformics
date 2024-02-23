@@ -27,9 +27,16 @@ else:
 class WorkflowRunStep(Entity):
     __tablename__ = "workflow_run_step"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    workflow_run_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("workflow_run.entity_id"), nullable=True)
+    workflow_run_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("workflow_run.entity_id"),
+        nullable=True,
+        index=True,
+    )
     workflow_run: Mapped["WorkflowRun"] = relationship(
-        "WorkflowRun", back_populates="steps", foreign_keys=workflow_run_id
+        "WorkflowRun",
+        foreign_keys=workflow_run_id,
+        back_populates="steps",
     )
     started_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
     ended_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)

@@ -2,7 +2,6 @@
 GraphQL types, queries, and mutations for files.
 """
 
-import gzip
 import json
 import tempfile
 import typing
@@ -22,6 +21,7 @@ from platformics.api.core.deps import (
     get_settings,
     get_sts_client,
     require_auth_principal,
+    require_system_user,
 )
 from platformics.api.core.gql_to_sql import EnumComparators, IntComparators, StrComparators, UUIDComparators
 from platformics.api.core.helpers import get_db_rows
@@ -30,6 +30,7 @@ from platformics.security.authorization import CerbosAction, get_resource_query
 from platformics.settings import APISettings
 from platformics.support.format_handlers import get_validator
 from sqlalchemy import inspect
+from sqlalchemy.sql import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from support.enums import FileAccessProtocol, FileStatus
 from typing_extensions import TypedDict
@@ -39,10 +40,12 @@ from api.types.entities import Entity
 from strawberry.scalars import JSON
 from strawberry.types import Info
 
+FILE_TEMPORARY_PREFIX = "tmp"
 FILE_CONCATENATION_MAX = 200
 FILE_CONCATENATION_MAX_SIZE = 50e3  # SARS-CoV-2 genome is ~30kbp
-FILE_CONCATENATION_PREFIX = "tmp/concatenated-files"
+FILE_CONCATENATION_PREFIX = f"{FILE_TEMPORARY_PREFIX}/concatenated-files"
 FILE_CONTENTS_MAX_SIZE = 1e6  # 1MB
+UPLOADS_PREFIX = "uploads"
 
 # ------------------------------------------------------------------------------
 # Utility types/inputs
@@ -248,17 +251,9 @@ async def validate_file(
     """
     validator = get_validator(file.file_format)
 
-    # Get first 1MB of a file (support plain text or gzip)
-    body = s3_client.get_object(Bucket=file.namespace, Key=file.path, Range="bytes=0-1000000")["Body"]
-    if file.path.endswith(".gz"):
-        with gzip.GzipFile(fileobj=body) as fp:
-            contents = fp.read().decode("utf-8")
-    else:
-        contents = body.read().decode("utf-8")
-
     # Validate data
     try:
-        validator.validate(contents)
+        validator(s3_client, file.namespace, file.path).validate()
         file_size = s3_client.head_object(Bucket=file.namespace, Key=file.path)["ContentLength"]
     except:  # noqa
         file.status = db.FileStatus.FAILED
@@ -266,6 +261,7 @@ async def validate_file(
         file.status = db.FileStatus.SUCCESS
         file.size = file_size
 
+    file.updated_at = func.now()
     await session.commit()
 
 
@@ -354,6 +350,8 @@ async def create_file(
     """
     Create a file object based on an existing S3 file (no upload).
     """
+    # Since user can specify an arbitrary path, make sure only a system user can do this.
+    require_system_user(principal)
     new_file = await create_or_upload_file(
         entity_id, entity_field_name, file, -1, session, cerbos_client, principal, s3_client, sts_client, settings
     )
@@ -437,7 +435,7 @@ async def create_or_upload_file(
     if isinstance(file, FileUpload):
         file_protocol = settings.DEFAULT_UPLOAD_PROTOCOL
         file_namespace = settings.DEFAULT_UPLOAD_BUCKET
-        file_path = f"uploads/{file_id}/{file.name}"
+        file_path = f"{settings.OUTPUT_S3_PREFIX}/{UPLOADS_PREFIX}/{file_id}/{file.name}"
     else:
         file_protocol = file.protocol  # type: ignore
         file_namespace = file.namespace
@@ -473,6 +471,24 @@ async def create_or_upload_file(
             file=new_file,  # type: ignore
             credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
         )
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def upload_temporary_file(
+    expiration: int = 3600,
+    principal: Principal = Depends(require_auth_principal),
+    sts_client: STSClient = Depends(get_sts_client),
+    settings: APISettings = Depends(get_settings),
+) -> MultipartUploadResponse:
+    """
+    Generate upload tokens to upload files to S3 for temporary use. Only system users can do this.
+    """
+    require_system_user(principal)
+    new_file = db.File(namespace=settings.DEFAULT_UPLOAD_BUCKET, path=f"{FILE_TEMPORARY_PREFIX}/{uuid6.uuid7()}")
+    return MultipartUploadResponse(
+        file=new_file,  # type: ignore
+        credentials=generate_multipart_upload_token(new_file, expiration, sts_client),
+    )
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

@@ -5,12 +5,13 @@ Cerbos policies, and Factoryboy factories from a LinkML schema.
 
 import logging
 import os
+
 import click
 from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 from platformics.codegen.lib.linkml_wrappers import ViewWrapper
 
-DIR_CODEGEN = ["support", "api/types", "database/models", "cerbos/policies", "test_infra/factories"]
+DIR_CODEGEN = ["support", "api/types", "api/validators", "api/helpers", "database/models", "cerbos/policies", "test_infra/factories"]
 
 
 @click.group()
@@ -68,7 +69,9 @@ def generate_entity_subclass_files(
             print(f"... wrote {dest_filename}")
 
 
-def generate_entity_import_files(output_prefix: str, environment: Environment, view: ViewWrapper, render_files: bool) -> None:
+def generate_entity_import_files(
+    output_prefix: str, environment: Environment, view: ViewWrapper, render_files: bool
+) -> None:
     """
     Code generation for database model imports, and GraphQL queries/mutations
     """
@@ -92,14 +95,14 @@ def generate_entity_import_files(output_prefix: str, environment: Environment, v
 @click.option("--render-files/--skip-render-files", type=bool, default=True, show_default=True)
 @click.option("--template-override-paths", type=str, multiple=True)
 @click.pass_context
-def api_generate(ctx: click.Context, schemafile: str, output_prefix: str, render_files: bool, template_override_paths: tuple[str]) -> None:
+def api_generate(
+    ctx: click.Context, schemafile: str, output_prefix: str, render_files: bool, template_override_paths: tuple[str]
+) -> None:
     """
     Launch code generation
     """
     template_paths = list(template_override_paths)
-    template_paths.append(
-        "platformics/codegen/templates/" # default template path
-    )
+    template_paths.append("platformics/codegen/templates/")  # default template path
     environment = Environment(loader=FileSystemLoader(template_paths))
     view = SchemaView(schemafile)
     view.imports_closure()
@@ -111,15 +114,27 @@ def api_generate(ctx: click.Context, schemafile: str, output_prefix: str, render
     for dir in DIR_CODEGEN:
         os.makedirs(f"{output_prefix}/{dir}", exist_ok=True)
 
-    # Generate enums and import files   
+    # Generate enums and import files
     generate_enums(output_prefix, environment, wrapped_view)
     generate_entity_import_files(output_prefix, environment, wrapped_view, render_files=render_files)
 
     # Generate database models, GraphQL types, Cerbos policies, and Factoryboy factories
-    generate_entity_subclass_files(output_prefix, "database/models/class_name.py", environment, wrapped_view, render_files=render_files)
-    generate_entity_subclass_files(output_prefix, "api/types/class_name.py", environment, wrapped_view, render_files=render_files)
-    generate_entity_subclass_files(output_prefix, "cerbos/policies/class_name.yaml", environment, wrapped_view, render_files=render_files)
-    generate_entity_subclass_files(output_prefix, "test_infra/factories/class_name.py", environment, wrapped_view, render_files=render_files)
+    generate_entity_subclass_files(
+        output_prefix, "database/models/class_name.py", environment, wrapped_view, render_files=render_files
+    )
+    generate_entity_subclass_files(
+        output_prefix, "api/types/class_name.py", environment, wrapped_view, render_files=render_files
+    )
+    generate_entity_subclass_files(
+        output_prefix, "api/validators/class_name.py", environment, wrapped_view, render_files=render_files
+    )
+    generate_entity_subclass_files(
+        output_prefix, "cerbos/policies/class_name.yaml", environment, wrapped_view, render_files=render_files
+    )
+    generate_entity_subclass_files(
+        output_prefix, "test_infra/factories/class_name.py", environment, wrapped_view, render_files=render_files
+    )
+    generate_entity_subclass_files(output_prefix, "api/helpers/class_name.py", environment, wrapped_view, render_files=render_files)
 
 
 if __name__ == "__main__":

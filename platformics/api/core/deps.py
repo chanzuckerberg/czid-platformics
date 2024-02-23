@@ -12,6 +12,7 @@ from platformics.security.token_auth import get_token_claims
 from platformics.settings import APISettings
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
+from platformics.api.core.errors import PlatformicsException
 
 
 def get_settings(request: Request) -> APISettings:
@@ -84,7 +85,7 @@ def require_auth_principal(
     principal: typing.Optional[Principal] = Depends(get_auth_principal),
 ) -> Principal:
     if not principal:
-        raise Exception("Unauthorized")
+        raise PlatformicsException("Unauthorized")
     return principal
 
 
@@ -97,7 +98,7 @@ def is_system_user(principal: Principal = Depends(require_auth_principal)) -> bo
 def require_system_user(principal: Principal = Depends(require_auth_principal)) -> None:
     if principal.attr.get("service_identity"):
         return None
-    raise Exception("Unauthorized")
+    raise PlatformicsException("Unauthorized")
 
 
 def get_s3_client(

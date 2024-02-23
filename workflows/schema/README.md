@@ -3,11 +3,10 @@ erDiagram
 Entity {
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRun {
     date started_at  
@@ -20,11 +19,10 @@ WorkflowRun {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 Workflow {
     string name  
@@ -33,11 +31,10 @@ Workflow {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRunStep {
     date started_at  
@@ -46,11 +43,10 @@ WorkflowRunStep {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowRunEntityInput {
     uuid input_entity_id  
@@ -59,11 +55,10 @@ WorkflowRunEntityInput {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 WorkflowVersion {
     string graph_json  
@@ -73,11 +68,10 @@ WorkflowVersion {
     uuid entity_id  
     uuid id  
     uuid producing_run_id  
-    int owner_user_id  
-    int collection_id  
+    integer owner_user_id  
+    integer collection_id  
     date created_at  
     date updated_at  
-    date deleted_at  
 }
 EntityMixin {
     uuid entity_id  
