@@ -19873,6 +19873,15 @@
             },
             {
               "defaultValue": "null",
+              "name": "fileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
               "name": "upstreamDatabaseId",
               "type": {
                 "kind": "SCALAR",
