@@ -10,14 +10,14 @@ setup(
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
-    py_modules=["sequencing_read"],
+    py_modules=["consensus_genome_output"],
     python_requires=">=3.6",
     setup_requires=[],
     install_requires=["miniwdl"],
     reentry_register=True,
     entry_points={
         "czid.plugin.output_loader": [
-            "sequencing_read = sequencing_read:SequencingReadOutputLoader",
+            "consensus_genome = consensus_genome_output:ConsensusGenomeOutputLoader",
         ],
     },
 )

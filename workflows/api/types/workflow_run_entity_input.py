@@ -18,6 +18,10 @@ from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.workflow_run_entity_input import (
     WorkflowRunEntityInputCreateInputValidator,
 )
+from api.helpers.workflow_run_entity_input import (
+    WorkflowRunEntityInputGroupByOptions,
+    build_workflow_run_entity_input_groupby_output,
+)
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -195,15 +199,15 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class WorkflowRunEntityInputCountColumns(enum.Enum):
-    input_entity_id = "input_entity_id"
-    field_name = "field_name"
-    entity_type = "entity_type"
-    workflow_run = "workflow_run"
+    inputEntityId = "input_entity_id"
+    fieldName = "field_name"
+    entityType = "entity_type"
+    workflowRun = "workflow_run"
     id = "id"
-    owner_user_id = "owner_user_id"
-    collection_id = "collection_id"
-    created_at = "created_at"
-    updated_at = "updated_at"
+    ownerUserId = "owner_user_id"
+    collectionId = "collection_id"
+    createdAt = "created_at"
+    updatedAt = "updated_at"
 
 
 """
@@ -227,6 +231,7 @@ class WorkflowRunEntityInputAggregateFunctions:
     variance: Optional[WorkflowRunEntityInputNumericalColumns] = None
     min: Optional[WorkflowRunEntityInputMinMaxColumns] = None
     max: Optional[WorkflowRunEntityInputMinMaxColumns] = None
+    groupBy: Optional[WorkflowRunEntityInputGroupByOptions] = None
 
 
 """
@@ -236,7 +241,7 @@ Wrapper around WorkflowRunEntityInputAggregateFunctions
 
 @strawberry.type
 class WorkflowRunEntityInputAggregate:
-    aggregate: Optional[WorkflowRunEntityInputAggregateFunctions] = None
+    aggregate: Optional[list[WorkflowRunEntityInputAggregateFunctions]] = None
 
 
 """
@@ -277,20 +282,42 @@ async def resolve_workflow_run_entity_inputs(
 
 
 def format_workflow_run_entity_input_aggregate_output(
-    query_results: RowMapping,
-) -> WorkflowRunEntityInputAggregateFunctions:
+    query_results: Sequence[RowMapping] | RowMapping,
+) -> WorkflowRunEntityInputAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
+    aggregate = []
+    if type(query_results) is not list:
+        query_results = [query_results]  # type: ignore
+    for row in query_results:
+        aggregate.append(format_workflow_run_entity_input_aggregate_row(row))
+    return WorkflowRunEntityInputAggregate(aggregate=aggregate)
+
+
+def format_workflow_run_entity_input_aggregate_row(row: RowMapping) -> WorkflowRunEntityInputAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
     output = WorkflowRunEntityInputAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", WorkflowRunEntityInputGroupByOptions())
+            group = build_workflow_run_entity_input_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
         else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
+            aggregate_name = aggregate[0]
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, WorkflowRunEntityInputMinMaxColumns())
@@ -311,13 +338,19 @@ async def resolve_workflow_run_entity_inputs_aggregate(
     """
     Aggregate values for WorkflowRunEntityInput objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.WorkflowRunEntityInput, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise PlatformicsException("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.WorkflowRunEntityInput, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_workflow_run_entity_input_aggregate_output(rows)
-    return WorkflowRunEntityInputAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

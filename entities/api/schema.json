@@ -1807,6 +1807,9 @@
           "enumValues": [
             {
               "name": "s3"
+            },
+            {
+              "name": "https"
             }
           ],
           "fields": null,
@@ -8930,9 +8933,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "SequencingReadAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "SequencingReadAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -8996,6 +9007,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "SequencingReadMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadGroupByOptions",
                 "ofType": null
               }
             },
@@ -9118,6 +9138,741 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sample",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "protocol",
+              "type": {
+                "kind": "ENUM",
+                "name": "SequencingProtocol",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "technology",
+              "type": {
+                "kind": "ENUM",
+                "name": "SequencingTechnology",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nucleicAcid",
+              "type": {
+                "kind": "ENUM",
+                "name": "NucleicAcid",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "clearlabsExport",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "medakaModel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxon",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "primerFile",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SequencingReadGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "railsSampleId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "sampleType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "waterControl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionLocation",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "notes",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "hostOrganism",
+              "type": {
+                "kind": "OBJECT",
+                "name": "HostOrganismGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SampleGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "category",
+              "type": {
+                "kind": "ENUM",
+                "name": "HostOrganismCategory",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "isDeuterostome",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "HostOrganismGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "wikipediaId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "commonName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "isPhage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "upstreamDatabase",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "upstreamDatabaseIdentifier",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "level",
+              "type": {
+                "kind": "ENUM",
+                "name": "TaxonLevel",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxParent",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxSubspecies",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxSpecies",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxGenus",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxFamily",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxOrder",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxClass",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxPhylum",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxKingdom",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "taxSuperkingdom",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "TaxonGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "UpstreamDatabaseGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "GenomicRangeGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
               "name": "sample"
@@ -9126,49 +9881,49 @@
               "name": "protocol"
             },
             {
-              "name": "r1_file"
+              "name": "r1File"
             },
             {
-              "name": "r2_file"
+              "name": "r2File"
             },
             {
               "name": "technology"
             },
             {
-              "name": "nucleic_acid"
+              "name": "nucleicAcid"
             },
             {
-              "name": "clearlabs_export"
+              "name": "clearlabsExport"
             },
             {
-              "name": "medaka_model"
+              "name": "medakaModel"
             },
             {
               "name": "taxon"
             },
             {
-              "name": "primer_file"
+              "name": "primerFile"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -9666,9 +10421,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "ConsensusGenomeAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ConsensusGenomeAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -9732,6 +10495,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "ConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeGroupByOptions",
                 "ofType": null
               }
             },
@@ -9845,15 +10617,279 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "taxon",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "sequencingRead",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SequencingReadGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenome",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "accession",
+              "type": {
+                "kind": "OBJECT",
+                "name": "AccessionGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ConsensusGenomeGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "ReferenceGenomeGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "accessionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "accessionName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "upstreamDatabase",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "AccessionGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
               "name": "taxon"
             },
             {
-              "name": "sequencing_read"
+              "name": "sequencingRead"
             },
             {
-              "name": "reference_genome"
+              "name": "referenceGenome"
             },
             {
               "name": "accession"
@@ -9865,25 +10901,25 @@
               "name": "metrics"
             },
             {
-              "name": "intermediate_outputs"
+              "name": "intermediateOutputs"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -10692,9 +11728,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "TaxonAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "TaxonAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -10758,6 +11802,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "TaxonMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "TaxonGroupByOptions",
                 "ofType": null
               }
             },
@@ -10918,82 +11971,82 @@
         {
           "enumValues": [
             {
-              "name": "wikipedia_id"
+              "name": "wikipediaId"
             },
             {
               "name": "description"
             },
             {
-              "name": "common_name"
+              "name": "commonName"
             },
             {
               "name": "name"
             },
             {
-              "name": "is_phage"
+              "name": "isPhage"
             },
             {
-              "name": "upstream_database"
+              "name": "upstreamDatabase"
             },
             {
-              "name": "upstream_database_identifier"
+              "name": "upstreamDatabaseIdentifier"
             },
             {
               "name": "level"
             },
             {
-              "name": "tax_parent"
+              "name": "taxParent"
             },
             {
-              "name": "tax_subspecies"
+              "name": "taxSubspecies"
             },
             {
-              "name": "tax_species"
+              "name": "taxSpecies"
             },
             {
-              "name": "tax_genus"
+              "name": "taxGenus"
             },
             {
-              "name": "tax_family"
+              "name": "taxFamily"
             },
             {
-              "name": "tax_order"
+              "name": "taxOrder"
             },
             {
-              "name": "tax_class"
+              "name": "taxClass"
             },
             {
-              "name": "tax_phylum"
+              "name": "taxPhylum"
             },
             {
-              "name": "tax_kingdom"
+              "name": "taxKingdom"
             },
             {
-              "name": "tax_superkingdom"
+              "name": "taxSuperkingdom"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
-              "name": "sequencing_reads"
+              "name": "sequencingReads"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -11110,9 +12163,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "IndexFileAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "IndexFileAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -11176,6 +12237,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "IndexFileMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "IndexFileGroupByOptions",
                 "ofType": null
               }
             },
@@ -11298,6 +12368,106 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "name",
+              "type": {
+                "kind": "ENUM",
+                "name": "IndexTypes",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "upstreamDatabase",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "hostOrganism",
+              "type": {
+                "kind": "OBJECT",
+                "name": "HostOrganismGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "IndexFileGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
               "name": "name"
@@ -11309,28 +12479,28 @@
               "name": "file"
             },
             {
-              "name": "upstream_database"
+              "name": "upstreamDatabase"
             },
             {
-              "name": "host_organism"
+              "name": "hostOrganism"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -11427,9 +12597,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "AccessionAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "AccessionAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -11493,6 +12671,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "AccessionMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "AccessionGroupByOptions",
                 "ofType": null
               }
             },
@@ -11626,34 +12813,34 @@
         {
           "enumValues": [
             {
-              "name": "accession_id"
+              "name": "accessionId"
             },
             {
-              "name": "accession_name"
+              "name": "accessionName"
             },
             {
-              "name": "upstream_database"
+              "name": "upstreamDatabase"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -11750,9 +12937,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "SampleAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "SampleAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -11816,6 +13011,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "SampleMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleGroupByOptions",
                 "ofType": null
               }
             },
@@ -11994,31 +13198,31 @@
         {
           "enumValues": [
             {
-              "name": "rails_sample_id"
+              "name": "railsSampleId"
             },
             {
               "name": "name"
             },
             {
-              "name": "sample_type"
+              "name": "sampleType"
             },
             {
-              "name": "water_control"
+              "name": "waterControl"
             },
             {
-              "name": "collection_date"
+              "name": "collectionDate"
             },
             {
-              "name": "collection_location"
+              "name": "collectionLocation"
             },
             {
               "name": "notes"
             },
             {
-              "name": "host_organism"
+              "name": "hostOrganism"
             },
             {
-              "name": "sequencing_reads"
+              "name": "sequencingReads"
             },
             {
               "name": "metadatas"
@@ -12027,19 +13231,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -12393,9 +13597,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "MetadatumAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetadatumAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -12459,6 +13671,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "MetadatumMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetadatumGroupByOptions",
                 "ofType": null
               }
             },
@@ -12590,12 +13811,103 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "sample",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SampleGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "fieldName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "value",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetadatumGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
               "name": "sample"
             },
             {
-              "name": "field_name"
+              "name": "fieldName"
             },
             {
               "name": "value"
@@ -12604,19 +13916,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -13078,9 +14390,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "GenomicRangeAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "GenomicRangeAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -13144,6 +14464,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "GenomicRangeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "GenomicRangeGroupByOptions",
                 "ofType": null
               }
             },
@@ -13262,25 +14591,25 @@
               "name": "file"
             },
             {
-              "name": "sequencing_reads"
+              "name": "sequencingReads"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -13297,9 +14626,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "ReferenceGenomeAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ReferenceGenomeAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -13363,6 +14700,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "ReferenceGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ReferenceGenomeGroupByOptions",
                 "ofType": null
               }
             },
@@ -13493,25 +14839,25 @@
               "name": "name"
             },
             {
-              "name": "consensus_genomes"
+              "name": "consensusGenomes"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -13528,9 +14874,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "HostOrganismAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "HostOrganismAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -13594,6 +14948,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "HostOrganismMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "HostOrganismGroupByOptions",
                 "ofType": null
               }
             },
@@ -13736,7 +15099,7 @@
               "name": "category"
             },
             {
-              "name": "is_deuterostome"
+              "name": "isDeuterostome"
             },
             {
               "name": "indexes"
@@ -13748,19 +15111,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -13777,9 +15140,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "MetricConsensusGenomeAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "MetricConsensusGenomeAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -13843,6 +15214,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "MetricConsensusGenomeMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "MetricConsensusGenomeGroupByOptions",
                 "ofType": null
               }
             },
@@ -14208,72 +15588,296 @@
           "possibleTypes": null
         },
         {
+          "enumValues": null,
+          "fields": [
+            {
+              "args": [],
+              "name": "consensusGenome",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ConsensusGenomeGroupByOptions",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "referenceGenomeLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentGenomeCalled",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "percentIdentity",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "gcPercent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "totalReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "mappedReads",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "refSnps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nActg",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nMissing",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "nAmbiguous",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageDepth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageBreadth",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageBinSize",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageTotalLength",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "coverageViz",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "Int",
+                        "ofType": null
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MetricConsensusGenomeGroupByOptions",
+          "possibleTypes": null
+        },
+        {
           "enumValues": [
             {
-              "name": "consensus_genome"
+              "name": "consensusGenome"
             },
             {
-              "name": "reference_genome_length"
+              "name": "referenceGenomeLength"
             },
             {
-              "name": "percent_genome_called"
+              "name": "percentGenomeCalled"
             },
             {
-              "name": "percent_identity"
+              "name": "percentIdentity"
             },
             {
-              "name": "gc_percent"
+              "name": "gcPercent"
             },
             {
-              "name": "total_reads"
+              "name": "totalReads"
             },
             {
-              "name": "mapped_reads"
+              "name": "mappedReads"
             },
             {
-              "name": "ref_snps"
+              "name": "refSnps"
             },
             {
-              "name": "n_actg"
+              "name": "nActg"
             },
             {
-              "name": "n_missing"
+              "name": "nMissing"
             },
             {
-              "name": "n_ambiguous"
+              "name": "nAmbiguous"
             },
             {
-              "name": "coverage_depth"
+              "name": "coverageDepth"
             },
             {
-              "name": "coverage_breadth"
+              "name": "coverageBreadth"
             },
             {
-              "name": "coverage_bin_size"
+              "name": "coverageBinSize"
             },
             {
-              "name": "coverage_total_length"
+              "name": "coverageTotalLength"
             },
             {
-              "name": "coverage_viz"
+              "name": "coverageViz"
             },
             {
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -14290,9 +15894,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "UpstreamDatabaseAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "UpstreamDatabaseAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -14356,6 +15968,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "UpstreamDatabaseMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "UpstreamDatabaseGroupByOptions",
                 "ofType": null
               }
             },
@@ -14495,19 +16116,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -14524,9 +16145,17 @@
               "args": [],
               "name": "aggregate",
               "type": {
-                "kind": "OBJECT",
-                "name": "BulkDownloadAggregateFunctions",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "BulkDownloadAggregateFunctions",
+                    "ofType": null
+                  }
+                }
               }
             }
           ],
@@ -14590,6 +16219,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "BulkDownloadMinMaxColumns",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "groupBy",
+              "type": {
+                "kind": "OBJECT",
+                "name": "BulkDownloadGroupByOptions",
                 "ofType": null
               }
             },
@@ -14712,12 +16350,94 @@
           "possibleTypes": null
         },
         {
-          "enumValues": [
+          "enumValues": null,
+          "fields": [
             {
-              "name": "download_type"
+              "args": [],
+              "name": "downloadType",
+              "type": {
+                "kind": "ENUM",
+                "name": "BulkDownloadType",
+                "ofType": null
+              }
             },
             {
-              "name": "download_display_name"
+              "args": [],
+              "name": "downloadDisplayName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "producingRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "ownerUserId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "collectionId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "BulkDownloadGroupByOptions",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": [
+            {
+              "name": "downloadType"
+            },
+            {
+              "name": "downloadDisplayName"
             },
             {
               "name": "file"
@@ -14726,19 +16446,19 @@
               "name": "id"
             },
             {
-              "name": "producing_run_id"
+              "name": "producingRunId"
             },
             {
-              "name": "owner_user_id"
+              "name": "ownerUserId"
             },
             {
-              "name": "collection_id"
+              "name": "collectionId"
             },
             {
-              "name": "created_at"
+              "name": "createdAt"
             },
             {
-              "name": "updated_at"
+              "name": "updatedAt"
             }
           ],
           "fields": null,
@@ -14860,6 +16580,33 @@
                 }
               ],
               "name": "uploadFile",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "MultipartUploadResponse",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": "3600",
+                  "name": "expiration",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "name": "uploadTemporaryFile",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
