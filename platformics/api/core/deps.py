@@ -79,7 +79,7 @@ def get_auth_principal(request: Request, settings: APISettings = Depends(get_set
         roles=["user"],
         attr={
             "user_id": int(claims["sub"]),
-            "admin_projects": project_claims.get("admin", []),
+            "owner_projects": project_claims.get("owner", []),
             "member_projects": project_claims.get("member", []),
             "viewer_projects": project_claims.get("viewer", []),
             "service_identity": claims["service_identity"],
