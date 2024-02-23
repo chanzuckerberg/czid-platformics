@@ -16,6 +16,7 @@ from platformics.api.core.deps import (
     get_cerbos_client,
     get_db_session,
     get_engine,
+    get_user_token,
     require_auth_principal,
 )
 from platformics.api.core.errors import PlatformicsException
@@ -112,6 +113,7 @@ async def _create_workflow_run(
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
+    token: str = Depends(get_user_token)
 ) -> workflow_run.WorkflowRun:
     logger = logging.getLogger()
     attr = {"collection_id": input.collection_id}
@@ -145,7 +147,7 @@ async def _create_workflow_run(
             logger.error(f"Input loader ({input_loader_specifier.name}, {input_loader_specifier.version}) not found")
             raise PlatformicsException("An error occurred while processing your inputs")
 
-        input_loader_outputs = await input_loader.load(
+        input_loader_outputs = await input_loader(token).load(
             workflow_version, loader_entity_inputs, loader_raw_inputs, list(input_loader_specifier.outputs.keys())
         )
         for k, v in input_loader_specifier.outputs.items():

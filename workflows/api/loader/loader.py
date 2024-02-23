@@ -5,6 +5,7 @@ Loader functions
 import asyncio
 import json
 import sys
+from platformics.client.impersonation import ImpersonationClient
 from platformics.util.types_utils import JSONValue
 
 
@@ -30,6 +31,7 @@ class LoaderDriver:
     def __init__(self, session: AsyncSession, bus: EventBus) -> None:
         self.session = session
         self.bus = bus
+        self.impersonation_client = ImpersonationClient()
 
     async def process_workflow_completed(
         self,
@@ -46,6 +48,7 @@ class LoaderDriver:
 
         loader_futures = []
         workflow_manifest = Manifest.from_yaml(workflow_version.manifest)
+        user_token = await self.impersonation_client.impersonate(workflow_run.owner_user_id)
         for output_loader_specifier in workflow_manifest.output_loaders:
             loader_entity_inputs = {
                 k: entity_inputs[v] for k, v in output_loader_specifier.inputs.items() if v in entity_inputs
@@ -58,7 +61,7 @@ class LoaderDriver:
             if not output_loader:
                 raise Exception(f"Output loader {output_loader_specifier.name} not found")
             loader_futures.append(
-                output_loader.load(workflow_run, loader_entity_inputs, loader_raw_inputs, loader_workflow_outputs)
+                output_loader(user_token).load(workflow_run, loader_entity_inputs, loader_raw_inputs, loader_workflow_outputs)
             )
         await asyncio.gather(*loader_futures)
 
