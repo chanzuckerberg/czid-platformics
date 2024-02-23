@@ -33,7 +33,7 @@ class IndexFile(Entity):
     file_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("file.id"),
-        nullable=False,
+        nullable=True,
         index=True,
     )
     file: Mapped["File"] = relationship(
