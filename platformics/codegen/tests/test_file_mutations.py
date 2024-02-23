@@ -219,12 +219,18 @@ async def test_create_file(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "file_path,should_delete",
-    [("nextgen/test1.fastq", True), ("bla/test1.fastq", False)],
+    "file_path,multiple_files_for_one_path,should_delete",
+    [
+        ("nextgen/test1.fastq", False, True),
+        ("bla/test1.fastq", False, False),
+        ("nextgen/test1.fastq", True, False),
+        ("bla/test1.fastq", True, False),
+    ],
 )
 async def test_delete_from_s3(
     file_path: str,
     should_delete: bool,
+    multiple_files_for_one_path: bool,
     sync_db: SyncDB,
     gql_client: GQLTestClient,
     moto_client: S3Client,
@@ -235,6 +241,9 @@ async def test_delete_from_s3(
     """
     user1_id = 12345
     project1_id = 123
+    user2_id = 67890
+    project2_id = 456
+    bucket = "local-bucket"
 
     # Patch the S3 client to make sure tests are operating on the same mock bucket
     monkeypatch.setattr(File, "get_s3_client", lambda: moto_client)
@@ -248,7 +257,18 @@ async def test_delete_from_s3(
         files = session.execute(sa.select(File)).scalars().all()
         file = list(filter(lambda file: file.entity_field_name == "r1_file", files))[0]
         file.path = file_path
+        file.namespace = bucket  # set the bucket to make sure the mock file is in the right place
         session.commit()
+
+        # Also test the case where multiple files point to the same path
+        if multiple_files_for_one_path:
+            sequencing_read = SequencingReadFactory.create(owner_user_id=user2_id, collection_id=project2_id)
+            FileFactory.update_file_ids()
+            session.commit()
+            session.refresh(sequencing_read)
+            sequencing_read.r1_file.path = file_path
+            sequencing_read.r1_file.namespace = bucket
+            session.commit()
 
     valid_fastq_file = "test_infra/fixtures/test1.fastq"
     moto_client.put_object(Bucket=file.namespace, Key=file.path, Body=open(valid_fastq_file, "rb"))
