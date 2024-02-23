@@ -50,23 +50,25 @@ def before_delete(mapper: Mapper, connection: Connection, target: File) -> None:
     """
     table_files = target.__table__
     table_entity = target.entity.__table__
+    settings = SettingsSingleton.get()
 
-    # Check if this is the only File object pointing to this file on S3
-    files_pointing_to_same_path = connection.execute(
-        table_files.select()
-        .where(table_files.c.id != target.id)
-        .where(table_files.c.protocol == target.protocol)
-        .where(table_files.c.namespace == target.namespace)
-        .where(table_files.c.path == target.path)
-    )
+    # If this file is managed by NextGen, see if it needs to be deleted from S3
+    if target.path.startswith(f"{settings.OUTPUT_S3_PREFIX}/"):
+        # Is this the last File object pointing to this path?
+        files_pointing_to_same_path = connection.execute(
+            table_files.select()
+            .where(table_files.c.id != target.id)
+            .where(table_files.c.protocol == target.protocol)
+            .where(table_files.c.namespace == target.namespace)
+            .where(table_files.c.path == target.path)
+        )
 
-    # If so, delete the file from S3
-    if len(list(files_pointing_to_same_path)) == 0:
-        print("ONLY FILE")
-        s3_client = get_s3_client(SettingsSingleton.get())
-        response = s3_client.delete_object(Bucket=target.namespace, Key=target.path)
-        if response["ResponseMetadata"]["HTTPStatusCode"] != 204:
-            raise Exception("Failed to delete file from S3")
+        # If so, delete it from S3
+        if len(list(files_pointing_to_same_path)) == 0:
+            s3_client = get_s3_client(settings)
+            response = s3_client.delete_object(Bucket=target.namespace, Key=target.path)
+            if response["ResponseMetadata"]["HTTPStatusCode"] != 204:
+                raise Exception("Failed to delete file from S3")
 
     d
 
