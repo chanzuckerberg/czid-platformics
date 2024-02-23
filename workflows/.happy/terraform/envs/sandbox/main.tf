@@ -29,8 +29,8 @@ module "stack" {
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
         },
         private-key = {
-          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "sandbox"]
-          image = "{entities}"
+          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
+          image = "{workflows}"
           tag   = "${var.image_tag}"
         }
       }
@@ -48,7 +48,6 @@ module "stack" {
   }
     additional_env_vars = {
     AWS_REGION                                      = "us-west-2"
-    BOTO_ENDPOINT_URL                               = "http://motoserver.czidnet:4000"
     CERBOS_URL                                      = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET                           = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL                         = "s3"
