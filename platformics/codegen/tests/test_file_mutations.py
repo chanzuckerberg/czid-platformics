@@ -4,6 +4,7 @@ Test file mutations for upload, linking an existing S3 file, and marking a file 
 
 import os
 import pytest
+import typing
 import sqlalchemy as sa
 from mypy_boto3_s3.client import S3Client
 from platformics.database.connect import SyncDB
@@ -227,7 +228,7 @@ async def test_delete_from_s3(
     sync_db: SyncDB,
     gql_client: GQLTestClient,
     moto_client: S3Client,
-    monkeypatch
+    monkeypatch: typing.Any,
 ) -> None:
     """
     Test that we delete a file from S3 under the right circumstances

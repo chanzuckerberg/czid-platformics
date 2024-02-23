@@ -1,6 +1,7 @@
 import datetime
 import uuid
 import uuid6
+from platformics.settings import APISettings
 from platformics.database.models.base import Base, Entity
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Enum, event
 from sqlalchemy.sql import func
@@ -8,6 +9,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import mapped_column, Mapped, Mapper, relationship
 from sqlalchemy.engine import Connection
 from support.enums import FileStatus, FileAccessProtocol, FileUploadClient
+from mypy_boto3_s3.client import S3Client
 
 
 class File(Base):
@@ -15,20 +17,24 @@ class File(Base):
     _settings = None
     _s3_client = None
 
-    def get_settings():
+    @staticmethod
+    def get_settings() -> APISettings:
         if not File._settings:
             raise Exception("Settings not defined in this environment")
         return File._settings
 
-    def set_settings(settings):
+    @staticmethod
+    def set_settings(settings: APISettings) -> None:
         File._settings = settings
 
-    def get_s3_client():
+    @staticmethod
+    def get_s3_client() -> S3Client:
         if not File._s3_client:
             raise Exception("S3 client not defined in this environment")
         return File._s3_client
 
-    def set_s3_client(s3_client):
+    @staticmethod
+    def set_s3_client(s3_client: S3Client) -> None:
         File._s3_client = s3_client
 
     id: Column[uuid.UUID] = Column(UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7)
