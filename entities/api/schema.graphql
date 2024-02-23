@@ -30,7 +30,7 @@ type Accession implements EntityInterface & Node {
 }
 
 type AccessionAggregate {
-  aggregate: AccessionAggregateFunctions
+  aggregate: [AccessionAggregateFunctions!]
 }
 
 type AccessionAggregateFunctions {
@@ -40,6 +40,7 @@ type AccessionAggregateFunctions {
   variance: AccessionNumericalColumns
   min: AccessionMinMaxColumns
   max: AccessionMinMaxColumns
+  groupBy: AccessionGroupByOptions
   count(distinct: Boolean = false, columns: AccessionCountColumns = null): Int
 }
 
@@ -53,16 +54,16 @@ type AccessionConnection {
 }
 
 enum AccessionCountColumns {
-  accession_id
-  accession_name
-  upstream_database
-  consensus_genomes
+  accessionId
+  accessionName
+  upstreamDatabase
+  consensusGenomes
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input AccessionCreateInput {
@@ -80,6 +81,18 @@ type AccessionEdge {
 
   """The item at the end of the edge"""
   node: Accession!
+}
+
+type AccessionGroupByOptions {
+  accessionId: String
+  accessionName: String
+  upstreamDatabase: UpstreamDatabaseGroupByOptions
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type AccessionMinMaxColumns {
@@ -157,7 +170,7 @@ type BulkDownload implements EntityInterface & Node {
 }
 
 type BulkDownloadAggregate {
-  aggregate: BulkDownloadAggregateFunctions
+  aggregate: [BulkDownloadAggregateFunctions!]
 }
 
 type BulkDownloadAggregateFunctions {
@@ -167,19 +180,20 @@ type BulkDownloadAggregateFunctions {
   variance: BulkDownloadNumericalColumns
   min: BulkDownloadMinMaxColumns
   max: BulkDownloadMinMaxColumns
+  groupBy: BulkDownloadGroupByOptions
   count(distinct: Boolean = false, columns: BulkDownloadCountColumns = null): Int
 }
 
 enum BulkDownloadCountColumns {
-  download_type
-  download_display_name
+  downloadType
+  downloadDisplayName
   file
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input BulkDownloadCreateInput {
@@ -187,6 +201,17 @@ input BulkDownloadCreateInput {
   downloadDisplayName: String!
   producingRunId: ID = null
   collectionId: Int!
+}
+
+type BulkDownloadGroupByOptions {
+  downloadType: BulkDownloadType
+  downloadDisplayName: String
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type BulkDownloadMinMaxColumns {
@@ -266,7 +291,7 @@ type ConsensusGenome implements EntityInterface & Node {
 }
 
 type ConsensusGenomeAggregate {
-  aggregate: ConsensusGenomeAggregateFunctions
+  aggregate: [ConsensusGenomeAggregateFunctions!]
 }
 
 type ConsensusGenomeAggregateFunctions {
@@ -276,6 +301,7 @@ type ConsensusGenomeAggregateFunctions {
   variance: ConsensusGenomeNumericalColumns
   min: ConsensusGenomeMinMaxColumns
   max: ConsensusGenomeMinMaxColumns
+  groupBy: ConsensusGenomeGroupByOptions
   count(distinct: Boolean = false, columns: ConsensusGenomeCountColumns = null): Int
 }
 
@@ -290,18 +316,18 @@ type ConsensusGenomeConnection {
 
 enum ConsensusGenomeCountColumns {
   taxon
-  sequencing_read
-  reference_genome
+  sequencingRead
+  referenceGenome
   accession
   sequence
   metrics
-  intermediate_outputs
+  intermediateOutputs
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input ConsensusGenomeCreateInput {
@@ -320,6 +346,19 @@ type ConsensusGenomeEdge {
 
   """The item at the end of the edge"""
   node: ConsensusGenome!
+}
+
+type ConsensusGenomeGroupByOptions {
+  taxon: TaxonGroupByOptions
+  sequencingRead: SequencingReadGroupByOptions
+  referenceGenome: ReferenceGenomeGroupByOptions
+  accession: AccessionGroupByOptions
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type ConsensusGenomeMinMaxColumns {
@@ -420,6 +459,7 @@ type File {
 
 enum FileAccessProtocol {
   s3
+  https
 }
 
 input FileCreate {
@@ -511,7 +551,7 @@ type GenomicRange implements EntityInterface & Node {
 }
 
 type GenomicRangeAggregate {
-  aggregate: GenomicRangeAggregateFunctions
+  aggregate: [GenomicRangeAggregateFunctions!]
 }
 
 type GenomicRangeAggregateFunctions {
@@ -521,23 +561,33 @@ type GenomicRangeAggregateFunctions {
   variance: GenomicRangeNumericalColumns
   min: GenomicRangeMinMaxColumns
   max: GenomicRangeMinMaxColumns
+  groupBy: GenomicRangeGroupByOptions
   count(distinct: Boolean = false, columns: GenomicRangeCountColumns = null): Int
 }
 
 enum GenomicRangeCountColumns {
   file
-  sequencing_reads
+  sequencingReads
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input GenomicRangeCreateInput {
   producingRunId: ID = null
   collectionId: Int!
+}
+
+type GenomicRangeGroupByOptions {
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type GenomicRangeMinMaxColumns {
@@ -630,7 +680,7 @@ type HostOrganism implements EntityInterface & Node {
 }
 
 type HostOrganismAggregate {
-  aggregate: HostOrganismAggregateFunctions
+  aggregate: [HostOrganismAggregateFunctions!]
 }
 
 type HostOrganismAggregateFunctions {
@@ -640,6 +690,7 @@ type HostOrganismAggregateFunctions {
   variance: HostOrganismNumericalColumns
   min: HostOrganismMinMaxColumns
   max: HostOrganismMinMaxColumns
+  groupBy: HostOrganismGroupByOptions
   count(distinct: Boolean = false, columns: HostOrganismCountColumns = null): Int
 }
 
@@ -666,15 +717,15 @@ enum HostOrganismCountColumns {
   name
   version
   category
-  is_deuterostome
+  isDeuterostome
   indexes
   samples
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input HostOrganismCreateInput {
@@ -684,6 +735,19 @@ input HostOrganismCreateInput {
   isDeuterostome: Boolean!
   producingRunId: ID = null
   collectionId: Int!
+}
+
+type HostOrganismGroupByOptions {
+  name: String
+  version: String
+  category: HostOrganismCategory
+  isDeuterostome: Boolean
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type HostOrganismMinMaxColumns {
@@ -757,7 +821,7 @@ type IndexFile implements EntityInterface & Node {
 }
 
 type IndexFileAggregate {
-  aggregate: IndexFileAggregateFunctions
+  aggregate: [IndexFileAggregateFunctions!]
 }
 
 type IndexFileAggregateFunctions {
@@ -767,6 +831,7 @@ type IndexFileAggregateFunctions {
   variance: IndexFileNumericalColumns
   min: IndexFileMinMaxColumns
   max: IndexFileMinMaxColumns
+  groupBy: IndexFileGroupByOptions
   count(distinct: Boolean = false, columns: IndexFileCountColumns = null): Int
 }
 
@@ -783,14 +848,14 @@ enum IndexFileCountColumns {
   name
   version
   file
-  upstream_database
-  host_organism
+  upstreamDatabase
+  hostOrganism
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input IndexFileCreateInput {
@@ -809,6 +874,19 @@ type IndexFileEdge {
 
   """The item at the end of the edge"""
   node: IndexFile!
+}
+
+type IndexFileGroupByOptions {
+  name: IndexTypes
+  version: String
+  upstreamDatabase: UpstreamDatabaseGroupByOptions
+  hostOrganism: HostOrganismGroupByOptions
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type IndexFileMinMaxColumns {
@@ -926,7 +1004,7 @@ type Metadatum implements EntityInterface & Node {
 }
 
 type MetadatumAggregate {
-  aggregate: MetadatumAggregateFunctions
+  aggregate: [MetadatumAggregateFunctions!]
 }
 
 type MetadatumAggregateFunctions {
@@ -936,6 +1014,7 @@ type MetadatumAggregateFunctions {
   variance: MetadatumNumericalColumns
   min: MetadatumMinMaxColumns
   max: MetadatumMinMaxColumns
+  groupBy: MetadatumGroupByOptions
   count(distinct: Boolean = false, columns: MetadatumCountColumns = null): Int
 }
 
@@ -950,14 +1029,14 @@ type MetadatumConnection {
 
 enum MetadatumCountColumns {
   sample
-  field_name
+  fieldName
   value
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input MetadatumCreateInput {
@@ -975,6 +1054,18 @@ type MetadatumEdge {
 
   """The item at the end of the edge"""
   node: Metadatum!
+}
+
+type MetadatumGroupByOptions {
+  sample: SampleGroupByOptions
+  fieldName: String
+  value: String
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type MetadatumMinMaxColumns {
@@ -1051,7 +1142,7 @@ type MetricConsensusGenome implements EntityInterface & Node {
 }
 
 type MetricConsensusGenomeAggregate {
-  aggregate: MetricConsensusGenomeAggregateFunctions
+  aggregate: [MetricConsensusGenomeAggregateFunctions!]
 }
 
 type MetricConsensusGenomeAggregateFunctions {
@@ -1061,32 +1152,33 @@ type MetricConsensusGenomeAggregateFunctions {
   variance: MetricConsensusGenomeNumericalColumns
   min: MetricConsensusGenomeMinMaxColumns
   max: MetricConsensusGenomeMinMaxColumns
+  groupBy: MetricConsensusGenomeGroupByOptions
   count(distinct: Boolean = false, columns: MetricConsensusGenomeCountColumns = null): Int
 }
 
 enum MetricConsensusGenomeCountColumns {
-  consensus_genome
-  reference_genome_length
-  percent_genome_called
-  percent_identity
-  gc_percent
-  total_reads
-  mapped_reads
-  ref_snps
-  n_actg
-  n_missing
-  n_ambiguous
-  coverage_depth
-  coverage_breadth
-  coverage_bin_size
-  coverage_total_length
-  coverage_viz
+  consensusGenome
+  referenceGenomeLength
+  percentGenomeCalled
+  percentIdentity
+  gcPercent
+  totalReads
+  mappedReads
+  refSnps
+  nActg
+  nMissing
+  nAmbiguous
+  coverageDepth
+  coverageBreadth
+  coverageBinSize
+  coverageTotalLength
+  coverageViz
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input MetricConsensusGenomeCreateInput {
@@ -1108,6 +1200,31 @@ input MetricConsensusGenomeCreateInput {
   coverageViz: [[Int!]!] = null
   producingRunId: ID = null
   collectionId: Int!
+}
+
+type MetricConsensusGenomeGroupByOptions {
+  consensusGenome: ConsensusGenomeGroupByOptions
+  referenceGenomeLength: Float
+  percentGenomeCalled: Float
+  percentIdentity: Float
+  gcPercent: Float
+  totalReads: Int
+  mappedReads: Int
+  refSnps: Int
+  nActg: Int
+  nMissing: Int
+  nAmbiguous: Int
+  coverageDepth: Float
+  coverageBreadth: Float
+  coverageBinSize: Float
+  coverageTotalLength: Int
+  coverageViz: [[Int!]!]
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type MetricConsensusGenomeMinMaxColumns {
@@ -1221,6 +1338,7 @@ type MultipartUploadResponse {
 type Mutation {
   createFile(entityId: ID!, entityFieldName: String!, file: FileCreate!): File!
   uploadFile(entityId: ID!, entityFieldName: String!, file: FileUpload!, expiration: Int! = 3600): MultipartUploadResponse!
+  uploadTemporaryFile(expiration: Int! = 3600): MultipartUploadResponse!
   markUploadComplete(fileId: ID!): File!
   concatenateFiles(ids: [UUID!]!): SignedURL!
   createSample(input: SampleCreateInput!): Sample!
@@ -1368,7 +1486,7 @@ type ReferenceGenome implements EntityInterface & Node {
 }
 
 type ReferenceGenomeAggregate {
-  aggregate: ReferenceGenomeAggregateFunctions
+  aggregate: [ReferenceGenomeAggregateFunctions!]
 }
 
 type ReferenceGenomeAggregateFunctions {
@@ -1378,25 +1496,36 @@ type ReferenceGenomeAggregateFunctions {
   variance: ReferenceGenomeNumericalColumns
   min: ReferenceGenomeMinMaxColumns
   max: ReferenceGenomeMinMaxColumns
+  groupBy: ReferenceGenomeGroupByOptions
   count(distinct: Boolean = false, columns: ReferenceGenomeCountColumns = null): Int
 }
 
 enum ReferenceGenomeCountColumns {
   file
   name
-  consensus_genomes
+  consensusGenomes
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input ReferenceGenomeCreateInput {
   name: String!
   producingRunId: ID = null
   collectionId: Int!
+}
+
+type ReferenceGenomeGroupByOptions {
+  name: String
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type ReferenceGenomeMinMaxColumns {
@@ -1495,7 +1624,7 @@ type Sample implements EntityInterface & Node {
 }
 
 type SampleAggregate {
-  aggregate: SampleAggregateFunctions
+  aggregate: [SampleAggregateFunctions!]
 }
 
 type SampleAggregateFunctions {
@@ -1505,6 +1634,7 @@ type SampleAggregateFunctions {
   variance: SampleNumericalColumns
   min: SampleMinMaxColumns
   max: SampleMinMaxColumns
+  groupBy: SampleGroupByOptions
   count(distinct: Boolean = false, columns: SampleCountColumns = null): Int
 }
 
@@ -1518,22 +1648,22 @@ type SampleConnection {
 }
 
 enum SampleCountColumns {
-  rails_sample_id
+  railsSampleId
   name
-  sample_type
-  water_control
-  collection_date
-  collection_location
+  sampleType
+  waterControl
+  collectionDate
+  collectionLocation
   notes
-  host_organism
-  sequencing_reads
+  hostOrganism
+  sequencingReads
   metadatas
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input SampleCreateInput {
@@ -1556,6 +1686,23 @@ type SampleEdge {
 
   """The item at the end of the edge"""
   node: Sample!
+}
+
+type SampleGroupByOptions {
+  railsSampleId: Int
+  name: String
+  sampleType: String
+  waterControl: Boolean
+  collectionDate: DateTime
+  collectionLocation: String
+  notes: String
+  hostOrganism: HostOrganismGroupByOptions
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type SampleMinMaxColumns {
@@ -1694,7 +1841,7 @@ type SequencingRead implements EntityInterface & Node {
 }
 
 type SequencingReadAggregate {
-  aggregate: SequencingReadAggregateFunctions
+  aggregate: [SequencingReadAggregateFunctions!]
 }
 
 type SequencingReadAggregateFunctions {
@@ -1704,6 +1851,7 @@ type SequencingReadAggregateFunctions {
   variance: SequencingReadNumericalColumns
   min: SequencingReadMinMaxColumns
   max: SequencingReadMinMaxColumns
+  groupBy: SequencingReadGroupByOptions
   count(distinct: Boolean = false, columns: SequencingReadCountColumns = null): Int
 }
 
@@ -1719,21 +1867,21 @@ type SequencingReadConnection {
 enum SequencingReadCountColumns {
   sample
   protocol
-  r1_file
-  r2_file
+  r1File
+  r2File
   technology
-  nucleic_acid
-  clearlabs_export
-  medaka_model
+  nucleicAcid
+  clearlabsExport
+  medakaModel
   taxon
-  primer_file
-  consensus_genomes
+  primerFile
+  consensusGenomes
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input SequencingReadCreateInput {
@@ -1756,6 +1904,23 @@ type SequencingReadEdge {
 
   """The item at the end of the edge"""
   node: SequencingRead!
+}
+
+type SequencingReadGroupByOptions {
+  sample: SampleGroupByOptions
+  protocol: SequencingProtocol
+  technology: SequencingTechnology
+  nucleicAcid: NucleicAcid
+  clearlabsExport: Boolean
+  medakaModel: String
+  taxon: TaxonGroupByOptions
+  primerFile: GenomicRangeGroupByOptions
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type SequencingReadMinMaxColumns {
@@ -1915,7 +2080,7 @@ type Taxon implements EntityInterface & Node {
 }
 
 type TaxonAggregate {
-  aggregate: TaxonAggregateFunctions
+  aggregate: [TaxonAggregateFunctions!]
 }
 
 type TaxonAggregateFunctions {
@@ -1925,6 +2090,7 @@ type TaxonAggregateFunctions {
   variance: TaxonNumericalColumns
   min: TaxonMinMaxColumns
   max: TaxonMinMaxColumns
+  groupBy: TaxonGroupByOptions
   count(distinct: Boolean = false, columns: TaxonCountColumns = null): Int
 }
 
@@ -1938,32 +2104,32 @@ type TaxonConnection {
 }
 
 enum TaxonCountColumns {
-  wikipedia_id
+  wikipediaId
   description
-  common_name
+  commonName
   name
-  is_phage
-  upstream_database
-  upstream_database_identifier
+  isPhage
+  upstreamDatabase
+  upstreamDatabaseIdentifier
   level
-  tax_parent
-  tax_subspecies
-  tax_species
-  tax_genus
-  tax_family
-  tax_order
-  tax_class
-  tax_phylum
-  tax_kingdom
-  tax_superkingdom
-  consensus_genomes
-  sequencing_reads
+  taxParent
+  taxSubspecies
+  taxSpecies
+  taxGenus
+  taxFamily
+  taxOrder
+  taxClass
+  taxPhylum
+  taxKingdom
+  taxSuperkingdom
+  consensusGenomes
+  sequencingReads
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input TaxonCreateInput {
@@ -1996,6 +2162,33 @@ type TaxonEdge {
 
   """The item at the end of the edge"""
   node: Taxon!
+}
+
+type TaxonGroupByOptions {
+  wikipediaId: String
+  description: String
+  commonName: String
+  name: String
+  isPhage: Boolean
+  upstreamDatabase: UpstreamDatabaseGroupByOptions
+  upstreamDatabaseIdentifier: String
+  level: TaxonLevel
+  taxParent: TaxonGroupByOptions
+  taxSubspecies: TaxonGroupByOptions
+  taxSpecies: TaxonGroupByOptions
+  taxGenus: TaxonGroupByOptions
+  taxFamily: TaxonGroupByOptions
+  taxOrder: TaxonGroupByOptions
+  taxClass: TaxonGroupByOptions
+  taxPhylum: TaxonGroupByOptions
+  taxKingdom: TaxonGroupByOptions
+  taxSuperkingdom: TaxonGroupByOptions
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 enum TaxonLevel {
@@ -2184,7 +2377,7 @@ type UpstreamDatabase implements EntityInterface & Node {
 }
 
 type UpstreamDatabaseAggregate {
-  aggregate: UpstreamDatabaseAggregateFunctions
+  aggregate: [UpstreamDatabaseAggregateFunctions!]
 }
 
 type UpstreamDatabaseAggregateFunctions {
@@ -2194,6 +2387,7 @@ type UpstreamDatabaseAggregateFunctions {
   variance: UpstreamDatabaseNumericalColumns
   min: UpstreamDatabaseMinMaxColumns
   max: UpstreamDatabaseMinMaxColumns
+  groupBy: UpstreamDatabaseGroupByOptions
   count(distinct: Boolean = false, columns: UpstreamDatabaseCountColumns = null): Int
 }
 
@@ -2203,17 +2397,27 @@ enum UpstreamDatabaseCountColumns {
   indexes
   accessions
   id
-  producing_run_id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  producingRunId
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input UpstreamDatabaseCreateInput {
   name: String!
   producingRunId: ID = null
   collectionId: Int!
+}
+
+type UpstreamDatabaseGroupByOptions {
+  name: String
+  id: UUID
+  producingRunId: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type UpstreamDatabaseMinMaxColumns {

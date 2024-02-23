@@ -171,7 +171,7 @@ type Workflow implements EntityInterface & Node {
 }
 
 type WorkflowAggregate {
-  aggregate: WorkflowAggregateFunctions
+  aggregate: [WorkflowAggregateFunctions!]
 }
 
 type WorkflowAggregateFunctions {
@@ -181,19 +181,20 @@ type WorkflowAggregateFunctions {
   variance: WorkflowNumericalColumns
   min: WorkflowMinMaxColumns
   max: WorkflowMinMaxColumns
+  groupBy: WorkflowGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowCountColumns = null): Int
 }
 
 enum WorkflowCountColumns {
   name
-  default_version
-  minimum_supported_version
+  defaultVersion
+  minimumSupportedVersion
   versions
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowCreateInput {
@@ -201,6 +202,17 @@ input WorkflowCreateInput {
   defaultVersion: String = null
   minimumSupportedVersion: String = null
   collectionId: Int!
+}
+
+type WorkflowGroupByOptions {
+  name: String
+  defaultVersion: String
+  minimumSupportedVersion: String
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowMinMaxColumns {
@@ -282,7 +294,7 @@ type WorkflowRun implements EntityInterface & Node {
 }
 
 type WorkflowRunAggregate {
-  aggregate: WorkflowRunAggregateFunctions
+  aggregate: [WorkflowRunAggregateFunctions!]
 }
 
 type WorkflowRunAggregateFunctions {
@@ -292,6 +304,7 @@ type WorkflowRunAggregateFunctions {
   variance: WorkflowRunNumericalColumns
   min: WorkflowRunMinMaxColumns
   max: WorkflowRunMinMaxColumns
+  groupBy: WorkflowRunGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowRunCountColumns = null): Int
 }
 
@@ -305,22 +318,22 @@ type WorkflowRunConnection {
 }
 
 enum WorkflowRunCountColumns {
-  started_at
-  ended_at
-  execution_id
-  outputs_json
-  workflow_runner_inputs_json
+  startedAt
+  endedAt
+  executionId
+  outputsJson
+  workflowRunnerInputsJson
   status
-  workflow_version
+  workflowVersion
   steps
-  entity_inputs
-  raw_inputs_json
-  deprecated_by
+  entityInputs
+  rawInputsJson
+  deprecatedBy
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowRunCreateInput {
@@ -359,7 +372,7 @@ type WorkflowRunEntityInput implements EntityInterface & Node {
 }
 
 type WorkflowRunEntityInputAggregate {
-  aggregate: WorkflowRunEntityInputAggregateFunctions
+  aggregate: [WorkflowRunEntityInputAggregateFunctions!]
 }
 
 type WorkflowRunEntityInputAggregateFunctions {
@@ -369,6 +382,7 @@ type WorkflowRunEntityInputAggregateFunctions {
   variance: WorkflowRunEntityInputNumericalColumns
   min: WorkflowRunEntityInputMinMaxColumns
   max: WorkflowRunEntityInputMinMaxColumns
+  groupBy: WorkflowRunEntityInputGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowRunEntityInputCountColumns = null): Int
 }
 
@@ -382,15 +396,15 @@ type WorkflowRunEntityInputConnection {
 }
 
 enum WorkflowRunEntityInputCountColumns {
-  input_entity_id
-  field_name
-  entity_type
-  workflow_run
+  inputEntityId
+  fieldName
+  entityType
+  workflowRun
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowRunEntityInputCreateInput {
@@ -408,6 +422,18 @@ type WorkflowRunEntityInputEdge {
 
   """The item at the end of the edge"""
   node: WorkflowRunEntityInput!
+}
+
+type WorkflowRunEntityInputGroupByOptions {
+  inputEntityId: UUID
+  fieldName: String
+  entityType: String
+  workflowRun: WorkflowRunGroupByOptions
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowRunEntityInputMinMaxColumns {
@@ -450,6 +476,23 @@ input WorkflowRunEntityInputWhereClause {
 
 input WorkflowRunEntityInputWhereClauseMutations {
   id: UUIDComparators
+}
+
+type WorkflowRunGroupByOptions {
+  startedAt: DateTime
+  endedAt: DateTime
+  executionId: String
+  outputsJson: String
+  workflowRunnerInputsJson: String
+  status: WorkflowRunStatus
+  workflowVersion: WorkflowVersionGroupByOptions
+  rawInputsJson: String
+  deprecatedBy: WorkflowRunGroupByOptions
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowRunMinMaxColumns {
@@ -522,7 +565,7 @@ type WorkflowRunStep implements EntityInterface & Node {
 }
 
 type WorkflowRunStepAggregate {
-  aggregate: WorkflowRunStepAggregateFunctions
+  aggregate: [WorkflowRunStepAggregateFunctions!]
 }
 
 type WorkflowRunStepAggregateFunctions {
@@ -532,6 +575,7 @@ type WorkflowRunStepAggregateFunctions {
   variance: WorkflowRunStepNumericalColumns
   min: WorkflowRunStepMinMaxColumns
   max: WorkflowRunStepMinMaxColumns
+  groupBy: WorkflowRunStepGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowRunStepCountColumns = null): Int
 }
 
@@ -545,15 +589,15 @@ type WorkflowRunStepConnection {
 }
 
 enum WorkflowRunStepCountColumns {
-  workflow_run
-  started_at
-  ended_at
+  workflowRun
+  startedAt
+  endedAt
   status
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowRunStepCreateInput {
@@ -570,6 +614,18 @@ type WorkflowRunStepEdge {
 
   """The item at the end of the edge"""
   node: WorkflowRunStep!
+}
+
+type WorkflowRunStepGroupByOptions {
+  workflowRun: WorkflowRunGroupByOptions
+  startedAt: DateTime
+  endedAt: DateTime
+  status: WorkflowRunStepStatus
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowRunStepMinMaxColumns {
@@ -707,7 +763,7 @@ type WorkflowVersion implements EntityInterface & Node {
 }
 
 type WorkflowVersionAggregate {
-  aggregate: WorkflowVersionAggregateFunctions
+  aggregate: [WorkflowVersionAggregateFunctions!]
 }
 
 type WorkflowVersionAggregateFunctions {
@@ -717,6 +773,7 @@ type WorkflowVersionAggregateFunctions {
   variance: WorkflowVersionNumericalColumns
   min: WorkflowVersionMinMaxColumns
   max: WorkflowVersionMinMaxColumns
+  groupBy: WorkflowVersionGroupByOptions
   count(distinct: Boolean = false, columns: WorkflowVersionCountColumns = null): Int
 }
 
@@ -730,17 +787,17 @@ type WorkflowVersionConnection {
 }
 
 enum WorkflowVersionCountColumns {
-  graph_json
-  workflow_uri
+  graphJson
+  workflowUri
   version
   manifest
   workflow
   runs
   id
-  owner_user_id
-  collection_id
-  created_at
-  updated_at
+  ownerUserId
+  collectionId
+  createdAt
+  updatedAt
 }
 
 input WorkflowVersionCreateInput {
@@ -759,6 +816,19 @@ type WorkflowVersionEdge {
 
   """The item at the end of the edge"""
   node: WorkflowVersion!
+}
+
+type WorkflowVersionGroupByOptions {
+  graphJson: String
+  workflowUri: String
+  version: String
+  manifest: String
+  workflow: WorkflowGroupByOptions
+  id: UUID
+  ownerUserId: Int
+  collectionId: Int
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 type WorkflowVersionMinMaxColumns {

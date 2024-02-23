@@ -4,6 +4,11 @@ Validate that format handlers work as expected
 
 import pytest
 from platformics.support.format_handlers import get_validator
+from typing import Generator
+
+import boto3
+from moto import mock_s3
+from mypy_boto3_s3 import S3Client
 
 CASES_VALID_FILES = {
     "fasta": [
@@ -38,17 +43,29 @@ CASES_INVALID_FILES = {
     ],
 }
 
+BUCKET = "local-bucket"
+
+@pytest.fixture()
+def moto_client() -> Generator[S3Client, None, None]:
+    with mock_s3():
+        client = boto3.client("s3")
+        client.create_bucket(Bucket="local-bucket")
+        yield client 
 
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
-def test_validation_valid_files(format: str) -> None:
-    validator = get_validator(format)
-    for test_case in CASES_VALID_FILES[format]:
-        validator.validate(test_case)
+def test_validation_valid_files(format: str, moto_client: S3Client) -> None:
+    for i, value in enumerate(CASES_VALID_FILES[format]):
+        key = f"valid-{i}.{format}"
+        moto_client.put_object(Bucket=BUCKET, Key=key, Body=value)
+        validator = get_validator(format)(moto_client, BUCKET, key)
+        validator.validate()
 
 
 @pytest.mark.parametrize("format", ["fasta", "fastq", "bed", "json"])
-def test_validation_invalid_files(format: str) -> None:
-    validator = get_validator(format)
-    for test_case in CASES_INVALID_FILES[format]:
+def test_validation_invalid_files(format: str, moto_client: S3Client) -> None:
+    for i, value in enumerate(CASES_INVALID_FILES[format]):
+        key = f"invalid-{i}.{format}"
+        moto_client.put_object(Bucket=BUCKET, Key=key, Body=value)
+        validator = get_validator(format)(moto_client, BUCKET, key)
         with pytest.raises(Exception):
-            validator.validate(test_case)
+            validator.validate()

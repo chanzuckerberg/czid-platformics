@@ -41,6 +41,7 @@ class WorkflowRun(Entity):
         UUID,
         ForeignKey("workflow_version.entity_id"),
         nullable=True,
+        index=True,
     )
     workflow_version: Mapped["WorkflowVersion"] = relationship(
         "WorkflowVersion",
@@ -64,6 +65,7 @@ class WorkflowRun(Entity):
         UUID,
         ForeignKey("workflow_run.entity_id"),
         nullable=True,
+        index=True,
     )
     deprecated_by: Mapped["WorkflowRun"] = relationship(
         "WorkflowRun",
