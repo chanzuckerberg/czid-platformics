@@ -47,7 +47,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             input=ConsensusGenomeCreateInput(
                 collection_id=int(workflow_run.collection_id),
                 taxon_id=ID(taxon_id),
-                sequence_read_id=ID(entity_inputs["sequencing_read"].entity_id),
+                sequencing_read_id=ID(entity_inputs["sequencing_read"].entity_id),
                 reference_genome_id=entity_inputs.get("reference_genome")
                 and ID(entity_inputs["reference_genome"].entity_id),
                 accession_id=ID(accession_id),
