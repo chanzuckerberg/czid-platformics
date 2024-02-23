@@ -28,14 +28,23 @@ else:
 class UpstreamDatabase(Entity):
     __tablename__ = "upstream_database"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False, index=True)
     taxa: Mapped[list[Taxon]] = relationship(
-        "Taxon", back_populates="upstream_database", uselist=True, foreign_keys="Taxon.upstream_database_id"
+        "Taxon",
+        back_populates="upstream_database",
+        uselist=True,
+        foreign_keys="Taxon.upstream_database_id",
     )
     indexes: Mapped[list[IndexFile]] = relationship(
-        "IndexFile", back_populates="upstream_database", uselist=True, foreign_keys="IndexFile.upstream_database_id"
+        "IndexFile",
+        back_populates="upstream_database",
+        uselist=True,
+        foreign_keys="IndexFile.upstream_database_id",
     )
     accessions: Mapped[list[Accession]] = relationship(
-        "Accession", back_populates="upstream_database", uselist=True, foreign_keys="Accession.upstream_database_id"
+        "Accession",
+        back_populates="upstream_database",
+        uselist=True,
+        foreign_keys="Accession.upstream_database_id",
     )
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)

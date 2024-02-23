@@ -14,6 +14,21 @@ types:
     base: int
     description: An integer
 
+  float:
+    uri: xsd:float
+    base: float
+    description: A float
+
+  boolean:
+    uri: xsd:boolean
+    base: bool
+    description: A boolean
+
+  date:
+    uri: xsd:date
+    base: XSDDate
+    description: A Date
+
   uuid:
     uri: xsd:string
     typeof: str
@@ -38,6 +53,8 @@ enums:
     permissible_values:
       s3:
         description: This file is accessible via the (AWS) S3 protocol
+      https:
+        description: This file is accessible via the HTTPS protocol
   FileUploadClient:
     permissible_values:
       browser:
@@ -94,11 +111,6 @@ enums:
       level_phylum:
       level_kingdom:
       level_superkingdom:
-  PhylogeneticTreeFormat:
-    permissible_values:
-      newick:
-      auspice_v1:
-      auspice_v2:
   BulkDownloadType:
     permissible_values:
       concatenate:
@@ -142,19 +154,23 @@ classes:
         range: uuid
         readonly: true # The API handles generating the values for these fields
         required: true
+      type:
+        range: string
+        designates_type: true
+        annotations:
+          hidden: true
       producing_run_id:
         range: uuid
-        required: true
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
       owner_user_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         readonly: true
       collection_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         annotations:
@@ -164,9 +180,6 @@ classes:
         required: true
         readonly: true
       updated_at:
-        range: date
-        readonly: true
-      deleted_at:
         range: date
         readonly: true
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
@@ -211,7 +224,7 @@ classes:
       compression_type:
         range: string
       size:
-        range: int
+        range: integer
         minimum_value: 0
       # Information about file upload (optional)
       upload_client:
@@ -233,7 +246,7 @@ classes:
     attributes:
       # If this Sample is a copy of what's in the Rails DB, store its ID here
       rails_sample_id:
-        range: int
+        range: integer
         annotations:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
@@ -241,6 +254,9 @@ classes:
       name:
         range: string
         required: true
+        annotations:
+            minimum_length: 4
+            maximum_length: 64
       sample_type:
         range: string
         required: true
@@ -268,10 +284,14 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+        annotations:
+          cascade_delete: true
       metadatas:
         range: Metadatum
         inverse: Metadatum.sample
         multivalued: true
+        annotations:
+          cascade_delete: true
     annotations:
       plural: Samples
 
@@ -298,9 +318,13 @@ classes:
       r1_file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       r2_file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       # Which sequencing technology / instrument was used?
       technology:
         range: SequencingTechnology
@@ -333,8 +357,10 @@ classes:
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome
-        inverse: ConsensusGenome.sequence_read
+        inverse: ConsensusGenome.sequencing_read
         multivalued: true
+        annotations:
+          cascade_delete: true
     annotations:
       plural: SequencingReads
 
@@ -349,6 +375,8 @@ classes:
       file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       sequencing_reads:
         range: SequencingRead
         inverse: SequencingRead.primer_file
@@ -368,6 +396,8 @@ classes:
       file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       name:
         range: string
         required: true
@@ -435,10 +465,6 @@ classes:
         range: IndexFile
         inverse: IndexFile.host_organism
         multivalued: true
-      # Original reference FASTA file used to generate indexes for this host; used for our record keeping
-      sequence:
-        range: File
-        readonly: true
       # Samples that obtained from this host organism
       samples:
         range: Sample
@@ -466,9 +492,12 @@ classes:
         required: true
         annotations:
           mutable: false
+          indexed: true
       value:
         range: string
         required: true
+        annotations:
+          indexed: true
     annotations:
       plural: Metadatas
 
@@ -491,7 +520,7 @@ classes:
         annotations:
           mutable: false
       # Which SequencingRead this ConsensusGenome was created from
-      sequence_read:
+      sequencing_read:
         range: SequencingRead
         required: true
         inverse: SequencingRead.consensus_genomes
@@ -512,6 +541,8 @@ classes:
       sequence:
         readonly: true
         range: File
+        annotations:
+          cascade_delete: true
       # Metrics output by CG pipeline
       metrics:
         range: MetricConsensusGenome
@@ -520,10 +551,14 @@ classes:
         # class actually defines the relationship and this is just a virtual field. We're misusing the LinkML
         # "inlined" field property until we learn how to use LinkML better and find a better way to express this
         inlined: true
+        annotations:
+          cascade_delete: true
       # Zip file containing intermediate outputs file output by CG pipeline
       intermediate_outputs:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
     annotations:
       plural: ConsensusGenomes
 
@@ -555,27 +590,29 @@ classes:
         annotations:
           mutable: false
       total_reads:
-        range: int
+        range: integer
+        minimum_value: 0
+        maximum_value: 999999999999
         annotations:
           mutable: false
       mapped_reads:
-        range: int
+        range: integer
         annotations:
           mutable: false
       ref_snps:
-        range: int
+        range: integer
         annotations:
           mutable: false
       n_actg:
-        range: int
+        range: integer
         annotations:
           mutable: false
       n_missing:
-        range: int
+        range: integer
         annotations:
           mutable: false
       n_ambiguous:
-        range: int
+        range: integer
         annotations:
           mutable: false
       coverage_depth:
@@ -591,7 +628,7 @@ classes:
         annotations:
           mutable: false
       coverage_total_length:
-        range: int
+        range: integer
         annotations:
           mutable: false
       coverage_viz:
@@ -615,11 +652,14 @@ classes:
         range: string
       common_name:
         range: string
+        annotations:
+          indexed: true
       name:
         range: string
         required: true
         annotations:
           mutable: false
+          indexed: true
       is_phage:
         range: boolean
         required: true
@@ -676,6 +716,8 @@ classes:
       name:
         range: string
         required: true
+        annotations:
+          indexed: true
       taxa:
         range: Taxon
         inverse: Taxon.upstream_database
@@ -714,6 +756,8 @@ classes:
         range: File
         required: true
         readonly: true
+        annotations:
+          cascade_delete: true
       # Links to either upstream database or host organism
       upstream_database:
         range: UpstreamDatabase
@@ -729,22 +773,6 @@ classes:
       plural: IndexFiles
 
 
-  # ----------------------------------------------------------------------------
-  # Phylogenetic tree
-  # ----------------------------------------------------------------------------
-  PhylogeneticTree:
-    is_a: Entity
-    mixins:
-      - EntityMixin
-    attributes:
-      tree:
-        range: File
-        readonly: true
-      format:
-        range: PhylogeneticTreeFormat
-        required: true
-    annotations:
-      plural: PhylogeneticTrees
 
 
   # ----------------------------------------------------------------------------
@@ -760,9 +788,16 @@ classes:
         required: true
         annotations:
           mutable: false
+      download_display_name:
+        range: string
+        required: true
+        annotations:
+          mutable: false
       file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
     annotations:
       plural: BulkDownloads
 

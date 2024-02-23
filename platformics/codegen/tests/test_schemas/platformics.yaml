@@ -92,12 +92,12 @@ classes:
           mutable: false  # This field can't be modified by an `Update` mutation
           system_writable_only: True
       owner_user_id:
-        range: int
+        range: integer
         minimum_value: 0
         readonly: true
         required: true
       collection_id:
-        range: int
+        range: integer
         minimum_value: 0
         required: true
         annotations:
@@ -107,9 +107,6 @@ classes:
         required: true
         readonly: true
       updated_at:
-        range: date
-        readonly: true
-      deleted_at:
         range: date
         readonly: true
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
@@ -149,7 +146,7 @@ classes:
       compression_type:
        range: string
       size:
-        range: int
+        range: integer
         minimum_value: 0
 
   Sample:
@@ -177,6 +174,8 @@ classes:
         range: SequencingRead
         multivalued: true
         inverse: SequencingRead.sample
+        annotations:
+          cascade_delete: true
       system_mutable_field:
         range: string
         annotations:
@@ -200,9 +199,13 @@ classes:
       r1_file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       r2_file:
         range: File
         readonly: true
+        annotations:
+          cascade_delete: true
       technology:
         range: SequencingTechnology
         required: true
@@ -214,6 +217,12 @@ classes:
         inverse: GenomicRange.sequencing_reads
         annotations:
           mutable: false
+      consensus_genomes:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.sequence_read
+        multivalued: true
+        annotations:
+          cascade_delete: true
       clearlabs_export:
         range: boolean
         required: true
@@ -224,6 +233,60 @@ classes:
           mutable: false
     annotations:
       plural: SequencingReads
+
+  ConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      sequence_read:
+        range: SequencingRead
+        required: true
+        inverse: SequencingRead.consensus_genomes
+        annotations:
+          mutable: false
+      sequence:
+        readonly: true
+        range: File
+        annotations:
+          cascade_delete: true
+      metrics:
+        range: MetricConsensusGenome
+        inverse: MetricConsensusGenome.consensus_genome
+        inlined: true
+        annotations:
+          cascade_delete: true
+      intermediate_outputs:
+        range: File
+        readonly: true
+        annotations:
+          cascade_delete: true
+    annotations:
+      plural: ConsensusGenomes
+
+  MetricConsensusGenome:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      consensus_genome:
+        range: ConsensusGenome
+        inverse: ConsensusGenome.metrics
+        required: true
+        annotations:
+          mutable: false
+      total_reads:
+        range: integer
+        minimum_value: 0
+        maximum_value: 999999999999
+        annotations:
+          mutable: false
+      mapped_reads:
+        range: integer
+        annotations:
+          mutable: false
+    annotations:
+      plural: MetricsConsensusGenomes
 
   GenomicRange:
     is_a: Entity
@@ -268,6 +331,21 @@ classes:
     annotations:
       plural: Taxa
 
+  UpstreamDatabase:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      name:
+        range: string
+        required: true
+      taxa:
+        range: Taxon
+        multivalued: true
+        inverse: Taxon.upstream_database
+    annotations:
+      plural: UpstreamDatabases
+
   SystemWritableOnlyType:
     is_a: Entity
     mixins:
@@ -292,20 +370,45 @@ classes:
       mutable: false
       plural: ImmutableTypes
 
-  UpstreamDatabase:
+  ConstraintCheckedType:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
-      name:
+      length_3_to_8:
         range: string
-        required: true
-      taxa:
-        range: Taxon
-        multivalued: true
-        inverse: Taxon.upstream_database
+        annotations:
+          minimum_length: 3
+          maximum_length: 8
+      regex_format_check:
+        range: string
+        pattern: '\d{3}-\d{2}-\d{4}'
+      min_value_0:
+        range: integer
+        minimum_value: 0
+      enum_field:
+        range: NucleicAcid
+      bool_field:
+        range: boolean
+      max_value_9:
+        range: integer
+        maximum_value: 9
+      min_value_0_max_value_9:
+        range: integer
+        minimum_value: 0
+        maximum_value: 9
+      float_1dot1_to_2dot2:
+        range: float
+        minimum_value: 1.1
+        maximum_value: 2.2
+      no_string_checks:
+        range: string
+      no_int_checks:
+        range: integer
+      no_float_checks:
+        range: float
     annotations:
-      plural: UpstreamDatabases
+      plural: ConstraintCheckedTypes
 
   EntityMixin:
     mixin: true

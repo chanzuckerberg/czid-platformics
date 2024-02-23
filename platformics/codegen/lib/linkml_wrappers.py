@@ -35,6 +35,10 @@ class FieldWrapper:
     @cached_property
     def name(self) -> str:
         return self.wrapped_field.name
+    
+    @cached_property
+    def camel_name(self) -> str:
+        return strcase.to_lower_camel(self.wrapped_field.name)
 
     @cached_property
     def multivalued(self) -> str:
@@ -43,6 +47,41 @@ class FieldWrapper:
     @cached_property
     def required(self) -> bool:
         return self.wrapped_field.required or False
+
+    # Validation attributes
+    @cached_property
+    def minimum_value(self) -> float | int | None:
+        if self.wrapped_field.minimum_value is not None:
+            return self.wrapped_field.minimum_value
+        return None
+
+    @cached_property
+    def maximum_value(self) -> float | int | None:
+        if self.wrapped_field.maximum_value is not None:
+            return self.wrapped_field.maximum_value
+        return None
+
+    @cached_property
+    def indexed(self) -> bool:
+        if "indexed" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["indexed"].value
+        return False
+
+    @cached_property
+    def minimum_length(self) -> int | None:
+        if "minimum_length" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["minimum_length"].value
+        return None
+
+    @cached_property
+    def maximum_length(self) -> int | None:
+        if "maximum_length" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["maximum_length"].value
+        return None
+
+    @cached_property
+    def pattern(self) -> str | None:
+        return self.wrapped_field.pattern or None
 
     # Whether these fields should be exposed in the GQL API
     @cached_property
@@ -126,6 +165,12 @@ class FieldWrapper:
         return None
 
     @cached_property
+    def is_cascade_delete(self) -> bool:
+        if "cascade_delete" in self.wrapped_field.annotations:
+            return self.wrapped_field.annotations["cascade_delete"].value
+        return False
+
+    @cached_property
     def is_virtual_relationship(self) -> bool | None:
         return self.wrapped_field.inlined or self.multivalued  # type: ignore
 
@@ -206,7 +251,7 @@ class EntityWrapper:
     def create_fields(self) -> list[FieldWrapper]:
         return [
             field
-            for field in self.all_fields
+            for field in self.visible_fields
             if not field.readonly and not field.hidden and not field.is_virtual_relationship
         ]
 
@@ -214,7 +259,7 @@ class EntityWrapper:
     def mutable_fields(self) -> list[FieldWrapper]:
         if not self.is_mutable:
             return []
-        return [field for field in self.all_fields if field.mutable and not field.is_virtual_relationship]
+        return [field for field in self.visible_fields if field.mutable and not field.is_virtual_relationship]
 
     @cached_property
     def is_mutable(self) -> bool:
@@ -235,6 +280,10 @@ class EntityWrapper:
     @cached_property
     def visible_fields(self) -> list[FieldWrapper]:
         return [field for field in self.all_fields if not field.hidden]
+
+    @cached_property
+    def numeric_fields(self) -> list[FieldWrapper]:
+        return [field for field in self.visible_fields if field.type in ["integer", "float"]]
 
     @cached_property
     def user_create_fields(self) -> list[FieldWrapper]:
@@ -272,11 +321,11 @@ class EntityWrapper:
     def enum_fields(self) -> list[FieldWrapper]:
         enumfields = self.view.all_enums()
         class_names = [k for k, _ in enumfields.items()]
-        return [field for field in self.all_fields if field.type in class_names]
+        return [field for field in self.visible_fields if field.type in class_names]
 
     @cached_property
     def related_fields(self) -> list[FieldWrapper]:
-        return [field for field in self.all_fields if field.is_entity]
+        return [field for field in self.visible_fields if field.is_entity]
 
 
 class ViewWrapper:

@@ -56,12 +56,6 @@ from api.types.upstream_database import (
     resolve_upstream_databases_aggregate,
 )
 from api.types.index_file import IndexFile, resolve_index_files, IndexFileAggregate, resolve_index_files_aggregate
-from api.types.phylogenetic_tree import (
-    PhylogeneticTree,
-    resolve_phylogenetic_trees,
-    PhylogeneticTreeAggregate,
-    resolve_phylogenetic_trees_aggregate,
-)
 from api.types.bulk_download import (
     BulkDownload,
     resolve_bulk_downloads,
@@ -91,7 +85,6 @@ class Query:
     taxa: Sequence[Taxon] = resolve_taxa
     upstream_databases: Sequence[UpstreamDatabase] = resolve_upstream_databases
     index_files: Sequence[IndexFile] = resolve_index_files
-    phylogenetic_trees: Sequence[PhylogeneticTree] = resolve_phylogenetic_trees
     bulk_downloads: Sequence[BulkDownload] = resolve_bulk_downloads
 
     # Query entity aggregates
@@ -107,5 +100,4 @@ class Query:
     taxa_aggregate: TaxonAggregate = resolve_taxa_aggregate
     upstream_databases_aggregate: UpstreamDatabaseAggregate = resolve_upstream_databases_aggregate
     index_files_aggregate: IndexFileAggregate = resolve_index_files_aggregate
-    phylogenetic_trees_aggregate: PhylogeneticTreeAggregate = resolve_phylogenetic_trees_aggregate
     bulk_downloads_aggregate: BulkDownloadAggregate = resolve_bulk_downloads_aggregate

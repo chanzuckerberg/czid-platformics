@@ -29,6 +29,7 @@ class BulkDownloadFactory(CommonFactory):
         sqlalchemy_get_or_create = ("entity_id",)
 
     download_type = fuzzy.FuzzyChoice(["concatenate", "zip"])
+    download_display_name = fuzzy.FuzzyText()
     file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",

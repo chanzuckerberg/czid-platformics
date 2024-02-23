@@ -15,6 +15,8 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.workflow_version import WorkflowVersionCreateInputValidator
+from api.helpers.workflow_version import WorkflowVersionGroupByOptions, build_workflow_version_groupby_output
 from api.types.entities import EntityInterface
 from api.types.workflow_run import WorkflowRunAggregate, format_workflow_run_aggregate_output
 from cerbos.sdk.client import CerbosClient
@@ -105,10 +107,8 @@ async def load_workflow_run_aggregate_rows(
     mapper = inspect(db.WorkflowVersion)
     relationship = mapper.relationships["runs"]
     rows = await dataloader.aggregate_loader_for(relationship, where, selections).load(root.id)  # type:ignore
-    # Aggregate queries always return a single row, so just grab the first one
-    result = rows[0] if rows else None
-    aggregate_output = format_workflow_run_aggregate_output(result)
-    return WorkflowRunAggregate(aggregate=aggregate_output)
+    aggregate_output = format_workflow_run_aggregate_output(rows)
+    return aggregate_output
 
 
 """
@@ -146,7 +146,6 @@ class WorkflowVersionWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
-    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -166,7 +165,6 @@ class WorkflowVersionOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -192,7 +190,6 @@ class WorkflowVersion(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
-    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -208,7 +205,6 @@ WorkflowVersion.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -235,7 +231,6 @@ class WorkflowVersionMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
-    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -245,18 +240,17 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class WorkflowVersionCountColumns(enum.Enum):
-    graph_json = "graph_json"
-    workflow_uri = "workflow_uri"
+    graphJson = "graph_json"
+    workflowUri = "workflow_uri"
     version = "version"
     manifest = "manifest"
     workflow = "workflow"
     runs = "runs"
     id = "id"
-    owner_user_id = "owner_user_id"
-    collection_id = "collection_id"
-    created_at = "created_at"
-    updated_at = "updated_at"
-    deleted_at = "deleted_at"
+    ownerUserId = "owner_user_id"
+    collectionId = "collection_id"
+    createdAt = "created_at"
+    updatedAt = "updated_at"
 
 
 """
@@ -276,10 +270,11 @@ class WorkflowVersionAggregateFunctions:
 
     sum: Optional[WorkflowVersionNumericalColumns] = None
     avg: Optional[WorkflowVersionNumericalColumns] = None
-    min: Optional[WorkflowVersionMinMaxColumns] = None
-    max: Optional[WorkflowVersionMinMaxColumns] = None
     stddev: Optional[WorkflowVersionNumericalColumns] = None
     variance: Optional[WorkflowVersionNumericalColumns] = None
+    min: Optional[WorkflowVersionMinMaxColumns] = None
+    max: Optional[WorkflowVersionMinMaxColumns] = None
+    groupBy: Optional[WorkflowVersionGroupByOptions] = None
 
 
 """
@@ -289,7 +284,7 @@ Wrapper around WorkflowVersionAggregateFunctions
 
 @strawberry.type
 class WorkflowVersionAggregate:
-    aggregate: Optional[WorkflowVersionAggregateFunctions] = None
+    aggregate: Optional[list[WorkflowVersionAggregateFunctions]] = None
 
 
 """
@@ -306,7 +301,7 @@ class WorkflowVersionCreateInput:
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """
@@ -330,19 +325,43 @@ async def resolve_workflow_versions(
     return await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
-def format_workflow_version_aggregate_output(query_results: RowMapping) -> WorkflowVersionAggregateFunctions:
+def format_workflow_version_aggregate_output(
+    query_results: Sequence[RowMapping] | RowMapping,
+) -> WorkflowVersionAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
+    aggregate = []
+    if type(query_results) is not list:
+        query_results = [query_results]  # type: ignore
+    for row in query_results:
+        aggregate.append(format_workflow_version_aggregate_row(row))
+    return WorkflowVersionAggregate(aggregate=aggregate)
+
+
+def format_workflow_version_aggregate_row(row: RowMapping) -> WorkflowVersionAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
     output = WorkflowVersionAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", WorkflowVersionGroupByOptions())
+            group = build_workflow_version_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
         else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
+            aggregate_name = aggregate[0]
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, WorkflowVersionMinMaxColumns())
@@ -363,13 +382,19 @@ async def resolve_workflow_versions_aggregate(
     """
     Aggregate values for WorkflowVersion objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise PlatformicsException("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_workflow_version_aggregate_output(rows)
-    return WorkflowVersionAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
@@ -383,23 +408,30 @@ async def create_workflow_version(
     """
     Create a new WorkflowVersion object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = WorkflowVersionCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         raise PlatformicsException("Unauthorized: WorkflowVersion is not creatable")
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowVersion.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that workflow relationship is accessible.
-    if input.workflow_id:
+    if validated.workflow_id:
         workflow = await get_db_rows(
-            db.Workflow, session, cerbos_client, principal, {"id": {"_eq": input.workflow_id}}, [], CerbosAction.VIEW
+            db.Workflow,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.workflow_id}},
+            [],
+            CerbosAction.VIEW,
         )
         if not workflow:
             raise PlatformicsException("Unauthorized: workflow does not exist")

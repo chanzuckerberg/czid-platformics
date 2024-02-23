@@ -19,5 +19,5 @@ auxData:
 storage:
   driver: "disk"
   disk:
-    directory: "/workflows/policies"
+    directory: "/var/policies/cerbos/policies"
     watchForChanges: true

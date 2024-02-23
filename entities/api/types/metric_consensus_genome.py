@@ -15,6 +15,13 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
+from api.validators.metric_consensus_genome import (
+    MetricConsensusGenomeCreateInputValidator,
+)
+from api.helpers.metric_consensus_genome import (
+    MetricConsensusGenomeGroupByOptions,
+    build_metric_consensus_genome_groupby_output,
+)
 from api.types.entities import EntityInterface
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal, Resource
@@ -122,7 +129,6 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
-    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -156,7 +162,6 @@ class MetricConsensusGenomeOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
-    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -185,12 +190,11 @@ class MetricConsensusGenome(EntityInterface):
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
     id: strawberry.ID
-    producing_run_id: strawberry.ID
+    producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
-    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -206,7 +210,6 @@ MetricConsensusGenome.__strawberry_definition__.is_type_of = (  # type: ignore
 Aggregation types
 ------------------------------------------------------------------------------
 """
-
 """
 Define columns that support numerical aggregations
 """
@@ -257,7 +260,6 @@ class MetricConsensusGenomeMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
-    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -267,29 +269,28 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class MetricConsensusGenomeCountColumns(enum.Enum):
-    consensus_genome = "consensus_genome"
-    reference_genome_length = "reference_genome_length"
-    percent_genome_called = "percent_genome_called"
-    percent_identity = "percent_identity"
-    gc_percent = "gc_percent"
-    total_reads = "total_reads"
-    mapped_reads = "mapped_reads"
-    ref_snps = "ref_snps"
-    n_actg = "n_actg"
-    n_missing = "n_missing"
-    n_ambiguous = "n_ambiguous"
-    coverage_depth = "coverage_depth"
-    coverage_breadth = "coverage_breadth"
-    coverage_bin_size = "coverage_bin_size"
-    coverage_total_length = "coverage_total_length"
-    coverage_viz = "coverage_viz"
+    consensusGenome = "consensus_genome"
+    referenceGenomeLength = "reference_genome_length"
+    percentGenomeCalled = "percent_genome_called"
+    percentIdentity = "percent_identity"
+    gcPercent = "gc_percent"
+    totalReads = "total_reads"
+    mappedReads = "mapped_reads"
+    refSnps = "ref_snps"
+    nActg = "n_actg"
+    nMissing = "n_missing"
+    nAmbiguous = "n_ambiguous"
+    coverageDepth = "coverage_depth"
+    coverageBreadth = "coverage_breadth"
+    coverageBinSize = "coverage_bin_size"
+    coverageTotalLength = "coverage_total_length"
+    coverageViz = "coverage_viz"
     id = "id"
-    producing_run_id = "producing_run_id"
-    owner_user_id = "owner_user_id"
-    collection_id = "collection_id"
-    created_at = "created_at"
-    updated_at = "updated_at"
-    deleted_at = "deleted_at"
+    producingRunId = "producing_run_id"
+    ownerUserId = "owner_user_id"
+    collectionId = "collection_id"
+    createdAt = "created_at"
+    updatedAt = "updated_at"
 
 
 """
@@ -309,10 +310,11 @@ class MetricConsensusGenomeAggregateFunctions:
 
     sum: Optional[MetricConsensusGenomeNumericalColumns] = None
     avg: Optional[MetricConsensusGenomeNumericalColumns] = None
-    min: Optional[MetricConsensusGenomeMinMaxColumns] = None
-    max: Optional[MetricConsensusGenomeMinMaxColumns] = None
     stddev: Optional[MetricConsensusGenomeNumericalColumns] = None
     variance: Optional[MetricConsensusGenomeNumericalColumns] = None
+    min: Optional[MetricConsensusGenomeMinMaxColumns] = None
+    max: Optional[MetricConsensusGenomeMinMaxColumns] = None
+    groupBy: Optional[MetricConsensusGenomeGroupByOptions] = None
 
 
 """
@@ -322,7 +324,7 @@ Wrapper around MetricConsensusGenomeAggregateFunctions
 
 @strawberry.type
 class MetricConsensusGenomeAggregate:
-    aggregate: Optional[MetricConsensusGenomeAggregateFunctions] = None
+    aggregate: Optional[list[MetricConsensusGenomeAggregateFunctions]] = None
 
 
 """
@@ -334,7 +336,7 @@ Mutation types
 
 @strawberry.input()
 class MetricConsensusGenomeCreateInput:
-    consensus_genome_id: Optional[strawberry.ID] = None
+    consensus_genome_id: strawberry.ID
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None
@@ -351,7 +353,7 @@ class MetricConsensusGenomeCreateInput:
     coverage_total_length: Optional[int] = None
     coverage_viz: Optional[List[List[int]]] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: Optional[int] = None
+    collection_id: int
 
 
 """
@@ -376,20 +378,42 @@ async def resolve_metrics_consensus_genomes(
 
 
 def format_metric_consensus_genome_aggregate_output(
-    query_results: RowMapping,
-) -> MetricConsensusGenomeAggregateFunctions:
+    query_results: Sequence[RowMapping] | RowMapping,
+) -> MetricConsensusGenomeAggregate:
     """
     Given a row from the DB containing the results of an aggregate query,
     format the results using the proper GraphQL types.
     """
+    aggregate = []
+    if type(query_results) is not list:
+        query_results = [query_results]  # type: ignore
+    for row in query_results:
+        aggregate.append(format_metric_consensus_genome_aggregate_row(row))
+    return MetricConsensusGenomeAggregate(aggregate=aggregate)
+
+
+def format_metric_consensus_genome_aggregate_row(row: RowMapping) -> MetricConsensusGenomeAggregateFunctions:
+    """
+    Given a single row from the DB containing the results of an aggregate query,
+    format the results using the proper GraphQL types.
+    """
     output = MetricConsensusGenomeAggregateFunctions()
-    for aggregate_name, value in query_results.items():
-        if aggregate_name == "count":
-            output.count = value
+    for key, value in row.items():
+        # Key is either an aggregate function or a groupby key
+        group_keys = key.split(".")
+        aggregate = key.split("_", 1)
+        if aggregate[0] not in aggregator_map.keys():
+            # Turn list of groupby keys into nested objects
+            if not getattr(output, "groupBy"):
+                setattr(output, "groupBy", MetricConsensusGenomeGroupByOptions())
+            group = build_metric_consensus_genome_groupby_output(getattr(output, "groupBy"), group_keys, value)
+            setattr(output, "groupBy", group)
         else:
-            aggregator_fn, col_name = aggregate_name.split("_", 1)
-            # Filter out the group_by key from the results if one was provided.
-            if aggregator_fn in aggregator_map.keys():
+            aggregate_name = aggregate[0]
+            if aggregate_name == "count":
+                output.count = value
+            else:
+                aggregator_fn, col_name = aggregate[0], aggregate[1]
                 if not getattr(output, aggregator_fn):
                     if aggregate_name in ["min", "max"]:
                         setattr(output, aggregator_fn, MetricConsensusGenomeMinMaxColumns())
@@ -410,13 +434,19 @@ async def resolve_metrics_consensus_genomes_aggregate(
     """
     Aggregate values for MetricConsensusGenome objects. Used for queries (see api/queries.py).
     """
-    # Get the selected aggregate functions and columns to operate on
+    # Get the selected aggregate functions and columns to operate on, and groupby options if any were provided.
     # TODO: not sure why selected_fields is a list
-    # The first list of selections will always be ["aggregate"], so just grab the first item
     selections = info.selected_fields[0].selections[0].selections
-    rows = await get_aggregate_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, selections, [])  # type: ignore
+    aggregate_selections = [selection for selection in selections if getattr(selection, "name") != "groupBy"]
+    groupby_selections = [selection for selection in selections if getattr(selection, "name") == "groupBy"]
+    groupby_selections = groupby_selections[0].selections if groupby_selections else []
+
+    if not aggregate_selections:
+        raise PlatformicsException("No aggregate functions selected")
+
+    rows = await get_aggregate_db_rows(db.MetricConsensusGenome, session, cerbos_client, principal, where, aggregate_selections, [], groupby_selections)  # type: ignore
     aggregate_output = format_metric_consensus_genome_aggregate_output(rows)
-    return MetricConsensusGenomeAggregate(aggregate=aggregate_output)
+    return aggregate_output
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])
@@ -430,27 +460,28 @@ async def create_metric_consensus_genome(
     """
     Create a new MetricConsensusGenome object. Used for mutations (see api/mutations.py).
     """
-    params = input.__dict__
+    validated = MetricConsensusGenomeCreateInputValidator(**input.__dict__)
+    params = validated.model_dump()
 
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
-        input.producing_run_id = None
+        del params["producing_run_id"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": input.collection_id}
+    attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
     # Check that consensus_genome relationship is accessible.
-    if input.consensus_genome_id:
+    if validated.consensus_genome_id:
         consensus_genome = await get_db_rows(
             db.ConsensusGenome,
             session,
             cerbos_client,
             principal,
-            {"id": {"_eq": input.consensus_genome_id}},
+            {"id": {"_eq": validated.consensus_genome_id}},
             [],
             CerbosAction.VIEW,
         )
