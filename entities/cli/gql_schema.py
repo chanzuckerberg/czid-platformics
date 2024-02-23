@@ -872,6 +872,7 @@ class IndexFileCreateInput(sgqlc.types.Input):
     __field_names__ = (
         "name",
         "version",
+        "file_id",
         "upstream_database_id",
         "host_organism_id",
         "producing_run_id",
@@ -879,6 +880,7 @@ class IndexFileCreateInput(sgqlc.types.Input):
     )
     name = sgqlc.types.Field(sgqlc.types.non_null(IndexTypes), graphql_name="name")
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="version")
+    file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     upstream_database_id = sgqlc.types.Field(ID, graphql_name="upstreamDatabaseId")
     host_organism_id = sgqlc.types.Field(ID, graphql_name="hostOrganismId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")

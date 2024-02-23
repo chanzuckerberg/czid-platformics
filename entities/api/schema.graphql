@@ -861,6 +861,7 @@ enum IndexFileCountColumns {
 input IndexFileCreateInput {
   name: IndexTypes!
   version: String!
+  fileId: ID = null
   upstreamDatabaseId: ID = null
   hostOrganismId: ID = null
   producingRunId: ID = null
