@@ -26,6 +26,7 @@ class IndexFileCreateInputValidator(BaseModel):
             strip_whitespace=True,
         ),
     ]
+    file_id: Annotated[uuid.UUID | None, Field()]
     upstream_database_id: Annotated[uuid.UUID | None, Field()]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]

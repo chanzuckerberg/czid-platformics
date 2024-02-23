@@ -5,11 +5,6 @@ import time
 from typing import TypedDict, Optional
 
 
-class ProjectRole(TypedDict):
-    project_id: int
-    roles: list[str]
-
-
 def get_token_claims(private_key: JWK, token: str) -> dict:
     unpacked_token = jwe.JWE()
     unpacked_token.deserialize(token)
@@ -25,7 +20,7 @@ def get_token_claims(private_key: JWK, token: str) -> dict:
 def create_token(
     private_key: JWK,
     userid: int,
-    project_claims: list[ProjectRole],
+    project_claims: dict[str, list[int]],
     expiration: int = 3600,
     service_identity: Optional[str] = None,
 ) -> str:
@@ -36,7 +31,7 @@ def create_token(
         "nbf": int(time.time()),
         "exp": int(time.time()) + expiration,
         "iss": "https://api.example.com",
-        "projects": project_claims,
+        "project_roles": project_claims,
         "service_identity": service_identity,
     }
     jwt_headers = {

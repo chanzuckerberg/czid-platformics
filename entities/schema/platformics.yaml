@@ -754,9 +754,9 @@ classes:
       # S3 path to the index file
       file:
         range: File
-        required: true
-        readonly: true
         annotations:
+          system_writable_only: True
+          mutable: False
           cascade_delete: true
       # Links to either upstream database or host organism
       upstream_database:

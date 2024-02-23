@@ -307,6 +307,7 @@ Mutation types
 class IndexFileCreateInput:
     name: IndexTypes
     version: str
+    file_id: Optional[strawberry.ID] = None
     upstream_database_id: Optional[strawberry.ID] = None
     host_organism_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
@@ -427,6 +428,7 @@ async def create_index_file(
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
+        del params["file"]
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
@@ -435,6 +437,13 @@ async def create_index_file(
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
     # Validate that the user can read all of the entities they're linking to.
+    # Check that file relationship is accessible.
+    if validated.file_id:
+        file = await get_db_rows(
+            db.File, session, cerbos_client, principal, {"id": {"_eq": validated.file_id}}, [], CerbosAction.VIEW
+        )
+        if not file:
+            raise PlatformicsException("Unauthorized: file does not exist")
     # Check that upstream_database relationship is accessible.
     if validated.upstream_database_id:
         upstream_database = await get_db_rows(
