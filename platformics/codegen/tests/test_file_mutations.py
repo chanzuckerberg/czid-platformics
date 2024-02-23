@@ -161,7 +161,7 @@ async def test_upload_file(
         assert output["errors"] is not None
         return
 
-    # Moto produces a hard-coded tokens
+    # Moto produces hard-coded tokens
     assert output["data"]["uploadFile"]["credentials"]["accessKeyId"].endswith("EXAMPLE")
     assert output["data"]["uploadFile"]["credentials"]["secretAccessKey"].endswith("EXAMPLEKEY")
 
@@ -214,3 +214,73 @@ async def test_create_file(
     """
     output = await gql_client.query(mutation, member_projects=[123], service_identity="workflows")
     assert output["data"]["createFile"]["size"] == file_size
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "file_path,should_delete",
+    [("nextgen/test1.fastq", True), ("bla/test1.fastq", False)],
+)
+async def test_delete_from_s3(
+    file_path: str,
+    should_delete: bool,
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+    moto_client: S3Client,
+    monkeypatch
+) -> None:
+    """
+    Test that we delete a file from S3 under the right circumstances
+    """
+    user1_id = 12345
+    project1_id = 123
+
+    # Patch the S3 client to make sure tests are operating on the same mock bucket
+    monkeypatch.setattr(File, "get_s3_client", lambda: moto_client)
+
+    # Create mock data
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        SequencingReadFactory.create(owner_user_id=user1_id, collection_id=project1_id)
+        FileFactory.update_file_ids()
+        session.commit()
+        files = session.execute(sa.select(File)).scalars().all()
+        file = list(filter(lambda file: file.entity_field_name == "r1_file", files))[0]
+        file.path = file_path
+        session.commit()
+
+    valid_fastq_file = "test_infra/fixtures/test1.fastq"
+    moto_client.put_object(Bucket=file.namespace, Key=file.path, Body=open(valid_fastq_file, "rb"))
+
+    # Delete SequencingRead and cascade to File objects
+    query = f"""
+      mutation MyMutation {{
+        deleteSequencingRead(where: {{ id: {{ _eq: "{file.entity_id}" }} }}) {{
+          id
+        }}
+      }}
+    """
+
+    # File should exist on S3 before the deletion
+    assert "Contents" in moto_client.list_objects(Bucket=file.namespace, Prefix=file.path)
+    
+    # Issue deletion
+    result = await gql_client.query(query, user_id=user1_id, member_projects=[project1_id])
+    assert result["data"]["deleteSequencingRead"][0]["id"] == str(file.entity_id)
+
+    # Make sure file either does or does not exist
+    if should_delete:
+        assert "Contents" not in moto_client.list_objects(Bucket=file.namespace, Prefix=file.path)
+    else:
+        assert "Contents" in moto_client.list_objects(Bucket=file.namespace, Prefix=file.path)
+
+    # Make sure File object doesn't exist either
+    query = f"""
+      query MyQuery {{
+        files(where: {{ id: {{ _eq: "{file.id}" }} }}) {{
+          id
+        }}
+      }}
+    """
+    result = await gql_client.query(query, user_id=user1_id, member_projects=[project1_id])
+    assert result["data"]["files"] == []

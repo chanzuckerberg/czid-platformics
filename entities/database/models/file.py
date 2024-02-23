@@ -2,7 +2,6 @@ import datetime
 import uuid
 import uuid6
 from platformics.database.models.base import Base, Entity
-from platformics.api.core.deps import get_s3_client
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Enum, event
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,6 +13,7 @@ from support.enums import FileStatus, FileAccessProtocol, FileUploadClient
 class File(Base):
     __tablename__ = "file"
     _settings = None
+    _s3_client = None
 
     def get_settings():
         if not File._settings:
@@ -22,6 +22,14 @@ class File(Base):
 
     def set_settings(settings):
         File._settings = settings
+
+    def get_s3_client():
+        if not File._s3_client:
+            raise Exception("S3 client not defined in this environment")
+        return File._s3_client
+
+    def set_s3_client(s3_client):
+        File._s3_client = s3_client
 
     id: Column[uuid.UUID] = Column(UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7)
 
@@ -59,9 +67,10 @@ def before_delete(mapper: Mapper, connection: Connection, target: File) -> None:
     table_files = target.__table__
     table_entity = target.entity.__table__
     settings = File.get_settings()
+    s3_client = File.get_s3_client()
 
     # If this file is managed by NextGen, see if it needs to be deleted from S3
-    if target.path.startswith(f"{settings.OUTPUT_S3_PREFIX}/"):
+    if target.path.startswith(f"{settings.OUTPUT_S3_PREFIX}/") and target.protocol == FileAccessProtocol.s3:
         # Is this the last File object pointing to this path?
         files_pointing_to_same_path = connection.execute(
             table_files.select()
@@ -73,7 +82,6 @@ def before_delete(mapper: Mapper, connection: Connection, target: File) -> None:
 
         # If so, delete it from S3
         if len(list(files_pointing_to_same_path)) == 0:
-            s3_client = get_s3_client(settings)
             response = s3_client.delete_object(Bucket=target.namespace, Key=target.path)
             if response["ResponseMetadata"]["HTTPStatusCode"] != 204:
                 raise Exception("Failed to delete file from S3")
