@@ -70,8 +70,6 @@ def before_delete(mapper: Mapper, connection: Connection, target: File) -> None:
             if response["ResponseMetadata"]["HTTPStatusCode"] != 204:
                 raise Exception("Failed to delete file from S3")
 
-    d
-
     # Finally, scrub the foreign keys in the related Entity
     values = {f"{target.entity_field_name}_id": None}
     # Modifying the target.entity directly does not save changes, we need to use `connection`
