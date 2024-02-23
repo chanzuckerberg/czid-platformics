@@ -219,7 +219,6 @@ class TaxonOrderByClause(TypedDict):
     upstream_database_identifier: Optional[orderBy] | None
     level: Optional[orderBy] | None
     tax_parent: Optional[orderBy] | None
-    tax_subspecies: Optional[orderBy] | None
     tax_species: Optional[orderBy] | None
     tax_genus: Optional[orderBy] | None
     tax_family: Optional[orderBy] | None
@@ -331,7 +330,6 @@ class TaxonCountColumns(enum.Enum):
     upstream_database_identifier = "upstream_database_identifier"
     level = "level"
     tax_parent = "tax_parent"
-    tax_subspecies = "tax_subspecies"
     tax_species = "tax_species"
     tax_genus = "tax_genus"
     tax_family = "tax_family"

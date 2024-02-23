@@ -23,6 +23,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     EnumComparators,
     DatetimeComparators,
     IntComparators,
@@ -42,12 +43,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.workflow_run import WorkflowRunWhereClause, WorkflowRun
+    from api.types.workflow_run import WorkflowRunOrderByClause, WorkflowRunWhereClause, WorkflowRun
 
     pass
 else:
     WorkflowRunWhereClause = "WorkflowRunWhereClause"
     WorkflowRun = "WorkflowRun"
+    WorkflowRunOrderByClause = "WorkflowRunOrderByClause"
     pass
 
 
@@ -64,11 +66,12 @@ async def load_workflow_run_rows(
     root: "WorkflowRunStep",
     info: Info,
     where: Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")] | None = None,
+    order_by: Optional[list[Annotated["WorkflowRunOrderByClause", strawberry.lazy("api.types.workflow_run")]]] = [],
 ) -> Optional[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowRunStep)
     relationship = mapper.relationships["workflow_run"]
-    return await dataloader.loader_for(relationship, where).load(root.workflow_run_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.workflow_run_id)  # type:ignore
 
 
 """
@@ -103,6 +106,26 @@ class WorkflowRunStepWhereClause(TypedDict):
     started_at: Optional[DatetimeComparators] | None
     ended_at: Optional[DatetimeComparators] | None
     status: Optional[EnumComparators[WorkflowRunStepStatus]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class WorkflowRunStepOrderByClause(TypedDict):
+    workflow_run: Optional[Annotated["WorkflowRunOrderByClause", strawberry.lazy("api.types.workflow_run")]] | None
+    started_at: Optional[orderBy] | None
+    ended_at: Optional[orderBy] | None
+    status: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -256,11 +279,12 @@ async def resolve_workflow_run_steps(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowRunStepWhereClause] = None,
+    order_by: Optional[list[WorkflowRunStepOrderByClause]] = [],
 ) -> typing.Sequence[WorkflowRunStep]:
     """
     Resolve WorkflowRunStep objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.WorkflowRunStep, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.WorkflowRunStep, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_workflow_run_step_aggregate_output(query_results: RowMapping) -> WorkflowRunStepAggregateFunctions:

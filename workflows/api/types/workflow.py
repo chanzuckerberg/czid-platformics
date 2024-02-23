@@ -23,6 +23,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -41,12 +42,13 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.workflow_version import WorkflowVersionWhereClause, WorkflowVersion
+    from api.types.workflow_version import WorkflowVersionOrderByClause, WorkflowVersionWhereClause, WorkflowVersion
 
     pass
 else:
     WorkflowVersionWhereClause = "WorkflowVersionWhereClause"
     WorkflowVersion = "WorkflowVersion"
+    WorkflowVersionOrderByClause = "WorkflowVersionOrderByClause"
     pass
 
 
@@ -65,11 +67,14 @@ async def load_workflow_version_rows(
     root: "Workflow",
     info: Info,
     where: Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")] | None = None,
+    order_by: Optional[
+        list[Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]]
+    ] = [],
 ) -> Sequence[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.Workflow)
     relationship = mapper.relationships["versions"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -121,6 +126,25 @@ class WorkflowWhereClause(TypedDict):
     default_version: Optional[StrComparators] | None
     minimum_supported_version: Optional[StrComparators] | None
     versions: Optional[Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class WorkflowOrderByClause(TypedDict):
+    name: Optional[orderBy] | None
+    default_version: Optional[orderBy] | None
+    minimum_supported_version: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -274,11 +298,12 @@ async def resolve_workflows(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowWhereClause] = None,
+    order_by: Optional[list[WorkflowOrderByClause]] = [],
 ) -> typing.Sequence[Workflow]:
     """
     Resolve Workflow objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.Workflow, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.Workflow, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_workflow_aggregate_output(query_results: RowMapping) -> WorkflowAggregateFunctions:

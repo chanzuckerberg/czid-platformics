@@ -10,7 +10,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Enum, Boolean
+from sqlalchemy import ForeignKey, String, Integer, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import HostOrganismCategory
@@ -28,6 +28,7 @@ else:
 class HostOrganism(Entity):
     __tablename__ = "host_organism"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
+    rails_host_genome_id: Mapped[int] = mapped_column(Integer, nullable=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
     version: Mapped[str] = mapped_column(String, nullable=False)
     category: Mapped[HostOrganismCategory] = mapped_column(

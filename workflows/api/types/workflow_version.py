@@ -23,6 +23,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     IntComparators,
     StrComparators,
     UUIDComparators,
@@ -41,15 +42,17 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.workflow import WorkflowWhereClause, Workflow
-    from api.types.workflow_run import WorkflowRunWhereClause, WorkflowRun
+    from api.types.workflow import WorkflowOrderByClause, WorkflowWhereClause, Workflow
+    from api.types.workflow_run import WorkflowRunOrderByClause, WorkflowRunWhereClause, WorkflowRun
 
     pass
 else:
     WorkflowWhereClause = "WorkflowWhereClause"
     Workflow = "Workflow"
+    WorkflowOrderByClause = "WorkflowOrderByClause"
     WorkflowRunWhereClause = "WorkflowRunWhereClause"
     WorkflowRun = "WorkflowRun"
+    WorkflowRunOrderByClause = "WorkflowRunOrderByClause"
     pass
 
 
@@ -66,11 +69,12 @@ async def load_workflow_rows(
     root: "WorkflowVersion",
     info: Info,
     where: Annotated["WorkflowWhereClause", strawberry.lazy("api.types.workflow")] | None = None,
+    order_by: Optional[list[Annotated["WorkflowOrderByClause", strawberry.lazy("api.types.workflow")]]] = [],
 ) -> Optional[Annotated["Workflow", strawberry.lazy("api.types.workflow")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowVersion)
     relationship = mapper.relationships["workflow"]
-    return await dataloader.loader_for(relationship, where).load(root.workflow_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.workflow_id)  # type:ignore
 
 
 @relay.connection(
@@ -80,11 +84,12 @@ async def load_workflow_run_rows(
     root: "WorkflowVersion",
     info: Info,
     where: Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")] | None = None,
+    order_by: Optional[list[Annotated["WorkflowRunOrderByClause", strawberry.lazy("api.types.workflow_run")]]] = [],
 ) -> Sequence[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowVersion)
     relationship = mapper.relationships["runs"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -138,6 +143,27 @@ class WorkflowVersionWhereClause(TypedDict):
     manifest: Optional[StrComparators] | None
     workflow: Optional[Annotated["WorkflowWhereClause", strawberry.lazy("api.types.workflow")]] | None
     runs: Optional[Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")]] | None
+
+
+"""
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class WorkflowVersionOrderByClause(TypedDict):
+    graph_json: Optional[orderBy] | None
+    workflow_uri: Optional[orderBy] | None
+    version: Optional[orderBy] | None
+    manifest: Optional[orderBy] | None
+    workflow: Optional[Annotated["WorkflowOrderByClause", strawberry.lazy("api.types.workflow")]] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -302,11 +328,12 @@ async def resolve_workflow_versions(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowVersionWhereClause] = None,
+    order_by: Optional[list[WorkflowVersionOrderByClause]] = [],
 ) -> typing.Sequence[WorkflowVersion]:
     """
     Resolve WorkflowVersion objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_workflow_version_aggregate_output(query_results: RowMapping) -> WorkflowVersionAggregateFunctions:

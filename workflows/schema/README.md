@@ -10,6 +10,7 @@ Entity {
     date deleted_at  
 }
 WorkflowRun {
+    int rails_workflow_run_id  
     date started_at  
     date ended_at  
     string execution_id  

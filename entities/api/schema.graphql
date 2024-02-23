@@ -603,6 +603,7 @@ type HostOrganism implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
+  railsHostGenomeId: Int
   name: String!
   version: String!
   category: HostOrganismCategory!
@@ -679,6 +680,7 @@ input HostOrganismCategoryEnumComparators {
 }
 
 enum HostOrganismCountColumns {
+  rails_host_genome_id
   name
   version
   category
@@ -698,6 +700,7 @@ enum HostOrganismCountColumns {
 
 input HostOrganismCreateInput {
   collectionId: Int!
+  railsHostGenomeId: Int = null
   name: String!
   version: String!
   category: HostOrganismCategory!
@@ -709,6 +712,7 @@ type HostOrganismMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  railsHostGenomeId: Int
   name: String
   version: String
 }
@@ -717,9 +721,11 @@ type HostOrganismNumericalColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  railsHostGenomeId: Int
 }
 
 input HostOrganismOrderByClause {
+  railsHostGenomeId: orderBy
   name: orderBy
   version: orderBy
   category: orderBy
@@ -735,6 +741,7 @@ input HostOrganismOrderByClause {
 
 input HostOrganismUpdateInput {
   collectionId: Int = null
+  railsHostGenomeId: Int = null
   name: String = null
   version: String = null
   category: HostOrganismCategory = null
@@ -747,6 +754,7 @@ input HostOrganismWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
+  railsHostGenomeId: IntComparators
   name: StrComparators
   version: StrComparators
   category: HostOrganismCategoryEnumComparators
@@ -2110,7 +2118,6 @@ enum TaxonCountColumns {
   upstream_database_identifier
   level
   tax_parent
-  tax_subspecies
   tax_species
   tax_genus
   tax_family
@@ -2203,7 +2210,6 @@ input TaxonOrderByClause {
   upstreamDatabaseIdentifier: orderBy
   level: orderBy
   taxParent: orderBy
-  taxSubspecies: orderBy
   taxSpecies: orderBy
   taxGenus: orderBy
   taxFamily: orderBy

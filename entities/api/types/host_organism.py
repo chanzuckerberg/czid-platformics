@@ -186,6 +186,7 @@ class HostOrganismWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
+    rails_host_genome_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
     category: Optional[EnumComparators[HostOrganismCategory]] | None
@@ -201,6 +202,7 @@ Supported ORDER BY clause attributes
 
 @strawberry.input
 class HostOrganismOrderByClause(TypedDict):
+    rails_host_genome_id: Optional[orderBy] | None
     name: Optional[orderBy] | None
     version: Optional[orderBy] | None
     category: Optional[orderBy] | None
@@ -225,6 +227,7 @@ class HostOrganism(EntityInterface):
     producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
+    rails_host_genome_id: Optional[int] = None
     name: str
     version: str
     category: HostOrganismCategory
@@ -267,6 +270,7 @@ class HostOrganismNumericalColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    rails_host_genome_id: Optional[int] = None
 
 
 """
@@ -279,6 +283,7 @@ class HostOrganismMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    rails_host_genome_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
 
@@ -290,6 +295,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class HostOrganismCountColumns(enum.Enum):
+    rails_host_genome_id = "rails_host_genome_id"
     name = "name"
     version = "version"
     category = "category"
@@ -350,6 +356,7 @@ Mutation types
 @strawberry.input()
 class HostOrganismCreateInput:
     collection_id: int
+    rails_host_genome_id: Optional[int] = None
     name: str
     version: str
     category: HostOrganismCategory
@@ -360,6 +367,7 @@ class HostOrganismCreateInput:
 @strawberry.input()
 class HostOrganismUpdateInput:
     collection_id: Optional[int] = None
+    rails_host_genome_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
     category: Optional[HostOrganismCategory] = None

@@ -78,6 +78,9 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # If this workflow_run is a copy of a workflow_run in the Rails DB, store its ID here
+      rails_workflow_run_id:
+        range: int
       started_at:
         range: date
       ended_at:

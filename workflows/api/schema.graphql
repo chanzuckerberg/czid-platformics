@@ -90,11 +90,11 @@ type Query {
     """The IDs of the objects."""
     ids: [GlobalID!]!
   ): [Node!]!
-  workflowRuns(where: WorkflowRunWhereClause = null): [WorkflowRun!]!
-  workflows(where: WorkflowWhereClause = null): [Workflow!]!
-  workflowRunSteps(where: WorkflowRunStepWhereClause = null): [WorkflowRunStep!]!
-  workflowRunEntityInputs(where: WorkflowRunEntityInputWhereClause = null): [WorkflowRunEntityInput!]!
-  workflowVersions(where: WorkflowVersionWhereClause = null): [WorkflowVersion!]!
+  workflowRuns(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = []): [WorkflowRun!]!
+  workflows(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = []): [Workflow!]!
+  workflowRunSteps(where: WorkflowRunStepWhereClause = null, orderBy: [WorkflowRunStepOrderByClause!] = []): [WorkflowRunStep!]!
+  workflowRunEntityInputs(where: WorkflowRunEntityInputWhereClause = null, orderBy: [WorkflowRunEntityInputOrderByClause!] = []): [WorkflowRunEntityInput!]!
+  workflowVersions(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): [WorkflowVersion!]!
   workflowRunsAggregate(where: WorkflowRunWhereClause = null): WorkflowRunAggregate!
   workflowsAggregate(where: WorkflowWhereClause = null): WorkflowAggregate!
   workflowRunStepsAggregate(where: WorkflowRunStepWhereClause = null): WorkflowRunStepAggregate!
@@ -154,6 +154,7 @@ type Workflow implements EntityInterface & Node {
   minimumSupportedVersion: String
   versions(
     where: WorkflowVersionWhereClause = null
+    orderBy: [WorkflowVersionOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -221,6 +222,19 @@ type WorkflowNumericalColumns {
   collectionId: Int
 }
 
+input WorkflowOrderByClause {
+  name: orderBy
+  defaultVersion: orderBy
+  minimumSupportedVersion: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 type WorkflowRun implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
@@ -228,15 +242,17 @@ type WorkflowRun implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
-  workflowVersion(where: WorkflowVersionWhereClause = null): WorkflowVersion
+  workflowVersion(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): WorkflowVersion
   steps(
     where: WorkflowRunStepWhereClause = null
+    orderBy: [WorkflowRunStepOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -253,6 +269,7 @@ type WorkflowRun implements EntityInterface & Node {
   stepsAggregate(where: WorkflowRunStepWhereClause = null): WorkflowRunStepAggregate
   entityInputs(
     where: WorkflowRunEntityInputWhereClause = null
+    orderBy: [WorkflowRunEntityInputOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -294,6 +311,7 @@ type WorkflowRunConnection {
 }
 
 enum WorkflowRunCountColumns {
+  rails_workflow_run_id
   started_at
   ended_at
   execution_id
@@ -317,6 +335,7 @@ enum WorkflowRunCountColumns {
 
 input WorkflowRunCreateInput {
   collectionId: Int!
+  railsWorkflowRunId: Int = null
   startedAt: DateTime = null
   endedAt: DateTime = null
   executionId: String = null
@@ -346,7 +365,7 @@ type WorkflowRunEntityInput implements EntityInterface & Node {
   inputEntityId: ID
   fieldName: String
   entityType: String
-  workflowRun(where: WorkflowRunWhereClause = null): WorkflowRun
+  workflowRun(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = []): WorkflowRun
 }
 
 type WorkflowRunEntityInputAggregate {
@@ -417,6 +436,20 @@ type WorkflowRunEntityInputNumericalColumns {
   collectionId: Int
 }
 
+input WorkflowRunEntityInputOrderByClause {
+  inputEntityId: orderBy
+  fieldName: orderBy
+  entityType: orderBy
+  workflowRun: WorkflowRunOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input WorkflowRunEntityInputUpdateInput {
   collectionId: Int = null
   fieldName: String = null
@@ -443,6 +476,7 @@ type WorkflowRunMinMaxColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -455,6 +489,27 @@ type WorkflowRunNumericalColumns {
   producingRunId: Int
   ownerUserId: Int
   collectionId: Int
+  railsWorkflowRunId: Int
+}
+
+input WorkflowRunOrderByClause {
+  railsWorkflowRunId: orderBy
+  startedAt: orderBy
+  endedAt: orderBy
+  executionId: orderBy
+  outputsJson: orderBy
+  workflowRunnerInputsJson: orderBy
+  status: orderBy
+  workflowVersion: WorkflowVersionOrderByClause
+  rawInputsJson: orderBy
+  deprecatedBy: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
 }
 
 enum WorkflowRunStatus {
@@ -484,7 +539,7 @@ type WorkflowRunStep implements EntityInterface & Node {
   producingRunId: Int
   ownerUserId: Int!
   collectionId: Int!
-  workflowRun(where: WorkflowRunWhereClause = null): WorkflowRun
+  workflowRun(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = []): WorkflowRun
   startedAt: DateTime
   endedAt: DateTime
   status: WorkflowRunStepStatus
@@ -559,6 +614,20 @@ type WorkflowRunStepNumericalColumns {
   collectionId: Int
 }
 
+input WorkflowRunStepOrderByClause {
+  workflowRun: WorkflowRunOrderByClause
+  startedAt: orderBy
+  endedAt: orderBy
+  status: orderBy
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 enum WorkflowRunStepStatus {
   RUNNING
   SUCCEEDED
@@ -602,6 +671,7 @@ input WorkflowRunStepWhereClauseMutations {
 
 input WorkflowRunUpdateInput {
   collectionId: Int = null
+  railsWorkflowRunId: Int = null
   startedAt: DateTime = null
   endedAt: DateTime = null
   executionId: String = null
@@ -617,6 +687,7 @@ input WorkflowRunWhereClause {
   producingRunId: IntComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
+  railsWorkflowRunId: IntComparators
   startedAt: DatetimeComparators
   endedAt: DatetimeComparators
   executionId: StrComparators
@@ -651,9 +722,10 @@ type WorkflowVersion implements EntityInterface & Node {
   workflowUri: String
   version: String
   manifest: String
-  workflow(where: WorkflowWhereClause = null): Workflow
+  workflow(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = []): Workflow
   runs(
     where: WorkflowRunWhereClause = null
+    orderBy: [WorkflowRunOrderByClause!] = []
 
     """Returns the items in the list that come before the specified cursor."""
     before: String = null
@@ -744,6 +816,21 @@ type WorkflowVersionNumericalColumns {
   collectionId: Int
 }
 
+input WorkflowVersionOrderByClause {
+  graphJson: orderBy
+  workflowUri: orderBy
+  version: orderBy
+  manifest: orderBy
+  workflow: WorkflowOrderByClause
+  id: orderBy
+  producingRunId: orderBy
+  ownerUserId: orderBy
+  collectionId: orderBy
+  createdAt: orderBy
+  updatedAt: orderBy
+  deletedAt: orderBy
+}
+
 input WorkflowVersionUpdateInput {
   collectionId: Int = null
   graphJson: String = null
@@ -783,4 +870,13 @@ input WorkflowWhereClause {
 
 input WorkflowWhereClauseMutations {
   id: UUIDComparators
+}
+
+enum orderBy {
+  asc
+  asc_nulls_first
+  asc_nulls_last
+  desc
+  desc_nulls_first
+  desc_nulls_last
 }

@@ -378,6 +378,9 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # If this hostorganism is a copy of a Host Genome that's in the Rails DB, store its ID here
+      rails_host_genome_id:
+        range: int
       # e.g. Human
       name:
         range: string
@@ -548,8 +551,6 @@ classes:
         range: TaxonLevel
         required: true
       tax_parent:
-        range: Taxon
-      tax_subspecies:
         range: Taxon
       tax_species:
         range: Taxon

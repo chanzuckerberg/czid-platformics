@@ -88,6 +88,7 @@ Accession {
     date deleted_at  
 }
 HostOrganism {
+    int rails_host_genome_id  
     string name  
     string version  
     HostOrganismCategory category  
@@ -244,7 +245,6 @@ ConsensusGenome ||--|o File : "intermediate_outputs"
 MetricConsensusGenome ||--|| ConsensusGenome : "consensus_genome"
 Taxon ||--|| UpstreamDatabase : "upstream_database"
 Taxon ||--|o Taxon : "tax_parent"
-Taxon ||--|o Taxon : "tax_subspecies"
 Taxon ||--|o Taxon : "tax_species"
 Taxon ||--|o Taxon : "tax_genus"
 Taxon ||--|o Taxon : "tax_family"

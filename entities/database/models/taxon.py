@@ -45,8 +45,6 @@ class Taxon(Entity):
     level: Mapped[TaxonLevel] = mapped_column(Enum(TaxonLevel, native_enum=False), nullable=False)
     tax_parent_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     tax_parent: Mapped["Taxon"] = relationship("Taxon", foreign_keys=tax_parent_id)
-    tax_subspecies_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
-    tax_subspecies: Mapped["Taxon"] = relationship("Taxon", foreign_keys=tax_subspecies_id)
     tax_species_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)
     tax_species: Mapped["Taxon"] = relationship("Taxon", foreign_keys=tax_species_id)
     tax_genus_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("taxon.entity_id"), nullable=True)

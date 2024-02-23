@@ -54,7 +54,6 @@ class TaxonFactory(CommonFactory):
         ]
     )
     tax_parent = None
-    tax_subspecies = None
     tax_species = None
     tax_genus = None
     tax_family = None

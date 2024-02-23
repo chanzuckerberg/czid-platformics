@@ -28,6 +28,7 @@ from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.deps import get_cerbos_client, get_db_session, require_auth_principal
 from platformics.api.core.gql_to_sql import (
     aggregator_map,
+    orderBy,
     EnumComparators,
     DatetimeComparators,
     IntComparators,
@@ -49,18 +50,25 @@ E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
 
 if TYPE_CHECKING:
-    from api.types.workflow_version import WorkflowVersionWhereClause, WorkflowVersion
-    from api.types.workflow_run_step import WorkflowRunStepWhereClause, WorkflowRunStep
-    from api.types.workflow_run_entity_input import WorkflowRunEntityInputWhereClause, WorkflowRunEntityInput
+    from api.types.workflow_version import WorkflowVersionOrderByClause, WorkflowVersionWhereClause, WorkflowVersion
+    from api.types.workflow_run_step import WorkflowRunStepOrderByClause, WorkflowRunStepWhereClause, WorkflowRunStep
+    from api.types.workflow_run_entity_input import (
+        WorkflowRunEntityInputOrderByClause,
+        WorkflowRunEntityInputWhereClause,
+        WorkflowRunEntityInput,
+    )
 
     pass
 else:
     WorkflowVersionWhereClause = "WorkflowVersionWhereClause"
     WorkflowVersion = "WorkflowVersion"
+    WorkflowVersionOrderByClause = "WorkflowVersionOrderByClause"
     WorkflowRunStepWhereClause = "WorkflowRunStepWhereClause"
     WorkflowRunStep = "WorkflowRunStep"
+    WorkflowRunStepOrderByClause = "WorkflowRunStepOrderByClause"
     WorkflowRunEntityInputWhereClause = "WorkflowRunEntityInputWhereClause"
     WorkflowRunEntityInput = "WorkflowRunEntityInput"
+    WorkflowRunEntityInputOrderByClause = "WorkflowRunEntityInputOrderByClause"
     pass
 
 
@@ -77,11 +85,14 @@ async def load_workflow_version_rows(
     root: "WorkflowRun",
     info: Info,
     where: Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")] | None = None,
+    order_by: Optional[
+        list[Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]]
+    ] = [],
 ) -> Optional[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowRun)
     relationship = mapper.relationships["workflow_version"]
-    return await dataloader.loader_for(relationship, where).load(root.workflow_version_id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.workflow_version_id)  # type:ignore
 
 
 @relay.connection(
@@ -91,11 +102,14 @@ async def load_workflow_run_step_rows(
     root: "WorkflowRun",
     info: Info,
     where: Annotated["WorkflowRunStepWhereClause", strawberry.lazy("api.types.workflow_run_step")] | None = None,
+    order_by: Optional[
+        list[Annotated["WorkflowRunStepOrderByClause", strawberry.lazy("api.types.workflow_run_step")]]
+    ] = [],
 ) -> Sequence[Annotated["WorkflowRunStep", strawberry.lazy("api.types.workflow_run_step")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowRun)
     relationship = mapper.relationships["steps"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -125,11 +139,14 @@ async def load_workflow_run_entity_input_rows(
     info: Info,
     where: Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]
     | None = None,
+    order_by: Optional[
+        list[Annotated["WorkflowRunEntityInputOrderByClause", strawberry.lazy("api.types.workflow_run_entity_input")]]
+    ] = [],
 ) -> Sequence[Annotated["WorkflowRunEntityInput", strawberry.lazy("api.types.workflow_run_entity_input")]]:
     dataloader = info.context["sqlalchemy_loader"]
     mapper = inspect(db.WorkflowRun)
     relationship = mapper.relationships["entity_inputs"]
-    return await dataloader.loader_for(relationship, where).load(root.id)  # type:ignore
+    return await dataloader.loader_for(relationship, where, order_by).load(root.id)  # type:ignore
 
 
 @strawberry.field
@@ -178,6 +195,7 @@ class WorkflowRunWhereClause(TypedDict):
     producing_run_id: IntComparators | None
     owner_user_id: IntComparators | None
     collection_id: IntComparators | None
+    rails_workflow_run_id: Optional[IntComparators] | None
     started_at: Optional[DatetimeComparators] | None
     ended_at: Optional[DatetimeComparators] | None
     execution_id: Optional[StrComparators] | None
@@ -195,6 +213,34 @@ class WorkflowRunWhereClause(TypedDict):
 
 
 """
+Supported ORDER BY clause attributes
+"""
+
+
+@strawberry.input
+class WorkflowRunOrderByClause(TypedDict):
+    rails_workflow_run_id: Optional[orderBy] | None
+    started_at: Optional[orderBy] | None
+    ended_at: Optional[orderBy] | None
+    execution_id: Optional[orderBy] | None
+    outputs_json: Optional[orderBy] | None
+    workflow_runner_inputs_json: Optional[orderBy] | None
+    status: Optional[orderBy] | None
+    workflow_version: Optional[
+        Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]
+    ] | None
+    raw_inputs_json: Optional[orderBy] | None
+    deprecated_by: Optional[orderBy] | None
+    id: Optional[orderBy] | None
+    producing_run_id: Optional[orderBy] | None
+    owner_user_id: Optional[orderBy] | None
+    collection_id: Optional[orderBy] | None
+    created_at: Optional[orderBy] | None
+    updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
+
+
+"""
 Define WorkflowRun type
 """
 
@@ -205,6 +251,7 @@ class WorkflowRun(EntityInterface):
     producing_run_id: Optional[int]
     owner_user_id: int
     collection_id: int
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
@@ -253,6 +300,7 @@ class WorkflowRunNumericalColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    rails_workflow_run_id: Optional[int] = None
 
 
 """
@@ -265,6 +313,7 @@ class WorkflowRunMinMaxColumns:
     producing_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
@@ -280,6 +329,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class WorkflowRunCountColumns(enum.Enum):
+    rails_workflow_run_id = "rails_workflow_run_id"
     started_at = "started_at"
     ended_at = "ended_at"
     execution_id = "execution_id"
@@ -344,6 +394,7 @@ Mutation types
 @strawberry.input()
 class WorkflowRunCreateInput:
     collection_id: int
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
@@ -357,6 +408,7 @@ class WorkflowRunCreateInput:
 @strawberry.input()
 class WorkflowRunUpdateInput:
     collection_id: Optional[int] = None
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
@@ -380,11 +432,12 @@ async def resolve_workflow_runs(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowRunWhereClause] = None,
+    order_by: Optional[list[WorkflowRunOrderByClause]] = [],
 ) -> typing.Sequence[WorkflowRun]:
     """
     Resolve WorkflowRun objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.WorkflowRun, session, cerbos_client, principal, where, [])  # type: ignore
+    return await get_db_rows(db.WorkflowRun, session, cerbos_client, principal, where, order_by)  # type: ignore
 
 
 def format_workflow_run_aggregate_output(query_results: RowMapping) -> WorkflowRunAggregateFunctions:

@@ -132,6 +132,7 @@ class HostOrganismCountColumns(sgqlc.types.Enum):
         "name",
         "owner_user_id",
         "producing_run_id",
+        "rails_host_genome_id",
         "samples",
         "sequence",
         "updated_at",
@@ -384,7 +385,6 @@ class TaxonCountColumns(sgqlc.types.Enum):
         "tax_parent",
         "tax_phylum",
         "tax_species",
-        "tax_subspecies",
         "tax_superkingdom",
         "updated_at",
         "upstream_database",
@@ -859,8 +859,17 @@ class HostOrganismCategoryEnumComparators(sgqlc.types.Input):
 
 class HostOrganismCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "name", "version", "category", "is_deuterostome", "sequence_id")
+    __field_names__ = (
+        "collection_id",
+        "rails_host_genome_id",
+        "name",
+        "version",
+        "category",
+        "is_deuterostome",
+        "sequence_id",
+    )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name="railsHostGenomeId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="version")
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name="category")
@@ -871,6 +880,7 @@ class HostOrganismCreateInput(sgqlc.types.Input):
 class HostOrganismOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
+        "rails_host_genome_id",
         "name",
         "version",
         "category",
@@ -883,6 +893,7 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
         "updated_at",
         "deleted_at",
     )
+    rails_host_genome_id = sgqlc.types.Field(orderBy, graphql_name="railsHostGenomeId")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     version = sgqlc.types.Field(orderBy, graphql_name="version")
     category = sgqlc.types.Field(orderBy, graphql_name="category")
@@ -898,8 +909,17 @@ class HostOrganismOrderByClause(sgqlc.types.Input):
 
 class HostOrganismUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "name", "version", "category", "is_deuterostome", "sequence_id")
+    __field_names__ = (
+        "collection_id",
+        "rails_host_genome_id",
+        "name",
+        "version",
+        "category",
+        "is_deuterostome",
+        "sequence_id",
+    )
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name="railsHostGenomeId")
     name = sgqlc.types.Field(String, graphql_name="name")
     version = sgqlc.types.Field(String, graphql_name="version")
     category = sgqlc.types.Field(HostOrganismCategory, graphql_name="category")
@@ -914,6 +934,7 @@ class HostOrganismWhereClause(sgqlc.types.Input):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
+        "rails_host_genome_id",
         "name",
         "version",
         "category",
@@ -925,6 +946,7 @@ class HostOrganismWhereClause(sgqlc.types.Input):
     producing_run_id = sgqlc.types.Field("IntComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field("IntComparators", graphql_name="collectionId")
+    rails_host_genome_id = sgqlc.types.Field("IntComparators", graphql_name="railsHostGenomeId")
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
     version = sgqlc.types.Field("StrComparators", graphql_name="version")
     category = sgqlc.types.Field(HostOrganismCategoryEnumComparators, graphql_name="category")
@@ -1806,7 +1828,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
         "upstream_database_identifier",
         "level",
         "tax_parent",
-        "tax_subspecies",
         "tax_species",
         "tax_genus",
         "tax_family",
@@ -1832,7 +1853,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
     upstream_database_identifier = sgqlc.types.Field(orderBy, graphql_name="upstreamDatabaseIdentifier")
     level = sgqlc.types.Field(orderBy, graphql_name="level")
     tax_parent = sgqlc.types.Field(orderBy, graphql_name="taxParent")
-    tax_subspecies = sgqlc.types.Field(orderBy, graphql_name="taxSubspecies")
     tax_species = sgqlc.types.Field(orderBy, graphql_name="taxSpecies")
     tax_genus = sgqlc.types.Field(orderBy, graphql_name="taxGenus")
     tax_family = sgqlc.types.Field(orderBy, graphql_name="taxFamily")
@@ -2293,20 +2313,22 @@ class HostOrganismAggregateFunctions(sgqlc.types.Type):
 
 class HostOrganismMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "name", "version")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "rails_host_genome_id", "name", "version")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name="railsHostGenomeId")
     name = sgqlc.types.Field(String, graphql_name="name")
     version = sgqlc.types.Field(String, graphql_name="version")
 
 
 class HostOrganismNumericalColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id")
+    __field_names__ = ("producing_run_id", "owner_user_id", "collection_id", "rails_host_genome_id")
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name="railsHostGenomeId")
 
 
 class IndexFileAggregate(sgqlc.types.Type):
@@ -4313,6 +4335,7 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
         "producing_run_id",
         "owner_user_id",
         "collection_id",
+        "rails_host_genome_id",
         "name",
         "version",
         "category",
@@ -4328,6 +4351,7 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     producing_run_id = sgqlc.types.Field(Int, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name="railsHostGenomeId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="version")
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name="category")
