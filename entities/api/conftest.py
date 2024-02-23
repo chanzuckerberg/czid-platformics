@@ -36,7 +36,7 @@ class GQLTestClient:
         query: str,
         user_id: Optional[int] = None,
         member_projects: Optional[list[int]] = None,
-        admin_projects: Optional[list[int]] = None,
+        owner_projects: Optional[list[int]] = None,
         viewer_projects: Optional[list[int]] = None,
         service_identity: Optional[str] = None,
     ) -> dict[str, typing.Any]:
@@ -45,8 +45,8 @@ class GQLTestClient:
         """
         if not user_id:
             user_id = 111
-        if not admin_projects:
-            admin_projects = []
+        if not owner_projects:
+            owner_projects = []
         if not member_projects:
             member_projects = []
         if not viewer_projects:
@@ -56,7 +56,7 @@ class GQLTestClient:
             "accept": "application/json",
             "user_id": str(user_id),
             "member_projects": json.dumps(member_projects),
-            "admin_projects": json.dumps(admin_projects),
+            "owner_projects": json.dumps(owner_projects),
             "viewer_projects": json.dumps(viewer_projects),
             "service_identity": service_identity or "",
         }
@@ -104,7 +104,7 @@ async def patched_authprincipal(request: Request) -> Principal:
         attr={
             "user_id": int(user_id),
             "member_projects": json.loads(request.headers.get("member_projects", "[]")),
-            "admin_projects": json.loads(request.headers.get("admin_projects", "[]")),
+            "owner_projects": json.loads(request.headers.get("owner_projects", "[]")),
             "viewer_projects": json.loads(request.headers.get("viewer_projects", "[]")),
             "service_identity": request.headers.get("service_identity"),
         },

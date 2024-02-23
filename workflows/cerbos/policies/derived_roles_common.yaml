@@ -17,13 +17,13 @@ derivedRoles:
           any:
             of:
               - expr: request.resource.attr.collection_id in request.principal.attr.member_projects
-              - expr: request.resource.attr.collection_id in request.principal.attr.admin_projects
+              - expr: request.resource.attr.collection_id in request.principal.attr.owner_projects
 
-    - name: admin
+    - name: project_owner
       parentRoles: ["user"]
       condition:
         match:
-          expr: request.resource.attr.collection_id in request.principal.attr.admin_projects
+          expr: request.resource.attr.collection_id in request.principal.attr.owner_projects
 
     - name: project_viewer
       parentRoles: ["user"]

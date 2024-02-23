@@ -3,9 +3,9 @@
     "type": "object",
     "properties": {
         "user_id": {"type": "integer"},
-        "admin_projects": { "type": "array", "items": { "type": "integer" } },
+        "owner_projects": { "type": "array", "items": { "type": "integer" } },
         "member_projects": { "type": "array", "items": { "type": "integer" } }
     },
     "additionalProperties": false,
-    "required": ["user_id", "admin_projects", "member_projects"]
+    "required": ["user_id", "owner_projects", "member_projects", "viewer_projects"]
 }
