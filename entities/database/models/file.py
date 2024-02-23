@@ -3,7 +3,6 @@ import uuid
 import uuid6
 from platformics.database.models.base import Base, Entity
 from platformics.api.core.deps import get_s3_client
-from platformics.support.settings_singleton import SettingsSingleton
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Enum, event
 from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,6 +13,15 @@ from support.enums import FileStatus, FileAccessProtocol, FileUploadClient
 
 class File(Base):
     __tablename__ = "file"
+    _settings = None
+
+    def get_settings():
+        if not File._settings:
+            raise Exception("Settings not defined in this environment")
+        return File._settings
+
+    def set_settings(settings):
+        File._settings = settings
 
     id: Column[uuid.UUID] = Column(UUID(as_uuid=True), primary_key=True, default=uuid6.uuid7)
 
@@ -50,7 +58,7 @@ def before_delete(mapper: Mapper, connection: Connection, target: File) -> None:
     """
     table_files = target.__table__
     table_entity = target.entity.__table__
-    settings = SettingsSingleton.get()
+    settings = File.get_settings()
 
     # If this file is managed by NextGen, see if it needs to be deleted from S3
     if target.path.startswith(f"{settings.OUTPUT_S3_PREFIX}/"):
