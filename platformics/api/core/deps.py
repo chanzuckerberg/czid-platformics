@@ -60,22 +60,28 @@ def get_auth_principal(request: Request, settings: APISettings = Depends(get_set
     except:  # noqa
         return None
 
-    # role_map is a bit brute-force to make cerbos-sqlalchemy happy, but it's fine
-    # for now.
-    role_map: dict[str, list[int]] = {}
-    for project in claims["projects"]:
-        for role in project["roles"]:
-            if role not in role_map:
-                role_map[role] = []
-            role_map[role].append(project["project_id"])
+    if "project_roles" not in claims:
+        raise PlatformicsException("Unauthorized")
+
+    project_claims = claims["project_roles"]
+
+    try:
+        for role, project_ids in project_claims.items():
+            assert role in ["member", "owner", "viewer"]
+            assert isinstance(project_ids, list)
+            for item in project_ids:
+                assert int(item)
+    except Exception:
+        raise PlatformicsException("Unauthorized")
+
     return Principal(
         claims["sub"],
         roles=["user"],
         attr={
             "user_id": int(claims["sub"]),
-            "admin_projects": role_map.get("admin", []),
-            "member_projects": role_map.get("member", []),
-            "viewer_projects": role_map.get("viewer", []),
+            "admin_projects": project_claims.get("admin", []),
+            "member_projects": project_claims.get("member", []),
+            "viewer_projects": project_claims.get("viewer", []),
             "service_identity": claims["service_identity"],
         },
     )
