@@ -120,10 +120,14 @@ classes:
         range: WorkflowRunStep
         multivalued: true
         inverse: WorkflowRunStep.workflow_run
+        annotations:
+          cascade_delete: true
       entity_inputs:
         range: WorkflowRunEntityInput
         multivalued: true
         inverse: RunEntityInput.workflow_run
+        annotations:
+          cascade_delete: true
       raw_inputs_json:
         range: string
         annotations:
