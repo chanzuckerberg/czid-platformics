@@ -53,12 +53,14 @@ class WorkflowRun(Entity):
         back_populates="workflow_run",
         uselist=True,
         foreign_keys="WorkflowRunStep.workflow_run_id",
+        cascade="all, delete-orphan",
     )
     entity_inputs: Mapped[list[WorkflowRunEntityInput]] = relationship(
         "WorkflowRunEntityInput",
         back_populates="workflow_run",
         uselist=True,
         foreign_keys="WorkflowRunEntityInput.workflow_run_id",
+        cascade="all, delete-orphan",
     )
     raw_inputs_json: Mapped[str] = mapped_column(String, nullable=True)
     deprecated_by_id: Mapped[uuid.UUID] = mapped_column(
