@@ -28,6 +28,8 @@ enums:
         description: The run has completed successfully
       FAILED:
         description: The run has failed
+      CREATED:
+        description: This workflow has not been started
       PENDING:
         description: The run is is waiting to start
       STARTED:

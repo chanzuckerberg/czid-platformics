@@ -13,6 +13,7 @@ import enum
 class WorkflowRunStatus(enum.Enum):
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
+    CREATED = "CREATED"
     PENDING = "PENDING"
     STARTED = "STARTED"
     RUNNING = "RUNNING"

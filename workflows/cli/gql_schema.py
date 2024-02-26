@@ -88,7 +88,7 @@ class WorkflowRunEntityInputCountColumns(sgqlc.types.Enum):
 
 class WorkflowRunStatus(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("FAILED", "PENDING", "RUNNING", "STARTED", "SUCCEEDED")
+    __choices__ = ("CREATED", "FAILED", "PENDING", "RUNNING", "STARTED", "SUCCEEDED")
 
 
 class WorkflowRunStepCountColumns(sgqlc.types.Enum):

@@ -533,6 +533,7 @@ input WorkflowRunOrderByClause {
 enum WorkflowRunStatus {
   SUCCEEDED
   FAILED
+  CREATED
   PENDING
   STARTED
   RUNNING

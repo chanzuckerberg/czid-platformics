@@ -1066,6 +1066,9 @@
               "name": "FAILED"
             },
             {
+              "name": "CREATED"
+            },
+            {
               "name": "PENDING"
             },
             {
