@@ -29,8 +29,8 @@ module "stack" {
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
         },
         private-key = {
-          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "sandbox"]
-          image = "{entities}"
+          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
+          image = "{workflows}"
           tag   = "${var.image_tag}"
         }
       }
@@ -53,14 +53,14 @@ module "stack" {
     DEFAULT_UPLOAD_BUCKET                           = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL                         = "s3"
     ENTITY_SERVICE_URL                              = "http://entities-entities:8008"
-    ENTITY_SERVICE_AUTH_TOKEN                       = ""
+    ENTITY_SERVICE_AUTH_TOKEN                       = "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6IkdCWEZDTHNjM2ZwTGYwdjVLcEFqU2NtaUNoRWpSZ1k1Z0hraTVMQ0FubDZ2aFZxU1llZ3JucEVwc25Wc3Y1YUEiLCJ5IjoielFTODZheVRqZTdOdVFxdGxLWnFudjZZcmFWMkZIOUlNank0SjluUFhJRmJ6QVI0Z19OcUxzZ3o4ZnZtTnpEWiJ9LCJraWQiOiJSUTJhWXpDaE43amQtcl9VN2hiVFVwcGJXWnoyelFDcW5LaERMM3gyaUJjIiwidHlwIjoiSldFIn0..M_BKYyBf-ThFwYcBDZfucQ.MKjPIEfqyLU39rlI-EsJVmfVdzJ-aZksQKBFOsdnC2M6YH8oc6HpBKRJFtMkyoh1H5fg75AbGxPLMvjUDFZOMwkXCq9ah1tdIeCbqYRpG59gWCdlOKpBIKcjhjutbmDPayjPl7nbDJRoNUTfc2oUev4r_zbwt2l_QgtnulbPXOYGklBuE_G6Izx12djYiVAW-QVb2eWU3jwtIYT5UOf4G5Y3ImLKOvDfxBKqd4iSO6R0IOENKCDzkNQgU3k7PJwc4ABjtrLP5RFSPRvQauVL-jn8h_8mnSvmkjPcz0ViEs0sY3sfF9sB2fAr4n0ypnLXDuKfvnNCd28FHF1lpEAcpq7xQLoCXZzt-NmyFdYTMsJyqCT42d3BJb0W4k7gHgZMrkdAwB7hKHo0cjuepucBgxyZO5K0f90AikgnGstiaYiJD3MZ-p9euKG9ytCmHxohnjXrcKCzZtxjAqciAZBhuzUJ0KmdzWId3L3koYwTCYX3nwx-_kW4FDxuUPzOr0Dgr48FE6_SOEEeBALAGowvccy2JIxh6RYOOwJlXF1IzReXznfXzbloeWTfhxI4pZkiHomR_X_XB6ooOYwHAYYWV16kTYq0aYRBxaoGE8Tx0E-Eb4TJGJlOkywTads4brtk.pmCO2_5XCjOaDQPibGtYn8Tbi5CmMJG-qswJRsiDWmo"
     JWK_PRIVATE_KEY_FILE                            = "/var/policies/private_key.pem"
     JWK_PUBLIC_KEY_FILE                             = "/var/policies/public_key.pem"
     WORKERS                                         = "2"
     PLATFORMICS_WORKFLOW_RUNNER_PLUGIN              = "swipe"
     PLATFORMICS_EVENT_BUS_PLUGIN                    = "swipe"
     PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT = ""
-    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-development/nextgen/"
+    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-sandbox/nextgen/"
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:732052188396:stateMachine:idseq-swipe-sandbox-default-wdl"
     PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL     = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-dev-web-sfn-notifications-queue"
     PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL         = "redis://redis.czidnet:6378"
