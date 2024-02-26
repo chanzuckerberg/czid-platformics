@@ -86,6 +86,7 @@ services:
       - PLATFORMICS_DATABASE_NAME=entities
       - DEFAULT_UPLOAD_BUCKET=local-bucket
       - DEFAULT_UPLOAD_PROTOCOL=s3
+      - OUTPUT_S3_PREFIX=nextgen
       - BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
       - WORKERS=2
       - AWS_REGION=us-west-2

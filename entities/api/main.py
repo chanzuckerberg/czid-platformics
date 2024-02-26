@@ -8,11 +8,12 @@ import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine
+from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine, get_s3_client
 from platformics.api.core.error_handler import HandleErrors
 from platformics.api.core.gql_loaders import EntityLoader
 from platformics.database.connect import AsyncDB
 from platformics.settings import APISettings
+from database.models.file import File
 
 import strawberry
 from api.mutations import Mutation
@@ -55,6 +56,8 @@ def get_app() -> FastAPI:
     Make sure tests can get their own instances of the app.
     """
     settings = APISettings.model_validate({})  # Workaround for https://github.com/pydantic/pydantic/issues/3753
+    File.set_settings(settings)
+    File.set_s3_client(get_s3_client(settings))
 
     title = settings.SERVICE_NAME
     graphql_app: GraphQLRouter = GraphQLRouter(schema, context_getter=get_context, graphiql=True)
