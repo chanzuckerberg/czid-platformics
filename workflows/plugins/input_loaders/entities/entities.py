@@ -28,6 +28,7 @@ class SampleInputLoader(InputLoader):
         for output in requested_outputs:
             getattr(samples, output)()
         resp = self._entities_gql(op)
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAA", resp)
         sample = resp["data"]["samples"][0]
         return {output: sample[output] for output in requested_outputs}
 
