@@ -72,10 +72,7 @@ class SeedSession:
         self.add = self.session.add
         self.commit = self.session.commit
         self.flush = self.session.flush
-        if os.getenv("BOTO_ENDPOINT_URL"):
-            self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'}))
-        else: 
-            self.s3_local = None
+        self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'})) if os.getenv("BOTO_ENDPOINT_URL") else None
         self.upsert_bucket(LOCAL_BUCKET)
 
     def upsert_bucket(self, bucket_name: str) -> None:
