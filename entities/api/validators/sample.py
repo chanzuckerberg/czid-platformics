@@ -8,7 +8,6 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
-import datetime
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -25,26 +24,6 @@ class SampleCreateInputValidator(BaseModel):
             strip_whitespace=True,
             min_length=4,
             max_length=64,
-        ),
-    ]
-    sample_type: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-        ),
-    ]
-    water_control: Annotated[bool, Field()]
-    collection_date: Annotated[datetime.datetime, Field()]
-    collection_location: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-        ),
-    ]
-    notes: Annotated[
-        str | None,
-        StringConstraints(
-            strip_whitespace=True,
         ),
     ]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
@@ -66,25 +45,5 @@ class SampleUpdateInputValidator(BaseModel):
             strip_whitespace=True,
             min_length=4,
             max_length=64,
-        ),
-    ]
-    sample_type: Annotated[
-        str | None,
-        StringConstraints(
-            strip_whitespace=True,
-        ),
-    ]
-    water_control: Annotated[bool | None, Field()]
-    collection_date: Annotated[datetime.datetime | None, Field()]
-    collection_location: Annotated[
-        str | None,
-        StringConstraints(
-            strip_whitespace=True,
-        ),
-    ]
-    notes: Annotated[
-        str | None,
-        StringConstraints(
-            strip_whitespace=True,
         ),
     ]

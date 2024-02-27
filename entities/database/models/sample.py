@@ -7,11 +7,10 @@ Make changes to the template codegen/templates/database/models/class_name.py.j2 
 
 
 import uuid
-import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Integer, Boolean, DateTime
+from sqlalchemy import ForeignKey, String, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -32,11 +31,6 @@ class Sample(Entity):
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     rails_sample_id: Mapped[int] = mapped_column(Integer, nullable=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    sample_type: Mapped[str] = mapped_column(String, nullable=False)
-    water_control: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    collection_date: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False)
-    collection_location: Mapped[str] = mapped_column(String, nullable=False)
-    notes: Mapped[str] = mapped_column(String, nullable=True)
     host_organism_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("host_organism.entity_id"),

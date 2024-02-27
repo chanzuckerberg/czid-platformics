@@ -225,11 +225,6 @@ class MetricConsensusGenomeCountColumns(sgqlc.types.Enum):
     )
 
 
-class NucleicAcid(sgqlc.types.Enum):
-    __schema__ = gql_schema
-    __choices__ = ("DNA", "RNA")
-
-
 class ReferenceGenomeCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
@@ -248,22 +243,17 @@ class ReferenceGenomeCountColumns(sgqlc.types.Enum):
 class SampleCountColumns(sgqlc.types.Enum):
     __schema__ = gql_schema
     __choices__ = (
-        "collectionDate",
         "collectionId",
-        "collectionLocation",
         "createdAt",
         "hostOrganism",
         "id",
         "metadatas",
         "name",
-        "notes",
         "ownerUserId",
         "producingRunId",
         "railsSampleId",
-        "sampleType",
         "sequencingReads",
         "updatedAt",
-        "waterControl",
     )
 
 
@@ -294,7 +284,6 @@ class SequencingReadCountColumns(sgqlc.types.Enum):
         "createdAt",
         "id",
         "medakaModel",
-        "nucleicAcid",
         "ownerUserId",
         "primerFile",
         "producingRunId",
@@ -1199,20 +1188,6 @@ class MetricConsensusGenomeWhereClauseMutations(sgqlc.types.Input):
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
 
 
-class NucleicAcidEnumComparators(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
-    _eq = sgqlc.types.Field(NucleicAcid, graphql_name="_eq")
-    _neq = sgqlc.types.Field(NucleicAcid, graphql_name="_neq")
-    _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(NucleicAcid)), graphql_name="_in")
-    _nin = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(NucleicAcid)), graphql_name="_nin")
-    _gt = sgqlc.types.Field(NucleicAcid, graphql_name="_gt")
-    _gte = sgqlc.types.Field(NucleicAcid, graphql_name="_gte")
-    _lt = sgqlc.types.Field(NucleicAcid, graphql_name="_lt")
-    _lte = sgqlc.types.Field(NucleicAcid, graphql_name="_lte")
-    _is_null = sgqlc.types.Field(NucleicAcid, graphql_name="_is_null")
-
-
 class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("name", "producing_run_id", "collection_id")
@@ -1269,25 +1244,9 @@ class ReferenceGenomeWhereClauseMutations(sgqlc.types.Input):
 
 class SampleCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = (
-        "rails_sample_id",
-        "name",
-        "sample_type",
-        "water_control",
-        "collection_date",
-        "collection_location",
-        "notes",
-        "host_organism_id",
-        "producing_run_id",
-        "collection_id",
-    )
+    __field_names__ = ("rails_sample_id", "name", "host_organism_id", "producing_run_id", "collection_id")
     rails_sample_id = sgqlc.types.Field(Int, graphql_name="railsSampleId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
-    sample_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sampleType")
-    water_control = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="waterControl")
-    collection_date = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="collectionLocation")
-    notes = sgqlc.types.Field(String, graphql_name="notes")
     host_organism_id = sgqlc.types.Field(ID, graphql_name="hostOrganismId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
@@ -1298,11 +1257,6 @@ class SampleOrderByClause(sgqlc.types.Input):
     __field_names__ = (
         "rails_sample_id",
         "name",
-        "sample_type",
-        "water_control",
-        "collection_date",
-        "collection_location",
-        "notes",
         "host_organism",
         "id",
         "producing_run_id",
@@ -1313,11 +1267,6 @@ class SampleOrderByClause(sgqlc.types.Input):
     )
     rails_sample_id = sgqlc.types.Field(orderBy, graphql_name="railsSampleId")
     name = sgqlc.types.Field(orderBy, graphql_name="name")
-    sample_type = sgqlc.types.Field(orderBy, graphql_name="sampleType")
-    water_control = sgqlc.types.Field(orderBy, graphql_name="waterControl")
-    collection_date = sgqlc.types.Field(orderBy, graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field(orderBy, graphql_name="collectionLocation")
-    notes = sgqlc.types.Field(orderBy, graphql_name="notes")
     host_organism = sgqlc.types.Field(HostOrganismOrderByClause, graphql_name="hostOrganism")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
@@ -1329,13 +1278,8 @@ class SampleOrderByClause(sgqlc.types.Input):
 
 class SampleUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "sample_type", "water_control", "collection_date", "collection_location", "notes")
+    __field_names__ = ("name",)
     name = sgqlc.types.Field(String, graphql_name="name")
-    sample_type = sgqlc.types.Field(String, graphql_name="sampleType")
-    water_control = sgqlc.types.Field(Boolean, graphql_name="waterControl")
-    collection_date = sgqlc.types.Field(DateTime, graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field(String, graphql_name="collectionLocation")
-    notes = sgqlc.types.Field(String, graphql_name="notes")
 
 
 class SampleWhereClause(sgqlc.types.Input):
@@ -1343,11 +1287,6 @@ class SampleWhereClause(sgqlc.types.Input):
     __field_names__ = (
         "rails_sample_id",
         "name",
-        "sample_type",
-        "water_control",
-        "collection_date",
-        "collection_location",
-        "notes",
         "host_organism",
         "sequencing_reads",
         "metadatas",
@@ -1360,11 +1299,6 @@ class SampleWhereClause(sgqlc.types.Input):
     )
     rails_sample_id = sgqlc.types.Field(IntComparators, graphql_name="railsSampleId")
     name = sgqlc.types.Field("StrComparators", graphql_name="name")
-    sample_type = sgqlc.types.Field("StrComparators", graphql_name="sampleType")
-    water_control = sgqlc.types.Field(BoolComparators, graphql_name="waterControl")
-    collection_date = sgqlc.types.Field(DatetimeComparators, graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field("StrComparators", graphql_name="collectionLocation")
-    notes = sgqlc.types.Field("StrComparators", graphql_name="notes")
     host_organism = sgqlc.types.Field(HostOrganismWhereClause, graphql_name="hostOrganism")
     sequencing_reads = sgqlc.types.Field("SequencingReadWhereClause", graphql_name="sequencingReads")
     metadatas = sgqlc.types.Field(MetadatumWhereClause, graphql_name="metadatas")
@@ -1402,7 +1336,6 @@ class SequencingReadCreateInput(sgqlc.types.Input):
         "sample_id",
         "protocol",
         "technology",
-        "nucleic_acid",
         "clearlabs_export",
         "medaka_model",
         "taxon_id",
@@ -1413,7 +1346,6 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     sample_id = sgqlc.types.Field(ID, graphql_name="sampleId")
     protocol = sgqlc.types.Field(SequencingProtocol, graphql_name="protocol")
     technology = sgqlc.types.Field(sgqlc.types.non_null(SequencingTechnology), graphql_name="technology")
-    nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name="nucleicAcid")
     clearlabs_export = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
@@ -1428,7 +1360,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
         "sample",
         "protocol",
         "technology",
-        "nucleic_acid",
         "clearlabs_export",
         "medaka_model",
         "taxon",
@@ -1443,7 +1374,6 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
     sample = sgqlc.types.Field(SampleOrderByClause, graphql_name="sample")
     protocol = sgqlc.types.Field(orderBy, graphql_name="protocol")
     technology = sgqlc.types.Field(orderBy, graphql_name="technology")
-    nucleic_acid = sgqlc.types.Field(orderBy, graphql_name="nucleicAcid")
     clearlabs_export = sgqlc.types.Field(orderBy, graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field(orderBy, graphql_name="medakaModel")
     taxon = sgqlc.types.Field("TaxonOrderByClause", graphql_name="taxon")
@@ -1458,8 +1388,7 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
 
 class SequencingReadUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("nucleic_acid", "clearlabs_export", "medaka_model")
-    nucleic_acid = sgqlc.types.Field(NucleicAcid, graphql_name="nucleicAcid")
+    __field_names__ = ("clearlabs_export", "medaka_model")
     clearlabs_export = sgqlc.types.Field(Boolean, graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
 
@@ -1470,7 +1399,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
         "sample",
         "protocol",
         "technology",
-        "nucleic_acid",
         "clearlabs_export",
         "medaka_model",
         "taxon",
@@ -1486,7 +1414,6 @@ class SequencingReadWhereClause(sgqlc.types.Input):
     sample = sgqlc.types.Field(SampleWhereClause, graphql_name="sample")
     protocol = sgqlc.types.Field(SequencingProtocolEnumComparators, graphql_name="protocol")
     technology = sgqlc.types.Field("SequencingTechnologyEnumComparators", graphql_name="technology")
-    nucleic_acid = sgqlc.types.Field(NucleicAcidEnumComparators, graphql_name="nucleicAcid")
     clearlabs_export = sgqlc.types.Field(BoolComparators, graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field("StrComparators", graphql_name="medakaModel")
     taxon = sgqlc.types.Field("TaxonWhereClause", graphql_name="taxon")
@@ -3734,11 +3661,6 @@ class SampleGroupByOptions(sgqlc.types.Type):
     __field_names__ = (
         "rails_sample_id",
         "name",
-        "sample_type",
-        "water_control",
-        "collection_date",
-        "collection_location",
-        "notes",
         "host_organism",
         "id",
         "producing_run_id",
@@ -3749,11 +3671,6 @@ class SampleGroupByOptions(sgqlc.types.Type):
     )
     rails_sample_id = sgqlc.types.Field(Int, graphql_name="railsSampleId")
     name = sgqlc.types.Field(String, graphql_name="name")
-    sample_type = sgqlc.types.Field(String, graphql_name="sampleType")
-    water_control = sgqlc.types.Field(Boolean, graphql_name="waterControl")
-    collection_date = sgqlc.types.Field(DateTime, graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field(String, graphql_name="collectionLocation")
-    notes = sgqlc.types.Field(String, graphql_name="notes")
     host_organism = sgqlc.types.Field(HostOrganismGroupByOptions, graphql_name="hostOrganism")
     id = sgqlc.types.Field(UUID, graphql_name="id")
     producing_run_id = sgqlc.types.Field(UUID, graphql_name="producingRunId")
@@ -3765,24 +3682,9 @@ class SampleGroupByOptions(sgqlc.types.Type):
 
 class SampleMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = (
-        "rails_sample_id",
-        "name",
-        "sample_type",
-        "collection_date",
-        "collection_location",
-        "notes",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-    )
+    __field_names__ = ("rails_sample_id", "name", "owner_user_id", "collection_id", "created_at", "updated_at")
     rails_sample_id = sgqlc.types.Field(Int, graphql_name="railsSampleId")
     name = sgqlc.types.Field(String, graphql_name="name")
-    sample_type = sgqlc.types.Field(String, graphql_name="sampleType")
-    collection_date = sgqlc.types.Field(DateTime, graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field(String, graphql_name="collectionLocation")
-    notes = sgqlc.types.Field(String, graphql_name="notes")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
@@ -3849,7 +3751,6 @@ class SequencingReadGroupByOptions(sgqlc.types.Type):
         "sample",
         "protocol",
         "technology",
-        "nucleic_acid",
         "clearlabs_export",
         "medaka_model",
         "taxon",
@@ -3864,7 +3765,6 @@ class SequencingReadGroupByOptions(sgqlc.types.Type):
     sample = sgqlc.types.Field(SampleGroupByOptions, graphql_name="sample")
     protocol = sgqlc.types.Field(SequencingProtocol, graphql_name="protocol")
     technology = sgqlc.types.Field(SequencingTechnology, graphql_name="technology")
-    nucleic_acid = sgqlc.types.Field(NucleicAcid, graphql_name="nucleicAcid")
     clearlabs_export = sgqlc.types.Field(Boolean, graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
     taxon = sgqlc.types.Field("TaxonGroupByOptions", graphql_name="taxon")
@@ -4697,11 +4597,6 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
         "id",
         "rails_sample_id",
         "name",
-        "sample_type",
-        "water_control",
-        "collection_date",
-        "collection_location",
-        "notes",
         "host_organism",
         "sequencing_reads",
         "sequencing_reads_aggregate",
@@ -4716,11 +4611,6 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     rails_sample_id = sgqlc.types.Field(Int, graphql_name="railsSampleId")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
-    sample_type = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="sampleType")
-    water_control = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="waterControl")
-    collection_date = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="collectionDate")
-    collection_location = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="collectionLocation")
-    notes = sgqlc.types.Field(String, graphql_name="notes")
     host_organism = sgqlc.types.Field(
         HostOrganism,
         graphql_name="hostOrganism",
@@ -4812,7 +4702,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         "r2_file_id",
         "r2_file",
         "technology",
-        "nucleic_acid",
         "clearlabs_export",
         "medaka_model",
         "taxon",
@@ -4857,7 +4746,6 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
         args=sgqlc.types.ArgDict((("where", sgqlc.types.Arg(FileWhereClause, graphql_name="where", default=None)),)),
     )
     technology = sgqlc.types.Field(sgqlc.types.non_null(SequencingTechnology), graphql_name="technology")
-    nucleic_acid = sgqlc.types.Field(sgqlc.types.non_null(NucleicAcid), graphql_name="nucleicAcid")
     clearlabs_export = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
     taxon = sgqlc.types.Field(

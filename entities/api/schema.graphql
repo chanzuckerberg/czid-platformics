@@ -1385,23 +1385,6 @@ interface Node {
   _id: GlobalID!
 }
 
-enum NucleicAcid {
-  RNA
-  DNA
-}
-
-input NucleicAcidEnumComparators {
-  _eq: NucleicAcid
-  _neq: NucleicAcid
-  _in: [NucleicAcid!]
-  _nin: [NucleicAcid!]
-  _gt: NucleicAcid
-  _gte: NucleicAcid
-  _lt: NucleicAcid
-  _lte: NucleicAcid
-  _is_null: NucleicAcid
-}
-
 """Information to aid in pagination."""
 type PageInfo {
   """When paginating forwards, are there more items?"""
@@ -1577,11 +1560,6 @@ type Sample implements EntityInterface & Node {
   id: ID!
   railsSampleId: Int
   name: String!
-  sampleType: String!
-  waterControl: Boolean!
-  collectionDate: DateTime!
-  collectionLocation: String!
-  notes: String
   hostOrganism(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): HostOrganism
   sequencingReads(
     where: SequencingReadWhereClause = null
@@ -1651,11 +1629,6 @@ type SampleConnection {
 enum SampleCountColumns {
   railsSampleId
   name
-  sampleType
-  waterControl
-  collectionDate
-  collectionLocation
-  notes
   hostOrganism
   sequencingReads
   metadatas
@@ -1670,11 +1643,6 @@ enum SampleCountColumns {
 input SampleCreateInput {
   railsSampleId: Int = null
   name: String!
-  sampleType: String!
-  waterControl: Boolean!
-  collectionDate: DateTime!
-  collectionLocation: String!
-  notes: String = null
   hostOrganismId: ID = null
   producingRunId: ID = null
   collectionId: Int!
@@ -1692,11 +1660,6 @@ type SampleEdge {
 type SampleGroupByOptions {
   railsSampleId: Int
   name: String
-  sampleType: String
-  waterControl: Boolean
-  collectionDate: DateTime
-  collectionLocation: String
-  notes: String
   hostOrganism: HostOrganismGroupByOptions
   id: UUID
   producingRunId: UUID
@@ -1709,10 +1672,6 @@ type SampleGroupByOptions {
 type SampleMinMaxColumns {
   railsSampleId: Int
   name: String
-  sampleType: String
-  collectionDate: DateTime
-  collectionLocation: String
-  notes: String
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -1728,11 +1687,6 @@ type SampleNumericalColumns {
 input SampleOrderByClause {
   railsSampleId: orderBy
   name: orderBy
-  sampleType: orderBy
-  waterControl: orderBy
-  collectionDate: orderBy
-  collectionLocation: orderBy
-  notes: orderBy
   hostOrganism: HostOrganismOrderByClause
   id: orderBy
   producingRunId: orderBy
@@ -1744,21 +1698,11 @@ input SampleOrderByClause {
 
 input SampleUpdateInput {
   name: String = null
-  sampleType: String = null
-  waterControl: Boolean = null
-  collectionDate: DateTime = null
-  collectionLocation: String = null
-  notes: String = null
 }
 
 input SampleWhereClause {
   railsSampleId: IntComparators
   name: StrComparators
-  sampleType: StrComparators
-  waterControl: BoolComparators
-  collectionDate: DatetimeComparators
-  collectionLocation: StrComparators
-  notes: StrComparators
   hostOrganism: HostOrganismWhereClause
   sequencingReads: SequencingReadWhereClause
   metadatas: MetadatumWhereClause
@@ -1812,7 +1756,6 @@ type SequencingRead implements EntityInterface & Node {
   r2FileId: ID
   r2File(where: FileWhereClause = null): File
   technology: SequencingTechnology!
-  nucleicAcid: NucleicAcid!
   clearlabsExport: Boolean!
   medakaModel: String
   taxon(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): Taxon
@@ -1871,7 +1814,6 @@ enum SequencingReadCountColumns {
   r1File
   r2File
   technology
-  nucleicAcid
   clearlabsExport
   medakaModel
   taxon
@@ -1889,7 +1831,6 @@ input SequencingReadCreateInput {
   sampleId: ID = null
   protocol: SequencingProtocol = null
   technology: SequencingTechnology!
-  nucleicAcid: NucleicAcid!
   clearlabsExport: Boolean!
   medakaModel: String = null
   taxonId: ID = null
@@ -1911,7 +1852,6 @@ type SequencingReadGroupByOptions {
   sample: SampleGroupByOptions
   protocol: SequencingProtocol
   technology: SequencingTechnology
-  nucleicAcid: NucleicAcid
   clearlabsExport: Boolean
   medakaModel: String
   taxon: TaxonGroupByOptions
@@ -1941,7 +1881,6 @@ input SequencingReadOrderByClause {
   sample: SampleOrderByClause
   protocol: orderBy
   technology: orderBy
-  nucleicAcid: orderBy
   clearlabsExport: orderBy
   medakaModel: orderBy
   taxon: TaxonOrderByClause
@@ -1955,7 +1894,6 @@ input SequencingReadOrderByClause {
 }
 
 input SequencingReadUpdateInput {
-  nucleicAcid: NucleicAcid = null
   clearlabsExport: Boolean = null
   medakaModel: String = null
 }
@@ -1964,7 +1902,6 @@ input SequencingReadWhereClause {
   sample: SampleWhereClause
   protocol: SequencingProtocolEnumComparators
   technology: SequencingTechnologyEnumComparators
-  nucleicAcid: NucleicAcidEnumComparators
   clearlabsExport: BoolComparators
   medakaModel: StrComparators
   taxon: TaxonWhereClause

@@ -25,11 +25,6 @@ File {
 Sample {
     integer rails_sample_id  
     string name  
-    string sample_type  
-    boolean water_control  
-    date collection_date  
-    string collection_location  
-    string notes  
     uuid entity_id  
     uuid id  
     string type  
@@ -42,7 +37,6 @@ Sample {
 SequencingRead {
     SequencingProtocol protocol  
     SequencingTechnology technology  
-    NucleicAcid nucleic_acid  
     boolean clearlabs_export  
     string medaka_model  
     uuid entity_id  

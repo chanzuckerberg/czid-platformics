@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -17,16 +18,10 @@ Define groupby options for Sample type.
 These are only used in aggregate queries.
 """
 
-
 @strawberry.type
 class SampleGroupByOptions:
     rails_sample_id: Optional[int] = None
     name: Optional[str] = None
-    sample_type: Optional[str] = None
-    water_control: Optional[bool] = None
-    collection_date: Optional[datetime.datetime] = None
-    collection_location: Optional[str] = None
-    notes: Optional[str] = None
     host_organism: Optional[HostOrganismGroupByOptions] = None
     id: Optional[uuid.UUID] = None
     producing_run_id: Optional[uuid.UUID] = None
