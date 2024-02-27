@@ -1958,6 +1958,7 @@ input SequencingReadUpdateInput {
   nucleicAcid: NucleicAcid = null
   clearlabsExport: Boolean = null
   medakaModel: String = null
+  primerFileId: ID = null
 }
 
 input SequencingReadWhereClause {

@@ -52,3 +52,4 @@ class SequencingReadUpdateInputValidator(BaseModel):
             strip_whitespace=True,
         ),
     ]
+    primer_file_id: Annotated[uuid.UUID | None, Field()]

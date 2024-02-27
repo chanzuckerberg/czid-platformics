@@ -1458,10 +1458,11 @@ class SequencingReadOrderByClause(sgqlc.types.Input):
 
 class SequencingReadUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("nucleic_acid", "clearlabs_export", "medaka_model")
+    __field_names__ = ("nucleic_acid", "clearlabs_export", "medaka_model", "primer_file_id")
     nucleic_acid = sgqlc.types.Field(NucleicAcid, graphql_name="nucleicAcid")
     clearlabs_export = sgqlc.types.Field(Boolean, graphql_name="clearlabsExport")
     medaka_model = sgqlc.types.Field(String, graphql_name="medakaModel")
+    primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
 
 
 class SequencingReadWhereClause(sgqlc.types.Input):
