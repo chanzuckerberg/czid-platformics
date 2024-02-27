@@ -113,8 +113,9 @@ async def _create_workflow_run(
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
-    token: str = Depends(get_user_token)
+    token: str,
 ) -> workflow_run.WorkflowRun:
+    print("CCCCCCC", token)
     logger = logging.getLogger()
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
@@ -191,8 +192,9 @@ async def create_workflow_run(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
-    return await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal)
+    return await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal, token=token)
 
 
 async def _run_workflow_run(
@@ -262,8 +264,9 @@ async def run_workflow_version(
     principal: Principal = Depends(require_auth_principal),
     workflow_runner: WorkflowRunner = Depends(get_workflow_runner),
     event_bus: EventBus = Depends(get_event_bus),
+    token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
-    workflow_run = await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal)
+    workflow_run = await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal, token=token)
     return await _run_workflow_run(
         workflow_run_id=workflow_run.id,
         session=session,

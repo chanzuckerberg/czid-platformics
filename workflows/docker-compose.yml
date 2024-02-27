@@ -24,7 +24,7 @@ x-redis-variables: &redis-variables
 x-workflow-variables: &workflow-variables
   ? ENVIRONMENT=test
   ? SERVICE_IDENTITY_SECRET_NAME=dev/czid-workflows-service-identity-token
-  ? IDENTITY_SERVICE_BASE_URL=http://localhost:3001
+  ? IDENTITY_SERVICE_BASE_URL=http://web.czidnet:3001
   ? BOTO_ENDPOINT_URL=http://motoserver.czidnet:4000
   ? ENTITY_SERVICE_URL=http://entities.czidnet:8008
   ? DEFAULT_UPLOAD_BUCKET=local-bucket
