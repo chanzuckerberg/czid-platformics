@@ -8,7 +8,7 @@ SECRET_NAME = os.environ["SERVICE_IDENTITY_SECRET_NAME"]
 
 class ImpersonationClient:
     def __init__(self) -> None:
-        client = boto3.client(service_name="secretsmanager")
+        client = boto3.client(service_name="secretsmanager", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
         get_secret_value_response = client.get_secret_value(SecretId=SECRET_NAME)
 
         # Decrypts secret using the associated KMS key and stores the private key in a pem file.
