@@ -14,7 +14,7 @@ class ImpersonationClient:
         self._token = create_token(private_key, None, None, 3600, "workflows")
 
     async def impersonate(self, user_id: int) -> str:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             logger = logging.getLogger()
             resp = await client.get(
                 f"{IDENTITY_SERVICE_URL}/impersonate/?user_id={user_id}",
