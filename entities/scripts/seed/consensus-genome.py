@@ -123,15 +123,17 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     session.commit()
 
     with TempCZIDWorkflowFile("integration_test/sample_sars-cov-2_paired_r1.fastq.gz", "consensus-genome") as temp_file:
-        ## TODO: fix for remote test files
-        session.s3_local.upload_file(
-            temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz"
-        )
+        if session.s3_local:
+            ## TODO: fix for remote test files
+            session.s3_local.upload_file(
+                temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz"
+            )
     with TempCZIDWorkflowFile("integration_test/sample_sars-cov-2_paired_r2.fastq.gz", "consensus-genome") as temp_file:
-        ## TODO: fix for remote test files
-        session.s3_local.upload_file(
-            temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz"
-        )
+        if session.s3_local:
+            ## TODO: fix for remote test files
+            session.s3_local.upload_file(
+                temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz"
+            )
 
     sars_cov2_paired_name = "sample_sars-cov-2_paired"
     sars_cov2_paired_sample = session.query(Sample).filter_by(name=sars_cov2_paired_name).first() or Sample()
