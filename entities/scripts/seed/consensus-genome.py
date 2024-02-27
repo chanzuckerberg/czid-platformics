@@ -2,7 +2,6 @@
 Populate the database with mock data for local development
 """
 import json
-from datetime import datetime
 from typing import Any
 from urllib.parse import urlparse
 
@@ -25,7 +24,7 @@ from platformics.util.seed_utils import (
     TempCZIDWorkflowFile,
 )
 from platformics.database.models.base import Entity
-from support.enums import HostOrganismCategory, NucleicAcid, SequencingProtocol, SequencingTechnology, TaxonLevel
+from support.enums import HostOrganismCategory, SequencingProtocol, SequencingTechnology, TaxonLevel
 
 
 def main() -> tuple[list[dict[str, str]], dict[str, str]]:
