@@ -1,4 +1,5 @@
 import os
+import logging
 from platformics.settings import Settings
 from platformics.security.token_auth import create_token
 
@@ -14,9 +15,13 @@ class ImpersonationClient:
 
     async def impersonate(self, user_id: int) -> str:
         async with httpx.AsyncClient() as client:
+            logger = logging.getLogger()
             resp = await client.get(
                 f"{IDENTITY_SERVICE_URL}/impersonate/?user_id={user_id}",
                 headers={"Authorization": f"Bearer {self._token}"},
             )
-            return resp.json()["token"]
-
+            try:
+                return resp.json()["token"]
+            except Exception as e:
+                logger.error(f"Unexpected response from identity endpoint: {resp.text}")
+                raise e
