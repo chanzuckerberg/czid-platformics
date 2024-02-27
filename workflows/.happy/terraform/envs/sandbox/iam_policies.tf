@@ -14,4 +14,40 @@ data "aws_iam_policy_document" "workflows" {
     ]
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+				"sqs:DeleteMessage",
+				"sqs:SendMessage"
+		]
+    resources = ["arn:aws:sqs:us-west-2:${var.aws_account_id}:idseq-swipe-sandbox-web-sfn-notifications-queue"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+				"sqs:ListQueues"
+		]
+    resources = ["*"]
+  }
+  statement { 
+    effect = "Allow"
+    actions = [
+      "states:DescribeExecution",
+      "states:ListExecutions",
+      "states:GetExecutionHistory",
+      "states:StartExecution"
+    ]
+    resources = [
+      "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-sandbox-default-wdl"
+    ]
+  }
+  statement { 
+    effect = "Allow"
+    actions = [
+      "states:ListStateMachines"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }

@@ -1,4 +1,5 @@
 import os
+import sys
 
 from sgqlc.operation import Operation
 
@@ -14,7 +15,7 @@ from platformics.client.entities_schema import (
 from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import InputLoader
 
-PUBLIC_REFERENCES_PREFIX = "s3://czid-public-references/consensus_genome"
+PUBLIC_REFERENCES_PREFIX = "s3://czid-public-references/consensus-genome"
 SARS_COV_2_ACCESSION_ID = "MN908947.3"
 NA_PRIMER_FILE = "na_primers.bed"
 
@@ -136,9 +137,9 @@ class ConsensusGenomeInputLoader(InputLoader):
                 #   cg samples from an mngs report
                 inputs["primer_bed"] = f"{PUBLIC_REFERENCES_PREFIX}/{NA_PRIMER_FILE}"
 
-            inputs["ref_host"] = f"{PUBLIC_REFERENCES_PREFIX}/hg38.fa.gz"
-            inputs["ercc_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/ercc_sequences.fasta"
-            inputs["kraken2_db_tar_gz"] = f"{PUBLIC_REFERENCES_PREFIX}/kraken_coronavirus_db_only.tar.gz"
+        inputs["ref_host"] = f"{PUBLIC_REFERENCES_PREFIX}/hg38.fa.gz"
+        inputs["ercc_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/ercc_sequences.fasta"
+        inputs["kraken2_db_tar_gz"] = f"{PUBLIC_REFERENCES_PREFIX}/kraken_coronavirus_db_only.tar.gz"
 
         if os.getenv("ENVIRONMENT") == "test":
             # This is a smaller human host so host filtering will run faster for local testing
@@ -151,6 +152,7 @@ class ConsensusGenomeInputLoader(InputLoader):
                 #   using their http style paths we hit the real bucket instead of the local one. It's a bit of a hack
                 #   but it's a pretty clean way to handle this.
                 inputs[k] = v.replace(
-                    PUBLIC_REFERENCES_PREFIX, "https://czid-public-references.s3.amazonaws.com/consensus_genome"
+                    PUBLIC_REFERENCES_PREFIX, "https://czid-public-references.s3.amazonaws.com/consensus-genome"
                 )
+        print(inputs, file=sys.stderr)
         return inputs

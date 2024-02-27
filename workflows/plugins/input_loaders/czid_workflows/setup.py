@@ -10,7 +10,7 @@ setup(
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
-    py_modules=["consensus_gneome_input"],
+    py_modules=["consensus_genome_input"],
     python_requires=">=3.6",
     setup_requires=[],
     reentry_register=True,

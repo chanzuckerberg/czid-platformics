@@ -22,6 +22,7 @@ resourcePolicy:
       effect: EFFECT_ALLOW
       derivedRoles:
         - project_member
+        
   schemas:
     principalSchema:
       ref: cerbos:///principal.json

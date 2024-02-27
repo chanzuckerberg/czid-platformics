@@ -10,7 +10,7 @@ setup(
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
-    py_modules=["sample"],
+    py_modules=["entities"],
     python_requires=">=3.6",
     setup_requires=[],
     install_requires=["sgqlc"],
