@@ -6,7 +6,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
-from typing import Any, Literal
+from typing import Any, Literal, TypedDict
 from urllib.parse import urlparse
 
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -137,8 +137,14 @@ class InputLoader(IOLoader):
         raise NotImplementedError()
 
 
+class ParsedURI(TypedDict):
+    protocol: FileAccessProtocol
+    namespace: str
+    path: str
+
+
 class OutputLoader(IOLoader):
-    def _parse_uri(self, uri: str) -> dict[str, FileAccessProtocol | str]:
+    def _parse_uri(self, uri: str) -> ParsedURI:
         parsed = urlparse(uri)
         return {
             "protocol": getattr(FileAccessProtocol, parsed.scheme),

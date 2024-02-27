@@ -1,3 +1,5 @@
+import json
+
 from database.models.workflow_run import WorkflowRun
 from sgqlc.operation import Operation
 from manifest.manifest import EntityInput
@@ -21,6 +23,15 @@ SARS_COV_2_ACCESSION_ID = "MN908947.3"
 
 
 class ConsensusGenomeOutputLoader(OutputLoader):
+    def _s3_json(self, path: str):
+        parsed = self._parse_uri(path)
+        return json.loads(
+            self._s3_client.get_object(
+                Bucket=parsed["namespace"],
+                Key=parsed["path"],
+            ).read()
+        )
+
     async def load(
         self,
         workflow_run: WorkflowRun,
@@ -58,24 +69,28 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         res = self._entities_gql(op)
         consensus_genome_id = res["createConsensusGenome"]["id"]
         op = Operation(Mutation)
+
+
+        output_stats = self._s3_json(workflow_outputs["compute_stats_out_output_stats"])
+
         op.create_metric_consensus_genome(
             input=MetricGenomeCreateInput(
                 consensus_genome_id = consensus_genome_id,
                 reference_genome_length = 1,
                 percent_genome_called = 1,
                 percent_identity = 1.0,
-                gc_percent = sgqlc.types.Field(Float, graphql_name='gcPercent')
-                total_reads = sgqlc.types.Field(Int, graphql_name='totalReads')
-                mapped_reads = sgqlc.types.Field(Int, graphql_name='mappedReads')
-                ref_snps = sgqlc.types.Field(Int, graphql_name='refSnps')
-                n_actg = sgqlc.types.Field(Int, graphql_name='nActg')
-                n_missing = sgqlc.types.Field(Int, graphql_name='nMissing')
-                n_ambiguous = sgqlc.types.Field(Int, graphql_name='nAmbiguous')
-                coverage_depth = sgqlc.types.Field(Float, graphql_name='coverageDepth')
-                coverage_breadth = sgqlc.types.Field(Float, graphql_name='coverageBreadth')
-                coverage_bin_size = sgqlc.types.Field(Float, graphql_name='coverageBinSize')
-                coverage_total_length = sgqlc.types.Field(Int, graphql_name='coverageTotalLength')
-                coverage_viz = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))), graphql_name='coverageViz')
+                gc_percent = 1.0,
+                total_reads = 1,
+                mapped_reads = 1,
+                ref_snps = 1,
+                n_actg = 1,
+                n_missing = 1,
+                n_ambiguous = 1,
+                coverage_depth = 1.0,
+                coverage_breadth = 1.0,
+                coverage_bin_size = output_stats["coverage_bin_size"],
+                coverage_total_length = 1,
+                coverage_viz = output_stats["coverage"],
             )
         )
 
