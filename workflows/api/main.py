@@ -19,6 +19,7 @@ from platformics.api.core.deps import (
     get_user_token,
     require_auth_principal,
 )
+from platformics.client.impersonation import ImpersonationClient
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
@@ -115,7 +116,9 @@ async def _create_workflow_run(
     principal: Principal,
     token: str,
 ) -> workflow_run.WorkflowRun:
-    print("CCCCCCC", token)
+    # TODO: use token, this is just to test sandbox
+    impersonation_client = ImpersonationClient()
+    token = await impersonation_client.impersonate(principal.id)
     logger = logging.getLogger()
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
@@ -147,7 +150,7 @@ async def _create_workflow_run(
         if not input_loader:
             logger.error(f"Input loader ({input_loader_specifier.name}, {input_loader_specifier.version}) not found")
             raise PlatformicsException("An error occurred while processing your inputs")
-
+        
         input_loader_outputs = await input_loader(token).load(
             workflow_version, loader_entity_inputs, loader_raw_inputs, list(input_loader_specifier.outputs.keys())
         )
