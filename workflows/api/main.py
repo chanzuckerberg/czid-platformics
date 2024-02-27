@@ -150,7 +150,7 @@ async def _create_workflow_run(
         if not input_loader:
             logger.error(f"Input loader ({input_loader_specifier.name}, {input_loader_specifier.version}) not found")
             raise PlatformicsException("An error occurred while processing your inputs")
-        
+
         input_loader_outputs = await input_loader(token).load(
             workflow_version, loader_entity_inputs, loader_raw_inputs, list(input_loader_specifier.outputs.keys())
         )
@@ -197,7 +197,9 @@ async def create_workflow_run(
     principal: Principal = Depends(require_auth_principal),
     token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
-    return await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal, token=token)
+    return await _create_workflow_run(
+        input, session=session, cerbos_client=cerbos_client, principal=principal, token=token
+    )
 
 
 async def _run_workflow_run(
@@ -269,7 +271,9 @@ async def run_workflow_version(
     event_bus: EventBus = Depends(get_event_bus),
     token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
-    workflow_run = await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal, token=token)
+    workflow_run = await _create_workflow_run(
+        input, session=session, cerbos_client=cerbos_client, principal=principal, token=token
+    )
     return await _run_workflow_run(
         workflow_run_id=workflow_run.id,
         session=session,

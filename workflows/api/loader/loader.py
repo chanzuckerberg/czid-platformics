@@ -61,7 +61,9 @@ class LoaderDriver:
             if not output_loader:
                 raise Exception(f"Output loader {output_loader_specifier.name} not found")
             loader_futures.append(
-                output_loader(user_token).load(workflow_run, loader_entity_inputs, loader_raw_inputs, loader_workflow_outputs)
+                output_loader(user_token).load(
+                    workflow_run, loader_entity_inputs, loader_raw_inputs, loader_workflow_outputs
+                )
             )
         await asyncio.gather(*loader_futures)
 
