@@ -26,8 +26,16 @@ enums:
     permissible_values:
       SUCCEEDED:
         description: The run has completed successfully
+      SUCCEEDED_WITH_ISSUE:
+        description: The run succeeded with a known issue, this usually means there was an issue with the workflow input files
+      TIMED_OUT:
+        description: The run has failed due to time out
+      ABORTED:
+        description: The run was cancelled
       FAILED:
         description: The run has failed
+      CREATED:
+        description: This workflow has not been started
       PENDING:
         description: The run is is waiting to start
       STARTED:
