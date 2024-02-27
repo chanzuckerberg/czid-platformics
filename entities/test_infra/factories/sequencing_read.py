@@ -65,7 +65,6 @@ class SequencingReadFactory(CommonFactory):
         file_format="fastq",
     )
     technology = fuzzy.FuzzyChoice(["Illumina", "Nanopore"])
-    nucleic_acid = fuzzy.FuzzyChoice(["RNA", "DNA"])
     clearlabs_export = factory.Faker("boolean")
     medaka_model = fuzzy.FuzzyText()
     taxon = factory.SubFactory(

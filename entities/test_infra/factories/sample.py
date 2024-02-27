@@ -31,11 +31,6 @@ class SampleFactory(CommonFactory):
 
     rails_sample_id = fuzzy.FuzzyInteger(1, 1000)
     name = fuzzy.FuzzyText()
-    sample_type = factory.Faker("organ")
-    water_control = factory.Faker("boolean")
-    collection_date = factory.Faker("date")
-    collection_location = factory.Faker("city")
-    notes = fuzzy.FuzzyText()
     host_organism = factory.SubFactory(
         HostOrganismFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

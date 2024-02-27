@@ -2,7 +2,6 @@
 Populate the database with mock data for local development
 """
 import json
-from datetime import datetime
 from typing import Any
 from urllib.parse import urlparse
 
@@ -25,7 +24,7 @@ from platformics.util.seed_utils import (
     TempCZIDWorkflowFile,
 )
 from platformics.database.models.base import Entity
-from support.enums import HostOrganismCategory, NucleicAcid, SequencingProtocol, SequencingTechnology, TaxonLevel
+from support.enums import HostOrganismCategory, SequencingProtocol, SequencingTechnology, TaxonLevel
 
 
 def main() -> tuple[list[dict[str, str]], dict[str, str]]:
@@ -140,10 +139,10 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_sample.owner_user_id = TEST_USER_ID
     sars_cov2_paired_sample.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_sample.name = sars_cov2_paired_name
-    sars_cov2_paired_sample.sample_type = "nasal"
-    sars_cov2_paired_sample.water_control = False
-    sars_cov2_paired_sample.collection_date = datetime(2021, 1, 1)
-    sars_cov2_paired_sample.collection_location = "California, USA"
+    # sars_cov2_paired_sample.sample_type = "nasal"
+    # sars_cov2_paired_sample.water_control = False
+    # sars_cov2_paired_sample.collection_date = datetime(2021, 1, 1)
+    # sars_cov2_paired_sample.collection_location = "California, USA"
     entity_inputs.append(entity_input("sample", "sample", sars_cov2_paired_sample))
     session.add(sars_cov2_paired_sample)
     session.commit()
@@ -156,7 +155,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_sequencing_read.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_sequencing_read.protocol = SequencingProtocol.artic
     sars_cov2_paired_sequencing_read.technology = SequencingTechnology.Illumina
-    sars_cov2_paired_sequencing_read.nucleic_acid = NucleicAcid.DNA
+    # sars_cov2_paired_sequencing_read.nucleic_acid = NucleicAcid.DNA
     sars_cov2_paired_sequencing_read.clearlabs_export = False
     sars_cov2_paired_sequencing_read.medaka_model = "r941_min_high_g360"
     sars_cov2_paired_sequencing_read.taxon = sars_cov2_taxon

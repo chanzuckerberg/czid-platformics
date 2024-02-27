@@ -2337,67 +2337,6 @@
               }
             },
             {
-              "args": [],
-              "name": "sampleType",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "waterControl",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionDate",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "DateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionLocation",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "name": "notes",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
               "args": [
                 {
                   "defaultValue": "null",
@@ -2795,24 +2734,6 @@
         },
         {
           "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Boolean",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "DateTime",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -3177,6 +3098,15 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "HostOrganismCategory",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Boolean",
           "possibleTypes": null
         },
         {
@@ -5151,15 +5081,6 @@
             },
             {
               "defaultValue": null,
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "NucleicAcidEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "clearlabsExport",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5287,51 +5208,6 @@
             },
             {
               "defaultValue": null,
-              "name": "sampleType",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "waterControl",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "BoolComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionDate",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "DatetimeComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionLocation",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "notes",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "hostOrganism",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -5415,113 +5291,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "SampleWhereClause",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "_eq",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_neq",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_in",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "DateTime",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nin",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "DateTime",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gte",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lte",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_is_null",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "DatetimeComparators",
           "possibleTypes": null
         },
         {
@@ -5962,6 +5731,122 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "DateTime",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "DatetimeComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "DateTime",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
               "name": "sample",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -6321,129 +6206,6 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "SequencingTechnology",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "_eq",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_neq",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_in",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "NucleicAcid",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_nin",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "NucleicAcid",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gt",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_gte",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lt",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_lte",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "_is_null",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "NucleicAcidEnumComparators",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": [
-            {
-              "name": "RNA"
-            },
-            {
-              "name": "DNA"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "NucleicAcid",
           "possibleTypes": null
         },
         {
@@ -7908,19 +7670,6 @@
             },
             {
               "args": [],
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "NucleicAcid",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "clearlabsExport",
               "type": {
                 "kind": "NON_NULL",
@@ -8199,51 +7948,6 @@
             {
               "defaultValue": null,
               "name": "name",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "sampleType",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "waterControl",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionDate",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionLocation",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "notes",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -8759,15 +8463,6 @@
             },
             {
               "defaultValue": null,
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "name": "clearlabsExport",
               "type": {
                 "kind": "ENUM",
@@ -9169,15 +8864,6 @@
             },
             {
               "args": [],
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "clearlabsExport",
               "type": {
                 "kind": "SCALAR",
@@ -9288,51 +8974,6 @@
             {
               "args": [],
               "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "sampleType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "waterControl",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionDate",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionLocation",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "notes",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -9888,9 +9529,6 @@
             },
             {
               "name": "technology"
-            },
-            {
-              "name": "nucleicAcid"
             },
             {
               "name": "clearlabsExport"
@@ -13118,42 +12756,6 @@
             },
             {
               "args": [],
-              "name": "sampleType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionDate",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "collectionLocation",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "notes",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -13202,21 +12804,6 @@
             },
             {
               "name": "name"
-            },
-            {
-              "name": "sampleType"
-            },
-            {
-              "name": "waterControl"
-            },
-            {
-              "name": "collectionDate"
-            },
-            {
-              "name": "collectionLocation"
-            },
-            {
-              "name": "notes"
             },
             {
               "name": "hostOrganism"
@@ -18217,67 +17804,6 @@
               }
             },
             {
-              "defaultValue": null,
-              "name": "sampleType",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "waterControl",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionDate",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "DateTime",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "collectionLocation",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "notes",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
               "defaultValue": "null",
               "name": "hostOrganismId",
               "type": {
@@ -18321,51 +17847,6 @@
             {
               "defaultValue": "null",
               "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "sampleType",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "waterControl",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "collectionDate",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "collectionLocation",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "notes",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -18428,19 +17909,6 @@
                 "ofType": {
                   "kind": "ENUM",
                   "name": "SequencingTechnology",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "NucleicAcid",
                   "ofType": null
                 }
               }
@@ -18517,15 +17985,6 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
-            {
-              "defaultValue": "null",
-              "name": "nucleicAcid",
-              "type": {
-                "kind": "ENUM",
-                "name": "NucleicAcid",
-                "ofType": null
-              }
-            },
             {
               "defaultValue": "null",
               "name": "clearlabsExport",
