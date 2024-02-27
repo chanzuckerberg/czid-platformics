@@ -34,7 +34,19 @@ class WorkflowRunFactory(CommonFactory):
     execution_id = fuzzy.FuzzyText()
     outputs_json = fuzzy.FuzzyText()
     workflow_runner_inputs_json = fuzzy.FuzzyText()
-    status = fuzzy.FuzzyChoice(["SUCCEEDED", "FAILED", "CREATED", "PENDING", "STARTED", "RUNNING"])
+    status = fuzzy.FuzzyChoice(
+        [
+            "SUCCEEDED",
+            "SUCCEEDED_WITH_ISSUE",
+            "TIMED_OUT",
+            "ABORTED",
+            "FAILED",
+            "CREATED",
+            "PENDING",
+            "STARTED",
+            "RUNNING",
+        ]
+    )
     workflow_version = factory.SubFactory(
         WorkflowVersionFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

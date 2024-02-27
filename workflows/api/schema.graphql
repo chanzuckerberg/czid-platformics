@@ -42,7 +42,7 @@ input IntComparators {
 }
 
 type Mutation {
-  createWorkflowRun(input: WorkflowRunCreateInput!): WorkflowRun!
+  createWorkflowRun(input: RunWorkflowVersionInput!): WorkflowRun!
   updateWorkflowRun(input: WorkflowRunUpdateInput!, where: WorkflowRunWhereClauseMutations!): [WorkflowRun!]!
   deleteWorkflowRun(where: WorkflowRunWhereClauseMutations!): [WorkflowRun!]!
   createWorkflow(input: WorkflowCreateInput!): Workflow!
@@ -55,7 +55,8 @@ type Mutation {
   deleteWorkflowRunEntityInput(where: WorkflowRunEntityInputWhereClauseMutations!): [WorkflowRunEntityInput!]!
   createWorkflowVersion(input: WorkflowVersionCreateInput!): WorkflowVersion!
   deleteWorkflowVersion(where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
-  RunWorkflow(input: RunWorkflowVersionInput!): WorkflowRun!
+  runWorkflowVersion(input: RunWorkflowVersionInput!): WorkflowRun!
+  runWorkflowRun(workflowRunId: ID!): WorkflowRun!
 }
 
 """An object with a Globally Unique ID"""
@@ -336,18 +337,6 @@ enum WorkflowRunCountColumns {
   updatedAt
 }
 
-input WorkflowRunCreateInput {
-  endedAt: DateTime = null
-  executionId: String = null
-  outputsJson: String = null
-  workflowRunnerInputsJson: String = null
-  status: WorkflowRunStatus = null
-  workflowVersionId: ID = null
-  rawInputsJson: String = null
-  deprecatedById: ID = null
-  collectionId: Int!
-}
-
 """An edge in a connection."""
 type WorkflowRunEdge {
   """A cursor for use in pagination"""
@@ -532,6 +521,9 @@ input WorkflowRunOrderByClause {
 
 enum WorkflowRunStatus {
   SUCCEEDED
+  SUCCEEDED_WITH_ISSUE
+  TIMED_OUT
+  ABORTED
   FAILED
   CREATED
   PENDING

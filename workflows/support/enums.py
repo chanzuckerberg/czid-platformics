@@ -12,6 +12,9 @@ import enum
 @strawberry.enum
 class WorkflowRunStatus(enum.Enum):
     SUCCEEDED = "SUCCEEDED"
+    SUCCEEDED_WITH_ISSUE = "SUCCEEDED_WITH_ISSUE"
+    TIMED_OUT = "TIMED_OUT"
+    ABORTED = "ABORTED"
     FAILED = "FAILED"
     CREATED = "CREATED"
     PENDING = "PENDING"

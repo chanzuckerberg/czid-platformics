@@ -2,6 +2,7 @@
 GraphQL web app runner
 """
 import json
+import logging
 import typing
 
 import database.models as db
@@ -112,6 +113,7 @@ async def _create_workflow_run(
     cerbos_client: CerbosClient,
     principal: Principal,
 ) -> workflow_run.WorkflowRun:
+    logger = logging.getLogger()
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
@@ -128,6 +130,8 @@ async def _create_workflow_run(
 
     input_errors = list(manifest.validate_inputs(entity_inputs, raw_inputs))
     if input_errors:
+        # This is a client-input error
+        logger.info(f"Invalid input: {', '.join(e.message() for e in input_errors)}")
         raise PlatformicsException(f"Invalid input: {', '.join(e.message() for e in input_errors)}")
 
     workflow_runner_inputs_json = {}
@@ -138,7 +142,8 @@ async def _create_workflow_run(
         loader_raw_inputs = {k: raw_inputs[v] for k, v in input_loader_specifier.inputs.items() if v in raw_inputs}
         input_loader = resolve_input_loader(input_loader_specifier.name, input_loader_specifier.version)
         if not input_loader:
-            raise PlatformicsException(f"Input loader {input_loader_specifier.name} not found")
+            logger.error(f"Input loader ({input_loader_specifier.name}, {input_loader_specifier.version}) not found")
+            raise PlatformicsException("An error occurred while processing your inputs")
 
         input_loader_outputs = await input_loader.load(
             workflow_version, loader_entity_inputs, loader_raw_inputs, list(input_loader_specifier.outputs.keys())
@@ -148,14 +153,17 @@ async def _create_workflow_run(
                 continue
 
             if v in workflow_runner_inputs_json:
-                raise PlatformicsException(f"Duplicate raw input {v}")
+                # This will only happen if loaders are misconfigured, it is an error on our side
+                version_tuple = f"({input_loader_specifier.name}, {input_loader_specifier.version})"
+                logger.error(f"Duplicate workflow input {v} for workflow {version_tuple}")
+                raise PlatformicsException("An error occurred while processing your inputs")
             workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
     workflow_run = db.WorkflowRun(
         owner_user_id=int(principal.id),
         collection_id=input.collection_id,
         workflow_version_id=workflow_version.id,
-        status="CREATED",
+        status=WorkflowRunStatus.CREATED,
         execution_id=None,
         raw_inputs_json=json.dumps(raw_inputs),
         workflow_runner_inputs_json=json.dumps(workflow_runner_inputs_json),
@@ -193,6 +201,7 @@ async def _run_workflow_run(
     workflow_runner: WorkflowRunner = Depends(get_workflow_runner),
     event_bus: EventBus = Depends(get_event_bus),
 ) -> workflow_run.WorkflowRun:
+    logger = logging.getLogger()
     workflow_run = await session.get_one(db.WorkflowRun, workflow_run_id)
     if not workflow_run:
         raise PlatformicsException(f"Workflow run {workflow_run_id} not found")
@@ -200,7 +209,7 @@ async def _run_workflow_run(
     resource = Resource(id=str(workflow_run.id), kind=db.WorkflowRun.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("update", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot update entity in this collection")
-    if workflow_run.status != "CREATED":
+    if workflow_run.status != WorkflowRunStatus.CREATED:
         raise PlatformicsException(f"Workflow run {workflow_run_id} is not in CREATED state")
     workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
     workflow_runner_inputs_json = json.loads(workflow_run.workflow_runner_inputs_json)
@@ -212,8 +221,11 @@ async def _run_workflow_run(
             workflow_path=workflow_version.workflow_uri,
             inputs=workflow_runner_inputs_json,
         )
-    except Exception:
+    except Exception as e:
+        logger.error(f"Failed to run workflow {workflow_version.id}: {e}")
         status = WorkflowRunStatus.FAILED
+        await session.commit()
+        raise PlatformicsException("Failed to run workflow")
     workflow_run.status = status
     if execution_id:
         workflow_run.execution_id = execution_id
@@ -262,7 +274,9 @@ async def run_workflow_version(
 
 @strawberry.type
 class Mutation(CodegenMutation):
-    RunWorkflow: workflow_run.WorkflowRun = run_workflow_version
+    run_workflow_version: workflow_run.WorkflowRun = run_workflow_version
+    create_workflow_run: workflow_run.WorkflowRun = create_workflow_run
+    run_workflow_run: workflow_run.WorkflowRun = run_workflow_run
 
 
 strawberry_config = StrawberryConfig(auto_camel_case=True, name_converter=CustomNameConverter())

@@ -88,7 +88,17 @@ class WorkflowRunEntityInputCountColumns(sgqlc.types.Enum):
 
 class WorkflowRunStatus(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("CREATED", "FAILED", "PENDING", "RUNNING", "STARTED", "SUCCEEDED")
+    __choices__ = (
+        "ABORTED",
+        "CREATED",
+        "FAILED",
+        "PENDING",
+        "RUNNING",
+        "STARTED",
+        "SUCCEEDED",
+        "SUCCEEDED_WITH_ISSUE",
+        "TIMED_OUT",
+    )
 
 
 class WorkflowRunStepCountColumns(sgqlc.types.Enum):
@@ -265,30 +275,6 @@ class WorkflowOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
-
-
-class WorkflowRunCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "ended_at",
-        "execution_id",
-        "outputs_json",
-        "workflow_runner_inputs_json",
-        "status",
-        "workflow_version_id",
-        "raw_inputs_json",
-        "deprecated_by_id",
-        "collection_id",
-    )
-    ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
-    execution_id = sgqlc.types.Field(String, graphql_name="executionId")
-    outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
-    workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
-    status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
-    workflow_version_id = sgqlc.types.Field(ID, graphql_name="workflowVersionId")
-    raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
-    deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
 class WorkflowRunEntityInputCreateInput(sgqlc.types.Input):
@@ -687,7 +673,8 @@ class Mutation(sgqlc.types.Type):
         "delete_workflow_run_entity_input",
         "create_workflow_version",
         "delete_workflow_version",
-        "run_workflow",
+        "run_workflow_version",
+        "run_workflow_run",
     )
     create_workflow_run = sgqlc.types.Field(
         sgqlc.types.non_null("WorkflowRun"),
@@ -696,7 +683,7 @@ class Mutation(sgqlc.types.Type):
             (
                 (
                     "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(WorkflowRunCreateInput), graphql_name="input", default=None),
+                    sgqlc.types.Arg(sgqlc.types.non_null(RunWorkflowVersionInput), graphql_name="input", default=None),
                 ),
             )
         ),
@@ -878,14 +865,26 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    run_workflow = sgqlc.types.Field(
+    run_workflow_version = sgqlc.types.Field(
         sgqlc.types.non_null("WorkflowRun"),
-        graphql_name="RunWorkflow",
+        graphql_name="runWorkflowVersion",
         args=sgqlc.types.ArgDict(
             (
                 (
                     "input",
                     sgqlc.types.Arg(sgqlc.types.non_null(RunWorkflowVersionInput), graphql_name="input", default=None),
+                ),
+            )
+        ),
+    )
+    run_workflow_run = sgqlc.types.Field(
+        sgqlc.types.non_null("WorkflowRun"),
+        graphql_name="runWorkflowRun",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "workflow_run_id",
+                    sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="workflowRunId", default=None),
                 ),
             )
         ),
