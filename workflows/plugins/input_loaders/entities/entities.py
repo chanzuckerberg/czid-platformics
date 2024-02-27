@@ -28,7 +28,7 @@ class SampleInputLoader(InputLoader):
         for output in requested_outputs:
             getattr(samples, output)()
         resp = self._entities_gql(op)
-        sample = resp["data"]["samples"][0]
+        sample = resp["samples"][0]
         return {output: sample[output] for output in requested_outputs}
 
 
@@ -51,7 +51,7 @@ class SequencingReadInputLoader(InputLoader):
         for output in non_file_outputs:
             getattr(sequencing_reads, output)()
         resp = self._entities_gql(op)
-        sequencing_read = resp["data"]["sequencingReads"][0]
+        sequencing_read = resp["sequencingReads"][0]
         sequencing_read["r1_file"] = self._uri_file(sequencing_read["r1File"])
         sequencing_read["r2_file"] = self._uri_file(sequencing_read["r2File"])
         outputs = {output: sequencing_read[output] for output in requested_outputs}
@@ -77,5 +77,5 @@ class IndexFileInputLoader(InputLoader):
         index_files.name()
         self._fetch_file(index_files.file())  # type: ignore
         resp = self._entities_gql(op)
-        index_files = resp["data"]["indexFiles"]
+        index_files = resp["indexFiles"]
         return {index_file["name"]: self._uri_file(index_file["file"]) for index_file in index_files}

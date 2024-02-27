@@ -2,6 +2,7 @@
 Module to define basic plugin types
 """
 
+import logging
 import os
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
@@ -13,6 +14,7 @@ from sgqlc.operation import Operation
 
 from database.models import WorkflowVersion, WorkflowRun
 from manifest.manifest import EntityInput
+from platformics.api.core.errors import PlatformicsException
 from platformics.client.entities_schema import FileAccessProtocol
 from platformics.util.types_utils import JSONValue
 
@@ -105,10 +107,15 @@ class IOLoader:
     def __init__(self, user_token: str) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")
         self._user_token = user_token
+        self.logger = logging.getLogger("IOLoader")
 
     def _entities_gql(self, op: Operation) -> dict:
         headers = {"Authorization": f"Bearer {self._user_token}"}
-        return self.entities_endpoint(op, extra_headers=headers)
+        resp = self.entities_endpoint(op, extra_headers=headers)
+        if resp.get("errors"):
+            self.logger.error(f"Error fetching entities: {resp['errors']}")
+            raise PlatformicsException("Internal error")
+        return resp["data"]
 
 
 class InputLoader(IOLoader):
