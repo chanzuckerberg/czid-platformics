@@ -354,8 +354,10 @@ classes:
       primer_file:
         range: GenomicRange
         inverse: GenomicRange.sequencing_reads
+        # Only mutable by system user (needed for upload flow)
         annotations:
-          mutable: false
+          mutable: true
+          system_writable_only: True
       # Consensus Genomes generated from these Sequencing Reads
       consensus_genomes:
         range: ConsensusGenome

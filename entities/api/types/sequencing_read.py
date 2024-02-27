@@ -395,6 +395,7 @@ class SequencingReadCreateInput:
 class SequencingReadUpdateInput:
     clearlabs_export: Optional[bool] = None
     medaka_model: Optional[str] = None
+    primer_file_id: Optional[strawberry.ID] = None
 
 
 """
@@ -507,6 +508,7 @@ async def create_sequencing_read(
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
+        del params["primer_file"]
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
@@ -572,6 +574,24 @@ async def update_sequencing_read(
         raise PlatformicsException("No fields to update")
 
     # Validate that the user can read all of the entities they're linking to.
+    # Check that primer_file relationship is accessible.
+    if validated.primer_file_id:
+        primer_file = await get_db_rows(
+            db.GenomicRange,
+            session,
+            cerbos_client,
+            principal,
+            {"id": {"_eq": validated.primer_file_id}},
+            [],
+            CerbosAction.VIEW,
+        )
+        if not primer_file:
+            raise PlatformicsException("Unauthorized: primer_file does not exist")
+        params["primer_file"] = primer_file[0]
+        del params["primer_file_id"]
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        del params["primer_file"]
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.SequencingRead, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
