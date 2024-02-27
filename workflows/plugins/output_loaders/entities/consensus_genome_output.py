@@ -4,6 +4,7 @@ from manifest.manifest import EntityInput
 from platformics.client.entities_schema import (
     AccessionWhereClause,
     Query,
+    MetricGenomeCreateInput,
     Mutation,
     ConsensusGenomeCreateInput,
     FileCreate,
@@ -59,10 +60,10 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         op = Operation(Mutation)
         op.create_metric_consensus_genome(
             input=MetricGenomeCreateInput(
-                consensus_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='consensusGenomeId')
-                reference_genome_length = sgqlc.types.Field(Float, graphql_name='referenceGenomeLength')
-                percent_genome_called = sgqlc.types.Field(Float, graphql_name='percentGenomeCalled')
-                percent_identity = sgqlc.types.Field(Float, graphql_name='percentIdentity')
+                consensus_genome_id = consensus_genome_id,
+                reference_genome_length = 1,
+                percent_genome_called = 1,
+                percent_identity = 1.0,
                 gc_percent = sgqlc.types.Field(Float, graphql_name='gcPercent')
                 total_reads = sgqlc.types.Field(Int, graphql_name='totalReads')
                 mapped_reads = sgqlc.types.Field(Int, graphql_name='mappedReads')
