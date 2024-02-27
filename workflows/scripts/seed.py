@@ -84,18 +84,6 @@ def use_factoryboy(use_moto: bool = False) -> None:
         # upload wdl
         upload_wdl()
 
-        # Initialize a boto3 client
-        secrets_manager_client = boto3.client('secretsmanager', endpoint_url=os.environ["BOTO_ENDPOINT_URL"])
-
-        # Specify the secret name and the secret value
-        secret_name = os.environ["SERVICE_IDENTITY_SECRET_NAME"]
-        secret_value = 'eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6Ims2Y01iUUJJVnpCaWotOWtuRF9tR3lCVXo4Q3BTRV9EVUZlMFBnVEFqT1k3Y3N4NFNHQmhXYmMwTzN3bjFQZ0siLCJ5IjoiZ3JqMksxSW5HVFZCZ1lrbFFFUjdUWXVBUmlPTXZTUXplUGZmVWZoa2N5bktFNWVfR0g2bGo4bWpyZE1aUlo0WSJ9LCJraWQiOiItQmx2bF9wVk5LU2JRQ2N5dGV4UzNfMk5MaHBia2J6LVk5VFFjbkY5S1drIiwidHlwIjoiSldFIn0..Uy_6hWYnHrt7j_0evaWnCw.ql9UQ40bXYis_k1NMamaxzVRxFY_FIpRVYz6xPPoBJop_nAlMgTRffn81BbbX98jrLNNYtd9ODwylzHy56iU4ykl6oWUn9Ufvu3EIogWoQUMTJbepcduFITe_J1UvUUGXcgfM4UQpaLpUPZNUzhuxDzmGFY-f5OD31dggyZtFUOGKKU5Oa5NJs6hbat9FOy6Z9zq2j9ycndEGeYZozI3SLTHMzqBv4YjOOf0Bmc3vG63Veer7R3pEMkD2NXUpqyXnTYuozvnzCHFi2Notl972S5GD5pVXCZ5Cju2alT10avHPwPjAs83E79Sgna7h4hKykmdu2CpFN9Cfu2OgdmIbldCLQ0Xaomh4nKSmQnwBCdzaukF-uC6c4qhosrO0V9R-Ie8sTgpZLwCyeuNqxCq4ayx9qyPlUHhUgMHJQJMxsPNd-GBWAI7X_8nmoCYvziU5yz_YG76NoPo4ViiGyj0PLMXePXEW59K_l_EJuyW8VGT--Biap2wxm4tPz7WT3KjPdZbemP4MoPCsj2_5dDgyQ.-s9HRO5yOPRAv69pCAjtK81fDI2cmwe5DT0jzaVaRIY'
-        secrets_manager_client.create_secret(
-            Name=secret_name,
-            SecretString=secret_value
-        )
-        
-
     # import manifests
     import_manifest(session=session)
 

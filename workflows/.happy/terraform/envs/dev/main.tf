@@ -47,26 +47,26 @@ module "stack" {
     }
   }
   additional_env_vars = {
-    AWS_REGION                                      = "us-west-2"
-    BOTO_ENDPOINT_URL                               = "http://motoserver.czidnet:4000"
-    CERBOS_URL                                      = "http://localhost:3592"
-    DEFAULT_UPLOAD_BUCKET                           = "local-bucket"
-    DEFAULT_UPLOAD_PROTOCOL                         = "s3"
-    ENTITY_SERVICE_URL                              = "http://ryan-test-entities:8008"
-    ENTITY_SERVICE_AUTH_TOKEN                       = ""
-    JWK_PRIVATE_KEY_FILE                            = "/var/policies/private_key.pem"
-    JWK_PUBLIC_KEY_FILE                             = "/var/policies/public_key.pem"
-    WORKERS                                         = "2"
-    PLATFORMICS_WORKFLOW_RUNNER_PLUGIN              = "swipe"
-    PLATFORMICS_EVENT_BUS_PLUGIN                    = "swipe"
-    PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT = ""
+    AWS_REGION                                            = "us-west-2"
+    CERBOS_URL                                            = "http://localhost:3592"
+    DEFAULT_UPLOAD_BUCKET                                 = "local-bucket"
+    DEFAULT_UPLOAD_PROTOCOL                               = "s3"
+    IDENTITY_SERVICE_BASE_URL                             = "http://sandbox.czid.org"
+    ENTITY_SERVICE_URL                                    = "http://ryan-test-entities:8008"
+    ENTITY_SERVICE_AUTH_TOKEN                             = ""
+    JWK_PRIVATE_KEY_FILE                                  = "/var/policies/private_key.pem"
+    JWK_PUBLIC_KEY_FILE                                   = "/var/policies/public_key.pem"
+    WORKERS                                               = "2"
+    PLATFORMICS_WORKFLOW_RUNNER_PLUGIN                    = "swipe"
+    PLATFORMICS_EVENT_BUS_PLUGIN                          = "swipe"
+    PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT       = ""
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-development/nextgen/"
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:732052188396:stateMachine:idseq-swipe-sandbox-default-wdl"
-    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL     = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-staging-web-sfn-notifications-queue"
-    PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL         = "redis://redis.czidnet:6378"
-    PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME        = "workflow-events"
+    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL           = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-staging-web-sfn-notifications-queue"
+    PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL               = "redis://redis.czidnet:6378"
+    PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME              = "workflow-events"
   }
-  
+
   create_dashboard = false
   emptydir_volumes = [{
     name = "policies"
