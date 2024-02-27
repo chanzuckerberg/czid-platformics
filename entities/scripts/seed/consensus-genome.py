@@ -159,13 +159,15 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_sequencing_read.medaka_model = "r941_min_high_g360"
     sars_cov2_paired_sequencing_read.taxon = sars_cov2_taxon
     sars_cov2_paired_sequencing_read.r1_file = uri_file(
-        f"s3://{LOCAL_BUCKET}/consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz", ## TODO: fix for remote test files
+        ## TODO: fix for remote test files
+        f"s3://{LOCAL_BUCKET}/consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz",
         sars_cov2_paired_sequencing_read,
         "r1_file",
         "fasta",
     )
     sars_cov2_paired_sequencing_read.r2_file = uri_file(
-        f"s3://{LOCAL_BUCKET}/consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz", ## TODO: fix for remote test files
+        ## TODO: fix for remote test files
+        f"s3://{LOCAL_BUCKET}/consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz",
         sars_cov2_paired_sequencing_read,
         "r2_file",
         "fasta",
