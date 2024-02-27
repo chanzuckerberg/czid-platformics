@@ -53,7 +53,7 @@ module "stack" {
       memory                = "1000Mi"
       name                  = "workflows-worker"
       platform_architecture = "arm64"
-      service_type          = "INTERNAL"
+      service_type          = "PRIVATE"
       cmd                   = ["python3", "api/loader/run_loader.py"]
       port                  = 8000
     }
