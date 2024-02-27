@@ -14,12 +14,13 @@ from http import HTTPStatus
 
 PORT = 8000
 
-def health_check()->None:
+
+def health_check() -> None:
     class Handler(http.server.SimpleHTTPRequestHandler):
         def do_GET(self) -> None:
             self.send_response(HTTPStatus.OK)
             self.end_headers()
-            self.wfile.write(b'Hello world')
+            self.wfile.write(b"Hello world")
 
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
         print("serving at port", PORT)

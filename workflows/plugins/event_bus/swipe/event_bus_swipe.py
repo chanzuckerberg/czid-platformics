@@ -40,7 +40,9 @@ class EventBusSWIPE(EventBus):
                 QueueUrl=url,
                 ReceiptHandle=receipt_handle,
             )
-            messages.append(json.loads(message["Body"]))
+            body = json.loads(message["Body"])
+            content = body["Message"] if body.get("Message") else body
+            messages.append(content)
 
         return messages
 
@@ -91,7 +93,7 @@ class EventBusSWIPE(EventBus):
             elif message.get("source") == "aws.batch":
                 # TODO: return step status messages
                 pass
-            
+
             elif message.get("source") is None:
                 print("message missing source", message)
 
