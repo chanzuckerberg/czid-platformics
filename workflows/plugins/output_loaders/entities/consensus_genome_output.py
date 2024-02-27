@@ -57,6 +57,27 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         res = self._entities_gql(op)
         consensus_genome_id = res["createConsensusGenome"]["id"]
         op = Operation(Mutation)
+        op.create_metric_consensus_genome(
+            input=MetricGenomeCreateInput(
+                consensus_genome_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='consensusGenomeId')
+                reference_genome_length = sgqlc.types.Field(Float, graphql_name='referenceGenomeLength')
+                percent_genome_called = sgqlc.types.Field(Float, graphql_name='percentGenomeCalled')
+                percent_identity = sgqlc.types.Field(Float, graphql_name='percentIdentity')
+                gc_percent = sgqlc.types.Field(Float, graphql_name='gcPercent')
+                total_reads = sgqlc.types.Field(Int, graphql_name='totalReads')
+                mapped_reads = sgqlc.types.Field(Int, graphql_name='mappedReads')
+                ref_snps = sgqlc.types.Field(Int, graphql_name='refSnps')
+                n_actg = sgqlc.types.Field(Int, graphql_name='nActg')
+                n_missing = sgqlc.types.Field(Int, graphql_name='nMissing')
+                n_ambiguous = sgqlc.types.Field(Int, graphql_name='nAmbiguous')
+                coverage_depth = sgqlc.types.Field(Float, graphql_name='coverageDepth')
+                coverage_breadth = sgqlc.types.Field(Float, graphql_name='coverageBreadth')
+                coverage_bin_size = sgqlc.types.Field(Float, graphql_name='coverageBinSize')
+                coverage_total_length = sgqlc.types.Field(Int, graphql_name='coverageTotalLength')
+                coverage_viz = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))), graphql_name='coverageViz')
+            )
+        )
+
         sequence_path = workflow_outputs["sequence"]
         assert isinstance(sequence_path, str)
         sequence_file = op.create_file(
