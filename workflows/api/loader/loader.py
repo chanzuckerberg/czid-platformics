@@ -64,6 +64,7 @@ class LoaderDriver:
 
     async def main(self) -> None:
         """Waits for events and if a workflow completes, runs the loaders"""
+        print("Running listener")
         while True:
             for event in await self.bus.poll():
                 print("event", event, file=sys.stderr)

@@ -44,28 +44,41 @@ module "stack" {
           tag    = "0.29.0"
         }
       }
+    },
+
+    workflows-worker = {
+      aws_iam = {
+        policy_json = data.aws_iam_policy_document.workflows.json,
+      }
+      cpu                   = "2"
+      memory                = "1000Mi"
+      name                  = "workflows-worker"
+      platform_architecture = "arm64"
+      service_type          = "INTERNAL"
+      cmd                   = ["python3", "api/loader/run_loader.py"]
+      port                  = 8000
     }
   }
-    additional_env_vars = {
-    AWS_REGION                                      = "us-west-2"
-    BOTO_ENDPOINT_URL                               = "http://motoserver.czidnet:4000"
-    CERBOS_URL                                      = "http://localhost:3592"
-    DEFAULT_UPLOAD_BUCKET                           = "local-bucket"
-    DEFAULT_UPLOAD_PROTOCOL                         = "s3"
-    ENTITY_SERVICE_URL                              = "http://entities-entities:8008"
-    ENTITY_SERVICE_AUTH_TOKEN                       = ""
-    JWK_PRIVATE_KEY_FILE                            = "/var/policies/private_key.pem"
-    JWK_PUBLIC_KEY_FILE                             = "/var/policies/public_key.pem"
-    WORKERS                                         = "2"
-    PLATFORMICS_WORKFLOW_RUNNER_PLUGIN              = "swipe"
-    PLATFORMICS_EVENT_BUS_PLUGIN                    = "swipe"
-    PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT = ""
+  additional_env_vars = {
+    AWS_REGION                                            = "us-west-2"
+    BOTO_ENDPOINT_URL                                     = "http://motoserver.czidnet:4000"
+    CERBOS_URL                                            = "http://localhost:3592"
+    DEFAULT_UPLOAD_BUCKET                                 = "local-bucket"
+    DEFAULT_UPLOAD_PROTOCOL                               = "s3"
+    ENTITY_SERVICE_URL                                    = "http://entities-entities:8008"
+    ENTITY_SERVICE_AUTH_TOKEN                             = "eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTI1NkNCQy1IUzUxMiIsImVwayI6eyJjcnYiOiJQLTM4NCIsImt0eSI6IkVDIiwieCI6IjFXdWNDRFdkNkdOdFR2VG1WaXZrT0I2ZjRKUTVvLS1POGtaZG5FQkppNFRxSUNfeGxITG5kLUNLTlR6RmtUR2siLCJ5IjoiZmI3bjlnTUhUSWFkSW13NllrMGRVaXpMb3lxRXJGa1VNSWtEXzZ4SV9TQWJFNlN5R0MxQjcySVhoeUVzYzdRMCJ9LCJraWQiOiJSUTJhWXpDaE43amQtcl9VN2hiVFVwcGJXWnoyelFDcW5LaERMM3gyaUJjIiwidHlwIjoiSldFIn0..eZxCCCrgRXPiW4WP-JIrag.lpbNX1wbNpZ_cD003X9upqk50mxPDnI6ISBjU1zLK0ymrqzXtc0VjaMXdBCB5dfFE7x7CdG-c3HyNnIr4mqOAGlk0sf1A0MduC1m1B0u_PVvnoHpkdcMwM0mUr6ef8NFwTIL1QLSQaA_uI0BnZzRgLgMg5FUq1eN0RcIqdbElu3YkyAIZZ_4vTGPdb3Fokr3_4uG7JcttKVoQZNKr4MenAmsMij6hr2kCGLe9bn3Mo2H4NHRVOxEOdVaYTROHK74LADlMoCr3F2SL6YHe3dqbNi2PKfi6ODerw4ZtmBFDkGfc6r9rorNkllbHJeSL7KHXUswyCilh8O1j4uphsX1kGB-Ejhy1iA6cpzir0QaQZh7M-Qsr6UF573pgywdtJonKHko3bRW609I5152iEv6lx9JNFyprNIOeo8oU6oAIhT3Bbq0rWsHUqlpC6VNBuj_VNNcVKNzjRhnqqe7qqqLLBscmfm9XED-s9LUqRW6JagrMF8tlffil0TC_-0KKbSaKkJjW5qPf_q0WQGiNtyF9FxcmmvVvpX9ZouGnpabK5Qb3kScTfBH1SR1RUFDrDrJn7nUwdp4RnuGPfUnivIy1hiMk0gU3ZkrtoQWA2J2paUxV4VZG3zNxjZFX1dnkS_5.1rwv8gLH_wZLW4YiezeUXvgaGYGvfNaLBbqkokcD8Cs"
+    JWK_PRIVATE_KEY_FILE                                  = "/var/policies/private_key.pem"
+    JWK_PUBLIC_KEY_FILE                                   = "/var/policies/public_key.pem"
+    WORKERS                                               = "2"
+    PLATFORMICS_WORKFLOW_RUNNER_PLUGIN                    = "swipe"
+    PLATFORMICS_EVENT_BUS_PLUGIN                          = "swipe"
+    PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT       = ""
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-sandbox/nextgen/"
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:732052188396:stateMachine:idseq-swipe-sandbox-default-wdl"
-    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL     = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-dev-web-sfn-notifications-queue"
-    PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL         = "redis://redis.czidnet:6378"
-    PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME        = "workflow-events"
-    SERVICE_NAME                                    = "workflows"
+    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL           = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-sandbox-web-sfn-notifications-queue"
+    PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL               = "redis://redis.czidnet:6378"
+    PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME              = "workflow-events"
+    SERVICE_NAME                                          = "workflows"
   }
   create_dashboard = false
   emptydir_volumes = [{

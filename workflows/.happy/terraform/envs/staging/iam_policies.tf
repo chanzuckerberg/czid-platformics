@@ -17,19 +17,20 @@ data "aws_iam_policy_document" "workflows" {
   statement {
     effect = "Allow"
     actions = [
-        "sqs:DeleteMessage",
-        "sqs:SendMessage"
+      "sqs:DeleteMessage",
+      "sqs:SendMessage",
+      "sqs:ReceiveMessage" 
     ]
     resources = ["arn:aws:sqs:us-west-2:${var.aws_account_id}:idseq-swipe-staging-web-sfn-notifications-queue"]
   }
   statement {
     effect = "Allow"
     actions = [
-				"sqs:ListQueues"
-		]
+      "sqs:ListQueues"
+    ]
     resources = ["*"]
   }
-  statement { 
+  statement {
     effect = "Allow"
     actions = [
       "states:DescribeExecution",
@@ -41,7 +42,7 @@ data "aws_iam_policy_document" "workflows" {
       "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-staging-default-wdl"
     ]
   }
-  statement { 
+  statement {
     effect = "Allow"
     actions = [
       "states:ListStateMachines"

@@ -93,6 +93,8 @@ services:
         - BUILDKIT_INLINE_CACHE=1
     image: "platformics-workflows"
     command: ["python3", "api/loader/run_loader.py"]
+    ports:
+        - 8000:8000
     restart: always
     volumes:
       - .:/workflows

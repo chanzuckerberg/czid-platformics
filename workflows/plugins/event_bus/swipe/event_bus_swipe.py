@@ -68,7 +68,7 @@ class EventBusSWIPE(EventBus):
         workflow_statuses: list[WorkflowStatusMessage] = []
 
         for message in messages:
-            if message["source"] == "aws.states":
+            if message.get("source") == "aws.states":
                 status = self.create_workflow_status(message["detail"]["status"])
                 if status == "WORKFLOW_SUCCESS":
                     workflow_statuses.append(
@@ -88,8 +88,11 @@ class EventBusSWIPE(EventBus):
                             runner_id=message["detail"]["executionArn"],
                         )
                     )
-            elif message["source"] == "aws.batch":
+            elif message.get("source") == "aws.batch":
                 # TODO: return step status messages
                 pass
+            
+            elif message.get("source") is None:
+                print("message missing source", message)
 
         return workflow_statuses
