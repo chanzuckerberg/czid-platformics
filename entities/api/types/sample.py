@@ -32,7 +32,6 @@ from platformics.api.core.gql_to_sql import (
     IntComparators,
     StrComparators,
     UUIDComparators,
-    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
@@ -175,11 +174,6 @@ Supported WHERE clause attributes
 class SampleWhereClause(TypedDict):
     rails_sample_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
-    sample_type: Optional[StrComparators] | None
-    water_control: Optional[BoolComparators] | None
-    collection_date: Optional[DatetimeComparators] | None
-    collection_location: Optional[StrComparators] | None
-    notes: Optional[StrComparators] | None
     host_organism: Optional[Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")]] | None
     sequencing_reads: Optional[
         Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
@@ -202,11 +196,6 @@ Supported ORDER BY clause attributes
 class SampleOrderByClause(TypedDict):
     rails_sample_id: Optional[orderBy] | None
     name: Optional[orderBy] | None
-    sample_type: Optional[orderBy] | None
-    water_control: Optional[orderBy] | None
-    collection_date: Optional[orderBy] | None
-    collection_location: Optional[orderBy] | None
-    notes: Optional[orderBy] | None
     host_organism: Optional[Annotated["HostOrganismOrderByClause", strawberry.lazy("api.types.host_organism")]] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
@@ -225,11 +214,6 @@ Define Sample type
 class Sample(EntityInterface):
     rails_sample_id: Optional[int] = None
     name: str
-    sample_type: str
-    water_control: bool
-    collection_date: datetime.datetime
-    collection_location: str
-    notes: Optional[str] = None
     host_organism: Optional[
         Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]
     ] = load_host_organism_rows  # type:ignore
@@ -287,10 +271,6 @@ Define columns that support min/max aggregations
 class SampleMinMaxColumns:
     rails_sample_id: Optional[int] = None
     name: Optional[str] = None
-    sample_type: Optional[str] = None
-    collection_date: Optional[datetime.datetime] = None
-    collection_location: Optional[str] = None
-    notes: Optional[str] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -306,11 +286,6 @@ Define enum of all columns to support count and count(distinct) aggregations
 class SampleCountColumns(enum.Enum):
     railsSampleId = "rails_sample_id"
     name = "name"
-    sampleType = "sample_type"
-    waterControl = "water_control"
-    collectionDate = "collection_date"
-    collectionLocation = "collection_location"
-    notes = "notes"
     hostOrganism = "host_organism"
     sequencingReads = "sequencing_reads"
     metadatas = "metadatas"
@@ -365,11 +340,6 @@ Mutation types
 class SampleCreateInput:
     rails_sample_id: Optional[int] = None
     name: str
-    sample_type: str
-    water_control: bool
-    collection_date: datetime.datetime
-    collection_location: str
-    notes: Optional[str] = None
     host_organism_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
     collection_id: int
@@ -378,11 +348,6 @@ class SampleCreateInput:
 @strawberry.input()
 class SampleUpdateInput:
     name: Optional[str] = None
-    sample_type: Optional[str] = None
-    water_control: Optional[bool] = None
-    collection_date: Optional[datetime.datetime] = None
-    collection_location: Optional[str] = None
-    notes: Optional[str] = None
 
 
 """

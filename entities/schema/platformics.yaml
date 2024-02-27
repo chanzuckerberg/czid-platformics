@@ -257,24 +257,25 @@ classes:
         annotations:
             minimum_length: 4
             maximum_length: 64
-      sample_type:
-        range: string
-        required: true
-        annotations:
-          factory_type: organ
-      water_control:
-        range: boolean
-        required: true
-      collection_date:
-        range: date
-        required: true
-      collection_location:
-        range: string
-        required: true
-        annotations:
-          factory_type: city
-      notes:
-        range: string
+      # TODO: Uncomment when we migrate metadata
+      # sample_type:
+      #   range: string
+      #   required: true
+      #   annotations:
+      #     factory_type: organ
+      # water_control:
+      #   range: boolean
+      #   required: true
+      # collection_date:
+      #   range: date
+      #   required: true
+      # collection_location:
+      #   range: string
+      #   required: true
+      #   annotations:
+      #     factory_type: city
+      # notes:
+      #   range: string
       host_organism:
         range: HostOrganism
         inverse: HostOrganism.samples
@@ -331,10 +332,11 @@ classes:
         required: true
         annotations:
           mutable: false
+      # TODO: Uncomment when we migrate metadata
       # Did we sequence DNA or RNA?
-      nucleic_acid:
-        range: NucleicAcid
-        required: true
+      # nucleic_acid:
+      #   range: NucleicAcid
+      #   required: true
       # Is this sequencing read exported from clearlabs? Clearlabs exports have undergone filtering
       clearlabs_export:
         range: boolean
