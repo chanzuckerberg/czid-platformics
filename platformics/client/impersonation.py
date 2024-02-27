@@ -5,7 +5,6 @@ from platformics.security.token_auth import create_token
 import httpx
 
 IDENTITY_SERVICE_URL = os.environ["IDENTITY_SERVICE_BASE_URL"]
-SECRET_NAME = os.environ["SERVICE_IDENTITY_SECRET_NAME"]
 
 class ImpersonationClient:
     def __init__(self) -> None:
