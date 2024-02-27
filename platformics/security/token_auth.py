@@ -19,14 +19,14 @@ def get_token_claims(private_key: JWK, token: str) -> dict:
 # it's just in our app for now to help us test the auth flow.
 def create_token(
     private_key: JWK,
-    userid: int,
-    project_claims: dict[str, list[int]],
+    userid: Optional[int] = None,
+    project_claims: Optional[dict[str, list[int]]] = None,
     expiration: int = 3600,
     service_identity: Optional[str] = None,
 ) -> str:
     # Create a JWT that's signed by our private key. This proves *who wrote the message*
     jwt_payload = {
-        "sub": str(userid),
+        "sub": userid and str(userid),
         "iat": int(time.time()),
         "nbf": int(time.time()),
         "exp": int(time.time()) + expiration,

@@ -80,8 +80,8 @@ def use_factoryboy(use_moto: bool = False) -> None:
     session = app_db.session()
     SessionStorage.set_session(session)
 
-    # upload wdl
     if use_moto:
+        # upload wdl
         upload_wdl()
 
     # import manifests

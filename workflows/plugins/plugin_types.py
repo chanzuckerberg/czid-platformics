@@ -2,6 +2,7 @@
 Module to define basic plugin types
 """
 
+import logging
 import os
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
@@ -13,13 +14,13 @@ from sgqlc.operation import Operation
 
 from database.models import WorkflowVersion, WorkflowRun
 from manifest.manifest import EntityInput
+from platformics.api.core.errors import PlatformicsException
 from platformics.client.entities_schema import FileAccessProtocol
 from platformics.util.types_utils import JSONValue
 
 from mypy_boto3_s3 import S3Client
 
 ENTITY_SERVICE_URL = os.environ["ENTITY_SERVICE_URL"]
-ENTITY_SERVICE_AUTH_TOKEN = os.environ["ENTITY_SERVICE_AUTH_TOKEN"]
 
 WorkflowStatus = Literal["WORKFLOW_STARTED", "WORKFLOW_SUCCESS", "WORKFLOW_FAILURE"]
 
@@ -91,6 +92,7 @@ class WorkflowRunner(ABC):
 class IOLoader:
     _entitties_endpoint: HTTPEndpoint
     _s3_client: S3Client
+    _user_token: str
 
     def _fetch_file(self, gql_file: Any) -> None:
         gql_file.protocol()
@@ -102,13 +104,18 @@ class IOLoader:
             return None
         return f"{file_result['protocol']}://{file_result['namespace']}/{file_result['path']}"
 
-    def __init__(self) -> None:
+    def __init__(self, user_token: str) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")
+        self._user_token = user_token
+        self.logger = logging.getLogger("IOLoader")
 
     def _entities_gql(self, op: Operation) -> dict:
-        # TODO: dynamically fetch token
-        headers = {"Authorization": f"Bearer {ENTITY_SERVICE_AUTH_TOKEN}"}
-        return self.entities_endpoint(op, extra_headers=headers)
+        headers = {"Authorization": f"Bearer {self._user_token}"}
+        resp = self.entities_endpoint(op, extra_headers=headers)
+        if resp.get("errors"):
+            self.logger.error(f"Error fetching entities: {resp['errors']}")
+            raise PlatformicsException("Internal error")
+        return resp["data"]
 
 
 class InputLoader(IOLoader):
