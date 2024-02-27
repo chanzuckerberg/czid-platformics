@@ -96,12 +96,12 @@ class ConsensusGenomeInputLoader(InputLoader):
             self._fetch_file(reference_genomes.file())  # type: ignore
 
         resp = self._entities_gql(op)
-        sequencing_read = resp["data"]["sequencingReads"][0]
+        sequencing_read = resp["sequencingReads"][0]
         primer_bed_uri = sequencing_read.get("primerFile") and self._uri_file(sequencing_read["primerFile"].get("file"))
 
         reference_fasta_uri = None
         if reference_genome_input:
-            reference_genome = resp["data"]["referenceGenomes"][0]
+            reference_genome = resp["referenceGenomes"][0]
             reference_fasta_uri = self._uri_file(reference_genome.get("file"))
 
         inputs: dict[str, JSONValue] = {}
@@ -116,7 +116,7 @@ class ConsensusGenomeInputLoader(InputLoader):
             else:
                 inputs["primer_bed"] = f"{PUBLIC_REFERENCES_PREFIX}/{illumina_primer_file(sequencing_read['protocol'])}"
         else:
-            accession = resp["data"]["accessions"][0]
+            accession = resp["accessions"][0]
             inputs["ref_accession_id"] = accession["accessionId"]
             assert sequencing_read["technology"] == "Illumina", "Nanopore only supports SARS-CoV-2"
 

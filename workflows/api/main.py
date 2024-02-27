@@ -16,8 +16,10 @@ from platformics.api.core.deps import (
     get_cerbos_client,
     get_db_session,
     get_engine,
+    get_user_token,
     require_auth_principal,
 )
+from platformics.client.impersonation import ImpersonationClient
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
@@ -112,7 +114,11 @@ async def _create_workflow_run(
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
+    token: str,
 ) -> workflow_run.WorkflowRun:
+    # TODO: use token, this is just to test sandbox
+    impersonation_client = ImpersonationClient()
+    token = await impersonation_client.impersonate(principal.id)
     logger = logging.getLogger()
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
@@ -145,7 +151,7 @@ async def _create_workflow_run(
             logger.error(f"Input loader ({input_loader_specifier.name}, {input_loader_specifier.version}) not found")
             raise PlatformicsException("An error occurred while processing your inputs")
 
-        input_loader_outputs = await input_loader.load(
+        input_loader_outputs = await input_loader(token).load(
             workflow_version, loader_entity_inputs, loader_raw_inputs, list(input_loader_specifier.outputs.keys())
         )
         for k, v in input_loader_specifier.outputs.items():
@@ -189,8 +195,11 @@ async def create_workflow_run(
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
+    token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
-    return await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal)
+    return await _create_workflow_run(
+        input, session=session, cerbos_client=cerbos_client, principal=principal, token=token
+    )
 
 
 async def _run_workflow_run(
@@ -260,8 +269,11 @@ async def run_workflow_version(
     principal: Principal = Depends(require_auth_principal),
     workflow_runner: WorkflowRunner = Depends(get_workflow_runner),
     event_bus: EventBus = Depends(get_event_bus),
+    token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
-    workflow_run = await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal)
+    workflow_run = await _create_workflow_run(
+        input, session=session, cerbos_client=cerbos_client, principal=principal, token=token
+    )
     return await _run_workflow_run(
         workflow_run_id=workflow_run.id,
         session=session,

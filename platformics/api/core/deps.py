@@ -46,8 +46,9 @@ def get_cerbos_client(settings: APISettings = Depends(get_settings)) -> CerbosCl
     return CerbosClient(host=settings.CERBOS_URL)
 
 
-def get_auth_principal(request: Request, settings: APISettings = Depends(get_settings)) -> typing.Optional[Principal]:
+def get_user_token(request: Request) -> typing.Optional[str]:
     auth_header = request.headers.get("authorization")
+    parts = []
     if auth_header:
         parts = auth_header.split()
     if not auth_header or len(parts) != 2:
@@ -55,8 +56,17 @@ def get_auth_principal(request: Request, settings: APISettings = Depends(get_set
     if parts[0].lower() != "bearer":
         return None
 
+    return parts[1]
+
+def get_auth_principal(
+        request: Request,
+        settings: APISettings = Depends(get_settings),
+        user_token: typing.Optional[str] = Depends(get_user_token),
+    ) -> typing.Optional[Principal]:
+    if not user_token:
+        return None
     try:
-        claims = get_token_claims(settings.JWK_PRIVATE_KEY, parts[1])
+        claims = get_token_claims(settings.JWK_PRIVATE_KEY, user_token)
     except:  # noqa
         return None
 
