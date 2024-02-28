@@ -18002,6 +18002,15 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": "null",
+              "name": "primerFileId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
