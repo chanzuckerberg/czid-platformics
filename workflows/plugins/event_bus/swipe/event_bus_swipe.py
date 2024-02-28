@@ -41,7 +41,7 @@ class EventBusSWIPE(EventBus):
                 ReceiptHandle=receipt_handle,
             )
             body = json.loads(message["Body"])
-            content = body["Message"] if body.get("Message") else body
+            content = json.loads(body["Message"]) if body.get("Message") else body
             messages.append(content)
 
         return messages
