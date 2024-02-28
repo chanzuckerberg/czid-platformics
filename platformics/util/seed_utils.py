@@ -112,7 +112,7 @@ class SeedSession:
         if not self.s3_local:
             return f"s3://idseq-workflows/{key}"
         with TempHTTPFile(f"https://idseq-workflows.s3.amazonaws.com/{key}") as f:
-          self.s3_local.upload_file(f.name, LOCAL_BUCKET, key)
+            self.s3_local.upload_file(f.name, LOCAL_BUCKET, key)
         return f"s3://{LOCAL_BUCKET}/{key}"
 
     def remote_path(self, bucket: str, key: str) -> str:

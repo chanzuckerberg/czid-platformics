@@ -2,11 +2,12 @@
 Module to define basic plugin types
 """
 
+import boto3
 import logging
 import os
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
-from typing import Any, Literal
+from typing import Any, Literal, TypedDict
 from urllib.parse import urlparse
 
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -106,6 +107,7 @@ class IOLoader:
 
     def __init__(self, user_token: str) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")
+        self._s3_client = boto3.client("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
         self._user_token = user_token
         self.logger = logging.getLogger("IOLoader")
 
@@ -137,14 +139,24 @@ class InputLoader(IOLoader):
         raise NotImplementedError()
 
 
+class ParsedURI(TypedDict):
+    protocol: FileAccessProtocol
+    namespace: str
+    path: str
+
+
 class OutputLoader(IOLoader):
-    def _parse_uri(self, uri: str) -> dict[str, FileAccessProtocol | str]:
+    def _parse_uri(self, uri: str) -> ParsedURI:
         parsed = urlparse(uri)
         return {
             "protocol": getattr(FileAccessProtocol, parsed.scheme),
             "namespace": parsed.netloc,
             "path": parsed.path.lstrip("/"),
         }
+
+    def _s3_object_data(self, path: str) -> bytes:
+        parsed = self._parse_uri(path)
+        return self._s3_client.get_object(Bucket=parsed["namespace"], Key=parsed["path"])["Body"].read()
 
     @abstractmethod
     async def load(
