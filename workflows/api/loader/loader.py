@@ -79,7 +79,11 @@ class LoaderDriver:
                             select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id)
                         )
                     ).scalar_one_or_none()
-                    if workflow_run:
+                    if workflow_run and workflow_run.status in [
+                        WorkflowRunStatus.CREATED,
+                        WorkflowRunStatus.PENDING,
+                        WorkflowRunStatus.STARTED,
+                    ]:
                         workflow_run.status = WorkflowRunStatus.RUNNING
                         await self.session.commit()
 
@@ -103,7 +107,9 @@ class LoaderDriver:
                             )
                             for entity_input in workflow_run.entity_inputs
                         }
-                        await self.process_workflow_completed(workflow_version, workflow_run, entity_inputs, _event.outputs)
+                        await self.process_workflow_completed(
+                            workflow_version, workflow_run, entity_inputs, _event.outputs
+                        )
                         workflow_run.status = WorkflowRunStatus.SUCCEEDED
                         await self.session.commit()
 
