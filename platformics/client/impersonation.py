@@ -23,5 +23,6 @@ class ImpersonationClient:
             try:
                 return resp.json()["token"]
             except Exception as e:
+                logger.error(f"resp is {resp}")
                 logger.error(f"Unexpected response from identity endpoint: {resp.text}")
                 raise e
