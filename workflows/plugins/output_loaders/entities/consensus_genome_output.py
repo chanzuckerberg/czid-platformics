@@ -1,3 +1,4 @@
+import csv
 import json
 
 from database.models.workflow_run import WorkflowRun
@@ -6,7 +7,7 @@ from manifest.manifest import EntityInput
 from platformics.client.entities_schema import (
     AccessionWhereClause,
     Query,
-    MetricGenomeCreateInput,
+    MetricConsensusGenomeCreateInput,
     Mutation,
     ConsensusGenomeCreateInput,
     FileCreate,
@@ -57,6 +58,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         op = Operation(Mutation)
         consensus_genome = op.create_consensus_genome(
             input=ConsensusGenomeCreateInput(
+                producing_run_id = ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
                 taxon_id=ID(taxon_id),
                 sequencing_read_id=ID(entity_inputs["sequencing_read"].entity_id),
@@ -70,29 +72,36 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         consensus_genome_id = res["createConsensusGenome"]["id"]
         op = Operation(Mutation)
 
+        stats_path = workflow_outputs["compute_stats_out_output_stats"]
+        assert isinstance(stats_path, str), f"Expected string, got {type(stats_path)}"
+        stats = json.loads(self._s3_object_data(stats_path))
+        quast_path = workflow_outputs["quast_out_quast_tsv"]
+        assert isinstance(quast_path, str), f"Expected string, got {type(quast_path)}"
+        quast_data = next(csv.DictReader(self._s3_object_data(quast_path), delimiter="\t"))
 
-        output_stats = self._s3_json(workflow_outputs["compute_stats_out_output_stats"])
-
-        op.create_metric_consensus_genome(
-            input=MetricGenomeCreateInput(
-                consensus_genome_id = consensus_genome_id,
-                reference_genome_length = 1,
-                percent_genome_called = 1,
-                percent_identity = 1.0,
-                gc_percent = 1.0,
-                total_reads = 1,
-                mapped_reads = 1,
-                ref_snps = 1,
-                n_actg = 1,
-                n_missing = 1,
-                n_ambiguous = 1,
-                coverage_depth = 1.0,
-                coverage_breadth = 1.0,
-                coverage_bin_size = output_stats["coverage_bin_size"],
-                coverage_total_length = 1,
-                coverage_viz = output_stats["coverage"],
+        metric_consensus_genome = op.create_metric_consensus_genome(
+            input=MetricConsensusGenomeCreateInput(
+                producing_run_id = ID(workflow_run.id),
+                collection_id = int(workflow_run.collection_id),
+                consensus_genome_id = ID(consensus_genome_id),
+                reference_genome_length = int(quast_data["Reference length"]),
+                percent_genome_called = round((stats["n_actg"] / float(quast_data['Reference length']) * 100), 1),
+                percent_identity = round(((stats['n_actg'] - stats['ref_snps']) / float(stats['n_actg']) * 100), 1),
+                gc_percent = round(float(quast_data["GC (%)"]), 1),
+                total_reads = stats["total_reads"],
+                mapped_reads = stats["mapped_reads"],
+                ref_snps = stats["ref_snps"],
+                n_actg = stats["n_actg"],
+                n_missing = stats["n_missing"],
+                n_ambiguous = stats["n_ambiguous"],
+                coverage_depth = stats["depth_avg"],
+                coverage_breadth = stats["coverage_breadth"],
+                coverage_bin_size = stats["coverage_bin_size"],
+                coverage_total_length = stats["total_length"],
+                coverage_viz = stats["coverage"],
             )
         )
+        metric_consensus_genome.id()
 
         sequence_path = workflow_outputs["sequence"]
         assert isinstance(sequence_path, str)
