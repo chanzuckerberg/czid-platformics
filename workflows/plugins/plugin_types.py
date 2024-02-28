@@ -107,7 +107,7 @@ class IOLoader:
 
     def __init__(self, user_token: str) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")
-        self._s3_client = boto3.client("s3", endpoint_url=os.getenv("BOTO3_ENDPOINT_URL"))
+        self._s3_client = boto3.client("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
         self._user_token = user_token
         self.logger = logging.getLogger("IOLoader")
 
@@ -156,7 +156,7 @@ class OutputLoader(IOLoader):
 
     def _s3_object_data(self, path: str):
         parsed = self._parse_uri(path)
-        return self._s3_client.get_object(Bucket=parsed["namespace"], Key=parsed["path"]).read()
+        return self._s3_client.get_object(Bucket=parsed["namespace"], Key=parsed["path"])["Body"].read()
 
     @abstractmethod
     async def load(

@@ -77,7 +77,12 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         stats = json.loads(self._s3_object_data(stats_path))
         quast_path = workflow_outputs["metrics_quast"]
         assert isinstance(quast_path, str), f"Expected string, got {type(quast_path)}"
-        quast_data = next(csv.DictReader(self._s3_object_data(quast_path), delimiter="\t"))
+        quast_data = {
+            row[0]: row[1] for row in csv.reader(
+                self._s3_object_data(quast_path).decode("utf-8").split("\n"),
+                delimiter="\t",
+            ) if len(row) == 2
+        }
 
         metric_consensus_genome = op.create_metric_consensus_genome(
             input=MetricConsensusGenomeCreateInput(
