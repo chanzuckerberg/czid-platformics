@@ -24,7 +24,7 @@ class EventBusSWIPE(EventBus):
         if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")
 
-    def valid_uuid(self, execution_id) -> bool:
+    def valid_uuid(self, execution_id: str) -> bool:
         try:
             uuid.UUID(execution_id, version=4)
             return True
