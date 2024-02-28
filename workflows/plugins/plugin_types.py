@@ -2,6 +2,7 @@
 Module to define basic plugin types
 """
 
+import boto3
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -106,6 +107,7 @@ class IOLoader:
 
     def __init__(self, user_token: str) -> None:
         self.entities_endpoint = HTTPEndpoint(ENTITY_SERVICE_URL + "/graphql")
+        self._s3_client = boto3.client("s3", endpoint_url=os.getenv("BOTO3_ENDPOINT_URL"))
         self._user_token = user_token
         self.logger = logging.getLogger("IOLoader")
 
