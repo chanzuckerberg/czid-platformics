@@ -28,6 +28,7 @@ class HostOrganismFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
+    rails_host_genome_id = fuzzy.FuzzyInteger(1, 1000)
     name = fuzzy.FuzzyText()
     version = fuzzy.FuzzyText()
     category = fuzzy.FuzzyChoice(["human", "insect", "non_human_animal", "unknown"])

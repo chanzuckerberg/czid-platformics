@@ -449,6 +449,12 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # If this Sample is a copy of what's in the Rails DB, store its ID here
+      rails_host_genome_id:
+        range: integer
+        annotations:
+          mutable: false  # This field can't be modified by an `Update` mutation
+          system_writable_only: True
       # e.g. Human
       name:
         range: string
@@ -682,8 +688,6 @@ classes:
         range: TaxonLevel
         required: true
       tax_parent:
-        range: Taxon
-      tax_subspecies:
         range: Taxon
       tax_species:
         range: Taxon

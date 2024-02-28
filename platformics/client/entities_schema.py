@@ -67,7 +67,7 @@ class HostOrganismCategory(sgqlc.types.Enum):
 
 class HostOrganismCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('category', 'collectionId', 'createdAt', 'id', 'indexes', 'isDeuterostome', 'name', 'ownerUserId', 'producingRunId', 'samples', 'updatedAt', 'version')
+    __choices__ = ('category', 'collectionId', 'createdAt', 'id', 'indexes', 'isDeuterostome', 'name', 'ownerUserId', 'producingRunId', 'railsHostGenomeId', 'samples', 'updatedAt', 'version')
 
 
 ID = sgqlc.types.ID
@@ -127,7 +127,7 @@ String = sgqlc.types.String
 
 class TaxonCountColumns(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('collectionId', 'commonName', 'consensusGenomes', 'createdAt', 'description', 'id', 'isPhage', 'level', 'name', 'ownerUserId', 'producingRunId', 'sequencingReads', 'taxClass', 'taxFamily', 'taxGenus', 'taxKingdom', 'taxOrder', 'taxParent', 'taxPhylum', 'taxSpecies', 'taxSubspecies', 'taxSuperkingdom', 'updatedAt', 'upstreamDatabase', 'upstreamDatabaseIdentifier', 'wikipediaId')
+    __choices__ = ('collectionId', 'commonName', 'consensusGenomes', 'createdAt', 'description', 'id', 'isPhage', 'level', 'name', 'ownerUserId', 'producingRunId', 'sequencingReads', 'taxClass', 'taxFamily', 'taxGenus', 'taxKingdom', 'taxOrder', 'taxParent', 'taxPhylum', 'taxSpecies', 'taxSuperkingdom', 'updatedAt', 'upstreamDatabase', 'upstreamDatabaseIdentifier', 'wikipediaId')
 
 
 class TaxonLevel(sgqlc.types.Enum):
@@ -460,7 +460,8 @@ class HostOrganismCategoryEnumComparators(sgqlc.types.Input):
 
 class HostOrganismCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('name', 'version', 'category', 'is_deuterostome', 'producing_run_id', 'collection_id')
+    __field_names__ = ('rails_host_genome_id', 'name', 'version', 'category', 'is_deuterostome', 'producing_run_id', 'collection_id')
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name='railsHostGenomeId')
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='version')
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name='category')
@@ -471,7 +472,8 @@ class HostOrganismCreateInput(sgqlc.types.Input):
 
 class HostOrganismOrderByClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('name', 'version', 'category', 'is_deuterostome', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('rails_host_genome_id', 'name', 'version', 'category', 'is_deuterostome', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    rails_host_genome_id = sgqlc.types.Field(orderBy, graphql_name='railsHostGenomeId')
     name = sgqlc.types.Field(orderBy, graphql_name='name')
     version = sgqlc.types.Field(orderBy, graphql_name='version')
     category = sgqlc.types.Field(orderBy, graphql_name='category')
@@ -495,7 +497,8 @@ class HostOrganismUpdateInput(sgqlc.types.Input):
 
 class HostOrganismWhereClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('name', 'version', 'category', 'is_deuterostome', 'indexes', 'samples', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('rails_host_genome_id', 'name', 'version', 'category', 'is_deuterostome', 'indexes', 'samples', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    rails_host_genome_id = sgqlc.types.Field('IntComparators', graphql_name='railsHostGenomeId')
     name = sgqlc.types.Field('StrComparators', graphql_name='name')
     version = sgqlc.types.Field('StrComparators', graphql_name='version')
     category = sgqlc.types.Field(HostOrganismCategoryEnumComparators, graphql_name='category')
@@ -945,7 +948,7 @@ class StrComparators(sgqlc.types.Input):
 
 class TaxonCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database_id', 'upstream_database_identifier', 'level', 'tax_parent_id', 'tax_subspecies_id', 'tax_species_id', 'tax_genus_id', 'tax_family_id', 'tax_order_id', 'tax_class_id', 'tax_phylum_id', 'tax_kingdom_id', 'tax_superkingdom_id', 'producing_run_id', 'collection_id')
+    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database_id', 'upstream_database_identifier', 'level', 'tax_parent_id', 'tax_species_id', 'tax_genus_id', 'tax_family_id', 'tax_order_id', 'tax_class_id', 'tax_phylum_id', 'tax_kingdom_id', 'tax_superkingdom_id', 'producing_run_id', 'collection_id')
     wikipedia_id = sgqlc.types.Field(String, graphql_name='wikipediaId')
     description = sgqlc.types.Field(String, graphql_name='description')
     common_name = sgqlc.types.Field(String, graphql_name='commonName')
@@ -955,7 +958,6 @@ class TaxonCreateInput(sgqlc.types.Input):
     upstream_database_identifier = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='upstreamDatabaseIdentifier')
     level = sgqlc.types.Field(sgqlc.types.non_null(TaxonLevel), graphql_name='level')
     tax_parent_id = sgqlc.types.Field(ID, graphql_name='taxParentId')
-    tax_subspecies_id = sgqlc.types.Field(ID, graphql_name='taxSubspeciesId')
     tax_species_id = sgqlc.types.Field(ID, graphql_name='taxSpeciesId')
     tax_genus_id = sgqlc.types.Field(ID, graphql_name='taxGenusId')
     tax_family_id = sgqlc.types.Field(ID, graphql_name='taxFamilyId')
@@ -984,7 +986,7 @@ class TaxonLevelEnumComparators(sgqlc.types.Input):
 
 class TaxonOrderByClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'tax_parent', 'tax_subspecies', 'tax_species', 'tax_genus', 'tax_family', 'tax_order', 'tax_class', 'tax_phylum', 'tax_kingdom', 'tax_superkingdom', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'tax_parent', 'tax_species', 'tax_genus', 'tax_family', 'tax_order', 'tax_class', 'tax_phylum', 'tax_kingdom', 'tax_superkingdom', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     wikipedia_id = sgqlc.types.Field(orderBy, graphql_name='wikipediaId')
     description = sgqlc.types.Field(orderBy, graphql_name='description')
     common_name = sgqlc.types.Field(orderBy, graphql_name='commonName')
@@ -994,7 +996,6 @@ class TaxonOrderByClause(sgqlc.types.Input):
     upstream_database_identifier = sgqlc.types.Field(orderBy, graphql_name='upstreamDatabaseIdentifier')
     level = sgqlc.types.Field(orderBy, graphql_name='level')
     tax_parent = sgqlc.types.Field(orderBy, graphql_name='taxParent')
-    tax_subspecies = sgqlc.types.Field(orderBy, graphql_name='taxSubspecies')
     tax_species = sgqlc.types.Field(orderBy, graphql_name='taxSpecies')
     tax_genus = sgqlc.types.Field(orderBy, graphql_name='taxGenus')
     tax_family = sgqlc.types.Field(orderBy, graphql_name='taxFamily')
@@ -1013,14 +1014,13 @@ class TaxonOrderByClause(sgqlc.types.Input):
 
 class TaxonUpdateInput(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'is_phage', 'level', 'tax_parent_id', 'tax_subspecies_id', 'tax_species_id', 'tax_genus_id', 'tax_family_id', 'tax_order_id', 'tax_class_id', 'tax_phylum_id', 'tax_kingdom_id', 'tax_superkingdom_id')
+    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'is_phage', 'level', 'tax_parent_id', 'tax_species_id', 'tax_genus_id', 'tax_family_id', 'tax_order_id', 'tax_class_id', 'tax_phylum_id', 'tax_kingdom_id', 'tax_superkingdom_id')
     wikipedia_id = sgqlc.types.Field(String, graphql_name='wikipediaId')
     description = sgqlc.types.Field(String, graphql_name='description')
     common_name = sgqlc.types.Field(String, graphql_name='commonName')
     is_phage = sgqlc.types.Field(Boolean, graphql_name='isPhage')
     level = sgqlc.types.Field(TaxonLevel, graphql_name='level')
     tax_parent_id = sgqlc.types.Field(ID, graphql_name='taxParentId')
-    tax_subspecies_id = sgqlc.types.Field(ID, graphql_name='taxSubspeciesId')
     tax_species_id = sgqlc.types.Field(ID, graphql_name='taxSpeciesId')
     tax_genus_id = sgqlc.types.Field(ID, graphql_name='taxGenusId')
     tax_family_id = sgqlc.types.Field(ID, graphql_name='taxFamilyId')
@@ -1433,7 +1433,8 @@ class HostOrganismAggregateFunctions(sgqlc.types.Type):
 
 class HostOrganismGroupByOptions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('name', 'version', 'category', 'is_deuterostome', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('rails_host_genome_id', 'name', 'version', 'category', 'is_deuterostome', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name='railsHostGenomeId')
     name = sgqlc.types.Field(String, graphql_name='name')
     version = sgqlc.types.Field(String, graphql_name='version')
     category = sgqlc.types.Field(HostOrganismCategory, graphql_name='category')
@@ -1448,7 +1449,8 @@ class HostOrganismGroupByOptions(sgqlc.types.Type):
 
 class HostOrganismMinMaxColumns(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('name', 'version', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('rails_host_genome_id', 'name', 'version', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name='railsHostGenomeId')
     name = sgqlc.types.Field(String, graphql_name='name')
     version = sgqlc.types.Field(String, graphql_name='version')
     owner_user_id = sgqlc.types.Field(Int, graphql_name='ownerUserId')
@@ -1459,7 +1461,8 @@ class HostOrganismMinMaxColumns(sgqlc.types.Type):
 
 class HostOrganismNumericalColumns(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('owner_user_id', 'collection_id')
+    __field_names__ = ('rails_host_genome_id', 'owner_user_id', 'collection_id')
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name='railsHostGenomeId')
     owner_user_id = sgqlc.types.Field(Int, graphql_name='ownerUserId')
     collection_id = sgqlc.types.Field(Int, graphql_name='collectionId')
 
@@ -2280,7 +2283,7 @@ class TaxonEdge(sgqlc.types.Type):
 
 class TaxonGroupByOptions(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'tax_parent', 'tax_subspecies', 'tax_species', 'tax_genus', 'tax_family', 'tax_order', 'tax_class', 'tax_phylum', 'tax_kingdom', 'tax_superkingdom', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'tax_parent', 'tax_species', 'tax_genus', 'tax_family', 'tax_order', 'tax_class', 'tax_phylum', 'tax_kingdom', 'tax_superkingdom', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     wikipedia_id = sgqlc.types.Field(String, graphql_name='wikipediaId')
     description = sgqlc.types.Field(String, graphql_name='description')
     common_name = sgqlc.types.Field(String, graphql_name='commonName')
@@ -2290,7 +2293,6 @@ class TaxonGroupByOptions(sgqlc.types.Type):
     upstream_database_identifier = sgqlc.types.Field(String, graphql_name='upstreamDatabaseIdentifier')
     level = sgqlc.types.Field(TaxonLevel, graphql_name='level')
     tax_parent = sgqlc.types.Field('TaxonGroupByOptions', graphql_name='taxParent')
-    tax_subspecies = sgqlc.types.Field('TaxonGroupByOptions', graphql_name='taxSubspecies')
     tax_species = sgqlc.types.Field('TaxonGroupByOptions', graphql_name='taxSpecies')
     tax_genus = sgqlc.types.Field('TaxonGroupByOptions', graphql_name='taxGenus')
     tax_family = sgqlc.types.Field('TaxonGroupByOptions', graphql_name='taxFamily')
@@ -2506,8 +2508,9 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
 
 class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = entities_schema
-    __field_names__ = ('id', 'name', 'version', 'category', 'is_deuterostome', 'indexes', 'indexes_aggregate', 'samples', 'samples_aggregate', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('id', 'rails_host_genome_id', 'name', 'version', 'category', 'is_deuterostome', 'indexes', 'indexes_aggregate', 'samples', 'samples_aggregate', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='id')
+    rails_host_genome_id = sgqlc.types.Field(Int, graphql_name='railsHostGenomeId')
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='name')
     version = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='version')
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name='category')

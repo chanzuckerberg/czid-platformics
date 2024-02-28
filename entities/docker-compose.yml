@@ -14,6 +14,8 @@ services:
       # directory as its storage location instead so it works with our db snapshot
       # workflow.
       - PGDATA=/var/lib/platformics/data
+    ports:
+      - "5433:5432"
   cerbos:
     image: ghcr.io/cerbos/cerbos:0.29.0
     ports:

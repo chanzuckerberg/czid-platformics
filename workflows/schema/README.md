@@ -9,6 +9,7 @@ Entity {
     date updated_at  
 }
 WorkflowRun {
+    integer rails_workflow_run_id  
     date started_at  
     date ended_at  
     string execution_id  

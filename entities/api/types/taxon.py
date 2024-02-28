@@ -221,7 +221,6 @@ class TaxonOrderByClause(TypedDict):
     upstream_database_identifier: Optional[orderBy] | None
     level: Optional[orderBy] | None
     tax_parent: Optional[orderBy] | None
-    tax_subspecies: Optional[orderBy] | None
     tax_species: Optional[orderBy] | None
     tax_genus: Optional[orderBy] | None
     tax_family: Optional[orderBy] | None
@@ -333,7 +332,6 @@ class TaxonCountColumns(enum.Enum):
     upstreamDatabaseIdentifier = "upstream_database_identifier"
     level = "level"
     taxParent = "tax_parent"
-    taxSubspecies = "tax_subspecies"
     taxSpecies = "tax_species"
     taxGenus = "tax_genus"
     taxFamily = "tax_family"
@@ -402,7 +400,6 @@ class TaxonCreateInput:
     upstream_database_identifier: str
     level: TaxonLevel
     tax_parent_id: Optional[strawberry.ID] = None
-    tax_subspecies_id: Optional[strawberry.ID] = None
     tax_species_id: Optional[strawberry.ID] = None
     tax_genus_id: Optional[strawberry.ID] = None
     tax_family_id: Optional[strawberry.ID] = None
@@ -423,7 +420,6 @@ class TaxonUpdateInput:
     is_phage: Optional[bool] = None
     level: Optional[TaxonLevel] = None
     tax_parent_id: Optional[strawberry.ID] = None
-    tax_subspecies_id: Optional[strawberry.ID] = None
     tax_species_id: Optional[strawberry.ID] = None
     tax_genus_id: Optional[strawberry.ID] = None
     tax_family_id: Optional[strawberry.ID] = None
@@ -570,19 +566,6 @@ async def create_taxon(
         )
         if not tax_parent:
             raise PlatformicsException("Unauthorized: tax_parent does not exist")
-    # Check that tax_subspecies relationship is accessible.
-    if validated.tax_subspecies_id:
-        tax_subspecies = await get_db_rows(
-            db.Taxon,
-            session,
-            cerbos_client,
-            principal,
-            {"id": {"_eq": validated.tax_subspecies_id}},
-            [],
-            CerbosAction.VIEW,
-        )
-        if not tax_subspecies:
-            raise PlatformicsException("Unauthorized: tax_subspecies does not exist")
     # Check that tax_species relationship is accessible.
     if validated.tax_species_id:
         tax_species = await get_db_rows(
@@ -696,21 +679,6 @@ async def update_taxon(
             raise PlatformicsException("Unauthorized: tax_parent does not exist")
         params["tax_parent"] = tax_parent[0]
         del params["tax_parent_id"]
-    # Check that tax_subspecies relationship is accessible.
-    if validated.tax_subspecies_id:
-        tax_subspecies = await get_db_rows(
-            db.Taxon,
-            session,
-            cerbos_client,
-            principal,
-            {"id": {"_eq": validated.tax_subspecies_id}},
-            [],
-            CerbosAction.VIEW,
-        )
-        if not tax_subspecies:
-            raise PlatformicsException("Unauthorized: tax_subspecies does not exist")
-        params["tax_subspecies"] = tax_subspecies[0]
-        del params["tax_subspecies_id"]
     # Check that tax_species relationship is accessible.
     if validated.tax_species_id:
         tax_species = await get_db_rows(

@@ -21,6 +21,7 @@ These are only used in aggregate queries.
 
 @strawberry.type
 class WorkflowRunGroupByOptions:
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
