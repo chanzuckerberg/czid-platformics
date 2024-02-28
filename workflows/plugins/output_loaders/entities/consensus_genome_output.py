@@ -24,15 +24,6 @@ SARS_COV_2_ACCESSION_ID = "MN908947.3"
 
 
 class ConsensusGenomeOutputLoader(OutputLoader):
-    def _s3_json(self, path: str):
-        parsed = self._parse_uri(path)
-        return json.loads(
-            self._s3_client.get_object(
-                Bucket=parsed["namespace"],
-                Key=parsed["path"],
-            ).read()
-        )
-
     async def load(
         self,
         workflow_run: WorkflowRun,

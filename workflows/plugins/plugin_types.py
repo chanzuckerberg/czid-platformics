@@ -154,7 +154,7 @@ class OutputLoader(IOLoader):
             "path": parsed.path.lstrip("/"),
         }
 
-    def _s3_object_data(self, path: str):
+    def _s3_object_data(self, path: str) -> bytes:
         parsed = self._parse_uri(path)
         return self._s3_client.get_object(Bucket=parsed["namespace"], Key=parsed["path"])["Body"].read()
 
