@@ -1090,7 +1090,7 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
     coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
     coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
     coverage_viz = sgqlc.types.Field(
-        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))),
+        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Float)))),
         graphql_name="coverageViz",
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
@@ -2466,7 +2466,7 @@ class MetricConsensusGenomeGroupByOptions(sgqlc.types.Type):
     coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
     coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
     coverage_viz = sgqlc.types.Field(
-        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))),
+        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Float)))),
         graphql_name="coverageViz",
     )
     id = sgqlc.types.Field(UUID, graphql_name="id")
@@ -4543,7 +4543,7 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     coverage_bin_size = sgqlc.types.Field(Float, graphql_name="coverageBinSize")
     coverage_total_length = sgqlc.types.Field(Int, graphql_name="coverageTotalLength")
     coverage_viz = sgqlc.types.Field(
-        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Int)))),
+        sgqlc.types.list_of(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null(Float)))),
         graphql_name="coverageViz",
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")

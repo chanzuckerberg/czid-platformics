@@ -1142,7 +1142,7 @@ type MetricConsensusGenome implements EntityInterface & Node {
   coverageBreadth: Float
   coverageBinSize: Float
   coverageTotalLength: Int
-  coverageViz: [[Int!]!]
+  coverageViz: [[Float!]!]
   producingRunId: ID
   ownerUserId: Int!
   collectionId: Int!
@@ -1206,7 +1206,7 @@ input MetricConsensusGenomeCreateInput {
   coverageBreadth: Float = null
   coverageBinSize: Float = null
   coverageTotalLength: Int = null
-  coverageViz: [[Int!]!] = null
+  coverageViz: [[Float!]!] = null
   producingRunId: ID = null
   collectionId: Int!
 }
@@ -1227,7 +1227,7 @@ type MetricConsensusGenomeGroupByOptions {
   coverageBreadth: Float
   coverageBinSize: Float
   coverageTotalLength: Int
-  coverageViz: [[Int!]!]
+  coverageViz: [[Float!]!]
   id: UUID
   producingRunId: UUID
   ownerUserId: Int

@@ -188,7 +188,7 @@ class MetricConsensusGenome(EntityInterface):
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[List[List[int]]] = None
+    coverage_viz: Optional[List[List[float]]] = None
     id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
@@ -351,7 +351,7 @@ class MetricConsensusGenomeCreateInput:
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[List[List[int]]] = None
+    coverage_viz: Optional[List[List[float]]] = None
     producing_run_id: Optional[strawberry.ID] = None
     collection_id: int
 

@@ -77,6 +77,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             if len(row) == 2
         }
 
+        print("AAAAAAAAAAAAAAAAAAA", stats["coverage"])
         metric_consensus_genome = op.create_metric_consensus_genome(
             input=MetricConsensusGenomeCreateInput(
                 producing_run_id=ID(workflow_run.id),
@@ -96,7 +97,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
                 coverage_breadth=stats["coverage_breadth"],
                 coverage_bin_size=stats["coverage_bin_size"],
                 coverage_total_length=stats["total_length"],
-                coverage_viz=stats["coverage"],
+                coverage_viz=[[1, 1]],
             )
         )
         metric_consensus_genome.id()
