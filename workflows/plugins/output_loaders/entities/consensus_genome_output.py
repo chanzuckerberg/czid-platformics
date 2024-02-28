@@ -58,7 +58,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         op = Operation(Mutation)
         consensus_genome = op.create_consensus_genome(
             input=ConsensusGenomeCreateInput(
-                producing_run_id = ID(workflow_run.id),
+                producing_run_id=ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
                 taxon_id=ID(taxon_id),
                 sequencing_read_id=ID(entity_inputs["sequencing_read"].entity_id),
@@ -78,32 +78,34 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         quast_path = workflow_outputs["metrics_quast"]
         assert isinstance(quast_path, str), f"Expected string, got {type(quast_path)}"
         quast_data = {
-            row[0]: row[1] for row in csv.reader(
+            row[0]: row[1]
+            for row in csv.reader(
                 self._s3_object_data(quast_path).decode("utf-8").split("\n"),
                 delimiter="\t",
-            ) if len(row) == 2
+            )
+            if len(row) == 2
         }
 
         metric_consensus_genome = op.create_metric_consensus_genome(
             input=MetricConsensusGenomeCreateInput(
-                producing_run_id = ID(workflow_run.id),
-                collection_id = int(workflow_run.collection_id),
-                consensus_genome_id = ID(consensus_genome_id),
-                reference_genome_length = int(quast_data["Reference length"]),
-                percent_genome_called = round((stats["n_actg"] / float(quast_data['Reference length']) * 100), 1),
-                percent_identity = round(((stats['n_actg'] - stats['ref_snps']) / float(stats['n_actg']) * 100), 1),
-                gc_percent = round(float(quast_data["GC (%)"]), 1),
-                total_reads = stats["total_reads"],
-                mapped_reads = stats["mapped_reads"],
-                ref_snps = stats["ref_snps"],
-                n_actg = stats["n_actg"],
-                n_missing = stats["n_missing"],
-                n_ambiguous = stats["n_ambiguous"],
-                coverage_depth = stats["depth_avg"],
-                coverage_breadth = stats["coverage_breadth"],
-                coverage_bin_size = stats["coverage_bin_size"],
-                coverage_total_length = stats["total_length"],
-                coverage_viz = stats["coverage"],
+                producing_run_id=ID(workflow_run.id),
+                collection_id=int(workflow_run.collection_id),
+                consensus_genome_id=ID(consensus_genome_id),
+                reference_genome_length=int(quast_data["Reference length"]),
+                percent_genome_called=round((stats["n_actg"] / float(quast_data["Reference length"]) * 100), 1),
+                percent_identity=round(((stats["n_actg"] - stats["ref_snps"]) / float(stats["n_actg"]) * 100), 1),
+                gc_percent=round(float(quast_data["GC (%)"]), 1),
+                total_reads=stats["total_reads"],
+                mapped_reads=stats["mapped_reads"],
+                ref_snps=stats["ref_snps"],
+                n_actg=stats["n_actg"],
+                n_missing=stats["n_missing"],
+                n_ambiguous=stats["n_ambiguous"],
+                coverage_depth=stats["depth_avg"],
+                coverage_breadth=stats["coverage_breadth"],
+                coverage_bin_size=stats["coverage_bin_size"],
+                coverage_total_length=stats["total_length"],
+                coverage_viz=stats["coverage"],
             )
         )
         metric_consensus_genome.id()
