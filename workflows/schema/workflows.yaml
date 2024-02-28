@@ -96,6 +96,12 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # If this workflow_run is a copy of what's in the Rails DB, store its ID here
+      rails_workflow_run_id:
+        range: integer
+        annotations:
+          mutable: false  # This field can't be modified by an `Update` mutation
+          system_writable_only: True
       started_at:
         range: date
         readonly: true
