@@ -60,7 +60,7 @@ module "stack" {
       init_containers = {
         private-key = {
           cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
-          image = "{workflows}"
+          image = "{workflows-worker}"
           tag   = "${var.image_tag}"
         }
       }
