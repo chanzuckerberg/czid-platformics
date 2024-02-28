@@ -16,7 +16,7 @@ class ImpersonationClient:
     def get_token(self)->str:
         settings = Settings.model_validate({})
         private_key = settings.JWK_PRIVATE_KEY
-        if self.time_created is None or (time.time() - self.time_created) > 3600:
+        if self.time_created is None or ((time.time() - self.time_created) > (3600-10)):
             self.time_created = time.time()
             self._token = create_token(private_key, None, None, 3600, "workflows")
             return self._token
