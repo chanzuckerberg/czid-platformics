@@ -28,6 +28,7 @@ class EventBusSWIPE(EventBus):
         resp = self.sqs.receive_message(
             QueueUrl=url,
             MaxNumberOfMessages=5,
+            WaitTimeSeconds=5,
         )
         # If no messages, just return
         if not resp.get("Messages", None):
@@ -40,7 +41,9 @@ class EventBusSWIPE(EventBus):
                 QueueUrl=url,
                 ReceiptHandle=receipt_handle,
             )
-            messages.append(json.loads(message["Body"]))
+            body = json.loads(message["Body"])
+            content = json.loads(body["Message"]) if body.get("Message") else body
+            messages.append(content)
 
         return messages
 
@@ -68,12 +71,14 @@ class EventBusSWIPE(EventBus):
         workflow_statuses: list[WorkflowStatusMessage] = []
 
         for message in messages:
-            if message["source"] == "aws.states":
+            if message.get("source") == "aws.states":
                 status = self.create_workflow_status(message["detail"]["status"])
                 if status == "WORKFLOW_SUCCESS":
+                    print("messsage detail", message["detail"]["output"])
                     workflow_statuses.append(
                         WorkflowSucceededMessage(
                             runner_id=message["detail"]["executionArn"],
+                            outputs=json.loads(message["detail"]["output"])["Result"],
                         )
                     )
                 if status == "WORKFLOW_FAILURE":
@@ -88,8 +93,11 @@ class EventBusSWIPE(EventBus):
                             runner_id=message["detail"]["executionArn"],
                         )
                     )
-            elif message["source"] == "aws.batch":
+            elif message.get("source") == "aws.batch":
                 # TODO: return step status messages
                 pass
+
+            elif message.get("source") is None:
+                print("message missing source", message)
 
         return workflow_statuses
