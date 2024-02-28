@@ -634,6 +634,7 @@ type HostOrganism implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
+  railsHostGenomeId: Int
   name: String!
   version: String!
   category: HostOrganismCategory!
@@ -714,6 +715,7 @@ input HostOrganismCategoryEnumComparators {
 }
 
 enum HostOrganismCountColumns {
+  railsHostGenomeId
   name
   version
   category
@@ -729,6 +731,7 @@ enum HostOrganismCountColumns {
 }
 
 input HostOrganismCreateInput {
+  railsHostGenomeId: Int = null
   name: String!
   version: String!
   category: HostOrganismCategory!
@@ -738,6 +741,7 @@ input HostOrganismCreateInput {
 }
 
 type HostOrganismGroupByOptions {
+  railsHostGenomeId: Int
   name: String
   version: String
   category: HostOrganismCategory
@@ -751,6 +755,7 @@ type HostOrganismGroupByOptions {
 }
 
 type HostOrganismMinMaxColumns {
+  railsHostGenomeId: Int
   name: String
   version: String
   ownerUserId: Int
@@ -760,11 +765,13 @@ type HostOrganismMinMaxColumns {
 }
 
 type HostOrganismNumericalColumns {
+  railsHostGenomeId: Int
   ownerUserId: Int
   collectionId: Int
 }
 
 input HostOrganismOrderByClause {
+  railsHostGenomeId: orderBy
   name: orderBy
   version: orderBy
   category: orderBy
@@ -785,6 +792,7 @@ input HostOrganismUpdateInput {
 }
 
 input HostOrganismWhereClause {
+  railsHostGenomeId: IntComparators
   name: StrComparators
   version: StrComparators
   category: HostOrganismCategoryEnumComparators
@@ -2052,7 +2060,6 @@ enum TaxonCountColumns {
   upstreamDatabaseIdentifier
   level
   taxParent
-  taxSubspecies
   taxSpecies
   taxGenus
   taxFamily
@@ -2081,7 +2088,6 @@ input TaxonCreateInput {
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
   taxParentId: ID = null
-  taxSubspeciesId: ID = null
   taxSpeciesId: ID = null
   taxGenusId: ID = null
   taxFamilyId: ID = null
@@ -2113,7 +2119,6 @@ type TaxonGroupByOptions {
   upstreamDatabaseIdentifier: String
   level: TaxonLevel
   taxParent: TaxonGroupByOptions
-  taxSubspecies: TaxonGroupByOptions
   taxSpecies: TaxonGroupByOptions
   taxGenus: TaxonGroupByOptions
   taxFamily: TaxonGroupByOptions
@@ -2181,7 +2186,6 @@ input TaxonOrderByClause {
   upstreamDatabaseIdentifier: orderBy
   level: orderBy
   taxParent: orderBy
-  taxSubspecies: orderBy
   taxSpecies: orderBy
   taxGenus: orderBy
   taxFamily: orderBy
@@ -2205,7 +2209,6 @@ input TaxonUpdateInput {
   isPhage: Boolean = null
   level: TaxonLevel = null
   taxParentId: ID = null
-  taxSubspeciesId: ID = null
   taxSpeciesId: ID = null
   taxGenusId: ID = null
   taxFamilyId: ID = null

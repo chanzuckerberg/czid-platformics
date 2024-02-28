@@ -29,6 +29,7 @@ class WorkflowRunFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
+    rails_workflow_run_id = fuzzy.FuzzyInteger(1, 1000)
     started_at = factory.Faker("date")
     ended_at = factory.Faker("date")
     execution_id = fuzzy.FuzzyText()

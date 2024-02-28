@@ -246,6 +246,7 @@ type WorkflowRun implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -319,6 +320,7 @@ type WorkflowRunConnection {
 }
 
 enum WorkflowRunCountColumns {
+  railsWorkflowRunId
   startedAt
   endedAt
   executionId
@@ -468,6 +470,7 @@ input WorkflowRunEntityInputWhereClauseMutations {
 }
 
 type WorkflowRunGroupByOptions {
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -485,6 +488,7 @@ type WorkflowRunGroupByOptions {
 }
 
 type WorkflowRunMinMaxColumns {
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -498,11 +502,13 @@ type WorkflowRunMinMaxColumns {
 }
 
 type WorkflowRunNumericalColumns {
+  railsWorkflowRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
 
 input WorkflowRunOrderByClause {
+  railsWorkflowRunId: orderBy
   startedAt: orderBy
   endedAt: orderBy
   executionId: orderBy
@@ -696,6 +702,7 @@ input WorkflowRunUpdateInput {
 }
 
 input WorkflowRunWhereClause {
+  railsWorkflowRunId: IntComparators
   startedAt: DatetimeComparators
   endedAt: DatetimeComparators
   executionId: StrComparators

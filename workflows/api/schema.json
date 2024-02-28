@@ -622,6 +622,15 @@
             },
             {
               "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "startedAt",
               "type": {
                 "kind": "SCALAR",
@@ -1037,6 +1046,15 @@
           "interfaces": null,
           "kind": "SCALAR",
           "name": "ID",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Int",
           "possibleTypes": null
         },
         {
@@ -2007,15 +2025,6 @@
         {
           "enumValues": null,
           "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Int",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
           "inputFields": [
             {
               "defaultValue": null,
@@ -2429,6 +2438,15 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
             {
               "defaultValue": null,
               "name": "startedAt",
@@ -3744,6 +3762,15 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "startedAt",
               "type": {
                 "kind": "ENUM",
@@ -4007,6 +4034,15 @@
           "fields": [
             {
               "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -4033,6 +4069,15 @@
         {
           "enumValues": null,
           "fields": [
+            {
+              "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
             {
               "args": [],
               "name": "startedAt",
@@ -4133,6 +4178,15 @@
         {
           "enumValues": null,
           "fields": [
+            {
+              "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
             {
               "args": [],
               "name": "startedAt",
@@ -4268,6 +4322,9 @@
         },
         {
           "enumValues": [
+            {
+              "name": "railsWorkflowRunId"
+            },
             {
               "name": "startedAt"
             },

@@ -19,6 +19,7 @@ from typing_extensions import Annotated
 class HostOrganismCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
+    rails_host_genome_id: Annotated[int | None, Field()]
     name: Annotated[
         str,
         StringConstraints(

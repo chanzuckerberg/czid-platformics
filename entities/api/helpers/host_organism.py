@@ -20,6 +20,7 @@ These are only used in aggregate queries.
 
 @strawberry.type
 class HostOrganismGroupByOptions:
+    rails_host_genome_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
     category: Optional[HostOrganismCategory] = None
