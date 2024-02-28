@@ -49,4 +49,6 @@ class MetricConsensusGenomeFactory(CommonFactory):
     coverage_breadth = fuzzy.FuzzyFloat(1, 100)
     coverage_bin_size = fuzzy.FuzzyFloat(1, 100)
     coverage_total_length = fuzzy.FuzzyInteger(1, 1000)
-    coverage_viz = factory.LazyAttribute(lambda o: [[random.randint(0, 10) for _ in range(5)]] * random.randint(2, 5))
+    coverage_viz = factory.LazyAttribute(
+        lambda o: [[fuzzy.FuzzyFloat(1, 100) for _ in range(5)]] * random.randint(2, 5)
+    )
