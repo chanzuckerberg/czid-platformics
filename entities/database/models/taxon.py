@@ -58,16 +58,6 @@ class Taxon(Entity):
         "Taxon",
         foreign_keys=tax_parent_id,
     )
-    tax_subspecies_id: Mapped[uuid.UUID] = mapped_column(
-        UUID,
-        ForeignKey("taxon.entity_id"),
-        nullable=True,
-        index=True,
-    )
-    tax_subspecies: Mapped["Taxon"] = relationship(
-        "Taxon",
-        foreign_keys=tax_subspecies_id,
-    )
     tax_species_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("taxon.entity_id"),

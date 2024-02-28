@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -18,7 +19,6 @@ Define groupby options for Taxon type.
 These are only used in aggregate queries.
 """
 
-
 @strawberry.type
 class TaxonGroupByOptions:
     wikipedia_id: Optional[str] = None
@@ -30,7 +30,6 @@ class TaxonGroupByOptions:
     upstream_database_identifier: Optional[str] = None
     level: Optional[TaxonLevel] = None
     tax_parent: Optional["TaxonGroupByOptions"] = None
-    tax_subspecies: Optional["TaxonGroupByOptions"] = None
     tax_species: Optional["TaxonGroupByOptions"] = None
     tax_genus: Optional["TaxonGroupByOptions"] = None
     tax_family: Optional["TaxonGroupByOptions"] = None
