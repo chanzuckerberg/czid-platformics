@@ -28,6 +28,7 @@ class EventBusSWIPE(EventBus):
         resp = self.sqs.receive_message(
             QueueUrl=url,
             MaxNumberOfMessages=5,
+            WaitTimeSeconds=5,
         )
         # If no messages, just return
         if not resp.get("Messages", None):
@@ -76,6 +77,7 @@ class EventBusSWIPE(EventBus):
                     workflow_statuses.append(
                         WorkflowSucceededMessage(
                             runner_id=message["detail"]["executionArn"],
+                            outputs=json.loads(message["detail"]["outputs"]),
                         )
                     )
                 if status == "WORKFLOW_FAILURE":
