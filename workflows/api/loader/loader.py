@@ -78,9 +78,14 @@ class LoaderDriver:
                         await self.session.execute(
                             select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id)
                         )
-                    ).scalar_one()
-                    workflow_run.status = WorkflowRunStatus.RUNNING
-                    await self.session.commit()
+                    ).scalar_one_or_none()
+                    if workflow_run and workflow_run.status in [
+                        WorkflowRunStatus.CREATED,
+                        WorkflowRunStatus.PENDING,
+                        WorkflowRunStatus.STARTED,
+                    ]:
+                        workflow_run.status = WorkflowRunStatus.RUNNING
+                        await self.session.commit()
 
                 if isinstance(event, WorkflowSucceededMessage):
                     _event: WorkflowSucceededMessage = event
@@ -92,26 +97,29 @@ class LoaderDriver:
                         )
                         .where(WorkflowRun.execution_id == _event.runner_id)
                     )
-                    workflow_run = result.scalar_one()
+                    workflow_run = result.scalar_one_or_none()
+                    if workflow_run:
+                        workflow_version = workflow_run.workflow_version
 
-                    workflow_version = workflow_run.workflow_version
-
-                    entity_inputs = {
-                        entity_input.field_name: EntityInput(
-                            entity_type=entity_input.type, entity_id=str(entity_input.input_entity_id)
+                        entity_inputs = {
+                            entity_input.field_name: EntityInput(
+                                entity_type=entity_input.type, entity_id=str(entity_input.input_entity_id)
+                            )
+                            for entity_input in workflow_run.entity_inputs
+                        }
+                        await self.process_workflow_completed(
+                            workflow_version, workflow_run, entity_inputs, _event.outputs
                         )
-                        for entity_input in workflow_run.entity_inputs
-                    }
-                    await self.process_workflow_completed(workflow_version, workflow_run, entity_inputs, _event.outputs)
-                    workflow_run.status = WorkflowRunStatus.SUCCEEDED
-                    await self.session.commit()
+                        workflow_run.status = WorkflowRunStatus.SUCCEEDED
+                        await self.session.commit()
 
                 if isinstance(event, WorkflowFailedMessage):
                     workflow_run = (
                         await self.session.execute(
                             select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id)
                         )
-                    ).scalar_one()
-                    workflow_run.status = WorkflowRunStatus.FAILED
-                    await self.session.commit()
+                    ).scalar_one_or_none()
+                    if workflow_run:
+                        workflow_run.status = WorkflowRunStatus.FAILED
+                        await self.session.commit()
             await asyncio.sleep(1)
