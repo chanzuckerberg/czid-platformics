@@ -72,10 +72,10 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         consensus_genome_id = res["createConsensusGenome"]["id"]
         op = Operation(Mutation)
 
-        stats_path = workflow_outputs["compute_stats_out_output_stats"]
+        stats_path = workflow_outputs["metrics_stats"]
         assert isinstance(stats_path, str), f"Expected string, got {type(stats_path)}"
         stats = json.loads(self._s3_object_data(stats_path))
-        quast_path = workflow_outputs["quast_out_quast_tsv"]
+        quast_path = workflow_outputs["metrics_quast"]
         assert isinstance(quast_path, str), f"Expected string, got {type(quast_path)}"
         quast_data = next(csv.DictReader(self._s3_object_data(quast_path), delimiter="\t"))
 
