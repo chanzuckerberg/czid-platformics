@@ -6551,6 +6551,15 @@
             },
             {
               "defaultValue": null,
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "entityInputs",
               "type": {
                 "kind": "LIST",

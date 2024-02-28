@@ -105,6 +105,7 @@ class EntityInputType:
 class RunWorkflowVersionInput:
     collection_id: int
     workflow_version_id: strawberry.ID
+    rails_workflow_run_id: typing.Optional[int]
     entity_inputs: typing.Optional[list[EntityInputType]]
     raw_input_json: typing.Optional[str]
 

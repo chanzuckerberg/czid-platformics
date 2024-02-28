@@ -104,6 +104,7 @@ type Query {
 input RunWorkflowVersionInput {
   collectionId: Int!
   workflowVersionId: ID!
+  railsWorkflowRunId: Int
   entityInputs: [EntityInputType!]
   rawInputJson: String
 }

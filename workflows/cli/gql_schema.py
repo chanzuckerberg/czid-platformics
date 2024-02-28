@@ -185,9 +185,16 @@ class IntComparators(sgqlc.types.Input):
 
 class RunWorkflowVersionInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "workflow_version_id", "entity_inputs", "raw_input_json")
+    __field_names__ = (
+        "collection_id",
+        "workflow_version_id",
+        "rails_workflow_run_id",
+        "entity_inputs",
+        "raw_input_json",
+    )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     workflow_version_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="workflowVersionId")
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     entity_inputs = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(EntityInputType)), graphql_name="entityInputs"
     )
