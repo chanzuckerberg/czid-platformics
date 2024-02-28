@@ -74,10 +74,11 @@ class EventBusSWIPE(EventBus):
             if message.get("source") == "aws.states":
                 status = self.create_workflow_status(message["detail"]["status"])
                 if status == "WORKFLOW_SUCCESS":
+                    print("messsage detail", message["detail"])
                     workflow_statuses.append(
                         WorkflowSucceededMessage(
                             runner_id=message["detail"]["executionArn"],
-                            outputs=json.loads(message["detail"]["outputs"]),
+                            outputs=json.loads(message["detail"]["output"]),
                         )
                     )
                 if status == "WORKFLOW_FAILURE":
