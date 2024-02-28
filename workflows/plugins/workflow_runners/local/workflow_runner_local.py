@@ -3,14 +3,12 @@ Plugin that runs a workflow locally using miniwdl
 """
 
 import asyncio
-from asyncio.streams import StreamReader
 import json
 import os
-import sys
 import tempfile
 import re
 from os.path import basename
-from typing import Callable, List
+from typing import List
 from urllib.parse import urlparse
 from uuid import uuid4
 from pathlib import Path
@@ -20,7 +18,6 @@ import boto3
 from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import (
     EventBus,
-    WorkflowFailedMessage,
     WorkflowRunner,
     WorkflowStartedMessage,
     WorkflowSucceededMessage,
@@ -89,6 +86,7 @@ allow_networks = ["czidnet"]"""
         await asyncio.sleep(1)
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
         with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
+            tmpdir = "/tmp/wdl"
             # download workflow path from s3
             s3 = boto3.client("s3", endpoint_url=self.s3_endpoint_url)
 
@@ -113,46 +111,73 @@ allow_networks = ["czidnet"]"""
             cmd += [os.path.abspath(local_workflow_path)]
             cmd += [f"{k}={v}" for k, v in inputs.items()]
 
-            process = await asyncio.create_subprocess_exec(
-                *cmd,
-                cwd=tmpdir,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
+            # process = await asyncio.create_subprocess_exec(
+            #     *cmd,
+            #     cwd=tmpdir,
+            #     stdout=asyncio.subprocess.PIPE,
+            #     stderr=asyncio.subprocess.PIPE,
+            # )
 
-            # Read from stderr and stdout concurrently
-            async def read_stream(stream: StreamReader | None, handler: Callable[[str], None]) -> None:
-                while stream:
-                    line = await stream.readline()
-                    if line:
-                        handler(line.decode())
-                    else:
-                        break
+            # # Read from stderr and stdout concurrently
+            # async def read_stream(stream: StreamReader | None, handler: Callable[[str], None]) -> None:
+            #     while stream:
+            #         line = await stream.readline()
+            #         if line:
+            #             handler(line.decode())
+            #         else:
+            #             break
 
-            def stderr_handler(line: str) -> None:
-                self._detect_task_output(line)
-                print(line, file=sys.stderr)
+            # def stderr_handler(line: str) -> None:
+            #     self._detect_task_output(line)
+            #     print(line, file=sys.stderr)
 
-            stdout = ""
+            # stdout = ""
 
-            def stdout_handler(line: str) -> None:
-                nonlocal stdout
-                stdout += line
+            # def stdout_handler(line: str) -> None:
+            #     nonlocal stdout
+            #     stdout += line
 
-            # Concurrently read stderr and stdout
-            await asyncio.gather(
-                read_stream(process.stderr, stderr_handler),
-                read_stream(process.stdout, stdout_handler),
-            )
+            # # Concurrently read stderr and stdout
+            # await asyncio.gather(
+            #     read_stream(process.stderr, stderr_handler),
+            #     read_stream(process.stdout, stdout_handler),
+            # )
 
-            # Wait for the subprocess to finish
-            await process.wait()
+            # # Wait for the subprocess to finish
+            # await process.wait()
 
-            if process.returncode != 0:
-                await event_bus.send(WorkflowFailedMessage(runner_id=runner_id))
-                return
-            assert process.stdout
-            outputs = json.loads(stdout)["outputs"]
+            # if process.returncode != 0:
+            #     await event_bus.send(WorkflowFailedMessage(runner_id=runner_id))
+            #     return
+            # assert process.stdout
+            # outputs = json.loads(stdout)["outputs"]
+            outputs = {
+                "consensus_genome.align_reads_out_alignments": "/tmp/wdl/20240228_013901_consensus_genome/out/align_reads_out_alignments/aligned_reads.bam",
+                "consensus_genome.call_variants_out_variants_ch": "/tmp/wdl/20240228_013901_consensus_genome/out/call_variants_out_variants_ch/variants.vcf.gz",
+                "consensus_genome.compute_stats_out_depths_fig": "/tmp/wdl/20240228_013901_consensus_genome/out/compute_stats_out_depths_fig/depths.png",
+                "consensus_genome.compute_stats_out_output_stats": "/tmp/wdl/20240228_013901_consensus_genome/out/compute_stats_out_output_stats/stats.json",
+                "consensus_genome.compute_stats_out_sam_depths": "/tmp/wdl/20240228_013901_consensus_genome/out/compute_stats_out_sam_depths/samtools_depth.txt",
+                "consensus_genome.filter_reads_out_filtered_fastqs": [
+                    "/tmp/wdl/20240228_013901_consensus_genome/out/filter_reads_out_filtered_fastqs/0/filtered_1.fq.gz",
+                    "/tmp/wdl/20240228_013901_consensus_genome/out/filter_reads_out_filtered_fastqs/1/filtered_2.fq.gz",
+                ],
+                "consensus_genome.make_consensus_out_consensus_fa": "/tmp/wdl/20240228_013901_consensus_genome/out/make_consensus_out_consensus_fa/consensus.fa",
+                "consensus_genome.quantify_erccs_out_ercc_out": "/tmp/wdl/20240228_013901_consensus_genome/out/quantify_erccs_out_ercc_out/ercc_stats.txt",
+                "consensus_genome.quast_out_quast_tsv": "/tmp/wdl/20240228_013901_consensus_genome/out/quast_out_quast_tsv/report.tsv",
+                "consensus_genome.quast_out_quast_txt": "/tmp/wdl/20240228_013901_consensus_genome/out/quast_out_quast_txt/report.txt",
+                "consensus_genome.realign_consensus_fa": "/tmp/wdl/20240228_013901_consensus_genome/out/realign_consensus_fa/sample_sars-cov-2_paired.muscle.out.fasta",
+                "consensus_genome.remove_host_out_host_removed_fastqs": [
+                    "/tmp/wdl/20240228_013901_consensus_genome/out/remove_host_out_host_removed_fastqs/0/no_host_1.fq.gz",
+                    "/tmp/wdl/20240228_013901_consensus_genome/out/remove_host_out_host_removed_fastqs/1/no_host_2.fq.gz",
+                ],
+                "consensus_genome.trim_primers_out_trimmed_bam_bai": "/tmp/wdl/20240228_013901_consensus_genome/out/trim_primers_out_trimmed_bam_bai/primertrimmed.bam.bai",
+                "consensus_genome.trim_primers_out_trimmed_bam_ch": "/tmp/wdl/20240228_013901_consensus_genome/out/trim_primers_out_trimmed_bam_ch/primertrimmed.bam",
+                "consensus_genome.trim_reads_out_trimmed_fastqs": [
+                    "/tmp/wdl/20240228_013901_consensus_genome/out/trim_reads_out_trimmed_fastqs/0/trim_reads_val_1.fq.gz",
+                    "/tmp/wdl/20240228_013901_consensus_genome/out/trim_reads_out_trimmed_fastqs/1/trim_reads_val_2.fq.gz",
+                ],
+                "consensus_genome.zip_outputs_out_output_zip": "/tmp/wdl/20240228_013901_consensus_genome/out/zip_outputs_out_output_zip/outputs.zip",
+            }
 
             def upload(e: dict | list | str) -> dict | list | str:
                 if isinstance(e, dict):
