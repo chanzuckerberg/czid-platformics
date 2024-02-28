@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -18,9 +19,9 @@ Define groupby options for WorkflowRun type.
 These are only used in aggregate queries.
 """
 
-
 @strawberry.type
 class WorkflowRunGroupByOptions:
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None

@@ -20,6 +20,7 @@ from typing_extensions import Annotated
 class WorkflowRunCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
+    rails_workflow_run_id: Annotated[int | None, Field()]
     ended_at: Annotated[datetime.datetime | None, Field()]
     execution_id: Annotated[
         str | None,
