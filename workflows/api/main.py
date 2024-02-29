@@ -194,9 +194,11 @@ async def _run_workflow_run(
 
     workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
-    workflow_entity_inputs = (await session.execute(
-        select(db.WorkflowRunEntityInput).where(db.WorkflowRunEntityInput.workflow_run_id == workflow_run.id)
-    )).scalars()
+    workflow_entity_inputs = (
+        await session.execute(
+            select(db.WorkflowRunEntityInput).where(db.WorkflowRunEntityInput.workflow_run_id == workflow_run.id)
+        )
+    ).scalars()
     entity_inputs = {
         e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))
         for e in workflow_entity_inputs
