@@ -2046,7 +2046,6 @@ class File(sgqlc.types.Type):
         "file_format",
         "compression_type",
         "size",
-        "upload_client",
         "upload_error",
         "created_at",
         "updated_at",
@@ -2068,7 +2067,6 @@ class File(sgqlc.types.Type):
     file_format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fileFormat")
     compression_type = sgqlc.types.Field(Int, graphql_name="compressionType")
     size = sgqlc.types.Field(Int, graphql_name="size")
-    upload_client = sgqlc.types.Field(String, graphql_name="uploadClient")
     upload_error = sgqlc.types.Field(String, graphql_name="uploadError")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")

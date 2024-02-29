@@ -1376,15 +1376,6 @@
             },
             {
               "args": [],
-              "name": "uploadClient",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "uploadError",
               "type": {
                 "kind": "SCALAR",

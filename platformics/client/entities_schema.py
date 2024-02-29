@@ -1336,7 +1336,7 @@ class Entity(sgqlc.types.Type):
 
 class File(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('id', 'entity_id', 'entity_field_name', 'entity', 'status', 'protocol', 'namespace', 'path', 'file_format', 'compression_type', 'size', 'upload_client', 'upload_error', 'created_at', 'updated_at', 'download_link', 'contents')
+    __field_names__ = ('id', 'entity_id', 'entity_field_name', 'entity', 'status', 'protocol', 'namespace', 'path', 'file_format', 'compression_type', 'size', 'upload_error', 'created_at', 'updated_at', 'download_link', 'contents')
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='id')
     entity_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='entityId')
     entity_field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='entityFieldName')
@@ -1351,7 +1351,6 @@ class File(sgqlc.types.Type):
     file_format = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='fileFormat')
     compression_type = sgqlc.types.Field(Int, graphql_name='compressionType')
     size = sgqlc.types.Field(Int, graphql_name='size')
-    upload_client = sgqlc.types.Field(String, graphql_name='uploadClient')
     upload_error = sgqlc.types.Field(String, graphql_name='uploadError')
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name='createdAt')
     updated_at = sgqlc.types.Field(DateTime, graphql_name='updatedAt')

@@ -453,7 +453,6 @@ type File {
   fileFormat: String!
   compressionType: Int
   size: Int
-  uploadClient: String
   uploadError: String
   createdAt: DateTime!
   updatedAt: DateTime

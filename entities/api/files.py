@@ -163,7 +163,6 @@ class File:
     file_format: str
     compression_type: typing.Optional[int] = None
     size: typing.Optional[int] = None
-    upload_client: typing.Optional[str] = None
     upload_error: typing.Optional[str] = None
     created_at: datetime.datetime
     updated_at: typing.Optional[datetime.datetime] = None
