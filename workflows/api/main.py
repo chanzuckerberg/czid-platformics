@@ -25,6 +25,7 @@ from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
 from plugins.plugin_types import EventBus, WorkflowRunner
 from settings import APISettings
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.config import StrawberryConfig
@@ -193,9 +194,14 @@ async def _run_workflow_run(
 
     workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
+    workflow_entity_inputs = (
+        await session.execute(
+            select(db.WorkflowRunEntityInput).where(db.WorkflowRunEntityInput.workflow_run_id == workflow_run.id)
+        )
+    ).scalars()
     entity_inputs = {
         e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))
-        for e in workflow_run.entity_inputs
+        for e in workflow_entity_inputs
     }
     raw_inputs = json.loads(workflow_run.raw_inputs_json)
     workflow_runner_inputs_json = {}
