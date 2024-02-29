@@ -1375,6 +1375,37 @@
               }
             },
             {
+              "args": [],
+              "name": "uploadError",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "name": "updatedAt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
               "args": [
                 {
                   "defaultValue": "3600",
@@ -1817,6 +1848,15 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "FileAccessProtocol",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "DateTime",
           "possibleTypes": null
         },
         {
@@ -5848,15 +5888,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "DatetimeComparators",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "DateTime",
           "possibleTypes": null
         },
         {

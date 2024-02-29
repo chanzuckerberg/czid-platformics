@@ -453,6 +453,9 @@ type File {
   fileFormat: String!
   compressionType: Int
   size: Int
+  uploadError: String
+  createdAt: DateTime!
+  updatedAt: DateTime
   downloadLink(expiration: Int! = 3600): SignedURL
   contents: String
 }
