@@ -193,7 +193,7 @@ async def _run_workflow_run(
     workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
     entity_inputs = {
-        e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.entity_id))
+        e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))
         for e in workflow_run.entity_inputs
     }
     raw_inputs = json.loads(workflow_run.raw_inputs_json)
