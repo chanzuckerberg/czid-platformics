@@ -236,7 +236,7 @@ async def _run_workflow_run(
         await session.commit()
         raise PlatformicsException("Failed to run workflow")
     workflow_run.status = status
-    workflow_run.runner_inputs_json = json.dumps(workflow_runner_inputs_json)
+    workflow_run.workflow_runner_inputs_json = json.dumps(workflow_runner_inputs_json)
     workflow_run.started_at = datetime.now()
     if execution_id:
         workflow_run.execution_id = execution_id
