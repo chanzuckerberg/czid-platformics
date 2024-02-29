@@ -188,17 +188,17 @@ class RunWorkflowVersionInput(sgqlc.types.Input):
     __field_names__ = (
         "collection_id",
         "workflow_version_id",
-        "rails_workflow_run_id",
         "entity_inputs",
         "raw_input_json",
+        "rails_workflow_run_id",
     )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     workflow_version_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="workflowVersionId")
-    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     entity_inputs = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(EntityInputType)), graphql_name="entityInputs"
     )
     raw_input_json = sgqlc.types.Field(String, graphql_name="rawInputJson")
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
 
 
 class StrComparators(sgqlc.types.Input):

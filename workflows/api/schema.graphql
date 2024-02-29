@@ -104,9 +104,9 @@ type Query {
 input RunWorkflowVersionInput {
   collectionId: Int!
   workflowVersionId: ID!
-  railsWorkflowRunId: Int
   entityInputs: [EntityInputType!]
   rawInputJson: String
+  railsWorkflowRunId: Int = null
 }
 
 input StrComparators {
