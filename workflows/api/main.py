@@ -140,6 +140,7 @@ async def _create_workflow_run(
     workflow_run = db.WorkflowRun(
         owner_user_id=int(principal.id),
         collection_id=input.collection_id,
+        rails_workflow_run_id=input.rails_workflow_run_id,
         workflow_version_id=workflow_version.id,
         status=WorkflowRunStatus.CREATED,
         execution_id=None,
