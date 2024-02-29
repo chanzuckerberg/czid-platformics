@@ -1,6 +1,7 @@
 """
 GraphQL web app runner
 """
+from datetime import datetime
 import json
 import logging
 import typing
@@ -19,7 +20,6 @@ from platformics.api.core.deps import (
     get_user_token,
     require_auth_principal,
 )
-from platformics.client.impersonation import ImpersonationClient
 from platformics.api.core.errors import PlatformicsException
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.database.connect import AsyncDB
@@ -115,11 +115,7 @@ async def _create_workflow_run(
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
-    token: str,
 ) -> workflow_run.WorkflowRun:
-    # TODO: use token, this is just to test sandbox
-    impersonation_client = ImpersonationClient()
-    token = await impersonation_client.impersonate(principal.id)
     logger = logging.getLogger()
     attr = {"collection_id": input.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
@@ -141,6 +137,66 @@ async def _create_workflow_run(
         logger.info(f"Invalid input: {', '.join(e.message() for e in input_errors)}")
         raise PlatformicsException(f"Invalid input: {', '.join(e.message() for e in input_errors)}")
 
+    workflow_run = db.WorkflowRun(
+        owner_user_id=int(principal.id),
+        collection_id=input.collection_id,
+        workflow_version_id=workflow_version.id,
+        status=WorkflowRunStatus.CREATED,
+        execution_id=None,
+        raw_inputs_json=json.dumps(raw_inputs),
+        entity_inputs=[
+            db.WorkflowRunEntityInput(
+                owner_user_id=int(principal.id),
+                collection_id=input.collection_id,
+                field_name=k,
+                input_entity_id=v.entity_id,
+                entity_type=v.entity_type,
+            )
+            for k, v in entity_inputs.items()
+        ],
+    )
+    session.add(workflow_run)
+    await session.commit()
+    return workflow_run  # type: ignore
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def create_workflow_run(
+    input: RunWorkflowVersionInput,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+) -> workflow_run.WorkflowRun:
+    return await _create_workflow_run(input, session=session, cerbos_client=cerbos_client, principal=principal)
+
+
+async def _run_workflow_run(
+    workflow_run_id: strawberry.ID,
+    session: AsyncSession,
+    cerbos_client: CerbosClient,
+    principal: Principal,
+    workflow_runner: WorkflowRunner,
+    event_bus: EventBus,
+    token: str,
+) -> workflow_run.WorkflowRun:
+    logger = logging.getLogger()
+    workflow_run = await session.get_one(db.WorkflowRun, workflow_run_id)
+    if not workflow_run:
+        raise PlatformicsException(f"Workflow run {workflow_run_id} not found")
+    attr = {"collection_id": workflow_run.collection_id}
+    resource = Resource(id=str(workflow_run.id), kind=db.WorkflowRun.__tablename__, attr=attr)
+    if not cerbos_client.is_allowed("update", principal, resource):
+        raise PlatformicsException("Unauthorized: Cannot update entity in this collection")
+    if workflow_run.status != WorkflowRunStatus.CREATED:
+        raise PlatformicsException(f"Workflow run {workflow_run_id} is not in CREATED state")
+
+    workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
+    manifest = Manifest.from_yaml(str(workflow_version.manifest))
+    entity_inputs = {
+        e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.entity_id))
+        for e in workflow_run.entity_inputs
+    }
+    raw_inputs = json.loads(workflow_run.raw_inputs_json)
     workflow_runner_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:
         loader_entity_inputs = {
@@ -166,63 +222,6 @@ async def _create_workflow_run(
                 raise PlatformicsException("An error occurred while processing your inputs")
             workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
-    workflow_run = db.WorkflowRun(
-        owner_user_id=int(principal.id),
-        collection_id=input.collection_id,
-        workflow_version_id=workflow_version.id,
-        status=WorkflowRunStatus.CREATED,
-        execution_id=None,
-        raw_inputs_json=json.dumps(raw_inputs),
-        workflow_runner_inputs_json=json.dumps(workflow_runner_inputs_json),
-        entity_inputs=[
-            db.WorkflowRunEntityInput(
-                owner_user_id=int(principal.id),
-                collection_id=input.collection_id,
-                field_name=k,
-                input_entity_id=v.entity_id,
-                entity_type=v.entity_type,
-            )
-            for k, v in entity_inputs.items()
-        ],
-    )
-    session.add(workflow_run)
-    await session.commit()
-    return workflow_run  # type: ignore
-
-
-@strawberry.mutation(extensions=[DependencyExtension()])
-async def create_workflow_run(
-    input: RunWorkflowVersionInput,
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-    token: str = Depends(get_user_token),
-) -> workflow_run.WorkflowRun:
-    return await _create_workflow_run(
-        input, session=session, cerbos_client=cerbos_client, principal=principal, token=token
-    )
-
-
-async def _run_workflow_run(
-    workflow_run_id: strawberry.ID,
-    session: AsyncSession = Depends(get_db_session, use_cache=False),
-    cerbos_client: CerbosClient = Depends(get_cerbos_client),
-    principal: Principal = Depends(require_auth_principal),
-    workflow_runner: WorkflowRunner = Depends(get_workflow_runner),
-    event_bus: EventBus = Depends(get_event_bus),
-) -> workflow_run.WorkflowRun:
-    logger = logging.getLogger()
-    workflow_run = await session.get_one(db.WorkflowRun, workflow_run_id)
-    if not workflow_run:
-        raise PlatformicsException(f"Workflow run {workflow_run_id} not found")
-    attr = {"collection_id": workflow_run.collection_id}
-    resource = Resource(id=str(workflow_run.id), kind=db.WorkflowRun.__tablename__, attr=attr)
-    if not cerbos_client.is_allowed("update", principal, resource):
-        raise PlatformicsException("Unauthorized: Cannot update entity in this collection")
-    if workflow_run.status != WorkflowRunStatus.CREATED:
-        raise PlatformicsException(f"Workflow run {workflow_run_id} is not in CREATED state")
-    workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
-    workflow_runner_inputs_json = json.loads(workflow_run.workflow_runner_inputs_json)
     status = WorkflowRunStatus.PENDING
     execution_id = None
     try:
@@ -237,6 +236,8 @@ async def _run_workflow_run(
         await session.commit()
         raise PlatformicsException("Failed to run workflow")
     workflow_run.status = status
+    workflow_run.runner_inputs_json = json.dumps(workflow_runner_inputs_json)
+    workflow_run.started_at = datetime.now()
     if execution_id:
         workflow_run.execution_id = execution_id
     await session.commit()
@@ -251,6 +252,7 @@ async def run_workflow_run(
     principal: Principal = Depends(require_auth_principal),
     workflow_runner: WorkflowRunner = Depends(get_workflow_runner),
     event_bus: EventBus = Depends(get_event_bus),
+    token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
     return await _run_workflow_run(
         workflow_run_id=workflow_run_id,
@@ -259,6 +261,7 @@ async def run_workflow_run(
         principal=principal,
         workflow_runner=workflow_runner,
         event_bus=event_bus,
+        token=token,
     )
 
 
@@ -273,7 +276,10 @@ async def run_workflow_version(
     token: str = Depends(get_user_token),
 ) -> workflow_run.WorkflowRun:
     workflow_run = await _create_workflow_run(
-        input, session=session, cerbos_client=cerbos_client, principal=principal, token=token
+        input,
+        session=session,
+        cerbos_client=cerbos_client,
+        principal=principal,
     )
     return await _run_workflow_run(
         workflow_run_id=workflow_run.id,
@@ -282,6 +288,7 @@ async def run_workflow_version(
         principal=principal,
         workflow_runner=workflow_runner,
         event_bus=event_bus,
+        token=token,
     )
 
 
