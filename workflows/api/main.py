@@ -126,6 +126,11 @@ async def _create_workflow_run(
     workflow_version = await session.get_one(db.WorkflowVersion, input.workflow_version_id)
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
 
+    entity_inputs: dict[str, list[EntityInput]] = {}
+    for entity_input in input.entity_inputs or []:
+        v = entity_inputs.get(entity_input.name, [])
+        v.append(EntityInput(entity_type=entity_input.entity_type, entity_id=entity_input.entity_id))
+        entity_inputs[entity_input.name] = v
     entity_inputs = {
         entity_input.name: EntityInput(entity_type=entity_input.entity_type, entity_id=entity_input.entity_id)
         for entity_input in input.entity_inputs or []

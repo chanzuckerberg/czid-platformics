@@ -103,14 +103,22 @@ class BaseInputArgument(BaseModel):
     name: str
     description: str
     required: bool = True
+    n: int = 1
 
 
 class EntityInputArgument(BaseInputArgument):
     entity_type: str
 
-    def validate_input(self, entity_input: EntityInput) -> _InputValidationErrors:
-        if entity_input.entity_type != self.entity_type:
-            yield InputTypeInvalid(self.name, "entity", self.entity_type, entity_input.entity_type)
+    def validate_input(self, entity_input: list[EntityInput]) -> _InputValidationErrors:
+        if not self.multivalue and len(entity_input) > 1:
+            yield InputConstraintUnsatisfied(
+                self.name,
+                "entity",
+                f"expected single entity input but recieved {len(entity_input)}"
+            )
+        for _entity_input in entity_input:
+            if _entity_input.entity_type != self.entity_type:
+                yield InputTypeInvalid(self.name, "entity", self.entity_type, entity_input.entity_type)
 
 
 class RawInputArgument(BaseInputArgument):
@@ -163,11 +171,18 @@ class RawInputArgument(BaseInputArgument):
             self.required = False
         return self
 
-    def validate_input(self, raw_input: typing.Any) -> _InputValidationErrors:
-        if self.options and raw_input not in self.options:
-            yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
-        if type(raw_input).__name__ != self.type:
-            yield InputTypeInvalid(self.name, "raw", self.type, type(raw_input.value).__name__)
+    def validate_input(self, raw_input: list[Primitive]) -> _InputValidationErrors:
+        if not self.multivalue and len(raw_input) > 1:
+            yield InputConstraintUnsatisfied(
+                self.name,
+                "raw",
+                f"expected single raw input but recieved {len(raw_input)}"
+            )
+        for _raw_input in raw_input:
+            if self.options and _raw_input not in self.options:
+                yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
+            if type(_raw_input).__name__ != self.type:
+                yield InputTypeInvalid(self.name, "raw", self.type, type(_raw_input).__name__)
 
 
 @dataclass
@@ -276,7 +291,7 @@ class Manifest(BaseModel):
         return self
 
     def validate_inputs(
-        self, entity_inputs: dict[str, EntityInput], raw_inputs: dict[str, typing.Any]
+        self, entity_inputs: dict[str, list[EntityInput]], raw_inputs: dict[str, list[Primitive]]
     ) -> _InputValidationErrors:
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),
