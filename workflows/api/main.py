@@ -32,7 +32,7 @@ from strawberry.schema.config import StrawberryConfig
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
 
 from api.config import load_event_bus, load_workflow_runner, resolve_input_loader
-from api.core.gql_loaders import WorkflowLoader
+from platformics.api.core.gql_loaders import EntityLoader
 from api.mutations import Mutation as CodegenMutation
 from api.queries import Query
 from api.types import workflow_run
@@ -72,7 +72,7 @@ def get_context(
     Injects the sqlalchemy_loader variable into GQL queries
     """
     return {
-        "sqlalchemy_loader": WorkflowLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
+        "sqlalchemy_loader": EntityLoader(engine=engine, cerbos_client=cerbos_client, principal=principal),
     }
 
 
