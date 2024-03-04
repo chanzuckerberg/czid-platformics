@@ -127,8 +127,8 @@ class InputLoader(IOLoader):
     async def load(
         self,
         workflow_version: WorkflowVersion,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, list[EntityInput]],
+        raw_inputs: dict[str, list[JSONValue]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
         """Processes workflow output specified by the type constraints in
@@ -162,8 +162,8 @@ class OutputLoader(IOLoader):
     async def load(
         self,
         workflow_run: WorkflowRun,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, list[EntityInput]],
+        raw_inputs: dict[str, list[JSONValue]],
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         """Processes workflow output specified by the type constraints

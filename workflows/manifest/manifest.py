@@ -3,7 +3,7 @@ import yaml
 from abc import ABC
 from collections.abc import Generator
 from dataclasses import dataclass
-from typing import IO, Annotated, Any, Literal, Optional
+from typing import IO, Annotated, Any, Iterable, Literal, Optional
 
 from packaging.specifiers import SpecifierSet
 from pydantic import BaseModel, GetCoreSchemaHandler, ValidationError, field_validator, model_validator
@@ -108,7 +108,6 @@ class BaseInputArgument(BaseModel, typing.Generic[T]):
     multivalue: bool = False
 
     def validate_input(self, inputs: list[T]) -> _InputValidationErrors:
-        print("EEE", inputs)
         if not self.multivalue and len(inputs) > 1:
             yield InputConstraintUnsatisfied(
                 self.name,
@@ -122,7 +121,6 @@ class EntityInputArgument(BaseInputArgument[EntityInput]):
     entity_type: str
 
     def validate_input(self, inputs):
-        print("DDD", inputs)
         for error in super().validate_input(inputs):
             yield error
         for _entity_input in inputs:
@@ -181,7 +179,6 @@ class RawInputArgument(BaseInputArgument[Primitive]):
         return self
 
     def validate_input(self, inputs):
-        print("CCC", inputs)
         for error in super().validate_input(inputs):
             yield error
         for raw_input in inputs:
@@ -264,6 +261,19 @@ class Manifest(BaseModel):
         obj = yaml.safe_load(manifest_yaml)
         return Manifest.model_validate(obj)
 
+    @staticmethod
+    def normalize_inputs(inputs: dict[str, T] | dict[str, list[T]] | dict[str, T | list[T]] | Iterable[tuple[str, T]]) -> dict[str, list[T]]:
+        """
+        Normalize inputs to a dictionary of lists
+        """
+        if not isinstance(inputs, dict):
+            normalized_inputs = {}
+            for name, input in inputs:
+                normalized_inputs[name] = normalized_inputs.get(name, []) + [input]
+        else:
+            normalized_inputs = {k: [v] if not isinstance(v, list) else v for k, v in inputs.items()}
+        return normalized_inputs
+
     @model_validator(mode="after")
     def _unique_input_names(self):  # type: ignore
         input_names = set(self.entity_inputs.keys())
@@ -298,18 +308,16 @@ class Manifest(BaseModel):
 
     def validate_inputs(
         self,
-        entity_inputs: dict[str, EntityInput | list[EntityInput]],
-        raw_inputs: dict[str, Primitive | list[Primitive]],
+        entity_inputs: dict[str, list[EntityInput]],
+        raw_inputs: dict[str, list[Primitive]],
     ) -> _InputValidationErrors:
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),
             ("raw", raw_inputs, self.raw_inputs),
         ]:
-            print("AAA", entity_or_raw, inputs, input_arguments)
-            list_inputs = {k: [v] if not isinstance(v, list) else v for k, v in inputs.items()}
+            normalized_inputs = self.normalize_inputs(inputs)
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}  # type: ignore
-            for name, input in list_inputs.items():  # type: ignore
-                print("BBB", name, input)
+            for name, input in normalized_inputs.items():  # type: ignore
                 input_argument = input_arguments.get(name)  # type: ignore
                 if not input_argument:
                     yield InputNotSupported(name, entity_or_raw)  # type: ignore

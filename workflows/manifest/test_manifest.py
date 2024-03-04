@@ -102,19 +102,19 @@ def test_validate_input() -> None:
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
 
-    entity_inputs = {
+    entity_inputs = Manifest.normalize_inputs({
         # Entity input with the wrong type
         "sample": EntityInput(entity_type="sequencing_read", entity_id="123"),
         # Entity input that isn't expected
         "missing": EntityInput(entity_type="sample", entity_id="123"),
-    }
+    })
 
-    raw_inputs = {
+    raw_inputs = Manifest.normalize_inputs({
         # Raw input with a value not in options
         "mood": "exstatic",
         # Raw input with incorrect type
         "ranking": 1.2,
-    }
+    })
 
     errors = [error.message() for error in manifest.validate_inputs(entity_inputs, raw_inputs)]
     assert errors == [
@@ -124,6 +124,36 @@ def test_validate_input() -> None:
         "Invalid value for raw input: Mood (input not in options)",
         "Invalid type for raw input: Ranking (expected int, got float)",
     ]
+
+
+def test_normalize_inputs() -> None:
+    """
+    Tests that validation works the same when providing inputs as a list
+    """
+    path = os.path.join(os.path.dirname(__file__), "test_manifests/valid_multivalue.yaml")
+    with open(path) as f:
+        manifest = Manifest.from_yaml(f)
+
+    dict_entity_inputs = {
+        # Entity input with the wrong type
+        "sample": [EntityInput(entity_type="sample", entity_id="123"), EntityInput(entity_type="sample", entity_id="124")],
+        # Entity input that isn't expected
+        "sequencing_reads": [
+            EntityInput(entity_type="sequencing_read", entity_id="123"),
+            EntityInput(entity_type="sequencing_read", entity_id="124"),
+        ],
+    }
+
+    list_entity_inputs = Manifest.normalize_inputs([
+        ("sample", EntityInput(entity_type="sample", entity_id="123")),
+        ("sample", EntityInput(entity_type="sample", entity_id="124")),
+        ("sequencing_reads", EntityInput(entity_type="sequencing_read", entity_id="123")),
+        ("sequencing_reads", EntityInput(entity_type="sequencing_read", entity_id="124")),
+    ])
+
+    dict_errors = [error.message() for error in manifest.validate_inputs(dict_entity_inputs, {})]
+    list_errors = [error.message() for error in manifest.validate_inputs(list_entity_inputs, {})]
+    assert dict_errors == list_errors
 
 
 def test_multivalued() -> None:

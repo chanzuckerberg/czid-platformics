@@ -204,11 +204,10 @@ async def _run_workflow_run(
             select(db.WorkflowRunEntityInput).where(db.WorkflowRunEntityInput.workflow_run_id == workflow_run.id)
         )
     ).scalars()
-    entity_inputs = {
-        e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))
-        for e in workflow_entity_inputs
-    }
-    raw_inputs = json.loads(workflow_run.raw_inputs_json)
+    entity_inputs = Manifest.normalize_inputs(
+        (e.field_name, EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))) for e in workflow_entity_inputs
+    )
+    raw_inputs = Manifest.normalize_inputs(json.loads(workflow_run.raw_inputs_json))
     workflow_runner_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:
         loader_entity_inputs = {
