@@ -102,7 +102,7 @@ def test_validate_input() -> None:
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
 
-    entity_inputs = {
+    entity_inputs: dict[str, EntityInput | list[EntityInput]] = {
         # Entity input with the wrong type
         "sample": EntityInput(entity_type="sequencing_read", entity_id="123"),
         # Entity input that isn't expected
@@ -134,7 +134,7 @@ def test_normalize_inputs() -> None:
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
 
-    dict_entity_inputs = {
+    dict_entity_inputs: dict[str, EntityInput | list[EntityInput]] = {
         # Entity input with the wrong type
         "sample": [
             EntityInput(entity_type="sample", entity_id="123"),
@@ -169,7 +169,7 @@ def test_multivalued() -> None:
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
 
-    entity_inputs = {
+    entity_inputs: dict[str, EntityInput | list[EntityInput]] = {
         # Entity input with the wrong type
         "sample": [
             EntityInput(entity_type="sample", entity_id="123"),

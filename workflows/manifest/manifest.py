@@ -99,15 +99,14 @@ class InputConstraintUnsatisfied(_InputValidationError):
         return f"Invalid value for {self.raw_or_entity} input: {self.input_name} ({self.explaination})"
 
 
-T = typing.TypeVar("T", EntityInput, Primitive)
-
-
-def _listify(value: T | list[T]) -> list[T]:
+R = typing.TypeVar("R")
+def _listify(value: R | list[R]) -> list[R]:
     if isinstance(value, list):
         return value
     return [value]
 
 
+T = typing.TypeVar("T", EntityInput, Primitive)
 class BaseInputArgument(BaseModel, typing.Generic[T]):
     name: str
     description: str
