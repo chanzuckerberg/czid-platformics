@@ -42,7 +42,7 @@ input IntComparators {
 }
 
 type Mutation {
-  createWorkflowRun(input: WorkflowRunCreateInput!): WorkflowRun!
+  createWorkflowRun(input: RunWorkflowVersionInput!): WorkflowRun!
   updateWorkflowRun(input: WorkflowRunUpdateInput!, where: WorkflowRunWhereClauseMutations!): [WorkflowRun!]!
   deleteWorkflowRun(where: WorkflowRunWhereClauseMutations!): [WorkflowRun!]!
   createWorkflow(input: WorkflowCreateInput!): Workflow!
@@ -55,7 +55,8 @@ type Mutation {
   deleteWorkflowRunEntityInput(where: WorkflowRunEntityInputWhereClauseMutations!): [WorkflowRunEntityInput!]!
   createWorkflowVersion(input: WorkflowVersionCreateInput!): WorkflowVersion!
   deleteWorkflowVersion(where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
-  RunWorkflow(input: RunWorkflowVersionInput!): WorkflowRun!
+  runWorkflowVersion(input: RunWorkflowVersionInput!): WorkflowRun!
+  runWorkflowRun(workflowRunId: ID!): WorkflowRun!
 }
 
 """An object with a Globally Unique ID"""
@@ -105,6 +106,7 @@ input RunWorkflowVersionInput {
   workflowVersionId: ID!
   entityInputs: [EntityInputType!]
   rawInputJson: String
+  railsWorkflowRunId: Int = null
 }
 
 input StrComparators {
@@ -245,6 +247,7 @@ type WorkflowRun implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
   _id: GlobalID!
   id: ID!
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -318,6 +321,7 @@ type WorkflowRunConnection {
 }
 
 enum WorkflowRunCountColumns {
+  railsWorkflowRunId
   startedAt
   endedAt
   executionId
@@ -334,18 +338,6 @@ enum WorkflowRunCountColumns {
   collectionId
   createdAt
   updatedAt
-}
-
-input WorkflowRunCreateInput {
-  endedAt: DateTime = null
-  executionId: String = null
-  outputsJson: String = null
-  workflowRunnerInputsJson: String = null
-  status: WorkflowRunStatus = null
-  workflowVersionId: ID = null
-  rawInputsJson: String = null
-  deprecatedById: ID = null
-  collectionId: Int!
 }
 
 """An edge in a connection."""
@@ -479,6 +471,7 @@ input WorkflowRunEntityInputWhereClauseMutations {
 }
 
 type WorkflowRunGroupByOptions {
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -496,6 +489,7 @@ type WorkflowRunGroupByOptions {
 }
 
 type WorkflowRunMinMaxColumns {
+  railsWorkflowRunId: Int
   startedAt: DateTime
   endedAt: DateTime
   executionId: String
@@ -509,11 +503,13 @@ type WorkflowRunMinMaxColumns {
 }
 
 type WorkflowRunNumericalColumns {
+  railsWorkflowRunId: Int
   ownerUserId: Int
   collectionId: Int
 }
 
 input WorkflowRunOrderByClause {
+  railsWorkflowRunId: orderBy
   startedAt: orderBy
   endedAt: orderBy
   executionId: orderBy
@@ -532,7 +528,11 @@ input WorkflowRunOrderByClause {
 
 enum WorkflowRunStatus {
   SUCCEEDED
+  SUCCEEDED_WITH_ISSUE
+  TIMED_OUT
+  ABORTED
   FAILED
+  CREATED
   PENDING
   STARTED
   RUNNING
@@ -703,6 +703,7 @@ input WorkflowRunUpdateInput {
 }
 
 input WorkflowRunWhereClause {
+  railsWorkflowRunId: IntComparators
   startedAt: DatetimeComparators
   endedAt: DatetimeComparators
   executionId: StrComparators

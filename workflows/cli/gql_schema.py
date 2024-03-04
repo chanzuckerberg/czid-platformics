@@ -61,6 +61,7 @@ class WorkflowRunCountColumns(sgqlc.types.Enum):
         "id",
         "outputsJson",
         "ownerUserId",
+        "railsWorkflowRunId",
         "rawInputsJson",
         "startedAt",
         "status",
@@ -88,7 +89,17 @@ class WorkflowRunEntityInputCountColumns(sgqlc.types.Enum):
 
 class WorkflowRunStatus(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("FAILED", "PENDING", "RUNNING", "STARTED", "SUCCEEDED")
+    __choices__ = (
+        "ABORTED",
+        "CREATED",
+        "FAILED",
+        "PENDING",
+        "RUNNING",
+        "STARTED",
+        "SUCCEEDED",
+        "SUCCEEDED_WITH_ISSUE",
+        "TIMED_OUT",
+    )
 
 
 class WorkflowRunStepCountColumns(sgqlc.types.Enum):
@@ -174,13 +185,20 @@ class IntComparators(sgqlc.types.Input):
 
 class RunWorkflowVersionInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("collection_id", "workflow_version_id", "entity_inputs", "raw_input_json")
+    __field_names__ = (
+        "collection_id",
+        "workflow_version_id",
+        "entity_inputs",
+        "raw_input_json",
+        "rails_workflow_run_id",
+    )
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     workflow_version_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="workflowVersionId")
     entity_inputs = sgqlc.types.Field(
         sgqlc.types.list_of(sgqlc.types.non_null(EntityInputType)), graphql_name="entityInputs"
     )
     raw_input_json = sgqlc.types.Field(String, graphql_name="rawInputJson")
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
 
 
 class StrComparators(sgqlc.types.Input):
@@ -267,30 +285,6 @@ class WorkflowOrderByClause(sgqlc.types.Input):
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
 
 
-class WorkflowRunCreateInput(sgqlc.types.Input):
-    __schema__ = gql_schema
-    __field_names__ = (
-        "ended_at",
-        "execution_id",
-        "outputs_json",
-        "workflow_runner_inputs_json",
-        "status",
-        "workflow_version_id",
-        "raw_inputs_json",
-        "deprecated_by_id",
-        "collection_id",
-    )
-    ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
-    execution_id = sgqlc.types.Field(String, graphql_name="executionId")
-    outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
-    workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
-    status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
-    workflow_version_id = sgqlc.types.Field(ID, graphql_name="workflowVersionId")
-    raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
-    deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
-
-
 class WorkflowRunEntityInputCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("input_entity_id", "field_name", "entity_type", "workflow_run_id", "collection_id")
@@ -358,6 +352,7 @@ class WorkflowRunEntityInputWhereClauseMutations(sgqlc.types.Input):
 class WorkflowRunOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
+        "rails_workflow_run_id",
         "started_at",
         "ended_at",
         "execution_id",
@@ -373,6 +368,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
         "created_at",
         "updated_at",
     )
+    rails_workflow_run_id = sgqlc.types.Field(orderBy, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(orderBy, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(orderBy, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(orderBy, graphql_name="executionId")
@@ -508,6 +504,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
 class WorkflowRunWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
+        "rails_workflow_run_id",
         "started_at",
         "ended_at",
         "execution_id",
@@ -524,6 +521,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
         "created_at",
         "updated_at",
     )
+    rails_workflow_run_id = sgqlc.types.Field(IntComparators, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DatetimeComparators, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DatetimeComparators, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(StrComparators, graphql_name="executionId")
@@ -687,7 +685,8 @@ class Mutation(sgqlc.types.Type):
         "delete_workflow_run_entity_input",
         "create_workflow_version",
         "delete_workflow_version",
-        "run_workflow",
+        "run_workflow_version",
+        "run_workflow_run",
     )
     create_workflow_run = sgqlc.types.Field(
         sgqlc.types.non_null("WorkflowRun"),
@@ -696,7 +695,7 @@ class Mutation(sgqlc.types.Type):
             (
                 (
                     "input",
-                    sgqlc.types.Arg(sgqlc.types.non_null(WorkflowRunCreateInput), graphql_name="input", default=None),
+                    sgqlc.types.Arg(sgqlc.types.non_null(RunWorkflowVersionInput), graphql_name="input", default=None),
                 ),
             )
         ),
@@ -878,14 +877,26 @@ class Mutation(sgqlc.types.Type):
             )
         ),
     )
-    run_workflow = sgqlc.types.Field(
+    run_workflow_version = sgqlc.types.Field(
         sgqlc.types.non_null("WorkflowRun"),
-        graphql_name="RunWorkflow",
+        graphql_name="runWorkflowVersion",
         args=sgqlc.types.ArgDict(
             (
                 (
                     "input",
                     sgqlc.types.Arg(sgqlc.types.non_null(RunWorkflowVersionInput), graphql_name="input", default=None),
+                ),
+            )
+        ),
+    )
+    run_workflow_run = sgqlc.types.Field(
+        sgqlc.types.non_null("WorkflowRun"),
+        graphql_name="runWorkflowRun",
+        args=sgqlc.types.ArgDict(
+            (
+                (
+                    "workflow_run_id",
+                    sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="workflowRunId", default=None),
                 ),
             )
         ),
@@ -1279,6 +1290,7 @@ class WorkflowRunEntityInputNumericalColumns(sgqlc.types.Type):
 class WorkflowRunGroupByOptions(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
+        "rails_workflow_run_id",
         "started_at",
         "ended_at",
         "execution_id",
@@ -1294,6 +1306,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
         "created_at",
         "updated_at",
     )
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")
@@ -1313,6 +1326,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
 class WorkflowRunMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
+        "rails_workflow_run_id",
         "started_at",
         "ended_at",
         "execution_id",
@@ -1324,6 +1338,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
         "created_at",
         "updated_at",
     )
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")
@@ -1338,7 +1353,8 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
 
 class WorkflowRunNumericalColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("owner_user_id", "collection_id")
+    __field_names__ = ("rails_workflow_run_id", "owner_user_id", "collection_id")
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
 
@@ -1588,6 +1604,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = gql_schema
     __field_names__ = (
         "id",
+        "rails_workflow_run_id",
         "started_at",
         "ended_at",
         "execution_id",
@@ -1606,6 +1623,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
         "updated_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
+    rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")

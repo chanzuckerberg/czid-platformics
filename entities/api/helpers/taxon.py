@@ -30,7 +30,6 @@ class TaxonGroupByOptions:
     upstream_database_identifier: Optional[str] = None
     level: Optional[TaxonLevel] = None
     tax_parent: Optional["TaxonGroupByOptions"] = None
-    tax_subspecies: Optional["TaxonGroupByOptions"] = None
     tax_species: Optional["TaxonGroupByOptions"] = None
     tax_genus: Optional["TaxonGroupByOptions"] = None
     tax_family: Optional["TaxonGroupByOptions"] = None

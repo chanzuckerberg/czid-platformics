@@ -237,8 +237,8 @@ class {{ cls.name }}(EntityInterface):
     {{ attr.name }}: {{ getType("strawberry.ID", attr.required) }}
         {%- elif attr.type == "string" %}
     {{ attr.name }}: {{ getType("str", attr.required) }}
-        {%- elif attr.type == "Array2dInt" %}
-    {{ attr.name }}: {{ getType("List[List[int]]", attr.required) }}
+        {%- elif attr.type == "Array2dFloat" %}
+    {{ attr.name }}: {{ getType("List[List[float]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getType(attr.type, attr.required) }}
         {%- elif attr.type == "integer" %}
@@ -360,8 +360,8 @@ Mutation types
     {{ attr.name }}: {{ getTypeMutation(action, "str", attr.required) }}
         {%- elif attr.type == "uuid" %}
     {{ attr.name }}: {{ getTypeMutation(action, "strawberry.ID", attr.required) }}
-        {%- elif attr.type == "Array2dInt" %}
-    {{ attr.name }}: {{ getTypeMutation(action, "List[List[int]]", attr.required) }}
+        {%- elif attr.type == "Array2dFloat" %}
+    {{ attr.name }}: {{ getTypeMutation(action, "List[List[float]]", attr.required) }}
         {%- elif attr.is_enum %}
     {{ attr.name }}: {{ getTypeMutation(action, attr.type, attr.required) }}
         {%- elif attr.type == "integer" %}

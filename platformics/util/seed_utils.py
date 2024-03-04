@@ -72,8 +72,7 @@ class SeedSession:
         self.add = self.session.add
         self.commit = self.session.commit
         self.flush = self.session.flush
-        if os.getenv("BOTO_ENDPOINT_URL"):
-            self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'}))
+        self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'})) if os.getenv("BOTO_ENDPOINT_URL") else None
         self.upsert_bucket(LOCAL_BUCKET)
 
     def upsert_bucket(self, bucket_name: str) -> None:
@@ -113,7 +112,7 @@ class SeedSession:
         if not self.s3_local:
             return f"s3://idseq-workflows/{key}"
         with TempHTTPFile(f"https://idseq-workflows.s3.amazonaws.com/{key}") as f:
-          self.s3_local.upload_file(f.name, LOCAL_BUCKET, key)
+            self.s3_local.upload_file(f.name, LOCAL_BUCKET, key)
         return f"s3://{LOCAL_BUCKET}/{key}"
 
     def remote_path(self, bucket: str, key: str) -> str:

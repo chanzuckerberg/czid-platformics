@@ -8,7 +8,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
-from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
+from support.enums import SequencingProtocol, SequencingTechnology
 
 import uuid
 
@@ -22,7 +22,6 @@ class SequencingReadCreateInputValidator(BaseModel):
     sample_id: Annotated[uuid.UUID | None, Field()]
     protocol: Annotated[SequencingProtocol | None, Field()]
     technology: Annotated[SequencingTechnology, Field()]
-    nucleic_acid: Annotated[NucleicAcid, Field()]
     clearlabs_export: Annotated[bool, Field()]
     medaka_model: Annotated[
         str | None,
@@ -44,7 +43,6 @@ class SequencingReadCreateInputValidator(BaseModel):
 class SequencingReadUpdateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
-    nucleic_acid: Annotated[NucleicAcid | None, Field()]
     clearlabs_export: Annotated[bool | None, Field()]
     medaka_model: Annotated[
         str | None,
@@ -52,3 +50,4 @@ class SequencingReadUpdateInputValidator(BaseModel):
             strip_whitespace=True,
         ),
     ]
+    primer_file_id: Annotated[uuid.UUID | None, Field()]

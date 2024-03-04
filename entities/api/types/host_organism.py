@@ -156,6 +156,7 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class HostOrganismWhereClause(TypedDict):
+    rails_host_genome_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
     version: Optional[StrComparators] | None
     category: Optional[EnumComparators[HostOrganismCategory]] | None
@@ -177,6 +178,7 @@ Supported ORDER BY clause attributes
 
 @strawberry.input
 class HostOrganismOrderByClause(TypedDict):
+    rails_host_genome_id: Optional[orderBy] | None
     name: Optional[orderBy] | None
     version: Optional[orderBy] | None
     category: Optional[orderBy] | None
@@ -196,6 +198,7 @@ Define HostOrganism type
 
 @strawberry.type
 class HostOrganism(EntityInterface):
+    rails_host_genome_id: Optional[int] = None
     name: str
     version: str
     category: HostOrganismCategory
@@ -238,6 +241,7 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class HostOrganismNumericalColumns:
+    rails_host_genome_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -249,6 +253,7 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class HostOrganismMinMaxColumns:
+    rails_host_genome_id: Optional[int] = None
     name: Optional[str] = None
     version: Optional[str] = None
     owner_user_id: Optional[int] = None
@@ -264,6 +269,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class HostOrganismCountColumns(enum.Enum):
+    railsHostGenomeId = "rails_host_genome_id"
     name = "name"
     version = "version"
     category = "category"
@@ -321,6 +327,7 @@ Mutation types
 
 @strawberry.input()
 class HostOrganismCreateInput:
+    rails_host_genome_id: Optional[int] = None
     name: str
     version: str
     category: HostOrganismCategory
@@ -445,6 +452,7 @@ async def create_host_organism(
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
+        del params["rails_host_genome_id"]
         del params["producing_run_id"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}

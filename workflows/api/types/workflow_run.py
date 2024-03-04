@@ -189,6 +189,7 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class WorkflowRunWhereClause(TypedDict):
+    rails_workflow_run_id: Optional[IntComparators] | None
     started_at: Optional[DatetimeComparators] | None
     ended_at: Optional[DatetimeComparators] | None
     execution_id: Optional[StrComparators] | None
@@ -217,6 +218,7 @@ Supported ORDER BY clause attributes
 
 @strawberry.input
 class WorkflowRunOrderByClause(TypedDict):
+    rails_workflow_run_id: Optional[orderBy] | None
     started_at: Optional[orderBy] | None
     ended_at: Optional[orderBy] | None
     execution_id: Optional[orderBy] | None
@@ -242,6 +244,7 @@ Define WorkflowRun type
 
 @strawberry.type
 class WorkflowRun(EntityInterface):
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
@@ -291,6 +294,7 @@ Define columns that support numerical aggregations
 
 @strawberry.type
 class WorkflowRunNumericalColumns:
+    rails_workflow_run_id: Optional[int] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
 
@@ -302,6 +306,7 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class WorkflowRunMinMaxColumns:
+    rails_workflow_run_id: Optional[int] = None
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
@@ -321,6 +326,7 @@ Define enum of all columns to support count and count(distinct) aggregations
 
 @strawberry.enum
 class WorkflowRunCountColumns(enum.Enum):
+    railsWorkflowRunId = "rails_workflow_run_id"
     startedAt = "started_at"
     endedAt = "ended_at"
     executionId = "execution_id"
@@ -382,6 +388,7 @@ Mutation types
 
 @strawberry.input()
 class WorkflowRunCreateInput:
+    rails_workflow_run_id: Optional[int] = None
     ended_at: Optional[datetime.datetime] = None
     execution_id: Optional[str] = None
     outputs_json: Optional[str] = None
@@ -511,6 +518,7 @@ async def create_workflow_run(
     # Validate that the user can read all of the entities they're linking to.
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
+        del params["rails_workflow_run_id"]
         del params["ended_at"]
         del params["execution_id"]
         del params["outputs_json"]

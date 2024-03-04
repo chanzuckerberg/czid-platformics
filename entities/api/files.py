@@ -2,6 +2,7 @@
 GraphQL types, queries, and mutations for files.
 """
 
+import datetime
 import json
 import tempfile
 import typing
@@ -162,6 +163,9 @@ class File:
     file_format: str
     compression_type: typing.Optional[int] = None
     size: typing.Optional[int] = None
+    upload_error: typing.Optional[str] = None
+    created_at: datetime.datetime
+    updated_at: typing.Optional[datetime.datetime] = None
 
     @strawberry.field(extensions=[DependencyExtension()])
     def download_link(

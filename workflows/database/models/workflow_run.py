@@ -11,7 +11,7 @@ import datetime
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String, Enum, DateTime
+from sqlalchemy import ForeignKey, String, Integer, Enum, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from support.enums import WorkflowRunStatus
@@ -31,6 +31,7 @@ else:
 class WorkflowRun(Entity):
     __tablename__ = "workflow_run"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
+    rails_workflow_run_id: Mapped[int] = mapped_column(Integer, nullable=True)
     started_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
     ended_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
     execution_id: Mapped[str] = mapped_column(String, nullable=True)
@@ -53,12 +54,14 @@ class WorkflowRun(Entity):
         back_populates="workflow_run",
         uselist=True,
         foreign_keys="WorkflowRunStep.workflow_run_id",
+        cascade="all, delete-orphan",
     )
     entity_inputs: Mapped[list[WorkflowRunEntityInput]] = relationship(
         "WorkflowRunEntityInput",
         back_populates="workflow_run",
         uselist=True,
         foreign_keys="WorkflowRunEntityInput.workflow_run_id",
+        cascade="all, delete-orphan",
     )
     raw_inputs_json: Mapped[str] = mapped_column(String, nullable=True)
     deprecated_by_id: Mapped[uuid.UUID] = mapped_column(

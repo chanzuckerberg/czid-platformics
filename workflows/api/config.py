@@ -31,10 +31,10 @@ def load_event_bus(settings: APISettings) -> EventBus:
     raise Exception(f"Event bus plugin {settings.PLATFORMICS_EVENT_BUS_PLUGIN} not found")
 
 
-_input_loader_cache: dict[tuple[str, SpecifierSet], InputLoader | None] = {}
+_input_loader_cache: dict[tuple[str, SpecifierSet], type[InputLoader] | None] = {}
 
 
-def resolve_input_loader(name: str, specifier: SpecifierSet) -> InputLoader | None:
+def resolve_input_loader(name: str, specifier: SpecifierSet) -> type[InputLoader] | None:
     """Load input loaders by name"""
     if (name, specifier) in _input_loader_cache:
         return _input_loader_cache[(name, specifier)]
@@ -48,16 +48,16 @@ def resolve_input_loader(name: str, specifier: SpecifierSet) -> InputLoader | No
                 max_version = plugin.dist.version
                 latest_plugin = plugin
     if latest_plugin:
-        _input_loader_cache[(name, specifier)] = latest_plugin.load()()
+        _input_loader_cache[(name, specifier)] = latest_plugin.load()
     else:
         _input_loader_cache[(name, specifier)] = None
     return _input_loader_cache[(name, specifier)]
 
 
-_output_loader_cache: dict[tuple[str, SpecifierSet], OutputLoader | None] = {}
+_output_loader_cache: dict[tuple[str, SpecifierSet], type[OutputLoader] | None] = {}
 
 
-def resolve_output_loader(name: str, specifier: SpecifierSet) -> OutputLoader | None:
+def resolve_output_loader(name: str, specifier: SpecifierSet) -> type[OutputLoader] | None:
     """Load output loaders by name"""
     if (name, specifier) in _output_loader_cache:
         return _output_loader_cache[(name, specifier)]
@@ -71,7 +71,7 @@ def resolve_output_loader(name: str, specifier: SpecifierSet) -> OutputLoader | 
                 max_version = plugin.dist.version
                 latest_plugin = plugin
     if latest_plugin:
-        _output_loader_cache[(name, specifier)] = latest_plugin.load()()
+        _output_loader_cache[(name, specifier)] = latest_plugin.load()
     else:
         _output_loader_cache[(name, specifier)] = None
     return _output_loader_cache[(name, specifier)]

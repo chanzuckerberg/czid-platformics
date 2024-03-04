@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     JWK_PRIVATE_KEY_FILE: str
     DEFAULT_UPLOAD_BUCKET: str
     DEFAULT_UPLOAD_PROTOCOL: str
-    BOTO_ENDPOINT_URL: str
+    BOTO_ENDPOINT_URL: typing.Optional[str] = None
     AWS_REGION: str
 
     ############################################################################

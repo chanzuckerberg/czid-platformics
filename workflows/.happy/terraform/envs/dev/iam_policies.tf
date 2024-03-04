@@ -14,4 +14,67 @@ data "aws_iam_policy_document" "workflows" {
     ]
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:DeleteMessage",
+      "sqs:SendMessage",
+      "sqs:ReceiveMessage"
+    ]
+    resources = ["arn:aws:sqs:us-west-2:${var.aws_account_id}:idseq-swipe-development-web-sfn-notifications-queue"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "sqs:ListQueues"
+    ]
+    resources = ["*"]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "states:DescribeExecution",
+      "states:ListExecutions",
+      "states:GetExecutionHistory",
+      "states:StartExecution"
+    ]
+    resources = [
+      "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-development-default-wdl"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "states:ListStateMachines"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:DeleteObjectTagging",
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:ListBucketMultipartUploads",
+      "s3:ListBucket",
+      "s3:PutObjectTagging"
+    ]
+    resources = [
+      "arn:aws:s3:::idseq-samples-development",
+      "arn:aws:s3:::idseq-samples-sandbox",
+      "arn:aws:s3:::idseq-samples-development/*",
+      "arn:aws:s3:::idseq-samples-sandbox/*"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:ListAllMyBuckets"
+    ]
+    resources = [
+      "*"
+    ]
+  }
 }

@@ -622,6 +622,15 @@
             },
             {
               "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "startedAt",
               "type": {
                 "kind": "SCALAR",
@@ -1045,6 +1054,15 @@
           "inputFields": null,
           "interfaces": null,
           "kind": "SCALAR",
+          "name": "Int",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
           "name": "DateTime",
           "possibleTypes": null
         },
@@ -1063,7 +1081,19 @@
               "name": "SUCCEEDED"
             },
             {
+              "name": "SUCCEEDED_WITH_ISSUE"
+            },
+            {
+              "name": "TIMED_OUT"
+            },
+            {
+              "name": "ABORTED"
+            },
+            {
               "name": "FAILED"
+            },
+            {
+              "name": "CREATED"
             },
             {
               "name": "PENDING"
@@ -1995,15 +2025,6 @@
         {
           "enumValues": null,
           "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Int",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
           "inputFields": [
             {
               "defaultValue": null,
@@ -2417,6 +2438,15 @@
           "enumValues": null,
           "fields": null,
           "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "IntComparators",
+                "ofType": null
+              }
+            },
             {
               "defaultValue": null,
               "name": "startedAt",
@@ -3732,6 +3762,15 @@
           "inputFields": [
             {
               "defaultValue": null,
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "startedAt",
               "type": {
                 "kind": "ENUM",
@@ -3995,6 +4034,15 @@
           "fields": [
             {
               "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -4021,6 +4069,15 @@
         {
           "enumValues": null,
           "fields": [
+            {
+              "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
             {
               "args": [],
               "name": "startedAt",
@@ -4121,6 +4178,15 @@
         {
           "enumValues": null,
           "fields": [
+            {
+              "args": [],
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
             {
               "args": [],
               "name": "startedAt",
@@ -4256,6 +4322,9 @@
         },
         {
           "enumValues": [
+            {
+              "name": "railsWorkflowRunId"
+            },
             {
               "name": "startedAt"
             },
@@ -5945,7 +6014,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "WorkflowRunCreateInput",
+                      "name": "RunWorkflowVersionInput",
                       "ofType": null
                     }
                   }
@@ -6405,7 +6474,34 @@
                   }
                 }
               ],
-              "name": "RunWorkflow",
+              "name": "runWorkflowVersion",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "WorkflowRun",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "name": "workflowRunId",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "name": "runWorkflowRun",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -6428,78 +6524,6 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": "null",
-              "name": "endedAt",
-              "type": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "executionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "outputsJson",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "workflowRunnerInputsJson",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "status",
-              "type": {
-                "kind": "ENUM",
-                "name": "WorkflowRunStatus",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "workflowVersionId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "rawInputsJson",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": "null",
-              "name": "deprecatedById",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            {
               "defaultValue": null,
               "name": "collectionId",
               "type": {
@@ -6511,11 +6535,108 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "workflowVersionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "entityInputs",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "EntityInputType",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "rawInputJson",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "railsWorkflowRunId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
           "kind": "INPUT_OBJECT",
-          "name": "WorkflowRunCreateInput",
+          "name": "RunWorkflowVersionInput",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "name",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "entityId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "entityType",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "EntityInputType",
           "possibleTypes": null
         },
         {
@@ -6967,117 +7088,6 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "WorkflowVersionWhereClauseMutations",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "collectionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "workflowVersionId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityInputs",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "EntityInputType",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "rawInputJson",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "RunWorkflowVersionInput",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "name": "name",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityId",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "entityType",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "interfaces": null,
-          "kind": "INPUT_OBJECT",
-          "name": "EntityInputType",
           "possibleTypes": null
         },
         {

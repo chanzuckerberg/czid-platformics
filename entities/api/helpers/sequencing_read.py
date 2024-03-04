@@ -10,7 +10,7 @@ from typing import Any, Optional
 import strawberry
 import datetime
 import uuid
-from support.enums import SequencingProtocol, SequencingTechnology, NucleicAcid
+from support.enums import SequencingProtocol, SequencingTechnology
 from api.helpers.sample import SampleGroupByOptions, build_sample_groupby_output
 from api.helpers.taxon import TaxonGroupByOptions, build_taxon_groupby_output
 from api.helpers.genomic_range import GenomicRangeGroupByOptions, build_genomic_range_groupby_output
@@ -26,7 +26,6 @@ class SequencingReadGroupByOptions:
     sample: Optional[SampleGroupByOptions] = None
     protocol: Optional[SequencingProtocol] = None
     technology: Optional[SequencingTechnology] = None
-    nucleic_acid: Optional[NucleicAcid] = None
     clearlabs_export: Optional[bool] = None
     medaka_model: Optional[str] = None
     taxon: Optional[TaxonGroupByOptions] = None

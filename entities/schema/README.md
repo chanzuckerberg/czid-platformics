@@ -25,11 +25,6 @@ File {
 Sample {
     integer rails_sample_id  
     string name  
-    string sample_type  
-    boolean water_control  
-    date collection_date  
-    string collection_location  
-    string notes  
     uuid entity_id  
     uuid id  
     string type  
@@ -42,7 +37,6 @@ Sample {
 SequencingRead {
     SequencingProtocol protocol  
     SequencingTechnology technology  
-    NucleicAcid nucleic_acid  
     boolean clearlabs_export  
     string medaka_model  
     uuid entity_id  
@@ -88,6 +82,7 @@ Accession {
     date updated_at  
 }
 HostOrganism {
+    integer rails_host_genome_id  
     string name  
     string version  
     HostOrganismCategory category  
@@ -138,7 +133,7 @@ MetricConsensusGenome {
     float coverage_breadth  
     float coverage_bin_size  
     integer coverage_total_length  
-    Array2dInt coverage_viz  
+    Array2dFloat coverage_viz  
     uuid entity_id  
     uuid id  
     string type  
@@ -233,7 +228,6 @@ ConsensusGenome ||--|o File : "intermediate_outputs"
 MetricConsensusGenome ||--|| ConsensusGenome : "consensus_genome"
 Taxon ||--|| UpstreamDatabase : "upstream_database"
 Taxon ||--|o Taxon : "tax_parent"
-Taxon ||--|o Taxon : "tax_subspecies"
 Taxon ||--|o Taxon : "tax_species"
 Taxon ||--|o Taxon : "tax_genus"
 Taxon ||--|o Taxon : "tax_family"
@@ -247,7 +241,7 @@ Taxon ||--}o SequencingRead : "sequencing_reads"
 UpstreamDatabase ||--}o Taxon : "taxa"
 UpstreamDatabase ||--}o IndexFile : "indexes"
 UpstreamDatabase ||--}o Accession : "accessions"
-IndexFile ||--|| File : "file"
+IndexFile ||--|o File : "file"
 IndexFile ||--|o UpstreamDatabase : "upstream_database"
 IndexFile ||--|o HostOrganism : "host_organism"
 BulkDownload ||--|o File : "file"

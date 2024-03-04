@@ -8,14 +8,14 @@ principals:
     roles: [user]
     attr:
       user_id: 1
-      admin_projects: [100]
+      owner_projects: [100]
       member_projects: [100]
   user2:
     id: USER2
     roles: [user]
     attr:
       user_id: 2
-      admin_projects: [200]
+      owner_projects: [200]
       member_projects: [300, 100]
 
 resources:

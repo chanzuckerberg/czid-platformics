@@ -29,12 +29,25 @@ class WorkflowRunFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
+    rails_workflow_run_id = fuzzy.FuzzyInteger(1, 1000)
     started_at = factory.Faker("date")
     ended_at = factory.Faker("date")
     execution_id = fuzzy.FuzzyText()
     outputs_json = fuzzy.FuzzyText()
     workflow_runner_inputs_json = fuzzy.FuzzyText()
-    status = fuzzy.FuzzyChoice(["SUCCEEDED", "FAILED", "PENDING", "STARTED", "RUNNING"])
+    status = fuzzy.FuzzyChoice(
+        [
+            "SUCCEEDED",
+            "SUCCEEDED_WITH_ISSUE",
+            "TIMED_OUT",
+            "ABORTED",
+            "FAILED",
+            "CREATED",
+            "PENDING",
+            "STARTED",
+            "RUNNING",
+        ]
+    )
     workflow_version = factory.SubFactory(
         WorkflowVersionFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

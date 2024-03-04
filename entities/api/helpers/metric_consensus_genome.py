@@ -35,7 +35,7 @@ class MetricConsensusGenomeGroupByOptions:
     coverage_breadth: Optional[float] = None
     coverage_bin_size: Optional[float] = None
     coverage_total_length: Optional[int] = None
-    coverage_viz: Optional[list[list[int]]] = None
+    coverage_viz: Optional[list[list[float]]] = None
     id: Optional[uuid.UUID] = None
     producing_run_id: Optional[uuid.UUID] = None
     owner_user_id: Optional[int] = None

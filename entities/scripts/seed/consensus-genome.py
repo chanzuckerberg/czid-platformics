@@ -2,7 +2,6 @@
 Populate the database with mock data for local development
 """
 import json
-from datetime import datetime
 from typing import Any
 from urllib.parse import urlparse
 
@@ -25,7 +24,7 @@ from platformics.util.seed_utils import (
     TempCZIDWorkflowFile,
 )
 from platformics.database.models.base import Entity
-from support.enums import HostOrganismCategory, NucleicAcid, SequencingProtocol, SequencingTechnology, TaxonLevel
+from support.enums import HostOrganismCategory, SequencingProtocol, SequencingTechnology, TaxonLevel
 
 
 def main() -> tuple[list[dict[str, str]], dict[str, str]]:
@@ -123,23 +122,27 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     session.commit()
 
     with TempCZIDWorkflowFile("integration_test/sample_sars-cov-2_paired_r1.fastq.gz", "consensus-genome") as temp_file:
-        session.s3_local.upload_file(
-            temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz"
-        )
+        if session.s3_local:
+            ## TODO: fix for remote test files
+            session.s3_local.upload_file(
+                temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz"
+            )
     with TempCZIDWorkflowFile("integration_test/sample_sars-cov-2_paired_r2.fastq.gz", "consensus-genome") as temp_file:
-        session.s3_local.upload_file(
-            temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz"
-        )
+        if session.s3_local:
+            ## TODO: fix for remote test files
+            session.s3_local.upload_file(
+                temp_file.name, LOCAL_BUCKET, "consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz"
+            )
 
     sars_cov2_paired_name = "sample_sars-cov-2_paired"
     sars_cov2_paired_sample = session.query(Sample).filter_by(name=sars_cov2_paired_name).first() or Sample()
     sars_cov2_paired_sample.owner_user_id = TEST_USER_ID
     sars_cov2_paired_sample.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_sample.name = sars_cov2_paired_name
-    sars_cov2_paired_sample.sample_type = "nasal"
-    sars_cov2_paired_sample.water_control = False
-    sars_cov2_paired_sample.collection_date = datetime(2021, 1, 1)
-    sars_cov2_paired_sample.collection_location = "California, USA"
+    # sars_cov2_paired_sample.sample_type = "nasal"
+    # sars_cov2_paired_sample.water_control = False
+    # sars_cov2_paired_sample.collection_date = datetime(2021, 1, 1)
+    # sars_cov2_paired_sample.collection_location = "California, USA"
     entity_inputs.append(entity_input("sample", "sample", sars_cov2_paired_sample))
     session.add(sars_cov2_paired_sample)
     session.commit()
@@ -152,17 +155,19 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_paired_sequencing_read.collection_id = TEST_COLLECTION_ID
     sars_cov2_paired_sequencing_read.protocol = SequencingProtocol.artic
     sars_cov2_paired_sequencing_read.technology = SequencingTechnology.Illumina
-    sars_cov2_paired_sequencing_read.nucleic_acid = NucleicAcid.DNA
+    # sars_cov2_paired_sequencing_read.nucleic_acid = NucleicAcid.DNA
     sars_cov2_paired_sequencing_read.clearlabs_export = False
     sars_cov2_paired_sequencing_read.medaka_model = "r941_min_high_g360"
     sars_cov2_paired_sequencing_read.taxon = sars_cov2_taxon
     sars_cov2_paired_sequencing_read.r1_file = uri_file(
+        ## TODO: fix for remote test files
         f"s3://{LOCAL_BUCKET}/consensus-genome-test/sample_sars-cov-2_paired_r1.fastq.gz",
         sars_cov2_paired_sequencing_read,
         "r1_file",
         "fasta",
     )
     sars_cov2_paired_sequencing_read.r2_file = uri_file(
+        ## TODO: fix for remote test files
         f"s3://{LOCAL_BUCKET}/consensus-genome-test/sample_sars-cov-2_paired_r2.fastq.gz",
         sars_cov2_paired_sequencing_read,
         "r2_file",
