@@ -3,7 +3,7 @@ import json
 
 from database.models.workflow_run import WorkflowRun
 from sgqlc.operation import Operation
-from manifest.manifest import EntityInput
+from manifest.manifest import EntityInput, Primitive
 from platformics.client.entities_schema import (
     AccessionWhereClause,
     Query,
@@ -27,8 +27,8 @@ class ConsensusGenomeOutputLoader(OutputLoader):
     async def load(
         self,
         workflow_run: WorkflowRun,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         if raw_inputs.get("sars_cov_2"):

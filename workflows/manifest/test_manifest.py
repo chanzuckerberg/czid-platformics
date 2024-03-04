@@ -102,19 +102,19 @@ def test_validate_input() -> None:
     with open(path) as f:
         manifest = Manifest.from_yaml(f)
 
-    entity_inputs = Manifest.normalize_inputs({
+    entity_inputs = {
         # Entity input with the wrong type
         "sample": EntityInput(entity_type="sequencing_read", entity_id="123"),
         # Entity input that isn't expected
         "missing": EntityInput(entity_type="sample", entity_id="123"),
-    })
+    }
 
-    raw_inputs = Manifest.normalize_inputs({
+    raw_inputs = {
         # Raw input with a value not in options
         "mood": "exstatic",
         # Raw input with incorrect type
         "ranking": 1.2,
-    })
+    }
 
     errors = [error.message() for error in manifest.validate_inputs(entity_inputs, raw_inputs)]
     assert errors == [
@@ -176,5 +176,5 @@ def test_multivalued() -> None:
 
     errors = [error.message() for error in manifest.validate_inputs(entity_inputs, {})]
     assert errors == [
-        "Invalid value for entity input: Sample (expected single input but recieved 2)",
+        "Invalid value for entity input: Sample (expected single input but recieved a list)",
     ]

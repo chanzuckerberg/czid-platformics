@@ -1,6 +1,6 @@
 from sgqlc.operation import Operation
 from database.models.workflow_version import WorkflowVersion
-from manifest.manifest import EntityInput
+from manifest.manifest import EntityInput, Primitive
 from platformics.client.entities_schema import (
     IndexFileWhereClause,
     IndexTypesEnumComparators,
@@ -18,11 +18,12 @@ class SampleInputLoader(InputLoader):
     async def load(
         self,
         workflow_version: WorkflowVersion,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
         sample_input = entity_inputs["sample"]
+        assert isinstance(sample_input, EntityInput)
         op = Operation(Query)
         samples = op.samples(where=SampleWhereClause(id=UUIDComparators(_eq=sample_input.entity_id)))
         for output in requested_outputs:
@@ -36,11 +37,12 @@ class SequencingReadInputLoader(InputLoader):
     async def load(
         self,
         workflow_version: WorkflowVersion,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
         sequencing_read_input = entity_inputs["sequencing_read"]
+        assert isinstance(sequencing_read_input, EntityInput)
         op = Operation(Query)
         sequencing_reads = op.sequencing_reads(
             where=SequencingReadWhereClause(id=UUIDComparators(_eq=sequencing_read_input.entity_id))
@@ -62,8 +64,8 @@ class IndexFileInputLoader(InputLoader):
     async def load(
         self,
         workflow_version: WorkflowVersion,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
         ncbi_index_version = raw_inputs["ncbi_index_version"]
