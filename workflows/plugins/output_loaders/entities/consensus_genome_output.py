@@ -44,17 +44,29 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             taxon_id = res["taxa"][0]["id"]
             accession_id = res["accessions"][0]["id"]
         else:
-            taxon_id = entity_inputs["taxon"].entity_id
-            accession_id = entity_inputs["accession"].entity_id
+            taxon_input = entity_inputs["taxon"]
+            assert isinstance(taxon_input, EntityInput)
+            taxon_id = taxon_input.entity_id
+            accession_input = entity_inputs["accession"]
+            assert isinstance(accession_input, EntityInput)
+            accession_id = accession_input.entity_id
         op = Operation(Mutation)
+        sequencing_read_input = entity_inputs["sequencing_read"]
+        assert isinstance(sequencing_read_input, EntityInput)
+        reference_genome_input = entity_inputs.get("reference_genome")
+        reference_genome_id: ID | None = None
+        if reference_genome_input:
+            assert isinstance(reference_genome_input, EntityInput)
+            reference_genome_id = ID(reference_genome_input.entity_id)
+
+
         consensus_genome = op.create_consensus_genome(
             input=ConsensusGenomeCreateInput(
                 producing_run_id=ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
                 taxon_id=ID(taxon_id),
-                sequencing_read_id=ID(entity_inputs["sequencing_read"].entity_id),
-                reference_genome_id=entity_inputs.get("reference_genome")
-                and ID(entity_inputs["reference_genome"].entity_id),
+                sequencing_read_id=ID(sequencing_read_input.entity_id),
+                reference_genome_id=reference_genome_id,
                 accession_id=ID(accession_id),
             )
         )

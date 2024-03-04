@@ -1,6 +1,9 @@
 import os
 
 import boto3
+from database.models.workflow_version import WorkflowVersion
+from manifest.manifest import EntityInput, Primitive
+from platformics.util.types_utils import JSONValue
 
 from plugins.plugin_types import InputLoader
 
@@ -10,7 +13,13 @@ class CZIDDockerInputLoader(InputLoader):
     This loads docker images based on CZID's conventions
     """
 
-    async def load(self, workflow_version, entity_inputs, raw_inputs, requested_outputs=[]):
+    async def load(
+        self,
+        workflow_version: WorkflowVersion,
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
+        requested_outputs: list[str] = [],
+    ) -> dict[str, JSONValue]:
         name = f"consensus-genome:v{str(workflow_version.version)}"
         if os.getenv("ENVIRONMENT") == "test":
             return {"docker_image_id": name}

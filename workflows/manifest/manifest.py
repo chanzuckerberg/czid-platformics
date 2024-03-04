@@ -121,7 +121,7 @@ class BaseInputArgument(BaseModel, typing.Generic[T]):
 class EntityInputArgument(BaseInputArgument[EntityInput]):
     entity_type: str
 
-    def validate_input(self, inputs):
+    def validate_input(self, inputs: EntityInput | list[EntityInput]) -> _InputValidationErrors:
         if not self.multivalue and isinstance(inputs, list):
             yield InputConstraintUnsatisfied(self.name, "entity", "expected single input but recieved a list")
         for _entity_input in _listify(inputs):
@@ -179,7 +179,7 @@ class RawInputArgument(BaseInputArgument[Primitive]):
             self.required = False
         return self
 
-    def validate_input(self, inputs):
+    def validate_input(self, inputs: Primitive | list[Primitive]) -> _InputValidationErrors:
         if not self.multivalue and isinstance(inputs, list):
             yield InputConstraintUnsatisfied(self.name, "raw", "expected single input but recieved a list")
         for raw_input in _listify(inputs):
@@ -267,14 +267,15 @@ class Manifest(BaseModel):
         """
         Normalize inputs to a dictionary of single elements or lists
         """
-        normalized_inputs = {}
+        normalized_inputs: dict[str, T | list[T]] = {}
         for name, input in inputs:
-            if name not in normalized_inputs:
+            v = normalized_inputs.get(name)
+            if not v:
                 normalized_inputs[name] = input
-            elif isinstance(normalized_inputs[name], list):
-                normalized_inputs[name].append(input)
+            elif isinstance(v, list):
+                normalized_inputs[name] = v + [input]
             else:
-                normalized_inputs[name] = [normalized_inputs[name], input]
+                normalized_inputs[name] = [v, input]
         return normalized_inputs
 
     @model_validator(mode="after")
