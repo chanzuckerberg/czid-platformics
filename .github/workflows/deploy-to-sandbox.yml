@@ -19,6 +19,9 @@ jobs:
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
       - name: Assume happy-api deployment role
         uses: aws-actions/configure-aws-credentials@v4
         with:
