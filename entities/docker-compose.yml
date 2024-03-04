@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   entities-db:
-    image: postgres:15
+    image: public.ecr.aws/docker/library/postgres:15
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -27,6 +27,7 @@ services:
       ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
   entities:
     image: "platformics-entities"
+    platform: linux/amd64
     build:
       context: ".."
       dockerfile: "entities/Dockerfile"
