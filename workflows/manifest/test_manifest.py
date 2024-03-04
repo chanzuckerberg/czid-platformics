@@ -136,7 +136,10 @@ def test_normalize_inputs() -> None:
 
     dict_entity_inputs = {
         # Entity input with the wrong type
-        "sample": [EntityInput(entity_type="sample", entity_id="123"), EntityInput(entity_type="sample", entity_id="124")],
+        "sample": [
+            EntityInput(entity_type="sample", entity_id="123"),
+            EntityInput(entity_type="sample", entity_id="124"),
+        ],
         # Entity input that isn't expected
         "sequencing_reads": [
             EntityInput(entity_type="sequencing_read", entity_id="123"),
@@ -144,12 +147,14 @@ def test_normalize_inputs() -> None:
         ],
     }
 
-    list_entity_inputs = Manifest.normalize_inputs([
-        ("sample", EntityInput(entity_type="sample", entity_id="123")),
-        ("sample", EntityInput(entity_type="sample", entity_id="124")),
-        ("sequencing_reads", EntityInput(entity_type="sequencing_read", entity_id="123")),
-        ("sequencing_reads", EntityInput(entity_type="sequencing_read", entity_id="124")),
-    ])
+    list_entity_inputs = Manifest.normalize_inputs(
+        [
+            ("sample", EntityInput(entity_type="sample", entity_id="123")),
+            ("sample", EntityInput(entity_type="sample", entity_id="124")),
+            ("sequencing_reads", EntityInput(entity_type="sequencing_read", entity_id="123")),
+            ("sequencing_reads", EntityInput(entity_type="sequencing_read", entity_id="124")),
+        ]
+    )
 
     dict_errors = [error.message() for error in manifest.validate_inputs(dict_entity_inputs, {})]
     list_errors = [error.message() for error in manifest.validate_inputs(list_entity_inputs, {})]
@@ -166,7 +171,10 @@ def test_multivalued() -> None:
 
     entity_inputs = {
         # Entity input with the wrong type
-        "sample": [EntityInput(entity_type="sample", entity_id="123"), EntityInput(entity_type="sample", entity_id="124")],
+        "sample": [
+            EntityInput(entity_type="sample", entity_id="123"),
+            EntityInput(entity_type="sample", entity_id="124"),
+        ],
         # Entity input that isn't expected
         "sequencing_reads": [
             EntityInput(entity_type="sequencing_read", entity_id="123"),

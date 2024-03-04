@@ -10,7 +10,7 @@ class CZIDDockerInputLoader(InputLoader):
     This loads docker images based on CZID's conventions
     """
 
-    async def load(self, workflow_version, entity_inputs, raw_inputs, requested_outputs = []):
+    async def load(self, workflow_version, entity_inputs, raw_inputs, requested_outputs=[]):
         name = f"consensus-genome:v{str(workflow_version.version)}"
         if os.getenv("ENVIRONMENT") == "test":
             return {"docker_image_id": name}

@@ -200,7 +200,8 @@ async def _run_workflow_run(
         )
     ).scalars()
     entity_inputs = Manifest.normalize_inputs(
-        (e.field_name, EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))) for e in workflow_entity_inputs
+        (e.field_name, EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id)))
+        for e in workflow_entity_inputs
     )
     raw_inputs = Manifest.normalize_inputs(json.loads(workflow_run.raw_inputs_json))
     workflow_runner_inputs_json = {}
