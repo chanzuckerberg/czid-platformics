@@ -48,6 +48,21 @@ def generate_enums(output_prefix: str, environment: Environment, view: ViewWrapp
         message.write(content)
         print(f"... wrote {filename}")
 
+def generate_limit_offset_type(output_prefix: str, environment: Environment, view: ViewWrapper) -> None:
+    """
+    Code generation for GraphQL limit offset type
+    """
+    filename = "support/limit_offset.py"
+    template = environment.get_template(f"{filename}.j2")
+    logging.debug("generating limit offset type")
+
+    content = template.render(
+        view=view,
+    )
+    with open(os.path.join(output_prefix, filename), mode="w", encoding="utf-8") as message:
+        message.write(content)
+        print(f"... wrote {filename}")
+
 
 def generate_entity_subclass_files(
     output_prefix: str, template_filename: str, environment: Environment, view: ViewWrapper, render_files: bool
@@ -116,6 +131,7 @@ def api_generate(
 
     # Generate enums and import files
     generate_enums(output_prefix, environment, wrapped_view)
+    generate_limit_offset_type(output_prefix, environment, wrapped_view)
     generate_entity_import_files(output_prefix, environment, wrapped_view, render_files=render_files)
 
     # Generate database models, GraphQL types, Cerbos policies, and Factoryboy factories
