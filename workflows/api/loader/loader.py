@@ -101,10 +101,14 @@ class LoaderDriver:
                     if workflow_run:
                         workflow_version = workflow_run.workflow_version
                         entity_inputs = Manifest.normalize_inputs(
-                            (entity_input.field_name, EntityInput(
-                                entity_type=entity_input.type,
-                                entity_id=str(entity_input.input_entity_id),
-                            )) for entity_input in workflow_run.entity_inputs
+                            (
+                                entity_input.field_name,
+                                EntityInput(
+                                    entity_type=entity_input.type,
+                                    entity_id=str(entity_input.input_entity_id),
+                                ),
+                            )
+                            for entity_input in workflow_run.entity_inputs
                         )
                         await self.process_workflow_completed(
                             workflow_version, workflow_run, entity_inputs, _event.outputs

@@ -59,7 +59,6 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             assert isinstance(reference_genome_input, EntityInput)
             reference_genome_id = ID(reference_genome_input.entity_id)
 
-
         consensus_genome = op.create_consensus_genome(
             input=ConsensusGenomeCreateInput(
                 producing_run_id=ID(workflow_run.id),
