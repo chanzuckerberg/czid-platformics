@@ -128,7 +128,7 @@ def test_validate_input() -> None:
 
 def test_multivalued() -> None:
     """
-    Tests the validation logic entity and raw inputs
+    Tests the validation logic for multivalue inputs
     """
     path = os.path.join(os.path.dirname(__file__), "test_manifests/valid_multivalue.yaml")
     with open(path) as f:
@@ -136,23 +136,15 @@ def test_multivalued() -> None:
 
     entity_inputs = {
         # Entity input with the wrong type
-        "sample": EntityInput(entity_type="sequencing_read", entity_id="123"),
+        "sample": [EntityInput(entity_type="sample", entity_id="123"), EntityInput(entity_type="sample", entity_id="124")],
         # Entity input that isn't expected
-        "sequencing_read": [EntityInput(entity_type="sample", entity_id="123")],
+        "sequencing_reads": [
+            EntityInput(entity_type="sequencing_read", entity_id="123"),
+            EntityInput(entity_type="sequencing_read", entity_id="124"),
+        ],
     }
 
-    raw_inputs = {
-        # Raw input with a value not in options
-        "mood": "exstatic",
-        # Raw input with incorrect type
-        "ranking": 1.2,
-    }
-
-    errors = [error.message() for error in manifest.validate_inputs(entity_inputs, raw_inputs)]
+    errors = [error.message() for error in manifest.validate_inputs(entity_inputs, {})]
     assert errors == [
-        "Invalid type for entity input: Sample (expected sample, got sequencing_read)",
-        "Entity input not found: missing",
-        "Missing required Entity input: sequencing_read",
-        "Invalid value for raw input: Mood (input not in options)",
-        "Invalid type for raw input: Ranking (expected int, got float)",
+        "Invalid value for entity input: Sample (expected single input but recieved 2)",
     ]

@@ -99,29 +99,38 @@ class InputConstraintUnsatisfied(_InputValidationError):
         return f"Invalid value for {self.raw_or_entity} input: {self.input_name} ({self.explaination})"
 
 
-class BaseInputArgument(BaseModel):
+T = typing.TypeVar("T", EntityInput, Primitive)
+
+class BaseInputArgument(BaseModel, typing.Generic[T]):
     name: str
     description: str
     required: bool = True
-    n: int = 1
+    multivalue: bool = False
 
-
-class EntityInputArgument(BaseInputArgument):
-    entity_type: str
-
-    def validate_input(self, entity_input: list[EntityInput]) -> _InputValidationErrors:
-        if not self.multivalue and len(entity_input) > 1:
+    def validate_input(self, inputs: list[T]) -> _InputValidationErrors:
+        print("EEE", inputs)
+        if not self.multivalue and len(inputs) > 1:
             yield InputConstraintUnsatisfied(
                 self.name,
-                "entity",
-                f"expected single entity input but recieved {len(entity_input)}"
+                # TODO: can't be sure
+                "entity" if isinstance(inputs[0], EntityInput) else "raw",
+                f"expected single input but recieved {len(inputs)}"
             )
-        for _entity_input in entity_input:
+
+
+class EntityInputArgument(BaseInputArgument[EntityInput]):
+    entity_type: str
+
+    def validate_input(self, inputs):
+        print("DDD", inputs)
+        for error in super().validate_input(inputs):
+            yield error
+        for _entity_input in inputs:
             if _entity_input.entity_type != self.entity_type:
-                yield InputTypeInvalid(self.name, "entity", self.entity_type, entity_input.entity_type)
+                yield InputTypeInvalid(self.name, "entity", self.entity_type, _entity_input.entity_type)
 
 
-class RawInputArgument(BaseInputArgument):
+class RawInputArgument(BaseInputArgument[Primitive]):
     type: PrimitiveTypeName
     default: Optional[Primitive] = None
     workflow_input: Optional[str] = None
@@ -171,18 +180,15 @@ class RawInputArgument(BaseInputArgument):
             self.required = False
         return self
 
-    def validate_input(self, raw_input: list[Primitive]) -> _InputValidationErrors:
-        if not self.multivalue and len(raw_input) > 1:
-            yield InputConstraintUnsatisfied(
-                self.name,
-                "raw",
-                f"expected single raw input but recieved {len(raw_input)}"
-            )
-        for _raw_input in raw_input:
-            if self.options and _raw_input not in self.options:
+    def validate_input(self, inputs):
+        print("CCC", inputs)
+        for error in super().validate_input(inputs):
+            yield error
+        for raw_input in inputs:
+            if self.options and raw_input not in self.options:
                 yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
-            if type(_raw_input).__name__ != self.type:
-                yield InputTypeInvalid(self.name, "raw", self.type, type(_raw_input).__name__)
+            if type(raw_input).__name__ != self.type:
+                yield InputTypeInvalid(self.name, "raw", self.type, type(raw_input).__name__)
 
 
 @dataclass
@@ -291,14 +297,19 @@ class Manifest(BaseModel):
         return self
 
     def validate_inputs(
-        self, entity_inputs: dict[str, list[EntityInput]], raw_inputs: dict[str, list[Primitive]]
+        self,
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
     ) -> _InputValidationErrors:
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),
             ("raw", raw_inputs, self.raw_inputs),
         ]:
+            print("AAA", entity_or_raw, inputs, input_arguments)
+            list_inputs = {k: [v] if not isinstance(v, list) else v for k, v in inputs.items()}
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}  # type: ignore
-            for name, input in inputs.items():  # type: ignore
+            for name, input in list_inputs.items():  # type: ignore
+                print("BBB", name, input)
                 input_argument = input_arguments.get(name)  # type: ignore
                 if not input_argument:
                     yield InputNotSupported(name, entity_or_raw)  # type: ignore
