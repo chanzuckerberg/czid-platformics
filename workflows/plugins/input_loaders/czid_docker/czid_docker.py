@@ -20,7 +20,7 @@ class CZIDDockerInputLoader(InputLoader):
         raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
-        name = f"consensus-genome:v{str(workflow_version.version)}"
+        name = f"{workflow_version.workflow.name}:v{str(workflow_version.version)}"
         if os.getenv("ENVIRONMENT") == "test":
             return {"docker_image_id": name}
         sts = boto3.client("sts")

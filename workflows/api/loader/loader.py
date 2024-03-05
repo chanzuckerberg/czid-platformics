@@ -92,7 +92,7 @@ class LoaderDriver:
                     result = await self.session.execute(
                         select(WorkflowRun)
                         .options(
-                            joinedload(WorkflowRun.workflow_version),
+                            joinedload(WorkflowRun.workflow_version).joinedload(WorkflowVersion.workflow),
                             selectinload(WorkflowRun.entity_inputs),
                         )
                         .where(WorkflowRun.execution_id == _event.runner_id)
