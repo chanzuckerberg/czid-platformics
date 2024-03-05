@@ -3,7 +3,7 @@ import os
 import pytest
 from pydantic import ValidationError
 
-from manifest.manifest import Manifest, EntityInput
+from manifest.manifest import Manifest, EntityInput, Primitive
 
 
 def test_valid_parse() -> None:
@@ -109,7 +109,7 @@ def test_validate_input() -> None:
         "missing": EntityInput(entity_type="sample", entity_id="123"),
     }
 
-    raw_inputs = {
+    raw_inputs: dict[str, Primitive | list[Primitive]] = {
         # Raw input with a value not in options
         "mood": "exstatic",
         # Raw input with incorrect type
