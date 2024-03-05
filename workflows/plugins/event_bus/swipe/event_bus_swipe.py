@@ -6,7 +6,6 @@ import json
 from typing import List, cast
 import boto3
 from settings import SWIPEEventBusSettings
-import uuid
 from plugins.plugin_types import (
     EventBus,
     WorkflowStartedMessage,
@@ -23,13 +22,6 @@ class EventBusSWIPE(EventBus):
         self.settings = settings
         if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")
-
-    def valid_uuid(self, execution_id: str) -> bool:
-        try:
-            uuid.UUID(execution_id, version=4)
-            return True
-        except ValueError:
-            return False
 
     def retrieve_messages(self, url: str) -> List:
         """Retrieve a list of SQS messages and delete them from queue"""
@@ -48,13 +40,11 @@ class EventBusSWIPE(EventBus):
             body = json.loads(message["Body"])
             content = json.loads(body["Message"]) if body.get("Message") else body
 
-            # check if message has valid uuid. If not could be from legacy web app
-            if self.valid_uuid(content["detail"]["executionArn"].split(":")[-1]):
-                messages.append(content)
-                self.sqs.delete_message(
-                    QueueUrl=url,
-                    ReceiptHandle=receipt_handle,
-                )
+            messages.append(content)
+            self.sqs.delete_message(
+                QueueUrl=url,
+                ReceiptHandle=receipt_handle,
+            )
 
         return messages
 
