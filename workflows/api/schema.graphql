@@ -41,6 +41,11 @@ input IntComparators {
   _is_null: Int
 }
 
+input LimitOffsetClause {
+  limit: Int
+  offset: Int
+}
+
 type Mutation {
   createWorkflowRun(input: RunWorkflowVersionInput!): WorkflowRun!
   updateWorkflowRun(input: WorkflowRunUpdateInput!, where: WorkflowRunWhereClauseMutations!): [WorkflowRun!]!
@@ -89,11 +94,11 @@ type Query {
     """The IDs of the objects."""
     ids: [GlobalID!]!
   ): [Node!]!
-  workflowRuns(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = []): [WorkflowRun!]!
-  workflows(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = []): [Workflow!]!
-  workflowRunSteps(where: WorkflowRunStepWhereClause = null, orderBy: [WorkflowRunStepOrderByClause!] = []): [WorkflowRunStep!]!
-  workflowRunEntityInputs(where: WorkflowRunEntityInputWhereClause = null, orderBy: [WorkflowRunEntityInputOrderByClause!] = []): [WorkflowRunEntityInput!]!
-  workflowVersions(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): [WorkflowVersion!]!
+  workflowRuns(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowRun!]!
+  workflows(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [Workflow!]!
+  workflowRunSteps(where: WorkflowRunStepWhereClause = null, orderBy: [WorkflowRunStepOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowRunStep!]!
+  workflowRunEntityInputs(where: WorkflowRunEntityInputWhereClause = null, orderBy: [WorkflowRunEntityInputOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowRunEntityInput!]!
+  workflowVersions(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowVersion!]!
   workflowRunsAggregate(where: WorkflowRunWhereClause = null): WorkflowRunAggregate!
   workflowsAggregate(where: WorkflowWhereClause = null): WorkflowAggregate!
   workflowRunStepsAggregate(where: WorkflowRunStepWhereClause = null): WorkflowRunStepAggregate!

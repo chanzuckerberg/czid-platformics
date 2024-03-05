@@ -198,6 +198,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "workflowRuns",
@@ -245,6 +254,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -294,6 +312,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "workflowRunSteps",
@@ -342,6 +369,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "workflowRunEntityInputs",
@@ -389,6 +425,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -5733,6 +5778,34 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "WorkflowRunEntityInputCountColumns",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "offset",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "LimitOffsetClause",
           "possibleTypes": null
         },
         {
