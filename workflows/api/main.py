@@ -174,6 +174,7 @@ async def create_workflow_run(
 
 async def _run_workflow_run(
     workflow_run_id: strawberry.ID,
+    execution_id: typing.Optional[str],
     session: AsyncSession,
     cerbos_client: CerbosClient,
     principal: Principal,
@@ -229,15 +230,15 @@ async def _run_workflow_run(
                 raise PlatformicsException("An error occurred while processing your inputs")
             workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
-    print(workflow_runner_inputs_json)
     status = WorkflowRunStatus.PENDING
-    execution_id = None
+    final_execution_id = execution_id
     try:
-        execution_id = await workflow_runner.run_workflow(
-            event_bus=event_bus,
-            workflow_path=workflow_version.workflow_uri,
-            inputs=workflow_runner_inputs_json,
-        )
+        if not final_execution_id:
+            final_execution_id = await workflow_runner.run_workflow(
+                event_bus=event_bus,
+                workflow_path=workflow_version.workflow_uri,
+                inputs=workflow_runner_inputs_json,
+            )
     except Exception as e:
         logger.error(f"Failed to run workflow {workflow_version.id}: {e}")
         status = WorkflowRunStatus.FAILED
@@ -246,8 +247,8 @@ async def _run_workflow_run(
     workflow_run.status = status
     workflow_run.workflow_runner_inputs_json = json.dumps(workflow_runner_inputs_json)
     workflow_run.started_at = datetime.now()
-    if execution_id:
-        workflow_run.execution_id = execution_id
+    if final_execution_id:
+        workflow_run.execution_id = final_execution_id
     await session.commit()
     return workflow_run  # type: ignore
 
@@ -255,6 +256,7 @@ async def _run_workflow_run(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def run_workflow_run(
     workflow_run_id: strawberry.ID,
+    execution_id: typing.Optional[str] = None,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -264,6 +266,7 @@ async def run_workflow_run(
 ) -> workflow_run.WorkflowRun:
     return await _run_workflow_run(
         workflow_run_id=workflow_run_id,
+        execution_id=execution_id,
         session=session,
         cerbos_client=cerbos_client,
         principal=principal,
@@ -276,6 +279,7 @@ async def run_workflow_run(
 @strawberry.mutation(extensions=[DependencyExtension()])
 async def run_workflow_version(
     input: RunWorkflowVersionInput,
+    execution_id: typing.Optional[str] = None,
     session: AsyncSession = Depends(get_db_session, use_cache=False),
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
@@ -291,6 +295,7 @@ async def run_workflow_version(
     )
     return await _run_workflow_run(
         workflow_run_id=workflow_run.id,
+        execution_id=execution_id,
         session=session,
         cerbos_client=cerbos_client,
         principal=principal,
