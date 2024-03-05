@@ -124,13 +124,13 @@ async def _create_workflow_run(
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
-    workflow_version = await session.execute(
+    workflow_version = (await session.execute(
         select(db.WorkflowVersion)
         .options(
             joinedload(db.WorkflowVersion.workflow),
         )
         .where(db.WorkflowVersion.id == input.workflow_version_id)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
 
     entity_inputs_list = [
