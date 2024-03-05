@@ -2,16 +2,28 @@ from sgqlc.operation import Operation
 from database.models.workflow_version import WorkflowVersion
 from manifest.manifest import EntityInput, Primitive
 from platformics.client.entities_schema import (
+    FileWhereClause,
     IndexFileWhereClause,
     IndexTypesEnumComparators,
     Query,
     SampleWhereClause,
     SequencingReadWhereClause,
-    UUIDComparators,
     StrComparators,
+    UUIDComparators,
 )
 from platformics.util.types_utils import JSONValue
 from plugins.plugin_types import InputLoader
+
+
+class PassthroughInputLoader(InputLoader):
+    async def load(
+        self,
+        workflow_version: WorkflowVersion,
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
+        requested_outputs: list[str] = [],
+    ) -> dict[str, JSONValue]:
+        return { output: raw_inputs[output] for output in requested_outputs }
 
 
 class SampleInputLoader(InputLoader):
@@ -81,3 +93,29 @@ class IndexFileInputLoader(InputLoader):
         resp = self._entities_gql(op)
         index_files = resp["indexFiles"]
         return {index_file["name"]: self._uri_file(index_file["file"]) for index_file in index_files}
+
+
+class FilesInputLoader(InputLoader):
+    async def load(
+        self,
+        workflow_version: WorkflowVersion,
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
+        requested_outputs: list[str] = [],
+    ) -> dict[str, JSONValue]:
+        files = entity_inputs["files"]
+        assert isinstance(files, list)
+        assert len(files) > 0
+        assert all(isinstance(f, EntityInput) for f in files)
+        op = Operation(Query)
+        files = op.files(
+            where=FileWhereClause(
+                id=UUIDComparators(_in=[f.entity_id for f in files])
+            )
+        )
+        self._fetch_file(files)  # type: ignore
+        resp = self._entities_gql(op)
+        return {
+            "files": [self._uri_file(file) for file in resp["files"]]
+        }
+

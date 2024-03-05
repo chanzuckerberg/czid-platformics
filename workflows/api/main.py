@@ -203,7 +203,7 @@ async def _run_workflow_run(
         (e.field_name, EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id)))
         for e in workflow_entity_inputs
     )
-    raw_inputs = Manifest.normalize_inputs(json.loads(workflow_run.raw_inputs_json))
+    raw_inputs = json.loads(workflow_run.raw_inputs_json)
     workflow_runner_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:
         loader_entity_inputs = {
@@ -229,6 +229,7 @@ async def _run_workflow_run(
                 raise PlatformicsException("An error occurred while processing your inputs")
             workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
+    print(workflow_runner_inputs_json)
     status = WorkflowRunStatus.PENDING
     execution_id = None
     try:

@@ -1,11 +1,7 @@
-"""
-Populate the database with mock data for local development
-"""
-
 from database.models.workflow import Workflow
 from database.models.workflow_version import WorkflowVersion
 
-from platformics.util.seed_utils import SeedSession, DEFAULT_WORKFLOW_VERSIONS, TempCZIDWorkflowFile
+from platformics.util.seed_utils import LOCAL_BUCKET, SeedSession, DEFAULT_WORKFLOW_VERSIONS, TempCZIDWorkflowFile
 
 
 def main() -> str:
@@ -16,17 +12,17 @@ def main() -> str:
     """
     session = SeedSession()
 
-    version = DEFAULT_WORKFLOW_VERSIONS["consensus-genome"]
-    cg_workflow = session.create_or_fetch_entity(Workflow, name="consensus-genome")
+    version = DEFAULT_WORKFLOW_VERSIONS["bulk-download"]
+    cg_workflow = session.create_or_fetch_entity(Workflow, name="bulk-download")
     cg_workflow.default_version = version
     cg_workflow.minimum_supported_version = version
     session.add(cg_workflow)
     session.commit()
 
-    workflow_uri = session.transfer_wdl("run.wdl", "consensus-genome", "3.5.0")
+    workflow_uri = session.transfer_wdl("run.wdl", "bulk-download")
     cg_workflow_version = session.create_or_fetch_entity(WorkflowVersion, version=version, workflow=cg_workflow)
     cg_workflow_version.workflow_uri = workflow_uri
-    with TempCZIDWorkflowFile("manifest.yml", "consensus-genome", branch="main") as manifest_file:
+    with TempCZIDWorkflowFile("manifest.yml", "bulk-download") as manifest_file:
         cg_workflow_version.manifest = manifest_file.read().decode()
     cg_workflow_version.workflow = cg_workflow
     session.add(cg_workflow_version)
