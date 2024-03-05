@@ -26,6 +26,7 @@ from platformics.database.connect import AsyncDB
 from plugins.plugin_types import EventBus, WorkflowRunner
 from settings import APISettings
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.config import StrawberryConfig
@@ -123,7 +124,13 @@ async def _create_workflow_run(
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
-    workflow_version = await session.get_one(db.WorkflowVersion, input.workflow_version_id)
+    workflow_version = await session.execute(
+        select(db.WorkflowVersion)
+        .options(
+            joinedload(db.WorkflowVersion.workflow),
+        )
+        .where(db.WorkflowVersion.id == input.workflow_version_id)
+    ).scalar_one_or_none()
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
 
     entity_inputs_list = [
