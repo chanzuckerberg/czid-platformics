@@ -18,11 +18,14 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     """
     session = SeedSession()
 
-    files = session.query(File).join(
-            Entity, File.entity_id == Entity.id
-        ).filter(
+    files = (
+        session.query(File)
+        .join(Entity, File.entity_id == Entity.id)
+        .filter(
             Entity.owner_user_id == TEST_USER_ID,
-        ).all()
+        )
+        .all()
+    )
 
     # redo above joining File on Entity by
     file_ids: list[dict[str, str]] = []
@@ -32,7 +35,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
             print(f"Creating file {file.id} in {file.namespace}/{file.path}")
             session.s3_local.put_object(Bucket=file.namespace, Key=file.path, Body="ABC")
         if len(file_ids) < 4:
-            file_ids.append({ "name": "files", "entity_type": "file", "entity_id": str(file.id) })
+            file_ids.append({"name": "files", "entity_type": "file", "entity_id": str(file.id)})
 
     return file_ids, {
         "bulk_download_type": "zip",

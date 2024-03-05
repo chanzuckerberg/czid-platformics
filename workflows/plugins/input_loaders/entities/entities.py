@@ -23,7 +23,7 @@ class PassthroughInputLoader(InputLoader):
         raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
-        return { output: raw_inputs[output] for output in requested_outputs }
+        return {output: raw_inputs[output] for output in requested_outputs}
 
 
 class SampleInputLoader(InputLoader):
@@ -108,14 +108,7 @@ class FilesInputLoader(InputLoader):
         assert len(files) > 0
         assert all(isinstance(f, EntityInput) for f in files)
         op = Operation(Query)
-        files = op.files(
-            where=FileWhereClause(
-                id=UUIDComparators(_in=[f.entity_id for f in files])
-            )
-        )
+        files = op.files(where=FileWhereClause(id=UUIDComparators(_in=[f.entity_id for f in files])))
         self._fetch_file(files)  # type: ignore
         resp = self._entities_gql(op)
-        return {
-            "files": [self._uri_file(file) for file in resp["files"]]
-        }
-
+        return {"files": [self._uri_file(file) for file in resp["files"]]}

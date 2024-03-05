@@ -1,7 +1,7 @@
 from database.models.workflow import Workflow
 from database.models.workflow_version import WorkflowVersion
 
-from platformics.util.seed_utils import LOCAL_BUCKET, SeedSession, DEFAULT_WORKFLOW_VERSIONS, TempCZIDWorkflowFile
+from platformics.util.seed_utils import SeedSession, DEFAULT_WORKFLOW_VERSIONS, TempCZIDWorkflowFile
 
 
 def main() -> str:

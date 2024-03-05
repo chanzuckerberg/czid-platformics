@@ -100,6 +100,8 @@ class InputConstraintUnsatisfied(_InputValidationError):
 
 
 R = typing.TypeVar("R")
+
+
 def _listify(value: R | list[R]) -> list[R]:
     if isinstance(value, list):
         return value
@@ -107,6 +109,8 @@ def _listify(value: R | list[R]) -> list[R]:
 
 
 T = typing.TypeVar("T", EntityInput, Primitive)
+
+
 class BaseInputArgument(BaseModel, typing.Generic[T]):
     name: str
     description: str

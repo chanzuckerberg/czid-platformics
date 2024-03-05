@@ -47,10 +47,7 @@ class BulkDownloadOutputLoader(OutputLoader):
         file = op.create_file(
             entity_id=bulk_download_id,
             entity_field_name="file",
-            file=FileCreate(
-                name="file", file_format="fasta", **self._parse_uri(file_path)
-            ),
+            file=FileCreate(name="file", file_format="fasta", **self._parse_uri(file_path)),
         )
         file.id()
         self._entities_gql(op)
-
