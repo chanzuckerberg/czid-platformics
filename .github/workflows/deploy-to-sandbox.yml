@@ -16,4 +16,5 @@ jobs:
     with:
       environment: sandbox
       service: ${{ github.event.inputs.service }}
+      developer_name: ${{ github.actor }}
     secrets: inherit

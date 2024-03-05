@@ -8,7 +8,8 @@ on:
       service:
         required: true
         type: string
-
+      developer_name: 
+        type: string
 
 jobs:
   run-deploy:
@@ -23,20 +24,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Set stack name
+        id: stack_name
+        run: |
+          if [ "${{ inputs.environment }}" = "development" ]; then
+            echo "::set-output name=sname::rdev-${{ inputs.developer_name }}"
+          else
+            echo "::set-output name=sname::${{ inputs.environment }}"
+          fi
       - name: Assume happy-api deployment role
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-west-2
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}  
           role-duration-seconds: 1200 
-          role-session-name: core-sandbox-deploy 
+          role-session-name: core-service-deploy 
       - name: Install happy
         uses: chanzuckerberg/github-actions/.github/actions/install-happy@main
-      - name: Update sandbox
+      - name: Create or Update deploy
         uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
         with:
           tfe-token: ${{ secrets.TFE_TOKEN }} 
           env: ${{ inputs.environment }} 
           create-tag: true
-          stack-name: ${{ inputs.service }} 
+          stack-name: ${{ steps.stack_name.outputs.sname }} 
           working-directory: ${{ inputs.service }}
