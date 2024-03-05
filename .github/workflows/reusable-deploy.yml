@@ -27,10 +27,10 @@ jobs:
       - name: Set stack name
         id: stack_name
         run: |
-          if [ "${{ inputs.environment }}" = "development" ]; then
-            echo "::set-output name=sname::rdev-${{ inputs.developer_name }}"
+          if [ "${{ inputs.environment }}" = "dev" ]; then
+            echo "sname=rdev-${{ inputs.developer_name }}-${{ inputs.service }}" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=sname::${{ inputs.environment }}"
+            echo "sname=${{ inputs.service }}" >> $GITHUB_OUTPUT
           fi
       - name: Assume happy-api deployment role
         uses: aws-actions/configure-aws-credentials@v4
