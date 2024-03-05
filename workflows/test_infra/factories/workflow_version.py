@@ -38,3 +38,4 @@ class WorkflowVersionFactory(CommonFactory):
         owner_user_id=factory.SelfAttribute("..owner_user_id"),
         collection_id=factory.SelfAttribute("..collection_id"),
     )
+    deprecated = factory.Faker("boolean")

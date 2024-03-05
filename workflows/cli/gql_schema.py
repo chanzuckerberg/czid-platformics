@@ -57,6 +57,7 @@ class WorkflowRunCountColumns(sgqlc.types.Enum):
         "deprecatedBy",
         "endedAt",
         "entityInputs",
+        "errorMessage",
         "executionId",
         "id",
         "outputsJson",
@@ -127,6 +128,7 @@ class WorkflowVersionCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collectionId",
         "createdAt",
+        "deprecated",
         "graphJson",
         "id",
         "manifest",
@@ -147,6 +149,20 @@ class orderBy(sgqlc.types.Enum):
 ########################################################################
 # Input Objects
 ########################################################################
+class BoolComparators(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
+    _eq = sgqlc.types.Field(Int, graphql_name="_eq")
+    _neq = sgqlc.types.Field(Int, graphql_name="_neq")
+    _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(Int)), graphql_name="_in")
+    _nin = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(Int)), graphql_name="_nin")
+    _gt = sgqlc.types.Field(Int, graphql_name="_gt")
+    _gte = sgqlc.types.Field(Int, graphql_name="_gte")
+    _lt = sgqlc.types.Field(Int, graphql_name="_lt")
+    _lte = sgqlc.types.Field(Int, graphql_name="_lte")
+    _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
+
+
 class DatetimeComparators(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
@@ -366,6 +382,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_message",
         "workflow_version",
         "raw_inputs_json",
         "deprecated_by",
@@ -382,6 +399,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
     outputs_json = sgqlc.types.Field(orderBy, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(orderBy, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(orderBy, graphql_name="status")
+    error_message = sgqlc.types.Field(orderBy, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field("WorkflowVersionOrderByClause", graphql_name="workflowVersion")
     raw_inputs_json = sgqlc.types.Field(orderBy, graphql_name="rawInputsJson")
     deprecated_by = sgqlc.types.Field(orderBy, graphql_name="deprecatedBy")
@@ -498,6 +516,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_message",
         "deprecated_by_id",
     )
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
@@ -505,6 +524,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
+    error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
 
 
@@ -518,6 +538,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_message",
         "workflow_version",
         "steps",
         "entity_inputs",
@@ -535,6 +556,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
     outputs_json = sgqlc.types.Field(StrComparators, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(StrComparators, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatusEnumComparators, graphql_name="status")
+    error_message = sgqlc.types.Field(StrComparators, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field("WorkflowVersionWhereClause", graphql_name="workflowVersion")
     steps = sgqlc.types.Field(WorkflowRunStepWhereClause, graphql_name="steps")
     entity_inputs = sgqlc.types.Field(WorkflowRunEntityInputWhereClause, graphql_name="entityInputs")
@@ -562,12 +584,21 @@ class WorkflowUpdateInput(sgqlc.types.Input):
 
 class WorkflowVersionCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("graph_json", "workflow_uri", "version", "manifest", "workflow_id", "collection_id")
+    __field_names__ = (
+        "graph_json",
+        "workflow_uri",
+        "version",
+        "manifest",
+        "workflow_id",
+        "deprecated",
+        "collection_id",
+    )
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
     version = sgqlc.types.Field(String, graphql_name="version")
     manifest = sgqlc.types.Field(String, graphql_name="manifest")
     workflow_id = sgqlc.types.Field(ID, graphql_name="workflowId")
+    deprecated = sgqlc.types.Field(Boolean, graphql_name="deprecated")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
 
 
@@ -579,6 +610,7 @@ class WorkflowVersionOrderByClause(sgqlc.types.Input):
         "version",
         "manifest",
         "workflow",
+        "deprecated",
         "id",
         "owner_user_id",
         "collection_id",
@@ -590,6 +622,7 @@ class WorkflowVersionOrderByClause(sgqlc.types.Input):
     version = sgqlc.types.Field(orderBy, graphql_name="version")
     manifest = sgqlc.types.Field(orderBy, graphql_name="manifest")
     workflow = sgqlc.types.Field(WorkflowOrderByClause, graphql_name="workflow")
+    deprecated = sgqlc.types.Field(orderBy, graphql_name="deprecated")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
@@ -605,6 +638,7 @@ class WorkflowVersionWhereClause(sgqlc.types.Input):
         "version",
         "manifest",
         "workflow",
+        "deprecated",
         "runs",
         "id",
         "owner_user_id",
@@ -617,6 +651,7 @@ class WorkflowVersionWhereClause(sgqlc.types.Input):
     version = sgqlc.types.Field(StrComparators, graphql_name="version")
     manifest = sgqlc.types.Field(StrComparators, graphql_name="manifest")
     workflow = sgqlc.types.Field("WorkflowWhereClause", graphql_name="workflow")
+    deprecated = sgqlc.types.Field(BoolComparators, graphql_name="deprecated")
     runs = sgqlc.types.Field(WorkflowRunWhereClause, graphql_name="runs")
     id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
@@ -1311,6 +1346,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_message",
         "workflow_version",
         "raw_inputs_json",
         "deprecated_by",
@@ -1327,6 +1363,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
+    error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field("WorkflowVersionGroupByOptions", graphql_name="workflowVersion")
     raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
     deprecated_by = sgqlc.types.Field("WorkflowRunGroupByOptions", graphql_name="deprecatedBy")
@@ -1346,6 +1383,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
         "execution_id",
         "outputs_json",
         "workflow_runner_inputs_json",
+        "error_message",
         "raw_inputs_json",
         "owner_user_id",
         "collection_id",
@@ -1358,6 +1396,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
+    error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
@@ -1515,6 +1554,7 @@ class WorkflowVersionGroupByOptions(sgqlc.types.Type):
         "version",
         "manifest",
         "workflow",
+        "deprecated",
         "id",
         "owner_user_id",
         "collection_id",
@@ -1526,6 +1566,7 @@ class WorkflowVersionGroupByOptions(sgqlc.types.Type):
     version = sgqlc.types.Field(String, graphql_name="version")
     manifest = sgqlc.types.Field(String, graphql_name="manifest")
     workflow = sgqlc.types.Field(WorkflowGroupByOptions, graphql_name="workflow")
+    deprecated = sgqlc.types.Field(Boolean, graphql_name="deprecated")
     id = sgqlc.types.Field(UUID, graphql_name="id")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
@@ -1625,6 +1666,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_message",
         "workflow_version",
         "steps",
         "steps_aggregate",
@@ -1644,6 +1686,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
+    error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field(
         "WorkflowVersion",
         graphql_name="workflowVersion",
@@ -1813,6 +1856,7 @@ class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
         "version",
         "manifest",
         "workflow",
+        "deprecated",
         "runs",
         "runs_aggregate",
         "owner_user_id",
@@ -1842,6 +1886,7 @@ class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
             )
         ),
     )
+    deprecated = sgqlc.types.Field(Boolean, graphql_name="deprecated")
     runs = sgqlc.types.Field(
         sgqlc.types.non_null(WorkflowRunConnection),
         graphql_name="runs",

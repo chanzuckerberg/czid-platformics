@@ -1,3 +1,15 @@
+input BoolComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
+}
+
 """Date with time (isoformat)"""
 scalar DateTime
 
@@ -259,6 +271,7 @@ type WorkflowRun implements EntityInterface & Node {
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
+  errorMessage: String
   workflowVersion(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): WorkflowVersion
   steps(
     where: WorkflowRunStepWhereClause = null
@@ -333,6 +346,7 @@ enum WorkflowRunCountColumns {
   outputsJson
   workflowRunnerInputsJson
   status
+  errorMessage
   workflowVersion
   steps
   entityInputs
@@ -483,6 +497,7 @@ type WorkflowRunGroupByOptions {
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
+  errorMessage: String
   workflowVersion: WorkflowVersionGroupByOptions
   rawInputsJson: String
   deprecatedBy: WorkflowRunGroupByOptions
@@ -500,6 +515,7 @@ type WorkflowRunMinMaxColumns {
   executionId: String
   outputsJson: String
   workflowRunnerInputsJson: String
+  errorMessage: String
   rawInputsJson: String
   ownerUserId: Int
   collectionId: Int
@@ -521,6 +537,7 @@ input WorkflowRunOrderByClause {
   outputsJson: orderBy
   workflowRunnerInputsJson: orderBy
   status: orderBy
+  errorMessage: orderBy
   workflowVersion: WorkflowVersionOrderByClause
   rawInputsJson: orderBy
   deprecatedBy: orderBy
@@ -704,6 +721,7 @@ input WorkflowRunUpdateInput {
   outputsJson: String = null
   workflowRunnerInputsJson: String = null
   status: WorkflowRunStatus = null
+  errorMessage: String = null
   deprecatedById: ID = null
 }
 
@@ -715,6 +733,7 @@ input WorkflowRunWhereClause {
   outputsJson: StrComparators
   workflowRunnerInputsJson: StrComparators
   status: WorkflowRunStatusEnumComparators
+  errorMessage: StrComparators
   workflowVersion: WorkflowVersionWhereClause
   steps: WorkflowRunStepWhereClause
   entityInputs: WorkflowRunEntityInputWhereClause
@@ -745,6 +764,7 @@ type WorkflowVersion implements EntityInterface & Node {
   version: String
   manifest: String
   workflow(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = []): Workflow
+  deprecated: Boolean
   runs(
     where: WorkflowRunWhereClause = null
     orderBy: [WorkflowRunOrderByClause!] = []
@@ -798,6 +818,7 @@ enum WorkflowVersionCountColumns {
   version
   manifest
   workflow
+  deprecated
   runs
   id
   ownerUserId
@@ -812,6 +833,7 @@ input WorkflowVersionCreateInput {
   version: String = null
   manifest: String = null
   workflowId: ID = null
+  deprecated: Boolean = null
   collectionId: Int!
 }
 
@@ -830,6 +852,7 @@ type WorkflowVersionGroupByOptions {
   version: String
   manifest: String
   workflow: WorkflowGroupByOptions
+  deprecated: Boolean
   id: UUID
   ownerUserId: Int
   collectionId: Int
@@ -859,6 +882,7 @@ input WorkflowVersionOrderByClause {
   version: orderBy
   manifest: orderBy
   workflow: WorkflowOrderByClause
+  deprecated: orderBy
   id: orderBy
   ownerUserId: orderBy
   collectionId: orderBy
@@ -872,6 +896,7 @@ input WorkflowVersionWhereClause {
   version: StrComparators
   manifest: StrComparators
   workflow: WorkflowWhereClause
+  deprecated: BoolComparators
   runs: WorkflowRunWhereClause
   id: UUIDComparators
   ownerUserId: IntComparators
