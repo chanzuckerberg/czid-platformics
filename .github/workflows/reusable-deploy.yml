@@ -1,0 +1,42 @@
+name: Reusable Deploy
+on:
+  workflow_call:
+    inputs: 
+      environment: 
+        required: true
+        type: string
+      service:
+        required: true
+        type: string
+
+
+jobs:
+  run-deploy:
+    runs-on: [ARM64, self-hosted, Linux]
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Assume happy-api deployment role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}  
+          role-duration-seconds: 1200 
+          role-session-name: core-sandbox-deploy 
+      - name: Install happy
+        uses: chanzuckerberg/github-actions/.github/actions/install-happy@main
+      - name: Update sandbox
+        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
+        with:
+          tfe-token: ${{ secrets.TFE_TOKEN }} 
+          env: ${{ inputs.environment }} 
+          create-tag: true
+          stack-name: ${{ inputs.service }} 
+          working-directory: ${{ inputs.service }}

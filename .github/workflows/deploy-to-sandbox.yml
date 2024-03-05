@@ -9,30 +9,13 @@ on:
         - workflows
         - entities
 
+run-name: Deploy ${{ github.event.inputs.service }} to sandbox
 jobs:
-  run-deploy:
+  run-deploy-to-sandbox:
     runs-on: [ARM64, self-hosted, Linux]
+    uses: chanzuckerberg/czid-platformics/.github/workflows/reusable-deploy.yml
     environment: sandbox
-    permissions:
-      id-token: write
-      contents: read
-    steps: 
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Assume happy-api deployment role
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: us-west-2
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}  
-          role-duration-seconds: 1200 
-          role-session-name: core-sandbox-deploy 
-      - name: Install happy
-        uses: chanzuckerberg/github-actions/.github/actions/install-happy@main
-      - name: Update sandbox
-        uses: chanzuckerberg/github-actions/.github/actions/deploy-happy-stack@main
-        with:
-          tfe-token: ${{ secrets.TFE_TOKEN }} 
-          env: ${{ vars.HAPPY_ENV }} 
-          create-tag: true
-          stack-name: ${{ github.event.inputs.service }} 
-          working-directory: ${{ github.event.inputs.service }}
+    with:
+      environment: sandbox
+      service: ${{ github.event.inputs.service }}
+    secrets: inherit
