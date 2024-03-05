@@ -27,7 +27,6 @@ services:
       ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
   entities:
     image: "platformics-entities"
-    platform: linux/amd64
     build:
       context: ".."
       dockerfile: "entities/Dockerfile"
