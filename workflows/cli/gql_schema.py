@@ -158,7 +158,7 @@ class DatetimeComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(DateTime, graphql_name="_gte")
     _lt = sgqlc.types.Field(DateTime, graphql_name="_lt")
     _lte = sgqlc.types.Field(DateTime, graphql_name="_lte")
-    _is_null = sgqlc.types.Field(DateTime, graphql_name="_is_null")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
 
 
 class EntityInputType(sgqlc.types.Input):
@@ -180,7 +180,7 @@ class IntComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(Int, graphql_name="_gte")
     _lt = sgqlc.types.Field(Int, graphql_name="_lt")
     _lte = sgqlc.types.Field(Int, graphql_name="_lte")
-    _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
 
 
 class LimitOffsetClause(sgqlc.types.Input):
@@ -233,7 +233,7 @@ class StrComparators(sgqlc.types.Input):
     _neq = sgqlc.types.Field(String, graphql_name="_neq")
     _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(String)), graphql_name="_in")
     _nin = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(String)), graphql_name="_nin")
-    _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
     _gt = sgqlc.types.Field(String, graphql_name="_gt")
     _gte = sgqlc.types.Field(String, graphql_name="_gte")
     _lt = sgqlc.types.Field(String, graphql_name="_lt")
@@ -250,7 +250,7 @@ class StrComparators(sgqlc.types.Input):
 
 class UUIDComparators(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte")
+    __field_names__ = ("_eq", "_neq", "_in", "_nin", "_gt", "_gte", "_lt", "_lte", "_is_null")
     _eq = sgqlc.types.Field(UUID, graphql_name="_eq")
     _neq = sgqlc.types.Field(UUID, graphql_name="_neq")
     _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(UUID)), graphql_name="_in")
@@ -259,6 +259,7 @@ class UUIDComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(UUID, graphql_name="_gte")
     _lt = sgqlc.types.Field(UUID, graphql_name="_lt")
     _lte = sgqlc.types.Field(UUID, graphql_name="_lte")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
 
 
 class WorkflowCreateInput(sgqlc.types.Input):
@@ -403,7 +404,7 @@ class WorkflowRunStatusEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(WorkflowRunStatus, graphql_name="_gte")
     _lt = sgqlc.types.Field(WorkflowRunStatus, graphql_name="_lt")
     _lte = sgqlc.types.Field(WorkflowRunStatus, graphql_name="_lte")
-    _is_null = sgqlc.types.Field(WorkflowRunStatus, graphql_name="_is_null")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
 
 
 class WorkflowRunStepCreateInput(sgqlc.types.Input):
@@ -450,7 +451,7 @@ class WorkflowRunStepStatusEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="_gte")
     _lt = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="_lt")
     _lte = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="_lte")
-    _is_null = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="_is_null")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
 
 
 class WorkflowRunStepUpdateInput(sgqlc.types.Input):
@@ -522,6 +523,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
         "steps",
         "entity_inputs",
         "raw_inputs_json",
+        "deprecated_by_id",
         "id",
         "owner_user_id",
         "collection_id",
@@ -539,6 +541,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
     steps = sgqlc.types.Field(WorkflowRunStepWhereClause, graphql_name="steps")
     entity_inputs = sgqlc.types.Field(WorkflowRunEntityInputWhereClause, graphql_name="entityInputs")
     raw_inputs_json = sgqlc.types.Field(StrComparators, graphql_name="rawInputsJson")
+    deprecated_by_id = sgqlc.types.Field(UUIDComparators, graphql_name="deprecatedById")
     id = sgqlc.types.Field(UUIDComparators, graphql_name="id")
     owner_user_id = sgqlc.types.Field(IntComparators, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
