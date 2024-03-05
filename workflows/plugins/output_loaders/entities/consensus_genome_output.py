@@ -41,12 +41,12 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             )
             accessions.id()
             res = self._entities_gql(op)
-            taxon_id = res["taxa"][0]["id"]
+            taxon_entity_id = res["taxa"][0]["id"]
             accession_id = res["accessions"][0]["id"]
         else:
             taxon_input = entity_inputs["taxon"]
             assert isinstance(taxon_input, EntityInput)
-            taxon_id = taxon_input.entity_id
+            taxon_entity_id = taxon_input.entity_id
             accession_input = entity_inputs["accession"]
             assert isinstance(accession_input, EntityInput)
             accession_id = accession_input.entity_id
@@ -63,7 +63,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             input=ConsensusGenomeCreateInput(
                 producing_run_id=ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
-                taxon_id=ID(taxon_id),
+                taxon_id=ID(taxon_entity_id),
                 sequencing_read_id=ID(sequencing_read_input.entity_id),
                 reference_genome_id=reference_genome_id,
                 accession_id=ID(accession_id),
