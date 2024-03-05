@@ -896,6 +896,7 @@ class Mutation(sgqlc.types.Type):
                     "input",
                     sgqlc.types.Arg(sgqlc.types.non_null(RunWorkflowVersionInput), graphql_name="input", default=None),
                 ),
+                ("execution_id", sgqlc.types.Arg(String, graphql_name="executionId", default=None)),
             )
         ),
     )
@@ -908,6 +909,7 @@ class Mutation(sgqlc.types.Type):
                     "workflow_run_id",
                     sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name="workflowRunId", default=None),
                 ),
+                ("execution_id", sgqlc.types.Arg(String, graphql_name="executionId", default=None)),
             )
         ),
     )

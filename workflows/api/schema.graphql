@@ -60,8 +60,8 @@ type Mutation {
   deleteWorkflowRunEntityInput(where: WorkflowRunEntityInputWhereClauseMutations!): [WorkflowRunEntityInput!]!
   createWorkflowVersion(input: WorkflowVersionCreateInput!): WorkflowVersion!
   deleteWorkflowVersion(where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
-  runWorkflowVersion(input: RunWorkflowVersionInput!): WorkflowRun!
-  runWorkflowRun(workflowRunId: ID!): WorkflowRun!
+  runWorkflowVersion(input: RunWorkflowVersionInput!, executionId: String = null): WorkflowRun!
+  runWorkflowRun(workflowRunId: ID!, executionId: String = null): WorkflowRun!
 }
 
 """An object with a Globally Unique ID"""

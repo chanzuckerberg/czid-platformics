@@ -37,7 +37,7 @@ class LoaderDriver:
         self,
         workflow_version: WorkflowVersion,
         workflow_run: WorkflowRun,
-        entity_inputs: dict[str, EntityInput],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
         outputs: dict[str, JSONValue],
     ) -> None:
         """
@@ -92,7 +92,7 @@ class LoaderDriver:
                     result = await self.session.execute(
                         select(WorkflowRun)
                         .options(
-                            joinedload(WorkflowRun.workflow_version),
+                            joinedload(WorkflowRun.workflow_version).joinedload(WorkflowVersion.workflow),
                             selectinload(WorkflowRun.entity_inputs),
                         )
                         .where(WorkflowRun.execution_id == _event.runner_id)
@@ -100,13 +100,16 @@ class LoaderDriver:
                     workflow_run = result.scalar_one_or_none()
                     if workflow_run:
                         workflow_version = workflow_run.workflow_version
-
-                        entity_inputs = {
-                            entity_input.field_name: EntityInput(
-                                entity_type=entity_input.type, entity_id=str(entity_input.input_entity_id)
+                        entity_inputs = Manifest.normalize_inputs(
+                            (
+                                entity_input.field_name,
+                                EntityInput(
+                                    entity_type=entity_input.type,
+                                    entity_id=str(entity_input.input_entity_id),
+                                ),
                             )
                             for entity_input in workflow_run.entity_inputs
-                        }
+                        )
                         await self.process_workflow_completed(
                             workflow_version, workflow_run, entity_inputs, _event.outputs
                         )

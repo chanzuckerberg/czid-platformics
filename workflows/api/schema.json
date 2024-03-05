@@ -6563,6 +6563,15 @@
                       "ofType": null
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "executionId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "runWorkflowVersion",
@@ -6589,6 +6598,15 @@
                       "name": "ID",
                       "ofType": null
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "executionId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
                   }
                 }
               ],

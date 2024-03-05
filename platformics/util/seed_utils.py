@@ -19,7 +19,8 @@ TEST_COLLECTION_ID = 444
 LOCAL_BUCKET = "local-bucket"
 
 DEFAULT_WORKFLOW_VERSIONS = {
-    "consensus-genome": "3.4.17",
+    "consensus-genome": "3.5.0",
+    "bulk-download": "0.0.2",
 }
 
 

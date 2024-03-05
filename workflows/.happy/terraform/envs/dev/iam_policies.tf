@@ -21,7 +21,7 @@ data "aws_iam_policy_document" "workflows" {
       "sqs:SendMessage",
       "sqs:ReceiveMessage"
     ]
-    resources = ["arn:aws:sqs:us-west-2:${var.aws_account_id}:idseq-swipe-development-web-sfn-notifications-queue"]
+    resources = ["arn:aws:sqs:us-west-2:${var.aws_account_id}:idseq-swipe-development-nextgen-web-sfn-notifications-queue"]
   }
   statement {
     effect = "Allow"
