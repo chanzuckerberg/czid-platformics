@@ -31,6 +31,7 @@ from platformics.api.core.gql_to_sql import (
     IntComparators,
     StrComparators,
     UUIDComparators,
+    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
@@ -142,6 +143,7 @@ class WorkflowVersionWhereClause(TypedDict):
     version: Optional[StrComparators] | None
     manifest: Optional[StrComparators] | None
     workflow: Optional[Annotated["WorkflowWhereClause", strawberry.lazy("api.types.workflow")]] | None
+    deprecated: Optional[BoolComparators] | None
     runs: Optional[Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")]] | None
     id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -162,6 +164,7 @@ class WorkflowVersionOrderByClause(TypedDict):
     version: Optional[orderBy] | None
     manifest: Optional[orderBy] | None
     workflow: Optional[Annotated["WorkflowOrderByClause", strawberry.lazy("api.types.workflow")]] | None
+    deprecated: Optional[orderBy] | None
     id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
     collection_id: Optional[orderBy] | None
@@ -181,6 +184,7 @@ class WorkflowVersion(EntityInterface):
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow: Optional[Annotated["Workflow", strawberry.lazy("api.types.workflow")]] = load_workflow_rows  # type:ignore
+    deprecated: Optional[bool] = None
     runs: Sequence[
         Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
     ] = load_workflow_run_rows  # type:ignore
@@ -247,6 +251,7 @@ class WorkflowVersionCountColumns(enum.Enum):
     version = "version"
     manifest = "manifest"
     workflow = "workflow"
+    deprecated = "deprecated"
     runs = "runs"
     id = "id"
     ownerUserId = "owner_user_id"
@@ -303,6 +308,7 @@ class WorkflowVersionCreateInput:
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow_id: Optional[strawberry.ID] = None
+    deprecated: Optional[bool] = None
     collection_id: int
 
 

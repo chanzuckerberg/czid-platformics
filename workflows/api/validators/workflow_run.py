@@ -41,6 +41,12 @@ class WorkflowRunCreateInputValidator(BaseModel):
         ),
     ]
     status: Annotated[WorkflowRunStatus | None, Field()]
+    error_message: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     workflow_version_id: Annotated[uuid.UUID | None, Field()]
     raw_inputs_json: Annotated[
         str | None,
@@ -80,4 +86,10 @@ class WorkflowRunUpdateInputValidator(BaseModel):
         ),
     ]
     status: Annotated[WorkflowRunStatus | None, Field()]
+    error_message: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     deprecated_by_id: Annotated[uuid.UUID | None, Field()]

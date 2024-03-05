@@ -48,6 +48,7 @@ class WorkflowRunFactory(CommonFactory):
             "RUNNING",
         ]
     )
+    error_message = fuzzy.FuzzyText()
     workflow_version = factory.SubFactory(
         WorkflowVersionFactory,
         owner_user_id=factory.SelfAttribute("..owner_user_id"),

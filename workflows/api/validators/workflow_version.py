@@ -42,6 +42,7 @@ class WorkflowVersionCreateInputValidator(BaseModel):
         ),
     ]
     workflow_id: Annotated[uuid.UUID | None, Field()]
+    deprecated: Annotated[bool | None, Field()]
     collection_id: Annotated[
         int,
         Field(
