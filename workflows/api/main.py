@@ -124,15 +124,7 @@ async def _create_workflow_run(
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
 
-    workflow_version = (
-        await session.execute(
-            select(db.WorkflowVersion)
-            .options(
-                joinedload(db.WorkflowVersion.workflow),
-            )
-            .where(db.WorkflowVersion.id == input.workflow_version_id)
-        )
-    ).scalar_one_or_none()
+    workflow_version = await session.get_one(db.WorkflowVersion, input.workflow_version_id)
     if not workflow_version:
         raise PlatformicsException(f"Workflow version {input.workflow_version_id} not found")
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
@@ -204,7 +196,17 @@ async def _run_workflow_run(
     if workflow_run.status != WorkflowRunStatus.CREATED:
         raise PlatformicsException(f"Workflow run {workflow_run_id} is not in CREATED state")
 
-    workflow_version = await session.get_one(db.WorkflowVersion, workflow_run.workflow_version_id)
+    workflow_version = (
+        await session.execute(
+            select(db.WorkflowVersion)
+            .options(
+                joinedload(db.WorkflowVersion.workflow),
+            )
+            .where(db.WorkflowVersion.id == workflow_run.workflow_version_id)
+        )
+    ).scalar_one_or_none()
+    if not workflow_version:
+        raise PlatformicsException(f"Workflow version {workflow_run.workflow_version_id} not found")
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
     workflow_entity_inputs = (
         await session.execute(
