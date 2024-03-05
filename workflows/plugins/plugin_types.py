@@ -14,7 +14,7 @@ from sgqlc.endpoint.http import HTTPEndpoint
 from sgqlc.operation import Operation
 
 from database.models import WorkflowVersion, WorkflowRun
-from manifest.manifest import EntityInput
+from manifest.manifest import EntityInput, Primitive
 from platformics.api.core.errors import PlatformicsException
 from platformics.client.entities_schema import FileAccessProtocol
 from platformics.util.types_utils import JSONValue
@@ -127,8 +127,8 @@ class InputLoader(IOLoader):
     async def load(
         self,
         workflow_version: WorkflowVersion,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
         """Processes workflow output specified by the type constraints in
@@ -162,8 +162,8 @@ class OutputLoader(IOLoader):
     async def load(
         self,
         workflow_run: WorkflowRun,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         """Processes workflow output specified by the type constraints

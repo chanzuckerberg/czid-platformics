@@ -41,8 +41,10 @@ from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
+from support.limit_offset import LimitOffsetClause
 from typing_extensions import TypedDict
 import enum
+
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -372,11 +374,16 @@ async def resolve_upstream_databases(
     principal: Principal = Depends(require_auth_principal),
     where: Optional[UpstreamDatabaseWhereClause] = None,
     order_by: Optional[list[UpstreamDatabaseOrderByClause]] = [],
+    limit_offset: Optional[LimitOffsetClause] = None,
 ) -> typing.Sequence[UpstreamDatabase]:
     """
     Resolve UpstreamDatabase objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, order_by)  # type: ignore
+    limit = limit_offset["limit"] if limit_offset and "limit" in limit_offset else None
+    offset = limit_offset["offset"] if limit_offset and "offset" in limit_offset else None
+    if offset and not limit:
+        raise PlatformicsException("Cannot use offset without limit")
+    return await get_db_rows(db.UpstreamDatabase, session, cerbos_client, principal, where, order_by, CerbosAction.VIEW, limit, offset)  # type: ignore
 
 
 def format_upstream_database_aggregate_output(
@@ -432,6 +439,7 @@ async def resolve_upstream_databases_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[UpstreamDatabaseWhereClause] = None,
+    # TODO: add support for groupby, limit/offset
 ) -> UpstreamDatabaseAggregate:
     """
     Aggregate values for UpstreamDatabase objects. Used for queries (see api/queries.py).

@@ -126,10 +126,10 @@ async def _create_workflow_run(
     workflow_version = await session.get_one(db.WorkflowVersion, input.workflow_version_id)
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
 
-    entity_inputs = {
-        entity_input.name: EntityInput(entity_type=entity_input.entity_type, entity_id=entity_input.entity_id)
-        for entity_input in input.entity_inputs or []
-    }
+    entity_inputs_list = [
+        (ei.name, EntityInput(entity_type=ei.entity_type, entity_id=ei.entity_id)) for ei in input.entity_inputs or []
+    ]
+    entity_inputs = Manifest.normalize_inputs(entity_inputs_list)
     raw_inputs = json.loads(input.raw_input_json) if input.raw_input_json else {}
 
     input_errors = list(manifest.validate_inputs(entity_inputs, raw_inputs))
@@ -150,11 +150,11 @@ async def _create_workflow_run(
             db.WorkflowRunEntityInput(
                 owner_user_id=int(principal.id),
                 collection_id=input.collection_id,
-                field_name=k,
-                input_entity_id=v.entity_id,
-                entity_type=v.entity_type,
+                field_name=name,
+                input_entity_id=ei.entity_id,
+                entity_type=ei.entity_type,
             )
-            for k, v in entity_inputs.items()
+            for name, ei in entity_inputs_list
         ],
     )
     session.add(workflow_run)
@@ -199,10 +199,10 @@ async def _run_workflow_run(
             select(db.WorkflowRunEntityInput).where(db.WorkflowRunEntityInput.workflow_run_id == workflow_run.id)
         )
     ).scalars()
-    entity_inputs = {
-        e.field_name: EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id))
+    entity_inputs = Manifest.normalize_inputs(
+        (e.field_name, EntityInput(entity_type=e.entity_type, entity_id=str(e.input_entity_id)))
         for e in workflow_entity_inputs
-    }
+    )
     raw_inputs = json.loads(workflow_run.raw_inputs_json)
     workflow_runner_inputs_json = {}
     for input_loader_specifier in manifest.input_loaders:
@@ -229,6 +229,7 @@ async def _run_workflow_run(
                 raise PlatformicsException("An error occurred while processing your inputs")
             workflow_runner_inputs_json[v] = input_loader_outputs[k]
 
+    print(workflow_runner_inputs_json)
     status = WorkflowRunStatus.PENDING
     execution_id = None
     try:

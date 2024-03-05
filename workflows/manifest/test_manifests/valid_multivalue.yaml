@@ -1,0 +1,35 @@
+workflow_name: Valid Manifest
+specification_language: WDL
+description: A valid manifest YAML, intended to demonstrate all of the features
+entity_inputs:
+  sample:
+    name: Sample
+    description: Your sample
+    entity_type: sample
+  sequencing_reads:
+    name: Sequencing Reads
+    description: Your sequencing reads
+    entity_type: sequencing_read
+    multivalue: True
+input_loaders:
+  - name: sample
+    version: ">=0.0.1"
+    inputs:
+      sample: ~
+    outputs:
+      name: sample
+  - name: sequencing_reads
+    version: ">=0.0.1"
+    inputs:
+      sequencing_reads: ~
+    outputs:
+      r1: ~
+      r2: ~
+output_loaders:
+  - name: sequencing_read
+    version: ">=0.0.1"
+    inputs:
+      sample: ~
+    workflow_outputs:
+      fastq: synthetic_sample.out_fastq
+

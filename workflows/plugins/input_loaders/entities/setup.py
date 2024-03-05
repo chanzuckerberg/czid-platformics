@@ -17,9 +17,11 @@ setup(
     reentry_register=True,
     entry_points={
         "czid.plugin.input_loader": [
+            "passthrough = entities:PassthroughInputLoader",
             "sample = entities:SampleInputLoader",
             "sequencing_read = entities:SequencingReadInputLoader",
             "ncbi_index = entities:IndexFileInputLoader",
+            "files = entities:FilesInputLoader",
         ],
     },
 )

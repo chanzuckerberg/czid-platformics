@@ -602,6 +602,13 @@ class IntComparators(sgqlc.types.Input):
     _is_null = sgqlc.types.Field(Int, graphql_name='_is_null')
 
 
+class LimitOffsetClause(sgqlc.types.Input):
+    __schema__ = entities_schema
+    __field_names__ = ('limit', 'offset')
+    limit = sgqlc.types.Field(Int, graphql_name='limit')
+    offset = sgqlc.types.Field(Int, graphql_name='offset')
+
+
 class MetadatumCreateInput(sgqlc.types.Input):
     __schema__ = entities_schema
     __field_names__ = ('sample_id', 'field_name', 'value', 'producing_run_id', 'collection_id')
@@ -1927,66 +1934,79 @@ class Query(sgqlc.types.Type):
     samples = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('Sample'))), graphql_name='samples', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(SampleWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(SampleOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     sequencing_reads = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('SequencingRead'))), graphql_name='sequencingReads', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(SequencingReadWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(SequencingReadOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     genomic_ranges = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('GenomicRange'))), graphql_name='genomicRanges', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(GenomicRangeWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(GenomicRangeOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     reference_genomes = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('ReferenceGenome'))), graphql_name='referenceGenomes', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(ReferenceGenomeWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(ReferenceGenomeOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     accessions = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('Accession'))), graphql_name='accessions', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(AccessionWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(AccessionOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     host_organisms = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('HostOrganism'))), graphql_name='hostOrganisms', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(HostOrganismWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(HostOrganismOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     metadatas = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('Metadatum'))), graphql_name='metadatas', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(MetadatumWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(MetadatumOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     consensus_genomes = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('ConsensusGenome'))), graphql_name='consensusGenomes', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenomeOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     metrics_consensus_genomes = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('MetricConsensusGenome'))), graphql_name='metricsConsensusGenomes', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(MetricConsensusGenomeWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(MetricConsensusGenomeOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     taxa = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('Taxon'))), graphql_name='taxa', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(TaxonWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(TaxonOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     upstream_databases = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('UpstreamDatabase'))), graphql_name='upstreamDatabases', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(UpstreamDatabaseWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(UpstreamDatabaseOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     index_files = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('IndexFile'))), graphql_name='indexFiles', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(IndexFileWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(IndexFileOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     bulk_downloads = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('BulkDownload'))), graphql_name='bulkDownloads', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(BulkDownloadWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(BulkDownloadOrderByClause)), graphql_name='orderBy', default=())),
+        ('limit_offset', sgqlc.types.Arg(LimitOffsetClause, graphql_name='limitOffset', default=None)),
 ))
     )
     samples_aggregate = sgqlc.types.Field(sgqlc.types.non_null('SampleAggregate'), graphql_name='samplesAggregate', args=sgqlc.types.ArgDict((

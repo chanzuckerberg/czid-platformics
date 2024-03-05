@@ -42,9 +42,11 @@ from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
+from support.limit_offset import LimitOffsetClause
 from typing_extensions import TypedDict
 import enum
 from support.enums import TaxonLevel
+
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -444,11 +446,16 @@ async def resolve_taxa(
     principal: Principal = Depends(require_auth_principal),
     where: Optional[TaxonWhereClause] = None,
     order_by: Optional[list[TaxonOrderByClause]] = [],
+    limit_offset: Optional[LimitOffsetClause] = None,
 ) -> typing.Sequence[Taxon]:
     """
     Resolve Taxon objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.Taxon, session, cerbos_client, principal, where, order_by)  # type: ignore
+    limit = limit_offset["limit"] if limit_offset and "limit" in limit_offset else None
+    offset = limit_offset["offset"] if limit_offset and "offset" in limit_offset else None
+    if offset and not limit:
+        raise PlatformicsException("Cannot use offset without limit")
+    return await get_db_rows(db.Taxon, session, cerbos_client, principal, where, order_by, CerbosAction.VIEW, limit, offset)  # type: ignore
 
 
 def format_taxon_aggregate_output(query_results: Sequence[RowMapping] | RowMapping) -> TaxonAggregate:
@@ -502,6 +509,7 @@ async def resolve_taxa_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[TaxonWhereClause] = None,
+    # TODO: add support for groupby, limit/offset
 ) -> TaxonAggregate:
     """
     Aggregate values for Taxon objects. Used for queries (see api/queries.py).

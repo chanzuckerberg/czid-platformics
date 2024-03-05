@@ -982,6 +982,13 @@ class IntComparators(sgqlc.types.Input):
     _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
 
 
+class LimitOffsetClause(sgqlc.types.Input):
+    __schema__ = gql_schema
+    __field_names__ = ("limit", "offset")
+    limit = sgqlc.types.Field(Int, graphql_name="limit")
+    offset = sgqlc.types.Field(Int, graphql_name="offset")
+
+
 class MetadatumCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("sample_id", "field_name", "value", "producing_run_id", "collection_id")
@@ -3281,6 +3288,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3298,6 +3306,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3315,6 +3324,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3332,6 +3342,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3349,6 +3360,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3366,6 +3378,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3383,6 +3396,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3400,6 +3414,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3417,6 +3432,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3434,6 +3450,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3451,6 +3468,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3468,6 +3486,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
@@ -3485,6 +3504,7 @@ class Query(sgqlc.types.Type):
                         default=(),
                     ),
                 ),
+                ("limit_offset", sgqlc.types.Arg(LimitOffsetClause, graphql_name="limitOffset", default=None)),
             )
         ),
     )
