@@ -133,6 +133,8 @@ async def _create_workflow_run(
             .where(db.WorkflowVersion.id == input.workflow_version_id)
         )
     ).scalar_one_or_none()
+    if not workflow_version:
+        raise PlatformicsException(f"Workflow version {input.workflow_version_id} not found")
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
 
     entity_inputs_list = [
