@@ -17,4 +17,3 @@ jobs:
       environment: sandbox
       service: ${{ github.event.inputs.service }}
     secrets: inherit
-    environment: sandbox
