@@ -10,7 +10,7 @@ input DatetimeComparators {
   _gte: DateTime
   _lt: DateTime
   _lte: DateTime
-  _is_null: DateTime
+  _is_null: Boolean
 }
 
 input EntityInputType {
@@ -38,7 +38,7 @@ input IntComparators {
   _gte: Int
   _lt: Int
   _lte: Int
-  _is_null: Int
+  _is_null: Boolean
 }
 
 input LimitOffsetClause {
@@ -119,7 +119,7 @@ input StrComparators {
   _neq: String
   _in: [String!]
   _nin: [String!]
-  _is_null: Int
+  _is_null: Boolean
   _gt: String
   _gte: String
   _lt: String
@@ -145,6 +145,7 @@ input UUIDComparators {
   _gte: UUID
   _lt: UUID
   _lte: UUID
+  _is_null: Boolean
 }
 
 type Workflow implements EntityInterface & Node {
@@ -552,7 +553,7 @@ input WorkflowRunStatusEnumComparators {
   _gte: WorkflowRunStatus
   _lt: WorkflowRunStatus
   _lte: WorkflowRunStatus
-  _is_null: WorkflowRunStatus
+  _is_null: Boolean
 }
 
 type WorkflowRunStep implements EntityInterface & Node {
@@ -674,7 +675,7 @@ input WorkflowRunStepStatusEnumComparators {
   _gte: WorkflowRunStepStatus
   _lt: WorkflowRunStepStatus
   _lte: WorkflowRunStepStatus
-  _is_null: WorkflowRunStepStatus
+  _is_null: Boolean
 }
 
 input WorkflowRunStepUpdateInput {
@@ -719,6 +720,7 @@ input WorkflowRunWhereClause {
   steps: WorkflowRunStepWhereClause
   entityInputs: WorkflowRunEntityInputWhereClause
   rawInputsJson: StrComparators
+  deprecatedById: UUIDComparators
   id: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators

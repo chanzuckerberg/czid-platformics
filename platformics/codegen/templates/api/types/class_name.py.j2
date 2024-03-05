@@ -204,6 +204,8 @@ class {{ cls.name }}WhereClause(TypedDict):
     {{ attr.name }}: Optional[DatetimeComparators] | None
         {%- elif attr.inverse %}
     {{ attr.name }}: Optional[Annotated["{{ attr.type }}WhereClause", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] | None
+        {%- elif attr.type == cls.name %}
+    {{ attr.name }}_id: Optional[UUIDComparators] | None
         {%- endif %}
     {%- endfor %}
 

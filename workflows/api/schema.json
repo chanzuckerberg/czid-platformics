@@ -1949,7 +1949,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -2249,6 +2249,15 @@
                 "name": "UUID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -2362,7 +2371,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2469,7 +2478,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "DateTime",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2579,6 +2588,15 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deprecatedById",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -2729,8 +2747,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "WorkflowRunStatus",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2927,8 +2945,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "WorkflowRunStepStatus",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }

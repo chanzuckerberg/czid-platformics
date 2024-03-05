@@ -206,6 +206,7 @@ class WorkflowRunWhereClause(TypedDict):
         Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]
     ] | None
     raw_inputs_json: Optional[StrComparators] | None
+    deprecated_by_id: Optional[UUIDComparators] | None
     id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
     collection_id: Optional[IntComparators] | None

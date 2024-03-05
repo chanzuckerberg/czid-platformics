@@ -191,6 +191,15 @@ class TaxonWhereClause(TypedDict):
     ] | None
     upstream_database_identifier: Optional[StrComparators] | None
     level: Optional[EnumComparators[TaxonLevel]] | None
+    tax_parent_id: Optional[UUIDComparators] | None
+    tax_species_id: Optional[UUIDComparators] | None
+    tax_genus_id: Optional[UUIDComparators] | None
+    tax_family_id: Optional[UUIDComparators] | None
+    tax_order_id: Optional[UUIDComparators] | None
+    tax_class_id: Optional[UUIDComparators] | None
+    tax_phylum_id: Optional[UUIDComparators] | None
+    tax_kingdom_id: Optional[UUIDComparators] | None
+    tax_superkingdom_id: Optional[UUIDComparators] | None
     consensus_genomes: Optional[
         Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
     ] | None

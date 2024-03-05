@@ -160,7 +160,10 @@ def convert_where_clauses_to_sql(
         for comparator, value in v.items():  # type: ignore
             sa_comparator = operator_map[comparator]
             if sa_comparator == "IS_NULL":
-                query = query.filter(getattr(sa_model, col).is_(None))
+                if value:
+                    query = query.filter(getattr(sa_model, col).is_(None))
+                else:
+                    query = query.filter(getattr(sa_model, col).isnot(None))
             else:
                 query = query.filter(getattr(getattr(sa_model, col), sa_comparator)(value))
 

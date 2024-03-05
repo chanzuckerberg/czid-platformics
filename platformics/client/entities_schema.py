@@ -215,7 +215,7 @@ class BoolComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(Int, graphql_name='_gte')
     _lt = sgqlc.types.Field(Int, graphql_name='_lt')
     _lte = sgqlc.types.Field(Int, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(Int, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class BulkDownloadCreateInput(sgqlc.types.Input):
@@ -251,7 +251,7 @@ class BulkDownloadTypeEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(BulkDownloadType, graphql_name='_gte')
     _lt = sgqlc.types.Field(BulkDownloadType, graphql_name='_lt')
     _lte = sgqlc.types.Field(BulkDownloadType, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(BulkDownloadType, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class BulkDownloadWhereClause(sgqlc.types.Input):
@@ -333,7 +333,7 @@ class DatetimeComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(DateTime, graphql_name='_gte')
     _lt = sgqlc.types.Field(DateTime, graphql_name='_lt')
     _lte = sgqlc.types.Field(DateTime, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(DateTime, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class EntityWhereClause(sgqlc.types.Input):
@@ -368,7 +368,7 @@ class FileStatusEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(FileStatus, graphql_name='_gte')
     _lt = sgqlc.types.Field(FileStatus, graphql_name='_lt')
     _lte = sgqlc.types.Field(FileStatus, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(FileStatus, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class FileUpload(sgqlc.types.Input):
@@ -405,7 +405,7 @@ class FloatComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(Float, graphql_name='_gte')
     _lt = sgqlc.types.Field(Float, graphql_name='_lt')
     _lte = sgqlc.types.Field(Float, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(Float, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class GenomicRangeCreateInput(sgqlc.types.Input):
@@ -455,7 +455,7 @@ class HostOrganismCategoryEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(HostOrganismCategory, graphql_name='_gte')
     _lt = sgqlc.types.Field(HostOrganismCategory, graphql_name='_lt')
     _lte = sgqlc.types.Field(HostOrganismCategory, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(HostOrganismCategory, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class HostOrganismCreateInput(sgqlc.types.Input):
@@ -585,7 +585,7 @@ class IndexTypesEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(IndexTypes, graphql_name='_gte')
     _lt = sgqlc.types.Field(IndexTypes, graphql_name='_lt')
     _lte = sgqlc.types.Field(IndexTypes, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(IndexTypes, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class IntComparators(sgqlc.types.Input):
@@ -599,7 +599,7 @@ class IntComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(Int, graphql_name='_gte')
     _lt = sgqlc.types.Field(Int, graphql_name='_lt')
     _lte = sgqlc.types.Field(Int, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(Int, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class LimitOffsetClause(sgqlc.types.Input):
@@ -849,7 +849,7 @@ class SequencingProtocolEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(SequencingProtocol, graphql_name='_gte')
     _lt = sgqlc.types.Field(SequencingProtocol, graphql_name='_lt')
     _lte = sgqlc.types.Field(SequencingProtocol, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(SequencingProtocol, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class SequencingReadCreateInput(sgqlc.types.Input):
@@ -928,7 +928,7 @@ class SequencingTechnologyEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(SequencingTechnology, graphql_name='_gte')
     _lt = sgqlc.types.Field(SequencingTechnology, graphql_name='_lt')
     _lte = sgqlc.types.Field(SequencingTechnology, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(SequencingTechnology, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class StrComparators(sgqlc.types.Input):
@@ -938,7 +938,7 @@ class StrComparators(sgqlc.types.Input):
     _neq = sgqlc.types.Field(String, graphql_name='_neq')
     _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(String)), graphql_name='_in')
     _nin = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(String)), graphql_name='_nin')
-    _is_null = sgqlc.types.Field(Int, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
     _gt = sgqlc.types.Field(String, graphql_name='_gt')
     _gte = sgqlc.types.Field(String, graphql_name='_gte')
     _lt = sgqlc.types.Field(String, graphql_name='_lt')
@@ -988,7 +988,7 @@ class TaxonLevelEnumComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(TaxonLevel, graphql_name='_gte')
     _lt = sgqlc.types.Field(TaxonLevel, graphql_name='_lt')
     _lte = sgqlc.types.Field(TaxonLevel, graphql_name='_lte')
-    _is_null = sgqlc.types.Field(TaxonLevel, graphql_name='_is_null')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class TaxonOrderByClause(sgqlc.types.Input):
@@ -1040,7 +1040,7 @@ class TaxonUpdateInput(sgqlc.types.Input):
 
 class TaxonWhereClause(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'consensus_genomes', 'sequencing_reads', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
+    __field_names__ = ('wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'tax_parent_id', 'tax_species_id', 'tax_genus_id', 'tax_family_id', 'tax_order_id', 'tax_class_id', 'tax_phylum_id', 'tax_kingdom_id', 'tax_superkingdom_id', 'consensus_genomes', 'sequencing_reads', 'id', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at')
     wikipedia_id = sgqlc.types.Field(StrComparators, graphql_name='wikipediaId')
     description = sgqlc.types.Field(StrComparators, graphql_name='description')
     common_name = sgqlc.types.Field(StrComparators, graphql_name='commonName')
@@ -1049,6 +1049,15 @@ class TaxonWhereClause(sgqlc.types.Input):
     upstream_database = sgqlc.types.Field('UpstreamDatabaseWhereClause', graphql_name='upstreamDatabase')
     upstream_database_identifier = sgqlc.types.Field(StrComparators, graphql_name='upstreamDatabaseIdentifier')
     level = sgqlc.types.Field(TaxonLevelEnumComparators, graphql_name='level')
+    tax_parent_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxParentId')
+    tax_species_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxSpeciesId')
+    tax_genus_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxGenusId')
+    tax_family_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxFamilyId')
+    tax_order_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxOrderId')
+    tax_class_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxClassId')
+    tax_phylum_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxPhylumId')
+    tax_kingdom_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxKingdomId')
+    tax_superkingdom_id = sgqlc.types.Field('UUIDComparators', graphql_name='taxSuperkingdomId')
     consensus_genomes = sgqlc.types.Field(ConsensusGenomeWhereClause, graphql_name='consensusGenomes')
     sequencing_reads = sgqlc.types.Field(SequencingReadWhereClause, graphql_name='sequencingReads')
     id = sgqlc.types.Field('UUIDComparators', graphql_name='id')
@@ -1067,7 +1076,7 @@ class TaxonWhereClauseMutations(sgqlc.types.Input):
 
 class UUIDComparators(sgqlc.types.Input):
     __schema__ = entities_schema
-    __field_names__ = ('_eq', '_neq', '_in', '_nin', '_gt', '_gte', '_lt', '_lte')
+    __field_names__ = ('_eq', '_neq', '_in', '_nin', '_gt', '_gte', '_lt', '_lte', '_is_null')
     _eq = sgqlc.types.Field(UUID, graphql_name='_eq')
     _neq = sgqlc.types.Field(UUID, graphql_name='_neq')
     _in = sgqlc.types.Field(sgqlc.types.list_of(sgqlc.types.non_null(UUID)), graphql_name='_in')
@@ -1076,6 +1085,7 @@ class UUIDComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(UUID, graphql_name='_gte')
     _lt = sgqlc.types.Field(UUID, graphql_name='_lt')
     _lte = sgqlc.types.Field(UUID, graphql_name='_lte')
+    _is_null = sgqlc.types.Field(Boolean, graphql_name='_is_null')
 
 
 class UpstreamDatabaseCreateInput(sgqlc.types.Input):
