@@ -12,10 +12,9 @@ on:
 run-name: Deploy ${{ github.event.inputs.service }} to sandbox
 jobs:
   run-deploy-to-sandbox:
-    runs-on: [ARM64, self-hosted, Linux]
     uses: ./.github/workflows/reusable-deploy.yml
-    environment: sandbox
     with:
       environment: sandbox
       service: ${{ github.event.inputs.service }}
     secrets: inherit
+    environment: sandbox
