@@ -316,7 +316,7 @@ class Manifest(BaseModel):
     def validate_inputs(
         self,
         entity_inputs: dict[str, EntityInput | list[EntityInput]],
-        raw_inputs: dict[str, EntityInput | list[Primitive]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
     ) -> _InputValidationErrors:
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),

@@ -23,7 +23,7 @@ class PassthroughInputLoader(InputLoader):
         raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
-        return {output: raw_inputs[output] for output in requested_outputs}
+        return {output: raw_inputs[output] for output in requested_outputs}  # type: ignore
 
 
 class SampleInputLoader(InputLoader):
