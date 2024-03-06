@@ -10,7 +10,10 @@ setup(
     long_description="",
     long_description_content_type="text/markdown",
     author="Todd Morse",
-    py_modules=["consensus_genome_output"],
+    py_modules=[
+        "consensus_genome_output",
+        "bulk_download_output",
+    ],
     python_requires=">=3.6",
     setup_requires=[],
     install_requires=["miniwdl"],
@@ -18,6 +21,7 @@ setup(
     entry_points={
         "czid.plugin.output_loader": [
             "consensus_genome = consensus_genome_output:ConsensusGenomeOutputLoader",
+            "bulk_download = bulk_download_output:BulkDownloadOutputLoader",
         ],
     },
 )

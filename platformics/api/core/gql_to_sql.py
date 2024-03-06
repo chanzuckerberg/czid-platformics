@@ -63,7 +63,7 @@ class EnumComparators(TypedDict, Generic[T]):
     _gte: Optional[T]
     _lt: Optional[T]
     _lte: Optional[T]
-    _is_null: Optional[T]
+    _is_null: Optional[bool]
 
 
 @strawberry.input
@@ -76,7 +76,7 @@ class BoolComparators(TypedDict):
     _gte: Optional[int]
     _lt: Optional[int]
     _lte: Optional[int]
-    _is_null: Optional[int]
+    _is_null: Optional[bool]
 
 
 @strawberry.input
@@ -89,7 +89,7 @@ class DatetimeComparators(TypedDict):
     _gte: Optional[datetime.datetime]
     _lt: Optional[datetime.datetime]
     _lte: Optional[datetime.datetime]
-    _is_null: Optional[datetime.datetime]
+    _is_null: Optional[bool]
 
 
 @strawberry.input
@@ -102,7 +102,7 @@ class IntComparators(TypedDict):
     _gte: Optional[int]
     _lt: Optional[int]
     _lte: Optional[int]
-    _is_null: Optional[int]
+    _is_null: Optional[bool]
 
 
 @strawberry.input
@@ -115,7 +115,7 @@ class FloatComparators(TypedDict):
     _gte: Optional[float]
     _lt: Optional[float]
     _lte: Optional[float]
-    _is_null: Optional[float]
+    _is_null: Optional[bool]
 
 
 @strawberry.input
@@ -128,6 +128,7 @@ class UUIDComparators(TypedDict):
     _gte: Optional[uuid.UUID]
     _lt: Optional[uuid.UUID]
     _lte: Optional[uuid.UUID]
+    _is_null: Optional[bool]
 
 
 @strawberry.input
@@ -136,7 +137,7 @@ class StrComparators(TypedDict):
     _neq: Optional[str]
     _in: Optional[list[str]]
     _nin: Optional[list[str]]
-    _is_null: Optional[int]
+    _is_null: Optional[bool]
     _gt: Optional[str]
     _gte: Optional[str]
     _lt: Optional[str]

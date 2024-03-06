@@ -4,7 +4,7 @@ import sys
 from sgqlc.operation import Operation
 
 from database.models.workflow_version import WorkflowVersion
-from manifest.manifest import EntityInput
+from manifest.manifest import EntityInput, Primitive
 from platformics.client.entities_schema import (
     AccessionWhereClause,
     Query,
@@ -66,13 +66,14 @@ class ConsensusGenomeInputLoader(InputLoader):
     async def load(
         self,
         workflow_version: WorkflowVersion,
-        entity_inputs: dict[str, EntityInput],
-        raw_inputs: dict[str, JSONValue],
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
         sars_cov_2 = raw_inputs.get("sars_cov_2", False)
 
         sequencing_read_input = entity_inputs["sequencing_read"]
+        assert isinstance(sequencing_read_input, EntityInput)
         op = Operation(Query)
         sequencing_reads = op.sequencing_reads(
             where=SequencingReadWhereClause(id=UUIDComparators(_eq=sequencing_read_input.entity_id))
@@ -85,11 +86,13 @@ class ConsensusGenomeInputLoader(InputLoader):
 
         if not sars_cov_2:
             accession_input = entity_inputs["accession"]
+            assert isinstance(accession_input, EntityInput)
             accessions = op.accessions(where=AccessionWhereClause(id=UUIDComparators(_eq=accession_input.entity_id)))
             accessions.accession_id()  # type: ignore
 
         reference_genome_input = entity_inputs.get("reference_genome")
         if reference_genome_input:
+            assert isinstance(reference_genome_input, EntityInput)
             reference_genomes = op.reference_genomes(
                 where=ReferenceGenomeWhereClause(id=UUIDComparators(_eq=reference_genome_input.entity_id))
             )

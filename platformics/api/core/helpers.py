@@ -160,7 +160,10 @@ def convert_where_clauses_to_sql(
         for comparator, value in v.items():  # type: ignore
             sa_comparator = operator_map[comparator]
             if sa_comparator == "IS_NULL":
-                query = query.filter(getattr(sa_model, col).is_(None))
+                if value:
+                    query = query.filter(getattr(sa_model, col).is_(None))
+                else:
+                    query = query.filter(getattr(sa_model, col).isnot(None))
             else:
                 query = query.filter(getattr(getattr(sa_model, col), sa_comparator)(value))
 
@@ -212,6 +215,8 @@ async def get_db_rows(
     where: Any,
     order_by: Optional[list[dict[str, Any]]] = None,
     action: CerbosAction = CerbosAction.VIEW,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> typing.Sequence[E]:
     """
     Retrieve rows from the database, filtered by the where clause and the user's permissions.
@@ -219,6 +224,10 @@ async def get_db_rows(
     if order_by is None:
         order_by = []
     query = get_db_query(model_cls, action, cerbos_client, principal, where, order_by)
+    if limit:
+        query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
     result = await session.execute(query)
     return result.scalars().all()
 

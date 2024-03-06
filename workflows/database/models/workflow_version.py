@@ -10,7 +10,7 @@ import uuid
 from typing import TYPE_CHECKING
 
 from platformics.database.models.base import Entity
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -42,6 +42,7 @@ class WorkflowVersion(Entity):
         foreign_keys=workflow_id,
         back_populates="versions",
     )
+    deprecated: Mapped[bool] = mapped_column(Boolean, nullable=True)
     runs: Mapped[list[WorkflowRun]] = relationship(
         "WorkflowRun",
         back_populates="workflow_version",

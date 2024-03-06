@@ -88,7 +88,9 @@ allow_networks = ["czidnet"]"""
         # sleep to simulate time before the workflow starts running
         await asyncio.sleep(1)
         await event_bus.send(WorkflowStartedMessage(runner_id=runner_id))
-        with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir:
+        with tempfile.TemporaryDirectory(dir="/tmp") as tmpdir, tempfile.NamedTemporaryFile(suffix=".json") as in_f:
+            in_f.write(json.dumps(inputs).encode())
+            in_f.seek(0)
             # download workflow path from s3
             s3 = boto3.client("s3", endpoint_url=self.s3_endpoint_url)
 
@@ -111,7 +113,7 @@ allow_networks = ["czidnet"]"""
                     config_path,
                 ]
             cmd += [os.path.abspath(local_workflow_path)]
-            cmd += [f"{k}={v}" for k, v in inputs.items()]
+            cmd += ["-i", in_f.name]
 
             process = await asyncio.create_subprocess_exec(
                 *cmd,

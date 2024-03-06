@@ -1,4 +1,4 @@
-name: Deploy to Sandbox
+name: Deploy to Development
 on:
   workflow_dispatch:
     inputs: 
@@ -14,7 +14,7 @@ jobs:
   run-deploy-to-sandbox:
     uses: ./.github/workflows/reusable-deploy.yml
     with:
-      environment: sandbox
+      environment: dev
       service: ${{ github.event.inputs.service }}
       developer_name: ${{ github.actor }}
     secrets: inherit

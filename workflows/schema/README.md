@@ -16,6 +16,7 @@ WorkflowRun {
     string outputs_json  
     string workflow_runner_inputs_json  
     WorkflowRunStatus status  
+    string error_message  
     string raw_inputs_json  
     uuid entity_id  
     uuid id  
@@ -66,6 +67,7 @@ WorkflowVersion {
     string workflow_uri  
     string version  
     string manifest  
+    boolean deprecated  
     uuid entity_id  
     uuid id  
     uuid producing_run_id  

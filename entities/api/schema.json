@@ -229,6 +229,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "samples",
@@ -276,6 +285,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -325,6 +343,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "genomicRanges",
@@ -372,6 +399,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -421,6 +457,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "accessions",
@@ -468,6 +513,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -517,6 +571,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "metadatas",
@@ -564,6 +627,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -613,6 +685,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "metricsConsensusGenomes",
@@ -660,6 +741,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -709,6 +799,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "upstreamDatabases",
@@ -757,6 +856,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "indexFiles",
@@ -804,6 +912,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -1692,6 +1809,15 @@
                 "name": "UUID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -1706,6 +1832,15 @@
           "interfaces": null,
           "kind": "SCALAR",
           "name": "UUID",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Boolean",
           "possibleTypes": null
         },
         {
@@ -1805,7 +1940,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2100,7 +2235,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -2314,8 +2449,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "FileStatus",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -3147,15 +3282,6 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "HostOrganismCategory",
-          "possibleTypes": null
-        },
-        {
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Boolean",
           "possibleTypes": null
         },
         {
@@ -4661,6 +4787,87 @@
             },
             {
               "defaultValue": null,
+              "name": "taxParentId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxSpeciesId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxGenusId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxFamilyId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxOrderId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxClassId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxPhylumId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxKingdomId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "taxSuperkingdomId",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "consensusGenomes",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -4834,7 +5041,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -4940,8 +5147,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "TaxonLevel",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -5565,8 +5772,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "HostOrganismCategory",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -5772,8 +5979,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "IndexTypes",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -5880,7 +6087,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "DateTime",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -6077,8 +6284,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "SequencingProtocol",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -6230,8 +6437,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "SequencingTechnology",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -6808,7 +7015,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -13573,6 +13780,34 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "offset",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "LimitOffsetClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -13923,8 +14158,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "BulkDownloadType",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }

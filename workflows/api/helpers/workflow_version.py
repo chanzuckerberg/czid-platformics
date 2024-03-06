@@ -25,6 +25,7 @@ class WorkflowVersionGroupByOptions:
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow: Optional[WorkflowGroupByOptions] = None
+    deprecated: Optional[bool] = None
     id: Optional[uuid.UUID] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None

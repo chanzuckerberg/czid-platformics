@@ -125,6 +125,10 @@ classes:
         range: WorkflowRunStatus 
         annotations:
           system_writable_only: true
+      error_message:
+        range: string
+        annotations:
+          system_writable_only: true
       workflow_version:
         range: WorkflowVersion
         inverse: WorkflowVersion.runs
@@ -231,6 +235,8 @@ classes:
       workflow:
         range: Workflow
         inverse: Workflow.versions
+      deprecated:
+        range: boolean
       runs:
         range: WorkflowRun
         multivalued: true

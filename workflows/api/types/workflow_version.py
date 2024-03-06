@@ -31,6 +31,7 @@ from platformics.api.core.gql_to_sql import (
     IntComparators,
     StrComparators,
     UUIDComparators,
+    BoolComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.security.authorization import CerbosAction
@@ -39,8 +40,10 @@ from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
+from support.limit_offset import LimitOffsetClause
 from typing_extensions import TypedDict
 import enum
+
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -140,6 +143,7 @@ class WorkflowVersionWhereClause(TypedDict):
     version: Optional[StrComparators] | None
     manifest: Optional[StrComparators] | None
     workflow: Optional[Annotated["WorkflowWhereClause", strawberry.lazy("api.types.workflow")]] | None
+    deprecated: Optional[BoolComparators] | None
     runs: Optional[Annotated["WorkflowRunWhereClause", strawberry.lazy("api.types.workflow_run")]] | None
     id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -160,6 +164,7 @@ class WorkflowVersionOrderByClause(TypedDict):
     version: Optional[orderBy] | None
     manifest: Optional[orderBy] | None
     workflow: Optional[Annotated["WorkflowOrderByClause", strawberry.lazy("api.types.workflow")]] | None
+    deprecated: Optional[orderBy] | None
     id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
     collection_id: Optional[orderBy] | None
@@ -179,6 +184,7 @@ class WorkflowVersion(EntityInterface):
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow: Optional[Annotated["Workflow", strawberry.lazy("api.types.workflow")]] = load_workflow_rows  # type:ignore
+    deprecated: Optional[bool] = None
     runs: Sequence[
         Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
     ] = load_workflow_run_rows  # type:ignore
@@ -245,6 +251,7 @@ class WorkflowVersionCountColumns(enum.Enum):
     version = "version"
     manifest = "manifest"
     workflow = "workflow"
+    deprecated = "deprecated"
     runs = "runs"
     id = "id"
     ownerUserId = "owner_user_id"
@@ -301,6 +308,7 @@ class WorkflowVersionCreateInput:
     version: Optional[str] = None
     manifest: Optional[str] = None
     workflow_id: Optional[strawberry.ID] = None
+    deprecated: Optional[bool] = None
     collection_id: int
 
 
@@ -318,11 +326,16 @@ async def resolve_workflow_versions(
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowVersionWhereClause] = None,
     order_by: Optional[list[WorkflowVersionOrderByClause]] = [],
+    limit_offset: Optional[LimitOffsetClause] = None,
 ) -> typing.Sequence[WorkflowVersion]:
     """
     Resolve WorkflowVersion objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, order_by)  # type: ignore
+    limit = limit_offset["limit"] if limit_offset and "limit" in limit_offset else None
+    offset = limit_offset["offset"] if limit_offset and "offset" in limit_offset else None
+    if offset and not limit:
+        raise PlatformicsException("Cannot use offset without limit")
+    return await get_db_rows(db.WorkflowVersion, session, cerbos_client, principal, where, order_by, CerbosAction.VIEW, limit, offset)  # type: ignore
 
 
 def format_workflow_version_aggregate_output(
@@ -378,6 +391,7 @@ async def resolve_workflow_versions_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowVersionWhereClause] = None,
+    # TODO: add support for groupby, limit/offset
 ) -> WorkflowVersionAggregate:
     """
     Aggregate values for WorkflowVersion objects. Used for queries (see api/queries.py).

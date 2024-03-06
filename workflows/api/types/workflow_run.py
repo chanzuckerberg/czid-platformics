@@ -44,9 +44,11 @@ from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 from strawberry import relay
 from strawberry.types import Info
+from support.limit_offset import LimitOffsetClause
 from typing_extensions import TypedDict
 import enum
 from support.enums import WorkflowRunStatus
+
 
 E = typing.TypeVar("E", db.File, db.Entity)
 T = typing.TypeVar("T")
@@ -196,6 +198,7 @@ class WorkflowRunWhereClause(TypedDict):
     outputs_json: Optional[StrComparators] | None
     workflow_runner_inputs_json: Optional[StrComparators] | None
     status: Optional[EnumComparators[WorkflowRunStatus]] | None
+    error_message: Optional[StrComparators] | None
     workflow_version: Optional[
         Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]
     ] | None
@@ -204,6 +207,7 @@ class WorkflowRunWhereClause(TypedDict):
         Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]
     ] | None
     raw_inputs_json: Optional[StrComparators] | None
+    deprecated_by_id: Optional[UUIDComparators] | None
     id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
     collection_id: Optional[IntComparators] | None
@@ -225,6 +229,7 @@ class WorkflowRunOrderByClause(TypedDict):
     outputs_json: Optional[orderBy] | None
     workflow_runner_inputs_json: Optional[orderBy] | None
     status: Optional[orderBy] | None
+    error_message: Optional[orderBy] | None
     workflow_version: Optional[
         Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]
     ] | None
@@ -251,6 +256,7 @@ class WorkflowRun(EntityInterface):
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_message: Optional[str] = None
     workflow_version: Optional[
         Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]
     ] = load_workflow_version_rows  # type:ignore
@@ -312,6 +318,7 @@ class WorkflowRunMinMaxColumns:
     execution_id: Optional[str] = None
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
+    error_message: Optional[str] = None
     raw_inputs_json: Optional[str] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
@@ -333,6 +340,7 @@ class WorkflowRunCountColumns(enum.Enum):
     outputsJson = "outputs_json"
     workflowRunnerInputsJson = "workflow_runner_inputs_json"
     status = "status"
+    errorMessage = "error_message"
     workflowVersion = "workflow_version"
     steps = "steps"
     entityInputs = "entity_inputs"
@@ -394,6 +402,7 @@ class WorkflowRunCreateInput:
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_message: Optional[str] = None
     workflow_version_id: Optional[strawberry.ID] = None
     raw_inputs_json: Optional[str] = None
     deprecated_by_id: Optional[strawberry.ID] = None
@@ -407,6 +416,7 @@ class WorkflowRunUpdateInput:
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_message: Optional[str] = None
     deprecated_by_id: Optional[strawberry.ID] = None
 
 
@@ -424,11 +434,16 @@ async def resolve_workflow_runs(
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowRunWhereClause] = None,
     order_by: Optional[list[WorkflowRunOrderByClause]] = [],
+    limit_offset: Optional[LimitOffsetClause] = None,
 ) -> typing.Sequence[WorkflowRun]:
     """
     Resolve WorkflowRun objects. Used for queries (see api/queries.py).
     """
-    return await get_db_rows(db.WorkflowRun, session, cerbos_client, principal, where, order_by)  # type: ignore
+    limit = limit_offset["limit"] if limit_offset and "limit" in limit_offset else None
+    offset = limit_offset["offset"] if limit_offset and "offset" in limit_offset else None
+    if offset and not limit:
+        raise PlatformicsException("Cannot use offset without limit")
+    return await get_db_rows(db.WorkflowRun, session, cerbos_client, principal, where, order_by, CerbosAction.VIEW, limit, offset)  # type: ignore
 
 
 def format_workflow_run_aggregate_output(query_results: Sequence[RowMapping] | RowMapping) -> WorkflowRunAggregate:
@@ -482,6 +497,7 @@ async def resolve_workflow_runs_aggregate(
     cerbos_client: CerbosClient = Depends(get_cerbos_client),
     principal: Principal = Depends(require_auth_principal),
     where: Optional[WorkflowRunWhereClause] = None,
+    # TODO: add support for groupby, limit/offset
 ) -> WorkflowRunAggregate:
     """
     Aggregate values for WorkflowRun objects. Used for queries (see api/queries.py).
@@ -524,6 +540,7 @@ async def create_workflow_run(
         del params["outputs_json"]
         del params["workflow_runner_inputs_json"]
         del params["status"]
+        del params["error_message"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
@@ -609,6 +626,7 @@ async def update_workflow_run(
         del params["outputs_json"]
         del params["workflow_runner_inputs_json"]
         del params["status"]
+        del params["error_message"]
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.WorkflowRun, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)

@@ -1,3 +1,15 @@
+input BoolComparators {
+  _eq: Int
+  _neq: Int
+  _in: [Int!]
+  _nin: [Int!]
+  _gt: Int
+  _gte: Int
+  _lt: Int
+  _lte: Int
+  _is_null: Int
+}
+
 """Date with time (isoformat)"""
 scalar DateTime
 
@@ -10,7 +22,7 @@ input DatetimeComparators {
   _gte: DateTime
   _lt: DateTime
   _lte: DateTime
-  _is_null: DateTime
+  _is_null: Boolean
 }
 
 input EntityInputType {
@@ -38,7 +50,12 @@ input IntComparators {
   _gte: Int
   _lt: Int
   _lte: Int
-  _is_null: Int
+  _is_null: Boolean
+}
+
+input LimitOffsetClause {
+  limit: Int
+  offset: Int
 }
 
 type Mutation {
@@ -55,8 +72,8 @@ type Mutation {
   deleteWorkflowRunEntityInput(where: WorkflowRunEntityInputWhereClauseMutations!): [WorkflowRunEntityInput!]!
   createWorkflowVersion(input: WorkflowVersionCreateInput!): WorkflowVersion!
   deleteWorkflowVersion(where: WorkflowVersionWhereClauseMutations!): [WorkflowVersion!]!
-  runWorkflowVersion(input: RunWorkflowVersionInput!): WorkflowRun!
-  runWorkflowRun(workflowRunId: ID!): WorkflowRun!
+  runWorkflowVersion(input: RunWorkflowVersionInput!, executionId: String = null): WorkflowRun!
+  runWorkflowRun(workflowRunId: ID!, executionId: String = null): WorkflowRun!
 }
 
 """An object with a Globally Unique ID"""
@@ -89,11 +106,11 @@ type Query {
     """The IDs of the objects."""
     ids: [GlobalID!]!
   ): [Node!]!
-  workflowRuns(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = []): [WorkflowRun!]!
-  workflows(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = []): [Workflow!]!
-  workflowRunSteps(where: WorkflowRunStepWhereClause = null, orderBy: [WorkflowRunStepOrderByClause!] = []): [WorkflowRunStep!]!
-  workflowRunEntityInputs(where: WorkflowRunEntityInputWhereClause = null, orderBy: [WorkflowRunEntityInputOrderByClause!] = []): [WorkflowRunEntityInput!]!
-  workflowVersions(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): [WorkflowVersion!]!
+  workflowRuns(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowRun!]!
+  workflows(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [Workflow!]!
+  workflowRunSteps(where: WorkflowRunStepWhereClause = null, orderBy: [WorkflowRunStepOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowRunStep!]!
+  workflowRunEntityInputs(where: WorkflowRunEntityInputWhereClause = null, orderBy: [WorkflowRunEntityInputOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowRunEntityInput!]!
+  workflowVersions(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [WorkflowVersion!]!
   workflowRunsAggregate(where: WorkflowRunWhereClause = null): WorkflowRunAggregate!
   workflowsAggregate(where: WorkflowWhereClause = null): WorkflowAggregate!
   workflowRunStepsAggregate(where: WorkflowRunStepWhereClause = null): WorkflowRunStepAggregate!
@@ -114,7 +131,7 @@ input StrComparators {
   _neq: String
   _in: [String!]
   _nin: [String!]
-  _is_null: Int
+  _is_null: Boolean
   _gt: String
   _gte: String
   _lt: String
@@ -140,6 +157,7 @@ input UUIDComparators {
   _gte: UUID
   _lt: UUID
   _lte: UUID
+  _is_null: Boolean
 }
 
 type Workflow implements EntityInterface & Node {
@@ -254,6 +272,7 @@ type WorkflowRun implements EntityInterface & Node {
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
+  errorMessage: String
   workflowVersion(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): WorkflowVersion
   steps(
     where: WorkflowRunStepWhereClause = null
@@ -328,6 +347,7 @@ enum WorkflowRunCountColumns {
   outputsJson
   workflowRunnerInputsJson
   status
+  errorMessage
   workflowVersion
   steps
   entityInputs
@@ -478,6 +498,7 @@ type WorkflowRunGroupByOptions {
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
+  errorMessage: String
   workflowVersion: WorkflowVersionGroupByOptions
   rawInputsJson: String
   deprecatedBy: WorkflowRunGroupByOptions
@@ -495,6 +516,7 @@ type WorkflowRunMinMaxColumns {
   executionId: String
   outputsJson: String
   workflowRunnerInputsJson: String
+  errorMessage: String
   rawInputsJson: String
   ownerUserId: Int
   collectionId: Int
@@ -516,6 +538,7 @@ input WorkflowRunOrderByClause {
   outputsJson: orderBy
   workflowRunnerInputsJson: orderBy
   status: orderBy
+  errorMessage: orderBy
   workflowVersion: WorkflowVersionOrderByClause
   rawInputsJson: orderBy
   deprecatedBy: orderBy
@@ -547,7 +570,7 @@ input WorkflowRunStatusEnumComparators {
   _gte: WorkflowRunStatus
   _lt: WorkflowRunStatus
   _lte: WorkflowRunStatus
-  _is_null: WorkflowRunStatus
+  _is_null: Boolean
 }
 
 type WorkflowRunStep implements EntityInterface & Node {
@@ -669,7 +692,7 @@ input WorkflowRunStepStatusEnumComparators {
   _gte: WorkflowRunStepStatus
   _lt: WorkflowRunStepStatus
   _lte: WorkflowRunStepStatus
-  _is_null: WorkflowRunStepStatus
+  _is_null: Boolean
 }
 
 input WorkflowRunStepUpdateInput {
@@ -699,6 +722,7 @@ input WorkflowRunUpdateInput {
   outputsJson: String = null
   workflowRunnerInputsJson: String = null
   status: WorkflowRunStatus = null
+  errorMessage: String = null
   deprecatedById: ID = null
 }
 
@@ -710,10 +734,12 @@ input WorkflowRunWhereClause {
   outputsJson: StrComparators
   workflowRunnerInputsJson: StrComparators
   status: WorkflowRunStatusEnumComparators
+  errorMessage: StrComparators
   workflowVersion: WorkflowVersionWhereClause
   steps: WorkflowRunStepWhereClause
   entityInputs: WorkflowRunEntityInputWhereClause
   rawInputsJson: StrComparators
+  deprecatedById: UUIDComparators
   id: UUIDComparators
   ownerUserId: IntComparators
   collectionId: IntComparators
@@ -740,6 +766,7 @@ type WorkflowVersion implements EntityInterface & Node {
   version: String
   manifest: String
   workflow(where: WorkflowWhereClause = null, orderBy: [WorkflowOrderByClause!] = []): Workflow
+  deprecated: Boolean
   runs(
     where: WorkflowRunWhereClause = null
     orderBy: [WorkflowRunOrderByClause!] = []
@@ -793,6 +820,7 @@ enum WorkflowVersionCountColumns {
   version
   manifest
   workflow
+  deprecated
   runs
   id
   ownerUserId
@@ -807,6 +835,7 @@ input WorkflowVersionCreateInput {
   version: String = null
   manifest: String = null
   workflowId: ID = null
+  deprecated: Boolean = null
   collectionId: Int!
 }
 
@@ -825,6 +854,7 @@ type WorkflowVersionGroupByOptions {
   version: String
   manifest: String
   workflow: WorkflowGroupByOptions
+  deprecated: Boolean
   id: UUID
   ownerUserId: Int
   collectionId: Int
@@ -854,6 +884,7 @@ input WorkflowVersionOrderByClause {
   version: orderBy
   manifest: orderBy
   workflow: WorkflowOrderByClause
+  deprecated: orderBy
   id: orderBy
   ownerUserId: orderBy
   collectionId: orderBy
@@ -867,6 +898,7 @@ input WorkflowVersionWhereClause {
   version: StrComparators
   manifest: StrComparators
   workflow: WorkflowWhereClause
+  deprecated: BoolComparators
   runs: WorkflowRunWhereClause
   id: UUIDComparators
   ownerUserId: IntComparators

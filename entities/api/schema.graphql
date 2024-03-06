@@ -151,7 +151,7 @@ input BoolComparators {
   _gte: Int
   _lt: Int
   _lte: Int
-  _is_null: Int
+  _is_null: Boolean
 }
 
 type BulkDownload implements EntityInterface & Node {
@@ -252,7 +252,7 @@ input BulkDownloadTypeEnumComparators {
   _gte: BulkDownloadType
   _lt: BulkDownloadType
   _lte: BulkDownloadType
-  _is_null: BulkDownloadType
+  _is_null: Boolean
 }
 
 input BulkDownloadWhereClause {
@@ -417,7 +417,7 @@ input DatetimeComparators {
   _gte: DateTime
   _lt: DateTime
   _lte: DateTime
-  _is_null: DateTime
+  _is_null: Boolean
 }
 
 type Entity {
@@ -489,7 +489,7 @@ input FileStatusEnumComparators {
   _gte: FileStatus
   _lt: FileStatus
   _lte: FileStatus
-  _is_null: FileStatus
+  _is_null: Boolean
 }
 
 input FileUpload {
@@ -520,7 +520,7 @@ input FloatComparators {
   _gte: Float
   _lt: Float
   _lte: Float
-  _is_null: Float
+  _is_null: Boolean
 }
 
 type GenomicRange implements EntityInterface & Node {
@@ -714,7 +714,7 @@ input HostOrganismCategoryEnumComparators {
   _gte: HostOrganismCategory
   _lt: HostOrganismCategory
   _lte: HostOrganismCategory
-  _is_null: HostOrganismCategory
+  _is_null: Boolean
 }
 
 enum HostOrganismCountColumns {
@@ -981,7 +981,7 @@ input IndexTypesEnumComparators {
   _gte: IndexTypes
   _lt: IndexTypes
   _lte: IndexTypes
-  _is_null: IndexTypes
+  _is_null: Boolean
 }
 
 input IntComparators {
@@ -993,13 +993,18 @@ input IntComparators {
   _gte: Int
   _lt: Int
   _lte: Int
-  _is_null: Int
+  _is_null: Boolean
 }
 
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+input LimitOffsetClause {
+  limit: Int
+  offset: Int
+}
 
 type Metadatum implements EntityInterface & Node {
   """The Globally Unique ID of this object"""
@@ -1421,19 +1426,19 @@ type Query {
     ids: [GlobalID!]!
   ): [Node!]!
   files(where: FileWhereClause = null): [File!]!
-  samples(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = []): [Sample!]!
-  sequencingReads(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = []): [SequencingRead!]!
-  genomicRanges(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = []): [GenomicRange!]!
-  referenceGenomes(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = []): [ReferenceGenome!]!
-  accessions(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = []): [Accession!]!
-  hostOrganisms(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = []): [HostOrganism!]!
-  metadatas(where: MetadatumWhereClause = null, orderBy: [MetadatumOrderByClause!] = []): [Metadatum!]!
-  consensusGenomes(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = []): [ConsensusGenome!]!
-  metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = []): [MetricConsensusGenome!]!
-  taxa(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = []): [Taxon!]!
-  upstreamDatabases(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): [UpstreamDatabase!]!
-  indexFiles(where: IndexFileWhereClause = null, orderBy: [IndexFileOrderByClause!] = []): [IndexFile!]!
-  bulkDownloads(where: BulkDownloadWhereClause = null, orderBy: [BulkDownloadOrderByClause!] = []): [BulkDownload!]!
+  samples(where: SampleWhereClause = null, orderBy: [SampleOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [Sample!]!
+  sequencingReads(where: SequencingReadWhereClause = null, orderBy: [SequencingReadOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [SequencingRead!]!
+  genomicRanges(where: GenomicRangeWhereClause = null, orderBy: [GenomicRangeOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [GenomicRange!]!
+  referenceGenomes(where: ReferenceGenomeWhereClause = null, orderBy: [ReferenceGenomeOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [ReferenceGenome!]!
+  accessions(where: AccessionWhereClause = null, orderBy: [AccessionOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [Accession!]!
+  hostOrganisms(where: HostOrganismWhereClause = null, orderBy: [HostOrganismOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [HostOrganism!]!
+  metadatas(where: MetadatumWhereClause = null, orderBy: [MetadatumOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [Metadatum!]!
+  consensusGenomes(where: ConsensusGenomeWhereClause = null, orderBy: [ConsensusGenomeOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [ConsensusGenome!]!
+  metricsConsensusGenomes(where: MetricConsensusGenomeWhereClause = null, orderBy: [MetricConsensusGenomeOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [MetricConsensusGenome!]!
+  taxa(where: TaxonWhereClause = null, orderBy: [TaxonOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [Taxon!]!
+  upstreamDatabases(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [UpstreamDatabase!]!
+  indexFiles(where: IndexFileWhereClause = null, orderBy: [IndexFileOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [IndexFile!]!
+  bulkDownloads(where: BulkDownloadWhereClause = null, orderBy: [BulkDownloadOrderByClause!] = [], limitOffset: LimitOffsetClause = null): [BulkDownload!]!
   samplesAggregate(where: SampleWhereClause = null): SampleAggregate!
   sequencingReadsAggregate(where: SequencingReadWhereClause = null): SequencingReadAggregate!
   genomicRangesAggregate(where: GenomicRangeWhereClause = null): GenomicRangeAggregate!
@@ -1753,7 +1758,7 @@ input SequencingProtocolEnumComparators {
   _gte: SequencingProtocol
   _lt: SequencingProtocol
   _lte: SequencingProtocol
-  _is_null: SequencingProtocol
+  _is_null: Boolean
 }
 
 type SequencingRead implements EntityInterface & Node {
@@ -1945,7 +1950,7 @@ input SequencingTechnologyEnumComparators {
   _gte: SequencingTechnology
   _lt: SequencingTechnology
   _lte: SequencingTechnology
-  _is_null: SequencingTechnology
+  _is_null: Boolean
 }
 
 type SignedURL {
@@ -1961,7 +1966,7 @@ input StrComparators {
   _neq: String
   _in: [String!]
   _nin: [String!]
-  _is_null: Int
+  _is_null: Boolean
   _gt: String
   _gte: String
   _lt: String
@@ -2159,7 +2164,7 @@ input TaxonLevelEnumComparators {
   _gte: TaxonLevel
   _lt: TaxonLevel
   _lte: TaxonLevel
-  _is_null: TaxonLevel
+  _is_null: Boolean
 }
 
 type TaxonMinMaxColumns {
@@ -2231,6 +2236,15 @@ input TaxonWhereClause {
   upstreamDatabase: UpstreamDatabaseWhereClause
   upstreamDatabaseIdentifier: StrComparators
   level: TaxonLevelEnumComparators
+  taxParentId: UUIDComparators
+  taxSpeciesId: UUIDComparators
+  taxGenusId: UUIDComparators
+  taxFamilyId: UUIDComparators
+  taxOrderId: UUIDComparators
+  taxClassId: UUIDComparators
+  taxPhylumId: UUIDComparators
+  taxKingdomId: UUIDComparators
+  taxSuperkingdomId: UUIDComparators
   consensusGenomes: ConsensusGenomeWhereClause
   sequencingReads: SequencingReadWhereClause
   id: UUIDComparators
@@ -2256,6 +2270,7 @@ input UUIDComparators {
   _gte: UUID
   _lt: UUID
   _lte: UUID
+  _is_null: Boolean
 }
 
 type UpstreamDatabase implements EntityInterface & Node {

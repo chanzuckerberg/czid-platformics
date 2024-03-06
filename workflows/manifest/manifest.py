@@ -3,7 +3,7 @@ import yaml
 from abc import ABC
 from collections.abc import Generator
 from dataclasses import dataclass
-from typing import IO, Annotated, Any, Literal, Optional
+from typing import IO, Annotated, Any, Iterable, Literal, Optional
 
 from packaging.specifiers import SpecifierSet
 from pydantic import BaseModel, GetCoreSchemaHandler, ValidationError, field_validator, model_validator
@@ -99,21 +99,40 @@ class InputConstraintUnsatisfied(_InputValidationError):
         return f"Invalid value for {self.raw_or_entity} input: {self.input_name} ({self.explaination})"
 
 
-class BaseInputArgument(BaseModel):
+R = typing.TypeVar("R")
+
+
+def _listify(value: R | list[R]) -> list[R]:
+    if isinstance(value, list):
+        return value
+    return [value]
+
+
+T = typing.TypeVar("T", EntityInput, Primitive)
+
+
+class BaseInputArgument(BaseModel, typing.Generic[T]):
     name: str
     description: str
     required: bool = True
+    multivalue: bool = False
+
+    def validate_input(self, inputs: T | list[T]) -> _InputValidationErrors:
+        raise NotImplementedError
 
 
-class EntityInputArgument(BaseInputArgument):
+class EntityInputArgument(BaseInputArgument[EntityInput]):
     entity_type: str
 
-    def validate_input(self, entity_input: EntityInput) -> _InputValidationErrors:
-        if entity_input.entity_type != self.entity_type:
-            yield InputTypeInvalid(self.name, "entity", self.entity_type, entity_input.entity_type)
+    def validate_input(self, inputs: EntityInput | list[EntityInput]) -> _InputValidationErrors:
+        if not self.multivalue and isinstance(inputs, list):
+            yield InputConstraintUnsatisfied(self.name, "entity", "expected single input but recieved a list")
+        for _entity_input in _listify(inputs):
+            if _entity_input.entity_type != self.entity_type:
+                yield InputTypeInvalid(self.name, "entity", self.entity_type, _entity_input.entity_type)
 
 
-class RawInputArgument(BaseInputArgument):
+class RawInputArgument(BaseInputArgument[Primitive]):
     type: PrimitiveTypeName
     default: Optional[Primitive] = None
     workflow_input: Optional[str] = None
@@ -163,11 +182,14 @@ class RawInputArgument(BaseInputArgument):
             self.required = False
         return self
 
-    def validate_input(self, raw_input: typing.Any) -> _InputValidationErrors:
-        if self.options and raw_input not in self.options:
-            yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
-        if type(raw_input).__name__ != self.type:
-            yield InputTypeInvalid(self.name, "raw", self.type, type(raw_input.value).__name__)
+    def validate_input(self, inputs: Primitive | list[Primitive]) -> _InputValidationErrors:
+        if not self.multivalue and isinstance(inputs, list):
+            yield InputConstraintUnsatisfied(self.name, "raw", "expected single input but recieved a list")
+        for raw_input in _listify(inputs):
+            if self.options and raw_input not in self.options:
+                yield InputConstraintUnsatisfied(self.name, "raw", "input not in options")
+            if type(raw_input).__name__ != self.type:
+                yield InputTypeInvalid(self.name, "raw", self.type, type(raw_input).__name__)
 
 
 @dataclass
@@ -243,6 +265,22 @@ class Manifest(BaseModel):
         obj = yaml.safe_load(manifest_yaml)
         return Manifest.model_validate(obj)
 
+    @staticmethod
+    def normalize_inputs(inputs: Iterable[tuple[str, T]]) -> dict[str, T | list[T]]:
+        """
+        Normalize inputs to a dictionary of single elements or lists
+        """
+        normalized_inputs: dict[str, T | list[T]] = {}
+        for name, input in inputs:
+            v = normalized_inputs.get(name)
+            if not v:
+                normalized_inputs[name] = input
+            elif isinstance(v, list):
+                normalized_inputs[name] = v + [input]
+            else:
+                normalized_inputs[name] = [v, input]
+        return normalized_inputs
+
     @model_validator(mode="after")
     def _unique_input_names(self):  # type: ignore
         input_names = set(self.entity_inputs.keys())
@@ -276,7 +314,9 @@ class Manifest(BaseModel):
         return self
 
     def validate_inputs(
-        self, entity_inputs: dict[str, EntityInput], raw_inputs: dict[str, typing.Any]
+        self,
+        entity_inputs: dict[str, EntityInput | list[EntityInput]],
+        raw_inputs: dict[str, Primitive | list[Primitive]],
     ) -> _InputValidationErrors:
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),

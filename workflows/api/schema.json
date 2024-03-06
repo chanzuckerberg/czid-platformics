@@ -198,6 +198,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "workflowRuns",
@@ -245,6 +254,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -294,6 +312,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "workflowRunSteps",
@@ -342,6 +369,15 @@
                       }
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "workflowRunEntityInputs",
@@ -389,6 +425,15 @@
                         "ofType": null
                       }
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "limitOffset",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "LimitOffsetClause",
+                    "ofType": null
                   }
                 }
               ],
@@ -680,6 +725,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "WorkflowRunStatus",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "errorMessage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -1210,6 +1264,15 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "Workflow",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "name": "deprecated",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -1785,6 +1848,15 @@
             },
             {
               "defaultValue": null,
+              "name": "deprecated",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "BoolComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "runs",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -1904,7 +1976,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -2204,6 +2276,15 @@
                 "name": "UUID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -2317,7 +2398,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2424,7 +2505,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "DateTime",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2432,6 +2513,113 @@
           "interfaces": null,
           "kind": "INPUT_OBJECT",
           "name": "DatetimeComparators",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "_eq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_neq",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_nin",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_gte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_lte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "_is_null",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "BoolComparators",
           "possibleTypes": null
         },
         {
@@ -2503,6 +2691,15 @@
             },
             {
               "defaultValue": null,
+              "name": "errorMessage",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "workflowVersion",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -2534,6 +2731,15 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deprecatedById",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UUIDComparators",
                 "ofType": null
               }
             },
@@ -2684,8 +2890,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "WorkflowRunStatus",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -2882,8 +3088,8 @@
               "defaultValue": null,
               "name": "_is_null",
               "type": {
-                "kind": "ENUM",
-                "name": "WorkflowRunStepStatus",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             }
@@ -3049,6 +3255,15 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "WorkflowOrderByClause",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "deprecated",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
                 "ofType": null
               }
             },
@@ -3501,6 +3716,15 @@
             },
             {
               "args": [],
+              "name": "deprecated",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "id",
               "type": {
                 "kind": "SCALAR",
@@ -3649,6 +3873,9 @@
             },
             {
               "name": "workflow"
+            },
+            {
+              "name": "deprecated"
             },
             {
               "name": "runs"
@@ -3817,6 +4044,15 @@
             {
               "defaultValue": null,
               "name": "status",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "errorMessage",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -4125,6 +4361,15 @@
             },
             {
               "args": [],
+              "name": "errorMessage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "rawInputsJson",
               "type": {
                 "kind": "SCALAR",
@@ -4243,6 +4488,15 @@
             },
             {
               "args": [],
+              "name": "errorMessage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "workflowVersion",
               "type": {
                 "kind": "OBJECT",
@@ -4342,6 +4596,9 @@
             },
             {
               "name": "status"
+            },
+            {
+              "name": "errorMessage"
             },
             {
               "name": "workflowVersion"
@@ -5737,6 +5994,34 @@
         },
         {
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "name": "limit",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "name": "offset",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "LimitOffsetClause",
+          "possibleTypes": null
+        },
+        {
+          "enumValues": null,
           "fields": [
             {
               "args": [],
@@ -6472,6 +6757,15 @@
                       "ofType": null
                     }
                   }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "executionId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
                 }
               ],
               "name": "runWorkflowVersion",
@@ -6498,6 +6792,15 @@
                       "name": "ID",
                       "ofType": null
                     }
+                  }
+                },
+                {
+                  "defaultValue": "null",
+                  "name": "executionId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
                   }
                 }
               ],
@@ -6685,6 +6988,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "WorkflowRunStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "errorMessage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -7049,6 +7361,15 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "deprecated",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
