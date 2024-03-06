@@ -13,6 +13,7 @@ from ..database.models.base import Entity
 
 import boto3
 from botocore.client import Config
+from botocore.exceptions import ClientError
 
 TEST_USER_ID = 111
 TEST_COLLECTION_ID = 444
@@ -79,9 +80,14 @@ class SeedSession:
     def upsert_bucket(self, bucket_name: str) -> None:
         if not self.s3_local:
             return
-        if any(bucket["Name"] == bucket for bucket in self.s3_local.list_buckets().get("Buckets", [])):
-            return
-        self.s3_local.create_bucket(Bucket=bucket_name)
+        try:
+            self.s3_local.create_bucket(Bucket=bucket_name)
+        except ClientError as e:
+            # Check if the error was because the bucket already exists or is owned by another account
+            if e.response['Error']['Code'] in ('BucketAlreadyExists', 'BucketAlreadyOwnedByYou'):
+                pass  # Bucket already exists, handle as needed
+            else:
+                raise e
 
     def transfer_to_local(self, s3_path: str) -> None:
         """
