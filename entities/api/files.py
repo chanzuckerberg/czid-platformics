@@ -485,7 +485,7 @@ async def upload_temporary_file(
     settings: APISettings = Depends(get_settings),
 ) -> MultipartUploadResponse:
     """
-    Generate upload tokens to upload files to S3 for temporary use (e.g. when export CGs to Nextclade, user can upload a 
+    Generate upload tokens to upload files to S3 for temporary use (e.g. when export CGs to Nextclade, user can upload a
     tree file that is sent to Nextclade and then not used in the app later). Only system users can do this.
     """
     require_system_user(principal)
@@ -510,7 +510,8 @@ async def concatenate_files(
     """
     Concatenate file contents synchronously (as opposed to the asynchronous bulk-download concatenate pipeline).
     Only use for small files e.g. for exporting small CG FASTAs to Nextclade, where input file IDs is an array of
-    ConsensusGenome.sequence.id. We only support doing so on SARS-CoV-2 FASTAs (~30kbp genome) so it's ok to do synchronously.
+    ConsensusGenome.sequence.id. We only support doing so on SARS-CoV-2 FASTAs (~30kbp genome)
+    so it's ok to do synchronously.
     """
     if len(ids) > FILE_CONCATENATION_MAX:
         raise Exception(f"Cannot concatenate more than {FILE_CONCATENATION_MAX} files")
