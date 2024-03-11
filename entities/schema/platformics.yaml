@@ -190,6 +190,7 @@ classes:
     annotations:
       plural: Entities
 
+  # TODO: File objects are not yet code generated, so modifications here require changes to api/files.py and database/models/file.py
   File:
     attributes:
       id:
