@@ -252,6 +252,8 @@ async def _run_workflow_run(
                 workflow_path=workflow_version.workflow_uri,
                 inputs=workflow_runner_inputs_json,
             )
+        else:
+            status = WorkflowRunStatus.RUNNING
     except Exception as e:
         logger.error(f"Failed to run workflow {workflow_version.id}: {e}")
         status = WorkflowRunStatus.FAILED

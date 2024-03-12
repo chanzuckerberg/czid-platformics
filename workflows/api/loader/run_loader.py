@@ -41,6 +41,8 @@ if __name__ == "__main__":
 
     # start server for health check
     t = threading.Thread(target=health_check)
+    # this will ensure the thread is killed when the main thread is killed
+    t.daemon = True
     t.start()
 
     task = loop.create_task(loader.main())
