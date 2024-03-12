@@ -70,7 +70,7 @@ class ConsensusGenomeInputLoader(InputLoader):
         raw_inputs: dict[str, Primitive | list[Primitive]],
         requested_outputs: list[str] = [],
     ) -> dict[str, JSONValue]:
-        sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload" 
+        sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload"
 
         sequencing_read_input = entity_inputs["sequencing_read"]
         assert isinstance(sequencing_read_input, EntityInput)
