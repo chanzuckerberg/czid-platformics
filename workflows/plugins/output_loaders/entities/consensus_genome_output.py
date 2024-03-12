@@ -31,7 +31,8 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         raw_inputs: dict[str, Primitive | list[Primitive]],
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
-        if raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload":
+        sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload" 
+        if sars_cov_2:
             op = Operation(Query)
             # Get the taxon id for SARS-CoV-2
             taxa = op.taxa(where=TaxonWhereClause(upstream_database_identifier=StrComparators(_eq=SARS_COV_2_TAXON_ID)))
