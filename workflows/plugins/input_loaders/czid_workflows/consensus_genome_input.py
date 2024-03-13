@@ -85,6 +85,10 @@ class ConsensusGenomeInputLoader(InputLoader):
         self._fetch_file(sequencing_reads.primer_file().file())  # type: ignore
 
         if not sars_cov_2:
+            assert (
+                "accession" in entity_inputs or "reference_genome" in entity_inputs
+            ), "Must provide accession or reference_genome"
+        if "accession" in entity_inputs:
             accession_input = entity_inputs["accession"]
             assert isinstance(accession_input, EntityInput)
             accessions = op.accessions(where=AccessionWhereClause(id=UUIDComparators(_eq=accession_input.entity_id)))
@@ -119,8 +123,9 @@ class ConsensusGenomeInputLoader(InputLoader):
             else:
                 inputs["primer_bed"] = f"{PUBLIC_REFERENCES_PREFIX}/{illumina_primer_file(sequencing_read['protocol'])}"
         else:
-            accession = resp["accessions"][0]
-            inputs["ref_accession_id"] = accession["accessionId"]
+            if "accession" in entity_inputs:
+                accession = resp["accessions"][0]
+                inputs["ref_accession_id"] = accession["accessionId"]
             assert sequencing_read["technology"] == "Illumina", "Nanopore only supports SARS-CoV-2"
 
             if reference_genome_input:
