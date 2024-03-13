@@ -111,8 +111,8 @@ class ConsensusGenomeInputLoader(InputLoader):
         if sars_cov_2:
             inputs["ref_fasta"] = f"{PUBLIC_REFERENCES_PREFIX}/{SARS_COV_2_ACCESSION_ID}.fa"
             if sequencing_read["technology"] == "Nanopore":
-                inputs["apply_length_filter"] = not sequencing_read["clearlabs_export"]
-                inputs["medaka_model"] = sequencing_read["medaka_model"]
+                inputs["apply_length_filter"] = not sequencing_read["clearlabsExport"]
+                inputs["medaka_model"] = sequencing_read["medakaModel"]
                 # Remove ref_fasta once it's changed to an optional wdl input for ONT runs.
                 inputs["primer_set"] = nanopore_primer_set(sequencing_read["protocol"])
                 inputs["primer_schemes"] = f"{PUBLIC_REFERENCES_PREFIX}/artic-primer-schemes_v6.tar.gz"
