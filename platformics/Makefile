@@ -4,11 +4,11 @@ FOLDER=
 CONTAINER=
 
 ### DATABASE VARIABLES #################################################
-LOCAL_DB_NAME= 
-LOCAL_DB_SERVER= 
-LOCAL_DB_USERNAME= 
-LOCAL_DB_PASSWORD= 
-LOCAL_DB_CONN_STRING= 
+LOCAL_DB_NAME=
+LOCAL_DB_SERVER=
+LOCAL_DB_USERNAME=
+LOCAL_DB_PASSWORD=
+LOCAL_DB_CONN_STRING=
 
 ### DOCKER ENVIRONMENTAL VARS #################################################
 export DOCKER_BUILDKIT:=1
@@ -89,7 +89,7 @@ local-tests: ## Run tests
 
 .PHONY: local-token
 local-token: ## Copy an auth token for this local dev env to the system clipboard
-	TOKEN=$$($(docker_compose_run) $(FOLDER) ../platformics/cli/generate_token.py auth generate-token 111 --project 444:owner --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(command -v pbcopy >/dev/null && pbcopy || xclip -selection clipboard)
+	TOKEN=$$($(docker_compose_run) $(FOLDER) ../platformics/cli/generate_token.py auth generate-token <YOUR_USER_ID> --project <YOUR_PROJECT_ID>:owner --expiration 99999); echo '{"Authorization":"Bearer '$$TOKEN'"}' | tee >(command -v pbcopy >/dev/null && pbcopy || xclip -selection clipboard)
 
 .PHONY: fix-lint
 fix-lint: ## Apply linting rules to the code in this directory.
@@ -118,7 +118,7 @@ gha-setup:
 
 ### ALEMBIC #############################################
 alembic-upgrade-head: ## Run alembic migrations locally
-	$(docker_compose) exec $(FOLDER) alembic upgrade head 
+	$(docker_compose) exec $(FOLDER) alembic upgrade head
 
 alembic-undo-migration: ## Downgrade the latest alembic migration
 	$(docker_compose) exec $(FOLDER) alembic downgrade -1

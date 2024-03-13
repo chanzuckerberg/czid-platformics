@@ -15,8 +15,8 @@ import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
 
-TEST_USER_ID = 111
-TEST_COLLECTION_ID = 444
+TEST_USER_ID = <YOUR_USER_ID>
+TEST_COLLECTION_ID = <YOUR_PROJECT_ID>
 LOCAL_BUCKET = "local-bucket"
 
 DEFAULT_WORKFLOW_VERSIONS = {
@@ -126,9 +126,8 @@ class SeedSession:
         """
         Returns a path to remote a remote S3 object
 
-        If we are using local S3 it returns an https path to ensure you are using the remote object 
+        If we are using local S3 it returns an https path to ensure you are using the remote object
         """
         if not self.s3_local:
             return f"s3://{bucket}/{key}"
         return f"https://{bucket}.s3.amazonaws.com/{key}"
-
