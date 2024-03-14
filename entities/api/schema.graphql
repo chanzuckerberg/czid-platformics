@@ -1393,6 +1393,7 @@ type Mutation {
   deleteIndexFile(where: IndexFileWhereClauseMutations!): [IndexFile!]!
   createBulkDownload(input: BulkDownloadCreateInput!): BulkDownload!
   deleteBulkDownload(where: BulkDownloadWhereClauseMutations!): [BulkDownload!]!
+  deleteOldBulkDownloads: [BulkDownload!]!
 }
 
 """An object with a Globally Unique ID"""

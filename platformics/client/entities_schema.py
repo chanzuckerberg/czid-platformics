@@ -1740,7 +1740,7 @@ class MultipartUploadResponse(sgqlc.types.Type):
 
 class Mutation(sgqlc.types.Type):
     __schema__ = entities_schema
-    __field_names__ = ('create_file', 'upload_file', 'upload_temporary_file', 'mark_upload_complete', 'concatenate_files', 'create_sample', 'update_sample', 'delete_sample', 'create_sequencing_read', 'update_sequencing_read', 'delete_sequencing_read', 'create_genomic_range', 'delete_genomic_range', 'create_reference_genome', 'update_reference_genome', 'delete_reference_genome', 'create_accession', 'update_accession', 'delete_accession', 'create_host_organism', 'update_host_organism', 'delete_host_organism', 'create_metadatum', 'update_metadatum', 'delete_metadatum', 'create_consensus_genome', 'delete_consensus_genome', 'create_metric_consensus_genome', 'delete_metric_consensus_genome', 'create_taxon', 'update_taxon', 'delete_taxon', 'create_upstream_database', 'update_upstream_database', 'delete_upstream_database', 'create_index_file', 'update_index_file', 'delete_index_file', 'create_bulk_download', 'delete_bulk_download')
+    __field_names__ = ('create_file', 'upload_file', 'upload_temporary_file', 'mark_upload_complete', 'concatenate_files', 'create_sample', 'update_sample', 'delete_sample', 'create_sequencing_read', 'update_sequencing_read', 'delete_sequencing_read', 'create_genomic_range', 'delete_genomic_range', 'create_reference_genome', 'update_reference_genome', 'delete_reference_genome', 'create_accession', 'update_accession', 'delete_accession', 'create_host_organism', 'update_host_organism', 'delete_host_organism', 'create_metadatum', 'update_metadatum', 'delete_metadatum', 'create_consensus_genome', 'delete_consensus_genome', 'create_metric_consensus_genome', 'delete_metric_consensus_genome', 'create_taxon', 'update_taxon', 'delete_taxon', 'create_upstream_database', 'update_upstream_database', 'delete_upstream_database', 'create_index_file', 'update_index_file', 'delete_index_file', 'create_bulk_download', 'delete_bulk_download', 'delete_old_bulk_downloads')
     create_file = sgqlc.types.Field(sgqlc.types.non_null(File), graphql_name='createFile', args=sgqlc.types.ArgDict((
         ('entity_id', sgqlc.types.Arg(sgqlc.types.non_null(ID), graphql_name='entityId', default=None)),
         ('entity_field_name', sgqlc.types.Arg(sgqlc.types.non_null(String), graphql_name='entityFieldName', default=None)),
@@ -1915,6 +1915,7 @@ class Mutation(sgqlc.types.Type):
         ('where', sgqlc.types.Arg(sgqlc.types.non_null(BulkDownloadWhereClauseMutations), graphql_name='where', default=None)),
 ))
     )
+    delete_old_bulk_downloads = sgqlc.types.Field(sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null('BulkDownload'))), graphql_name='deleteOldBulkDownloads')
 
 
 class PageInfo(sgqlc.types.Type):
