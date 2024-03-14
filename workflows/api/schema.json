@@ -2612,7 +2612,7 @@
               "name": "_is_null",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Boolean",
                 "ofType": null
               }
             }

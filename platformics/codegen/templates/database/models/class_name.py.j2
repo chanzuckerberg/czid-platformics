@@ -61,7 +61,7 @@ class {{cls.name}}(Entity):
         {%- elif attr.type == "boolean" %}
     {{attr.name}}: Mapped[bool] = mapped_column(Boolean, nullable={{ "False" if attr.required else "True"}}{%- if attr.indexed%}, index=True{%- endif %})
         {%- elif attr.type == "date" %}
-    {{attr.name}}: Mapped[datetime.datetime] = mapped_column(DateTime, nullable={{ "False" if attr.required else "True"}}{%- if attr.indexed%}, index=True{%- endif %})
+    {{attr.name}}: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable={{ "False" if attr.required else "True"}}{%- if attr.indexed%}, index=True{%- endif %})
         {%- else %}
             {%- if attr.is_cascade_delete -%}
                 {%- if attr.type == "File" -%}

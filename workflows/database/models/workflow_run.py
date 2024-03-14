@@ -32,8 +32,8 @@ class WorkflowRun(Entity):
     __tablename__ = "workflow_run"
     __mapper_args__ = {"polymorphic_identity": __tablename__, "polymorphic_load": "inline"}
     rails_workflow_run_id: Mapped[int] = mapped_column(Integer, nullable=True)
-    started_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
-    ended_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
+    started_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    ended_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     execution_id: Mapped[str] = mapped_column(String, nullable=True)
     outputs_json: Mapped[str] = mapped_column(String, nullable=True)
     workflow_runner_inputs_json: Mapped[str] = mapped_column(String, nullable=True)

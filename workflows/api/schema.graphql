@@ -7,7 +7,7 @@ input BoolComparators {
   _gte: Int
   _lt: Int
   _lte: Int
-  _is_null: Int
+  _is_null: Boolean
 }
 
 """Date with time (isoformat)"""

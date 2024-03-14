@@ -160,7 +160,7 @@ class BoolComparators(sgqlc.types.Input):
     _gte = sgqlc.types.Field(Int, graphql_name="_gte")
     _lt = sgqlc.types.Field(Int, graphql_name="_lt")
     _lte = sgqlc.types.Field(Int, graphql_name="_lte")
-    _is_null = sgqlc.types.Field(Int, graphql_name="_is_null")
+    _is_null = sgqlc.types.Field(Boolean, graphql_name="_is_null")
 
 
 class DatetimeComparators(sgqlc.types.Input):
