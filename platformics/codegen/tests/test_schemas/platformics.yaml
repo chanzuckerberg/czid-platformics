@@ -346,6 +346,24 @@ classes:
     annotations:
       plural: UpstreamDatabases
 
+  BulkDownload:
+    is_a: Entity
+    mixins:
+      - EntityMixin
+    attributes:
+      download_display_name:
+        range: string
+        required: true
+        annotations:
+          mutable: false
+      file:
+        range: File
+        readonly: true
+        annotations:
+          cascade_delete: true
+    annotations:
+      plural: BulkDownloads
+
   SystemWritableOnlyType:
     is_a: Entity
     mixins:
