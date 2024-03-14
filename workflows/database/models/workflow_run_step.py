@@ -38,7 +38,7 @@ class WorkflowRunStep(Entity):
         foreign_keys=workflow_run_id,
         back_populates="steps",
     )
-    started_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
-    ended_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=True)
+    started_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    ended_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[WorkflowRunStepStatus] = mapped_column(Enum(WorkflowRunStepStatus, native_enum=False), nullable=True)
     entity_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("entity.id"), nullable=False, primary_key=True)
