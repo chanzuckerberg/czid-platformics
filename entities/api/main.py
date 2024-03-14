@@ -88,9 +88,10 @@ def get_app() -> FastAPI:
 
 
 @strawberry.type
-class Mutation(Mutation):
+class Mutation(Mutation):  # type: ignore
     @strawberry.mutation(extensions=[DependencyExtension()])
     async def delete_old_bulk_downloads(
+        self,
         session: AsyncSession = Depends(get_db_session, use_cache=False),
         cerbos_client: CerbosClient = Depends(get_cerbos_client),
         principal: Principal = Depends(require_auth_principal),
@@ -110,7 +111,7 @@ class Mutation(Mutation):
         for bulk_download in bulk_downloads:
             await session.delete(bulk_download)
         await session.commit()
-        return bulk_downloads
+        return bulk_downloads  # type: ignore
 
 
 # ------------------------------------------------------------------------------
