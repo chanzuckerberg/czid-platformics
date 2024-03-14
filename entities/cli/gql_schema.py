@@ -2659,6 +2659,7 @@ class Mutation(sgqlc.types.Type):
         "delete_index_file",
         "create_bulk_download",
         "delete_bulk_download",
+        "delete_old_bulk_downloads",
     )
     create_file = sgqlc.types.Field(
         sgqlc.types.non_null(File),
@@ -3220,6 +3221,10 @@ class Mutation(sgqlc.types.Type):
                 ),
             )
         ),
+    )
+    delete_old_bulk_downloads = sgqlc.types.Field(
+        sgqlc.types.non_null(sgqlc.types.list_of(sgqlc.types.non_null("BulkDownload"))),
+        graphql_name="deleteOldBulkDownloads",
     )
 
 

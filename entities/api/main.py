@@ -2,22 +2,35 @@
 Launch the GraphQL server.
 """
 
+import datetime
 import typing
 
 import uvicorn
 from cerbos.sdk.client import CerbosClient
 from cerbos.sdk.model import Principal
 from fastapi import Depends, FastAPI
-from platformics.api.core.deps import get_auth_principal, get_cerbos_client, get_engine, get_s3_client
+from platformics.api.core.deps import (
+    get_auth_principal,
+    get_cerbos_client,
+    get_engine,
+    get_s3_client,
+    get_db_session,
+    require_auth_principal,
+    require_system_user,
+)
 from platformics.api.core.error_handler import HandleErrors
 from platformics.api.core.gql_loaders import EntityLoader
-from platformics.database.connect import AsyncDB
+from platformics.database.connect import AsyncDB, AsyncSession
+from platformics.api.core.helpers import get_db_rows
+from platformics.api.core.strawberry_extensions import DependencyExtension
 from platformics.settings import APISettings
 from database.models.file import File
 
+import database.models as db
 import strawberry
 from api.mutations import Mutation
 from api.queries import Query
+from api.types.bulk_download import BulkDownload
 from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.config import StrawberryConfig
 from strawberry.schema.name_converter import HasGraphQLName, NameConverter
@@ -67,6 +80,38 @@ def get_app() -> FastAPI:
     _app.state.entities_settings = settings
 
     return _app
+
+
+# ------------------------------------------------------------------------------
+# Additional mutations (this class extends the code-generated Mutation class)
+# ------------------------------------------------------------------------------
+
+
+@strawberry.type
+class Mutation(Mutation):  # type: ignore
+    @strawberry.mutation(extensions=[DependencyExtension()])
+    async def delete_old_bulk_downloads(
+        self,
+        session: AsyncSession = Depends(get_db_session, use_cache=False),
+        cerbos_client: CerbosClient = Depends(get_cerbos_client),
+        principal: Principal = Depends(require_auth_principal),
+    ) -> typing.Sequence[BulkDownload]:
+        """
+        Delete old bulk downloads
+        TODO: This is currently called from Rails; move this to a cron job once we have that system set up.
+        """
+        # Can only be called by a system user
+        require_system_user(principal)
+
+        # Get old bulk downloads
+        where = {"created_at": {"_lt": datetime.datetime.now() - datetime.timedelta(days=7)}}
+        bulk_downloads = await get_db_rows(db.BulkDownload, session, cerbos_client, principal, where, [])
+
+        # Delete the entities (will cascade to deleting the File objects on S3)
+        for bulk_download in bulk_downloads:
+            await session.delete(bulk_download)
+        await session.commit()
+        return bulk_downloads  # type: ignore
 
 
 # ------------------------------------------------------------------------------
