@@ -47,7 +47,6 @@ module "stack" {
   }
   additional_env_vars = {
     AWS_REGION              = "us-west-2"
-    BOTO_ENDPOINT_URL       = "http://motoserver.czidnet:4000"
     CERBOS_URL              = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET   = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL = "s3"
