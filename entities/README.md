@@ -5,6 +5,7 @@ The entities service handles secure data storage, retrieval, and basic transform
 
 
 ## Getting started
+
 To run a local development environment, clone this repo and run:
 
 ```
