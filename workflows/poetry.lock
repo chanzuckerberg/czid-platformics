@@ -1948,17 +1948,18 @@ referencing = ">=0.31.0"
 
 [[package]]
 name = "jwcrypto"
-version = "1.5.1"
+version = "1.5.6"
 description = "Implementation of JOSE Web standards"
 optional = false
-python-versions = ">= 3.6"
+python-versions = ">= 3.8"
 files = [
-    {file = "jwcrypto-1.5.1.tar.gz", hash = "sha256:48bb9bf433777136253579e52b75ffe0f9a4a721d133d01f45a0b91ed5f4f1ae"},
+    {file = "jwcrypto-1.5.6-py3-none-any.whl", hash = "sha256:150d2b0ebbdb8f40b77f543fb44ffd2baeff48788be71f67f03566692fd55789"},
+    {file = "jwcrypto-1.5.6.tar.gz", hash = "sha256:771a87762a0c081ae6166958a954f80848820b2ab066937dc8b8379d65b1b039"},
 ]
 
 [package.dependencies]
 cryptography = ">=3.4"
-deprecated = "*"
+typing-extensions = ">=4.5.0"
 
 [[package]]
 name = "libcst"
@@ -3096,6 +3097,7 @@ description = "A pure Python implementation of the trie data structure."
 optional = false
 python-versions = "*"
 files = [
+    {file = "PyTrie-0.4.0-py3-none-any.whl", hash = "sha256:f687c224ee8c66cda8e8628a903011b692635ffbb08d4b39c5f92b18eb78c950"},
     {file = "PyTrie-0.4.0.tar.gz", hash = "sha256:8f4488f402d3465993fb6b6efa09866849ed8cda7903b50647b7d0342b805379"},
 ]
 
@@ -4362,4 +4364,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c4a8631de80c90b599493b9df4f14f8187627de27ee2ed2ec9fc6cdf18e41b86"
+content-hash = "ba98301db656edfd289e596d1953f4b8e73d54666ddb5cfa4a2f48694987b804"
