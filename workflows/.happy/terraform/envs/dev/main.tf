@@ -72,11 +72,11 @@ module "stack" {
     PLATFORMICS_EVENT_BUS_PLUGIN                          = "swipe"
     PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME              = "workflow-events"
     PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL               = "redis://redis.czidnet:6378"
-    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL           = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-development-nextgen-web-sfn-notifications-queue"
+    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL           = "https://sqs.us-west-2.amazonaws.com/732052188396/idseq-swipe-dev-nextgen-web-sfn-notifications-queue"
     PLATFORMICS_WORKFLOW_RUNNER_PLUGIN                    = "swipe"
     PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT       = ""
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-development/nextgen/"
-    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:732052188396:stateMachine:idseq-swipe-development-default-wdl"
+    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:732052188396:stateMachine:idseq-swipe-dev-default-wdl"
     WORKERS                                               = "2"
   }
   create_dashboard = false
