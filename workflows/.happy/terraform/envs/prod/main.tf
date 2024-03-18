@@ -8,7 +8,7 @@ module "stack" {
   image_tags       = jsondecode(var.image_tags)
   stack_prefix     = "/${var.stack_name}"
   app_name         = var.app
-  deployment_stage = "sandbox"
+  deployment_stage = "prod"
   services = {
     workflows = {
       aws_iam = {
@@ -29,7 +29,7 @@ module "stack" {
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
         },
         private-key = {
-          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
+          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "prod"]
           image = "{workflows}"
           tag   = "${var.image_tag}"
         }
@@ -59,7 +59,7 @@ module "stack" {
       port                  = 8000
       init_containers = {
         private-key = {
-          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
+          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "prod"]
           image = "{workflows-worker}"
           tag   = "${var.image_tag}"
         }
@@ -71,7 +71,7 @@ module "stack" {
     CERBOS_URL                                            = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET                                 = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL                               = "s3"
-    IDENTITY_SERVICE_BASE_URL                             = "http://sandbox.czid.org"
+    IDENTITY_SERVICE_BASE_URL                             = "http://czid.org"
     ENTITY_SERVICE_URL                                    = "http://entities-entities:8008"
     ENTITY_SERVICE_AUTH_TOKEN                             = ""
     JWK_PRIVATE_KEY_FILE                                  = "/var/policies/private_key.pem"
@@ -80,9 +80,9 @@ module "stack" {
     PLATFORMICS_WORKFLOW_RUNNER_PLUGIN                    = "swipe"
     PLATFORMICS_EVENT_BUS_PLUGIN                          = "swipe"
     PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT       = ""
-    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-sandbox/nextgen/"
-    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-sandbox-default-wdl"
-    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL           = "https://sqs.us-west-2.amazonaws.com/${var.aws_account_id}/idseq-swipe-sandbox-nextgen-web-sfn-notifications-queue"
+    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-prod-samples-us-west-2/nextgen/"
+    PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-prod-default-wdl"
+    PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL           = "https://sqs.us-west-2.amazonaws.com/${var.aws_account_id}/idseq-swipe-prod-nextgen-web-sfn-notifications-queue"
     PLATFORMICS_EVENT_BUS__REDIS__REDIS_URL               = "redis://redis.czidnet:6378"
     PLATFORMICS_EVENT_BUS__REDIS__QUEUE_NAME              = "workflow-events"
     SERVICE_NAME                                          = "workflows"

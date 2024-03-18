@@ -177,6 +177,17 @@
                 },
                 "source": "git@github.com:chanzuckerberg/happy//terraform/modules/happy-stack-eks?ref=main"
             }
+        }, 
+        "prod": {
+            "aws_profile": "idseq-prod",
+            "aws_region": "us-west-2",
+            "k8s": {
+                "namespace": "czid-prod-happy-happy-env",
+                "cluster_id": "czid-prod-eks",
+                "auth_method": "eks"
+            },
+            "terraform_directory": ".happy/terraform/envs/prod",
+            "task_launch_type": "k8s"
         }
     },
     "tasks": {
