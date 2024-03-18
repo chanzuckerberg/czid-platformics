@@ -28,7 +28,8 @@ jobs:
         id: stack_name
         run: |
           if [ "${{ inputs.environment }}" = "dev" ]; then
-            echo "sname=rdev-${{ inputs.developer_name }}-${{ inputs.service }}" >> $GITHUB_OUTPUT
+            sname=$(echo ${{ inputs.developer_name }} | cut -c1-6)
+            echo "sname=$sname" >> $GITHUB_OUTPUT
           else
             echo "sname=${{ inputs.service }}" >> $GITHUB_OUTPUT
           fi
