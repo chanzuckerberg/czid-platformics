@@ -9,9 +9,9 @@ on:
         - workflows
         - entities
 
-run-name: Deploy ${{ github.event.inputs.service }} to sandbox
+run-name: Deploy ${{ github.event.inputs.service }} to development for user ${{ github.actor }}
 jobs:
-  run-deploy-to-sandbox:
+  run-deploy-to-dev:
     uses: ./.github/workflows/reusable-deploy.yml
     with:
       environment: dev

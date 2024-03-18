@@ -25,13 +25,15 @@ jobs:
         with:
           node-version: 20
       - name: Set stack name
-        id: stack_name
+        id: stack_name 
         run: |
           if [ "${{ inputs.environment }}" = "dev" ]; then
-            echo "sname=rdev-${{ inputs.developer_name }}-${{ inputs.service }}" >> $GITHUB_OUTPUT
+            # we must limit stackname length due to role name limitations
+            sname=$(echo ${{ inputs.developer_name }} | cut -c1-6)-${{ inputs.service }}
+            echo "sname=$sname" >> $GITHUB_OUTPUT
           else
             echo "sname=${{ inputs.service }}" >> $GITHUB_OUTPUT
-          fi
+          fi 
       - name: Assume happy-api deployment role
         uses: aws-actions/configure-aws-credentials@v4
         with:
