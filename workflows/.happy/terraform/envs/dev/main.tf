@@ -47,6 +47,7 @@ module "stack" {
       }
     },
     workflows-worker = {
+      cache_volume_mount_dir = "/var/policies"
       aws_iam = {
         policy_json = data.aws_iam_policy_document.workflows.json,
       }
