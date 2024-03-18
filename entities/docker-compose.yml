@@ -27,7 +27,6 @@ services:
       ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
   entities:
     image: "platformics-entities"
-    platform: linux/arm64
     build:
       context: ".."
       dockerfile: "entities/Dockerfile"
@@ -70,7 +69,6 @@ services:
       ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
   codegen-tests:
     image: "platformics-entities"
-    platform: linux/arm64
     profiles: ["codegen-tests"]
     build:
       context: ".."

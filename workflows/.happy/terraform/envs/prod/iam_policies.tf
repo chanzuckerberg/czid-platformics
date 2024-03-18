@@ -62,9 +62,7 @@ data "aws_iam_policy_document" "workflows" {
       "s3:PutObjectTagging"
     ]
     resources = [
-      "arn:aws:s3:::idseq-samples-development",
       "arn:aws:s3:::idseq-prod-samples-us-west-2",
-      "arn:aws:s3:::idseq-samples-development/*",
       "arn:aws:s3:::idseq-prod-samples-us-west-2/*"
     ]
   }
