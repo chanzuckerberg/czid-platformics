@@ -1,7 +1,10 @@
+import os
 import typing
 from functools import cached_property
 from jwcrypto import jwk
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import boto3
+from botocore.exceptions import ClientError
 
 
 class Settings(BaseSettings):
@@ -32,8 +35,8 @@ class Settings(BaseSettings):
     PLATFORMICS_DATABASE_PASSWORD: str
     PLATFORMICS_DATABASE_NAME: str
     OUTPUT_S3_PREFIX: typing.Optional[str] = None
-    JWK_PUBLIC_KEY_FILE: str
-    JWK_PRIVATE_KEY_FILE: str
+    JWK_PUBLIC_KEY_FILE: typing.Optional[str] = None
+    JWK_PRIVATE_KEY_FILE: typing.Optional[str] = None
     DEFAULT_UPLOAD_BUCKET: str
     DEFAULT_UPLOAD_PROTOCOL: str
     BOTO_ENDPOINT_URL: typing.Optional[str] = None
@@ -41,15 +44,30 @@ class Settings(BaseSettings):
 
     ############################################################################
     # Computed properties
+    def fetch_private_key(self)->None:
+        environment = os.environ["DEPLOYMENT_STAGE"]
+        secret_name = f"{environment}/czid-services-private-key"
+        session = boto3.session.Session()
+        client = session.client(service_name="secretsmanager", region_name=self.AWS_REGION)
+        try:
+            get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        except ClientError as e:
+            # Just raise error. If we hit this too much, add retries
+            raise e
+
+        pem_string = get_secret_value_response["SecretString"]
+        private_key = jwk.JWK.from_pem(pem_string.encode("utf-8"))
+        return private_key
 
     @cached_property
     def JWK_PRIVATE_KEY(self) -> jwk.JWK:
         key = None
         if not self.JWK_PRIVATE_KEY_FILE:
-            raise Exception("JWK_PRIVATE_KEY_FILE not set")
-        with open(self.JWK_PRIVATE_KEY_FILE) as fh:
-            key = fh.read().strip()
-        private_key = jwk.JWK.from_pem(key.encode("utf-8"))
+            private_key = self.fetch_private_key()
+        else:
+            with open(self.JWK_PRIVATE_KEY_FILE) as fh:
+                key = fh.read().strip()
+            private_key = jwk.JWK.from_pem(key.encode("utf-8"))
         return private_key
 
     @cached_property
