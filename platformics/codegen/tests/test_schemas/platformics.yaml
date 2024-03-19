@@ -53,7 +53,7 @@ enums:
       Nanopore:
   TaxonLevel:
     permissible_values:
-      level_subspecies:
+      level_sublevel:
       level_species:
       level_genus:
       level_family:
