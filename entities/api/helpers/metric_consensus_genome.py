@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -16,7 +17,6 @@ from api.helpers.consensus_genome import ConsensusGenomeGroupByOptions, build_co
 Define groupby options for MetricConsensusGenome type.
 These are only used in aggregate queries.
 """
-
 
 @strawberry.type
 class MetricConsensusGenomeGroupByOptions:
@@ -42,6 +42,7 @@ class MetricConsensusGenomeGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_metric_consensus_genome_groupby_output(

@@ -10,6 +10,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 from support.enums import SequencingProtocol, SequencingTechnology
 
+import datetime
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -38,6 +39,7 @@ class SequencingReadCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class SequencingReadUpdateInputValidator(BaseModel):
@@ -51,3 +53,4 @@ class SequencingReadUpdateInputValidator(BaseModel):
         ),
     ]
     primer_file_id: Annotated[uuid.UUID | None, Field()]
+    deleted_at: Annotated[datetime.datetime | None, Field()]

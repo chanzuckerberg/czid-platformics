@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -19,7 +20,6 @@ from api.helpers.genomic_range import GenomicRangeGroupByOptions, build_genomic_
 Define groupby options for SequencingRead type.
 These are only used in aggregate queries.
 """
-
 
 @strawberry.type
 class SequencingReadGroupByOptions:
@@ -36,6 +36,7 @@ class SequencingReadGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_sequencing_read_groupby_output(

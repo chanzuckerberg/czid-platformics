@@ -15,7 +15,7 @@ import database.models as db
 import strawberry
 import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
-from api.validators.bulk_download import BulkDownloadCreateInputValidator
+from api.validators.bulk_download import BulkDownloadCreateInputValidator, BulkDownloadUpdateInputValidator
 from api.files import File, FileWhereClause
 from api.helpers.bulk_download import BulkDownloadGroupByOptions, build_bulk_download_groupby_output
 from api.types.entities import EntityInterface
@@ -117,6 +117,7 @@ class BulkDownloadWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -134,6 +135,7 @@ class BulkDownloadOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -153,6 +155,7 @@ class BulkDownload(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -191,6 +194,7 @@ class BulkDownloadMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -209,6 +213,7 @@ class BulkDownloadCountColumns(enum.Enum):
     collectionId = "collection_id"
     createdAt = "created_at"
     updatedAt = "updated_at"
+    deletedAt = "deleted_at"
 
 
 """
@@ -258,6 +263,12 @@ class BulkDownloadCreateInput:
     download_display_name: str
     producing_run_id: Optional[strawberry.ID] = None
     collection_id: int
+    deleted_at: Optional[datetime.datetime] = None
+
+
+@strawberry.input()
+class BulkDownloadUpdateInput:
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -375,6 +386,7 @@ async def create_bulk_download(
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         del params["producing_run_id"]
+        del params["deleted_at"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.BulkDownload.__tablename__, attr=attr)
@@ -389,6 +401,47 @@ async def create_bulk_download(
     session.add(new_entity)
     await session.commit()
     return new_entity
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def update_bulk_download(
+    input: BulkDownloadUpdateInput,
+    where: BulkDownloadWhereClauseMutations,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
+) -> Sequence[db.Entity]:
+    """
+    Update BulkDownload objects. Used for mutations (see api/mutations.py).
+    """
+    validated = BulkDownloadUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
+
+    # Need at least one thing to update
+    num_params = len([x for x in params if params[x] is not None])
+    if num_params == 0:
+        raise PlatformicsException("No fields to update")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        raise PlatformicsException("Unauthorized: BulkDownload is not mutable")
+
+    # Fetch entities for update, if we have access to them
+    entities = await get_db_rows(db.BulkDownload, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)
+    if len(entities) == 0:
+        raise PlatformicsException("Unauthorized: Cannot update entities")
+
+    # Update DB
+    updated_at = datetime.datetime.now()
+    for entity in entities:
+        entity.updated_at = updated_at
+        for key in params:
+            if params[key] is not None:
+                setattr(entity, key, params[key])
+    await session.commit()
+    return entities
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -16,7 +17,6 @@ from api.helpers.upstream_database import UpstreamDatabaseGroupByOptions, build_
 Define groupby options for Accession type.
 These are only used in aggregate queries.
 """
-
 
 @strawberry.type
 class AccessionGroupByOptions:
@@ -29,6 +29,7 @@ class AccessionGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_accession_groupby_output(

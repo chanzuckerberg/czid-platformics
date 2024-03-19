@@ -10,6 +10,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 from support.enums import TaxonLevel
 
+import datetime
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -68,6 +69,7 @@ class TaxonCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class TaxonUpdateInputValidator(BaseModel):
@@ -102,3 +104,4 @@ class TaxonUpdateInputValidator(BaseModel):
     tax_phylum_id: Annotated[uuid.UUID | None, Field()]
     tax_kingdom_id: Annotated[uuid.UUID | None, Field()]
     tax_superkingdom_id: Annotated[uuid.UUID | None, Field()]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
