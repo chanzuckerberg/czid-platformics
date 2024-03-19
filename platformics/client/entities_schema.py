@@ -132,7 +132,7 @@ class TaxonCountColumns(sgqlc.types.Enum):
 
 class TaxonLevel(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('level_class', 'level_family', 'level_genus', 'level_kingdom', 'level_order', 'level_phylum', 'level_species', 'level_subspecies', 'level_superkingdom')
+    __choices__ = ('level_class', 'level_family', 'level_genus', 'level_kingdom', 'level_order', 'level_phylum', 'level_species', 'level_sublevel', 'level_superkingdom')
 
 
 class UUID(sgqlc.types.Scalar):
