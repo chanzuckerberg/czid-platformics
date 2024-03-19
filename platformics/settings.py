@@ -44,7 +44,7 @@ class Settings(BaseSettings):
 
     ############################################################################
     # Computed properties
-    def fetch_private_key(self)->None:
+    def fetch_private_key(self)->jwk.JWK:
         environment = os.environ["DEPLOYMENT_STAGE"]
         secret_name = f"{environment}/czid-services-private-key"
         session = boto3.session.Session()
