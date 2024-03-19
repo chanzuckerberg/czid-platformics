@@ -5224,7 +5224,7 @@
         {
           "enumValues": [
             {
-              "name": "level_subspecies"
+              "name": "level_sublevel"
             },
             {
               "name": "level_species"

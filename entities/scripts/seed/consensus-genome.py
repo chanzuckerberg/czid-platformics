@@ -72,7 +72,7 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
     sars_cov2_taxon = session.create_or_fetch_entity(Taxon, upstream_database_identifier="2697049")
     sars_cov2_taxon.name = "Severe acute respiratory syndrome coronavirus 2"
     sars_cov2_taxon.is_phage = False
-    sars_cov2_taxon.level = TaxonLevel.level_subspecies
+    sars_cov2_taxon.level = TaxonLevel.level_sublevel
     upstream_database.taxa = [sars_cov2_taxon]
     entity_inputs.append(entity_input("taxon", "taxon", sars_cov2_taxon))
 

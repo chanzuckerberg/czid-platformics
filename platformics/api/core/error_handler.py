@@ -7,9 +7,11 @@ from pydantic import ValidationError
 from strawberry.extensions.base_extension import SchemaExtension
 from abc import ABC
 
+
 class ExceptionHandler(ABC):
     def convert_exception(self, err: Any) -> list[Any]:
         raise NotImplementedError
+
 
 class NoOpHandler(ExceptionHandler):
     def convert_exception(self, err: PlatformicsException) -> list[PlatformicsException]:

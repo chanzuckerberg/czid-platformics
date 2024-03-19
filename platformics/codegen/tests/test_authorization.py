@@ -7,10 +7,8 @@ import uuid
 import pytest
 from database.models import Sample
 from platformics.codegen.conftest import GQLTestClient, SessionStorage
-from platformics.codegen.tests.output.test_infra.factories.sample import \
-    SampleFactory
-from platformics.codegen.tests.output.test_infra.factories.sequencing_read import \
-    SequencingReadFactory
+from platformics.codegen.tests.output.test_infra.factories.sample import SampleFactory
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 from platformics.database.connect import SyncDB
 
 
@@ -176,8 +174,14 @@ async def test_system_types_only_mutable_by_system(
     assert "not mutable" in output["errors"][0]["message"]
 
     # This field should have been ignored because we're not a system user
-    output = await gql_client.query(get_update_query(item_id, "new_name"), user_id=user_id, member_projects=project_ids, service_identity="workflows")
+    output = await gql_client.query(
+        get_update_query(item_id, "new_name"),
+        user_id=user_id,
+        member_projects=project_ids,
+        service_identity="workflows",
+    )
     assert output["data"]["updateSystemWritableOnlyType"][0]["name"] == "new_name"
+
 
 @pytest.mark.asyncio
 async def test_update_wont_associate_inaccessible_relationships(
