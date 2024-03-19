@@ -8,15 +8,16 @@ import httpx
 
 IDENTITY_SERVICE_URL = os.environ["IDENTITY_SERVICE_BASE_URL"]
 
+
 class ImpersonationClient:
     def __init__(self) -> None:
         self.time_created = None
         self._token = self.get_token()
-    
-    def get_token(self)->str:
+
+    def get_token(self) -> str:
         settings = Settings.model_validate({})
         private_key = settings.JWK_PRIVATE_KEY
-        if self.time_created is None or ((time.time() - self.time_created) > (3600-10)):
+        if self.time_created is None or ((time.time() - self.time_created) > (3600 - 10)):
             self.time_created = time.time()
             self._token = create_token(private_key, None, None, 3600, "workflows")
             return self._token

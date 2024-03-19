@@ -8,6 +8,7 @@ Make changes to the template codegen/templates/support/limit_offset.py.j2 instea
 import strawberry
 from typing import Optional, TypedDict
 
+
 @strawberry.input
 class LimitOffsetClause(TypedDict):
     limit: Optional[int] | None

@@ -47,4 +47,5 @@ class Entity(Base):
     )
     updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
+
 Index("entity_query_fields", Entity.collection_id, Entity.producing_run_id)

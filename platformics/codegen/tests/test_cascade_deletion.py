@@ -8,6 +8,7 @@ from platformics.database.connect import SyncDB
 from platformics.codegen.conftest import SessionStorage, GQLTestClient, FileFactory
 from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 
+
 @pytest.mark.asyncio
 async def test_cascade_delete(
     sync_db: SyncDB,
@@ -22,7 +23,9 @@ async def test_cascade_delete(
     # Create mock data: 2 SequencingReads, each with a different Sample, and each with R1/R2
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        sequencing_reads = SequencingReadFactory.create_batch(2, technology="Illumina", owner_user_id=user_id, collection_id=project_id)
+        sequencing_reads = SequencingReadFactory.create_batch(
+            2, technology="Illumina", owner_user_id=user_id, collection_id=project_id
+        )
         FileFactory.update_file_ids()
 
     # Delete the first Sample

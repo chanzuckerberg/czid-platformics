@@ -8,8 +8,7 @@ functions to keep complicated LinkML-specific logic out of our Jinja2 templates.
 from functools import cached_property
 
 import strcase
-from linkml_runtime.linkml_model.meta import (ClassDefinition, EnumDefinition,
-                                              SlotDefinition)
+from linkml_runtime.linkml_model.meta import ClassDefinition, EnumDefinition, SlotDefinition
 from linkml_runtime.utils.schemaview import SchemaView
 
 
@@ -35,7 +34,7 @@ class FieldWrapper:
     @cached_property
     def name(self) -> str:
         return self.wrapped_field.name
-    
+
     @cached_property
     def camel_name(self) -> str:
         return strcase.to_lower_camel(self.wrapped_field.name)
