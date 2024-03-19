@@ -60,7 +60,7 @@ class SequencingTechnology(enum.Enum):
 
 @strawberry.enum
 class TaxonLevel(enum.Enum):
-    level_subspecies = "level_subspecies"
+    level_sublevel = "level_sublevel"
     level_species = "level_species"
     level_genus = "level_genus"
     level_family = "level_family"
