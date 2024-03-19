@@ -11,7 +11,15 @@ from jinja2 import Environment, FileSystemLoader
 from linkml_runtime.utils.schemaview import SchemaView
 from platformics.codegen.lib.linkml_wrappers import ViewWrapper
 
-DIR_CODEGEN = ["support", "api/types", "api/validators", "api/helpers", "database/models", "cerbos/policies", "test_infra/factories"]
+DIR_CODEGEN = [
+    "support",
+    "api/types",
+    "api/validators",
+    "api/helpers",
+    "database/models",
+    "cerbos/policies",
+    "test_infra/factories",
+]
 
 
 @click.group()
@@ -47,6 +55,7 @@ def generate_enums(output_prefix: str, environment: Environment, view: ViewWrapp
     with open(os.path.join(output_prefix, filename), mode="w", encoding="utf-8") as message:
         message.write(content)
         print(f"... wrote {filename}")
+
 
 def generate_limit_offset_type(output_prefix: str, environment: Environment) -> None:
     """
@@ -148,7 +157,9 @@ def api_generate(
     generate_entity_subclass_files(
         output_prefix, "test_infra/factories/class_name.py", environment, wrapped_view, render_files=render_files
     )
-    generate_entity_subclass_files(output_prefix, "api/helpers/class_name.py", environment, wrapped_view, render_files=render_files)
+    generate_entity_subclass_files(
+        output_prefix, "api/helpers/class_name.py", environment, wrapped_view, render_files=render_files
+    )
 
 
 if __name__ == "__main__":

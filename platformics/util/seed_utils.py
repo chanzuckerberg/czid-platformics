@@ -40,7 +40,8 @@ class TempHTTPFile:
     def __enter__(self) -> tempfile._TemporaryFileWrapper:
         return self.temp_file
 
-    def __exit__(self,
+    def __exit__(
+        self,
         exc_type: type[BaseException] | None,
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
@@ -64,7 +65,6 @@ class TempCZIDWorkflowFile(TempGitHubFile):
         )
 
 
-
 class SeedSession:
     def __init__(self) -> None:
         self.settings = CLISettings.model_validate({})
@@ -74,7 +74,13 @@ class SeedSession:
         self.add = self.session.add
         self.commit = self.session.commit
         self.flush = self.session.flush
-        self.s3_local = boto3.client('s3', endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={'addressing_style': 'path'})) if os.getenv("BOTO_ENDPOINT_URL") else None
+        self.s3_local = (
+            boto3.client(
+                "s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=Config(s3={"addressing_style": "path"})
+            )
+            if os.getenv("BOTO_ENDPOINT_URL")
+            else None
+        )
         self.upsert_bucket(LOCAL_BUCKET)
 
     def upsert_bucket(self, bucket_name: str) -> None:
@@ -84,7 +90,7 @@ class SeedSession:
             self.s3_local.create_bucket(Bucket=bucket_name)
         except ClientError as e:
             # Check if the error was because the bucket already exists or is owned by another account
-            if e.response['Error']['Code'] in ('BucketAlreadyExists', 'BucketAlreadyOwnedByYou'):
+            if e.response["Error"]["Code"] in ("BucketAlreadyExists", "BucketAlreadyOwnedByYou"):
                 pass  # Bucket already exists, handle as needed
             else:
                 raise e
@@ -105,7 +111,8 @@ class SeedSession:
         with TempHTTPFile(f"https://{bucket}.s3.amazonaws.com/{key}") as f:
             self.s3_local.upload_file(f.name, bucket, key)
 
-    T = TypeVar('T', bound=Entity)
+    T = TypeVar("T", bound=Entity)
+
     def create_or_fetch_entity(self, entity_type: type[T], **kwargs: Any) -> T:
         entity = self.session.query(entity_type).filter_by(**kwargs).first() or entity_type()
         entity.owner_user_id = TEST_USER_ID
@@ -126,9 +133,8 @@ class SeedSession:
         """
         Returns a path to remote a remote S3 object
 
-        If we are using local S3 it returns an https path to ensure you are using the remote object 
+        If we are using local S3 it returns an https path to ensure you are using the remote object
         """
         if not self.s3_local:
             return f"s3://{bucket}/{key}"
         return f"https://{bucket}.s3.amazonaws.com/{key}"
-

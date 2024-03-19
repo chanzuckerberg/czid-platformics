@@ -5,10 +5,8 @@ Test file queries
 import pytest
 import sqlalchemy as sa
 from database.models.file import File
-from platformics.codegen.conftest import (FileFactory, GQLTestClient,
-                                          SessionStorage)
-from platformics.codegen.tests.output.test_infra.factories.sequencing_read import \
-    SequencingReadFactory
+from platformics.codegen.conftest import FileFactory, GQLTestClient, SessionStorage
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 from platformics.database.connect import SyncDB
 
 

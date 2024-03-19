@@ -9,28 +9,27 @@ from typing import Any
 import pytest
 from database.models import Sample
 from platformics.codegen.conftest import GQLTestClient, SessionStorage
-from platformics.codegen.tests.output.test_infra.factories.constraint_checked_type import \
-    ConstraintCheckedTypeFactory
-from platformics.codegen.tests.output.test_infra.factories.sequencing_read import \
-    SequencingReadFactory
+from platformics.codegen.tests.output.test_infra.factories.constraint_checked_type import ConstraintCheckedTypeFactory
+from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 from platformics.database.connect import SyncDB
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "field_name,invalid_values,valid_values",
-    [("length3To8", ["a", "", "  a   ", "  abcdefghi  "], ["abcde", "   abc    ", "abcdefgh   "]),
-    ("regexFormatCheck", ["hi", "aaa-bbb-ccc", "100-100-10000"], ["222-33-4444", "  aaa333-44-5555ccc  "]),
-    ("minValue0", [-7, -14], [0, 3, 999999]),
-    ("maxValue9", [11, 44444], [0, -17, 9]),
-    ("minValue0MaxValue9", [-39, 10, 9999], [0, 6, 9]),
-    ("float1dot1To2dot2", [0, 3.3], [1.1, 1.2, 2.2]),
-    ("noStringChecks", [], ["", "aasdfasdfasd", "  lorem ipsum !@#$%^&*()  "]),
-    ("noIntChecks", [], [65, 0, 400, 7]),
-    ("noFloatChecks", [], [-65.50, .00001, 400.6, 7]),
-    ("boolField", [], [True, False]),
-    ("enumField", [], ["RNA", "DNA"]),
-  ]
+    [
+        ("length3To8", ["a", "", "  a   ", "  abcdefghi  "], ["abcde", "   abc    ", "abcdefgh   "]),
+        ("regexFormatCheck", ["hi", "aaa-bbb-ccc", "100-100-10000"], ["222-33-4444", "  aaa333-44-5555ccc  "]),
+        ("minValue0", [-7, -14], [0, 3, 999999]),
+        ("maxValue9", [11, 44444], [0, -17, 9]),
+        ("minValue0MaxValue9", [-39, 10, 9999], [0, 6, 9]),
+        ("float1dot1To2dot2", [0, 3.3], [1.1, 1.2, 2.2]),
+        ("noStringChecks", [], ["", "aasdfasdfasd", "  lorem ipsum !@#$%^&*()  "]),
+        ("noIntChecks", [], [65, 0, 400, 7]),
+        ("noFloatChecks", [], [-65.50, 0.00001, 400.6, 7]),
+        ("boolField", [], [True, False]),
+        ("enumField", [], ["RNA", "DNA"]),
+    ],
 )
 async def test_create_validation(
     field_name: str,
@@ -43,6 +42,7 @@ async def test_create_validation(
     """
     user_id = 12345
     project_ids = [333]
+
     def get_query(field_name: str, value: Any) -> str:
         if "enum" not in field_name:
             value = json.dumps(value)
@@ -75,18 +75,19 @@ async def test_create_validation(
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "field_name,invalid_values,valid_values",
-    [("length3To8", ["a", "", "  a   ", "  abcdefghi  "], ["abcde", "   abc    ", "abcdefgh   "]),
-    ("regexFormatCheck", ["hi", "aaa-bbb-ccc", "100-100-10000"], ["222-33-4444", "  aaa333-44-5555ccc  "]),
-    ("minValue0", [-7, -14], [0, 3, 999999]),
-    ("maxValue9", [11, 44444], [0, -17, 9]),
-    ("minValue0MaxValue9", [-39, 10, 9999], [0, 6, 9]),
-    ("float1dot1To2dot2", [0, 3.3], [1.1, 1.2, 2.2]),
-    ("noStringChecks", [], ["", "aasdfasdfasd", "  lorem ipsum !@#$%^&*()  "]),
-    ("noIntChecks", [], [65, 0, 400, 7]),
-    ("noFloatChecks", [], [-65.50, .00001, 400.6, 7]),
-    ("boolField", [], [True, False]),
-    ("enumField", [], ["RNA", "DNA"]),
-  ]
+    [
+        ("length3To8", ["a", "", "  a   ", "  abcdefghi  "], ["abcde", "   abc    ", "abcdefgh   "]),
+        ("regexFormatCheck", ["hi", "aaa-bbb-ccc", "100-100-10000"], ["222-33-4444", "  aaa333-44-5555ccc  "]),
+        ("minValue0", [-7, -14], [0, 3, 999999]),
+        ("maxValue9", [11, 44444], [0, -17, 9]),
+        ("minValue0MaxValue9", [-39, 10, 9999], [0, 6, 9]),
+        ("float1dot1To2dot2", [0, 3.3], [1.1, 1.2, 2.2]),
+        ("noStringChecks", [], ["", "aasdfasdfasd", "  lorem ipsum !@#$%^&*()  "]),
+        ("noIntChecks", [], [65, 0, 400, 7]),
+        ("noFloatChecks", [], [-65.50, 0.00001, 400.6, 7]),
+        ("boolField", [], [True, False]),
+        ("enumField", [], ["RNA", "DNA"]),
+    ],
 )
 async def test_update_validation(
     field_name: str,
@@ -104,6 +105,7 @@ async def test_update_validation(
 
     user_id = 12345
     project_ids = [333]
+
     def get_query(id: uuid.UUID, field_name: str, value: Any) -> str:
         if "enum" not in field_name:
             value = json.dumps(value)

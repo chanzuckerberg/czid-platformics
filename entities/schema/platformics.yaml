@@ -102,7 +102,7 @@ enums:
   TaxonLevel:
     permissible_values:
       # Prepending "level_" because "class" is a reserved word, so can't create an Enum with it.
-      level_subspecies:
+      level_sublevel:
       level_species:
       level_genus:
       level_family:

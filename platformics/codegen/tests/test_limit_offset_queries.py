@@ -10,6 +10,7 @@ from platformics.codegen.tests.output.test_infra.factories.sample import SampleF
 
 date_now = datetime.datetime.now()
 
+
 @pytest.mark.asyncio
 async def test_limit_query(
     sync_db: SyncDB,
@@ -24,9 +25,7 @@ async def test_limit_query(
     # Create mock data
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        SampleFactory.create_batch(
-            10, owner_user_id=user_id, collection_id=project_id
-        )
+        SampleFactory.create_batch(10, owner_user_id=user_id, collection_id=project_id)
 
     # Fetch all samples
     query = """

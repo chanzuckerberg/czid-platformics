@@ -45,7 +45,14 @@ async def test_basic_order_by_query(
     """
     output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
     locations = [sample["collectionLocation"] for sample in output["data"]["samples"]]
-    assert locations == ["San Francisco, CA", "San Francisco, CA", "Mountain View, CA", "Los Angeles, CA", "Los Angeles, CA"]
+    assert locations == [
+        "San Francisco, CA",
+        "San Francisco, CA",
+        "Mountain View, CA",
+        "Los Angeles, CA",
+        "Los Angeles, CA",
+    ]
+
 
 @pytest.mark.asyncio
 async def test_order_multiple_fields_query(
@@ -63,9 +70,13 @@ async def test_order_multiple_fields_query(
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         SampleFactory(owner_user_id=user_id, collection_id=project_id, collection_location="San Francisco, CA")
-        SampleFactory(owner_user_id=user_id, collection_id=secondary_project_id, collection_location="San Francisco, CA")
+        SampleFactory(
+            owner_user_id=user_id, collection_id=secondary_project_id, collection_location="San Francisco, CA"
+        )
         SampleFactory(owner_user_id=user_id, collection_id=project_id, collection_location="Mountain View, CA")
-        SampleFactory(owner_user_id=user_id, collection_id=secondary_project_id, collection_location="Mountain View, CA")
+        SampleFactory(
+            owner_user_id=user_id, collection_id=secondary_project_id, collection_location="Mountain View, CA"
+        )
 
     # Fetch all samples, in descending order of collection id and then ascending order of collection location
     query = """
@@ -111,8 +122,12 @@ async def test_sort_nested_objects_query(
 
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        sample_1 = SampleFactory(owner_user_id=user_id, collection_id=project_id, collection_location="San Francisco, CA")
-        sample_2 = SampleFactory(owner_user_id=user_id, collection_id=project_id, collection_location="Mountain View, CA")
+        sample_1 = SampleFactory(
+            owner_user_id=user_id, collection_id=project_id, collection_location="San Francisco, CA"
+        )
+        sample_2 = SampleFactory(
+            owner_user_id=user_id, collection_id=project_id, collection_location="Mountain View, CA"
+        )
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_1, nucleic_acid="DNA")
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_1, nucleic_acid="RNA")
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_2, nucleic_acid="DNA")
@@ -142,6 +157,7 @@ async def test_sort_nested_objects_query(
             nucleic_acids.append(sr["node"]["nucleicAcid"])
     assert nucleic_acids == ["DNA", "RNA", "DNA", "RNA"]
 
+
 @pytest.mark.asyncio
 async def test_order_by_related_field_query(
     sync_db: SyncDB,
@@ -156,8 +172,12 @@ async def test_order_by_related_field_query(
     # Create mock data
     with sync_db.session() as session:
         SessionStorage.set_session(session)
-        sample_1 = SampleFactory(owner_user_id=user_id, collection_id=project_id, collection_location="Mountain View, CA")
-        sample_2 = SampleFactory(owner_user_id=user_id, collection_id=project_id, collection_location="San Francisco, CA")
+        sample_1 = SampleFactory(
+            owner_user_id=user_id, collection_id=project_id, collection_location="Mountain View, CA"
+        )
+        sample_2 = SampleFactory(
+            owner_user_id=user_id, collection_id=project_id, collection_location="San Francisco, CA"
+        )
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_1, nucleic_acid="DNA")
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_1, nucleic_acid="RNA")
         SequencingReadFactory(owner_user_id=user_id, collection_id=project_id, sample=sample_2, nucleic_acid="DNA")
@@ -179,6 +199,7 @@ async def test_order_by_related_field_query(
     collection_locations = [sr["sample"]["collectionLocation"] for sr in output["data"]["sequencingReads"]]
     assert nucleic_acids == ["DNA", "RNA", "DNA", "RNA"]
     assert collection_locations == ["San Francisco, CA", "San Francisco, CA", "Mountain View, CA", "Mountain View, CA"]
+
 
 @pytest.mark.asyncio
 async def test_deeply_nested_query(
