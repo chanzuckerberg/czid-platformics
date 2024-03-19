@@ -2145,7 +2145,7 @@ type TaxonGroupByOptions {
 }
 
 enum TaxonLevel {
-  level_subspecies
+  level_sublevel
   level_species
   level_genus
   level_family

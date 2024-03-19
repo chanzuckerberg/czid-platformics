@@ -42,7 +42,7 @@ class TaxonFactory(CommonFactory):
     upstream_database_identifier = fuzzy.FuzzyText()
     level = fuzzy.FuzzyChoice(
         [
-            "level_subspecies",
+            "level_sublevel",
             "level_species",
             "level_genus",
             "level_family",

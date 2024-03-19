@@ -68,13 +68,14 @@ async def test_basic_aggregate_query(
     min_collectionLocation = output["data"]["samplesAggregate"]["aggregate"][0]["min"]["collectionLocation"]
     stddev_collectionId = output["data"]["samplesAggregate"]["aggregate"][0]["stddev"]["collectionId"]
     sum_ownerUserId = output["data"]["samplesAggregate"]["aggregate"][0]["sum"]["ownerUserId"]
-    
+
     assert avg_collectionId == 189
     assert count == 5
     assert max_collectionLocation == "San Francisco, CA"
     assert min_collectionLocation == "Mountain View, CA"
     assert stddev_collectionId == 60
     assert sum_ownerUserId == 61725
+
 
 @pytest.mark.asyncio
 async def test_nested_aggregate_query(
@@ -88,8 +89,12 @@ async def test_nested_aggregate_query(
         SessionStorage.set_session(session)
         sample_1 = SampleFactory(owner_user_id=111, collection_id=888)
         sample_2 = SampleFactory(owner_user_id=111, collection_id=888)
-        SequencingReadFactory.create_batch(2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id)
-        SequencingReadFactory.create_batch(3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id)
+        SequencingReadFactory.create_batch(
+            2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id
+        )
+        SequencingReadFactory.create_batch(
+            3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id
+        )
 
     query = """
         query MyQuery {
@@ -105,6 +110,7 @@ async def test_nested_aggregate_query(
     results = await gql_client.query(query, user_id=111, member_projects=[888])
     assert results["data"]["samples"][0]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 2
     assert results["data"]["samples"][1]["sequencingReadsAggregate"]["aggregate"][0]["count"] == 3
+
 
 @pytest.mark.asyncio
 async def test_count_distinct_query(
@@ -145,6 +151,7 @@ async def test_count_distinct_query(
     results = await gql_client.query(query, user_id=111, member_projects=[888])
     assert results["data"]["samplesAggregate"]["aggregate"][0]["count"] == 2
 
+
 @pytest.mark.asyncio
 async def test_groupby_query(
     sync_db: SyncDB,
@@ -178,6 +185,7 @@ async def test_groupby_query(
         elif group["groupBy"]["collectionLocation"] == "Mountain View, CA":
             assert group["count"] == 3
 
+
 @pytest.mark.asyncio
 async def test_groupby_query_with_nested_fields(
     sync_db: SyncDB,
@@ -190,8 +198,12 @@ async def test_groupby_query_with_nested_fields(
         SessionStorage.set_session(session)
         sample_1 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="San Francisco, CA")
         sample_2 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="Mountain View, CA")
-        SequencingReadFactory.create_batch(2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id)
-        SequencingReadFactory.create_batch(3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id)
+        SequencingReadFactory.create_batch(
+            2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id
+        )
+        SequencingReadFactory.create_batch(
+            3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id
+        )
 
     query = """
         query MyQuery {
@@ -215,6 +227,7 @@ async def test_groupby_query_with_nested_fields(
         elif group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA":
             assert group["count"] == 3
 
+
 @pytest.mark.asyncio
 async def test_groupby_query_with_multiple_fields(
     sync_db: SyncDB,
@@ -227,10 +240,34 @@ async def test_groupby_query_with_multiple_fields(
         SessionStorage.set_session(session)
         sample_1 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="San Francisco, CA")
         sample_2 = SampleFactory(owner_user_id=111, collection_id=888, collection_location="Mountain View, CA")
-        SequencingReadFactory.create_batch(1, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id, technology="Illumina")
-        SequencingReadFactory.create_batch(2, sample=sample_1, owner_user_id=sample_1.owner_user_id, collection_id=sample_1.collection_id, technology="Nanopore")
-        SequencingReadFactory.create_batch(3, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id, technology="Illumina")
-        SequencingReadFactory.create_batch(4, sample=sample_2, owner_user_id=sample_2.owner_user_id, collection_id=sample_2.collection_id, technology="Nanopore")
+        SequencingReadFactory.create_batch(
+            1,
+            sample=sample_1,
+            owner_user_id=sample_1.owner_user_id,
+            collection_id=sample_1.collection_id,
+            technology="Illumina",
+        )
+        SequencingReadFactory.create_batch(
+            2,
+            sample=sample_1,
+            owner_user_id=sample_1.owner_user_id,
+            collection_id=sample_1.collection_id,
+            technology="Nanopore",
+        )
+        SequencingReadFactory.create_batch(
+            3,
+            sample=sample_2,
+            owner_user_id=sample_2.owner_user_id,
+            collection_id=sample_2.collection_id,
+            technology="Illumina",
+        )
+        SequencingReadFactory.create_batch(
+            4,
+            sample=sample_2,
+            owner_user_id=sample_2.owner_user_id,
+            collection_id=sample_2.collection_id,
+            technology="Nanopore",
+        )
 
     query = """
         query MyQuery {
@@ -250,14 +287,27 @@ async def test_groupby_query_with_multiple_fields(
     results = await gql_client.query(query, user_id=111, member_projects=[888])
     aggregate = results["data"]["sequencingReadsAggregate"]["aggregate"]
     for group in aggregate:
-        if group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA" and group["groupBy"]["technology"] == "Illumina":
+        if (
+            group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA"
+            and group["groupBy"]["technology"] == "Illumina"
+        ):
             assert group["count"] == 1
-        elif group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA" and group["groupBy"]["technology"] == "Nanopore":
+        elif (
+            group["groupBy"]["sample"]["collectionLocation"] == "San Francisco, CA"
+            and group["groupBy"]["technology"] == "Nanopore"
+        ):
             assert group["count"] == 2
-        elif group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA" and group["groupBy"]["technology"] == "Illumina":
+        elif (
+            group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA"
+            and group["groupBy"]["technology"] == "Illumina"
+        ):
             assert group["count"] == 3
-        elif group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA" and group["groupBy"]["technology"] == "Nanopore":
+        elif (
+            group["groupBy"]["sample"]["collectionLocation"] == "Mountain View, CA"
+            and group["groupBy"]["technology"] == "Nanopore"
+        ):
             assert group["count"] == 4
+
 
 @pytest.mark.asyncio
 async def test_deeply_nested_groupby_query(

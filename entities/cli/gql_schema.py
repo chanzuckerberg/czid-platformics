@@ -347,7 +347,7 @@ class TaxonLevel(sgqlc.types.Enum):
         "level_order",
         "level_phylum",
         "level_species",
-        "level_subspecies",
+        "level_sublevel",
         "level_superkingdom",
     )
 

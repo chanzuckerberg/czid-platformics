@@ -58,11 +58,12 @@ def get_user_token(request: Request) -> typing.Optional[str]:
 
     return parts[1]
 
+
 def get_auth_principal(
-        request: Request,
-        settings: APISettings = Depends(get_settings),
-        user_token: typing.Optional[str] = Depends(get_user_token),
-    ) -> typing.Optional[Principal]:
+    request: Request,
+    settings: APISettings = Depends(get_settings),
+    user_token: typing.Optional[str] = Depends(get_user_token),
+) -> typing.Optional[Principal]:
     if not user_token:
         return None
     try:
