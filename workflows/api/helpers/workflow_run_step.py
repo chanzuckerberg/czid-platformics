@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -18,7 +19,6 @@ Define groupby options for WorkflowRunStep type.
 These are only used in aggregate queries.
 """
 
-
 @strawberry.type
 class WorkflowRunStepGroupByOptions:
     workflow_run: Optional[WorkflowRunGroupByOptions] = None
@@ -30,6 +30,7 @@ class WorkflowRunStepGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_workflow_run_step_groupby_output(
