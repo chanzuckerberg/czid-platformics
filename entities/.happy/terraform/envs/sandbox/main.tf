@@ -21,11 +21,6 @@ module "stack" {
           cmd   = ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]
           image = "{entities}"
           tag   = "${var.image_tag}"
-        },
-        private-key = {
-          cmd   = ["python3", "/czid-platformics/platformics/scripts/make_private_key_pem.py", "sandbox"]
-          image = "{entities}"
-          tag   = "${var.image_tag}"
         }
       }
       memory                = "1000Mi"
@@ -50,8 +45,6 @@ module "stack" {
     CERBOS_URL              = "http://localhost:3592"
     DEFAULT_UPLOAD_BUCKET   = "local-bucket"
     DEFAULT_UPLOAD_PROTOCOL = "s3"
-    JWK_PRIVATE_KEY_FILE    = "/var/policies/private_key.pem"
-    JWK_PUBLIC_KEY_FILE     = "/var/policies/public_key.pem"
     WORKERS                 = "2"
   }
   create_dashboard = false
