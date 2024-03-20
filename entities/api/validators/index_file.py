@@ -10,6 +10,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 from support.enums import IndexTypes
 
+import datetime
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -36,6 +37,7 @@ class IndexFileCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class IndexFileUpdateInputValidator(BaseModel):
@@ -48,3 +50,4 @@ class IndexFileUpdateInputValidator(BaseModel):
             strip_whitespace=True,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]

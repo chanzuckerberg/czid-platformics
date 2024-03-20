@@ -61,6 +61,7 @@ class WorkflowRunCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class WorkflowRunUpdateInputValidator(BaseModel):
@@ -93,3 +94,4 @@ class WorkflowRunUpdateInputValidator(BaseModel):
         ),
     ]
     deprecated_by_id: Annotated[uuid.UUID | None, Field()]
+    deleted_at: Annotated[datetime.datetime | None, Field()]

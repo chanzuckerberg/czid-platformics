@@ -213,6 +213,7 @@ class WorkflowRunWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -240,6 +241,7 @@ class WorkflowRunOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -278,6 +280,7 @@ class WorkflowRun(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -324,6 +327,7 @@ class WorkflowRunMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -351,6 +355,7 @@ class WorkflowRunCountColumns(enum.Enum):
     collectionId = "collection_id"
     createdAt = "created_at"
     updatedAt = "updated_at"
+    deletedAt = "deleted_at"
 
 
 """
@@ -407,6 +412,7 @@ class WorkflowRunCreateInput:
     raw_inputs_json: Optional[str] = None
     deprecated_by_id: Optional[strawberry.ID] = None
     collection_id: int
+    deleted_at: Optional[datetime.datetime] = None
 
 
 @strawberry.input()
@@ -418,6 +424,7 @@ class WorkflowRunUpdateInput:
     status: Optional[WorkflowRunStatus] = None
     error_message: Optional[str] = None
     deprecated_by_id: Optional[strawberry.ID] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -541,6 +548,7 @@ async def create_workflow_run(
         del params["workflow_runner_inputs_json"]
         del params["status"]
         del params["error_message"]
+        del params["deleted_at"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRun.__tablename__, attr=attr)
@@ -627,6 +635,7 @@ async def update_workflow_run(
         del params["workflow_runner_inputs_json"]
         del params["status"]
         del params["error_message"]
+        del params["deleted_at"]
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.WorkflowRun, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)

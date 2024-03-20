@@ -10,6 +10,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 
 from support.enums import HostOrganismCategory
 
+import datetime
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
@@ -41,6 +42,7 @@ class HostOrganismCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class HostOrganismUpdateInputValidator(BaseModel):
@@ -60,3 +62,4 @@ class HostOrganismUpdateInputValidator(BaseModel):
     ]
     category: Annotated[HostOrganismCategory | None, Field()]
     is_deuterostome: Annotated[bool | None, Field()]
+    deleted_at: Annotated[datetime.datetime | None, Field()]

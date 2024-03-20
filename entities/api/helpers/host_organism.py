@@ -31,6 +31,7 @@ class HostOrganismGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_host_organism_groupby_output(

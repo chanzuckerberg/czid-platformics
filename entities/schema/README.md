@@ -8,6 +8,7 @@ Entity {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 File {
     uuid id  
@@ -21,6 +22,8 @@ File {
     integer size  
     FileUploadClient upload_client  
     string upload_error  
+    date created_at  
+    date updated_at  
 }
 Sample {
     integer rails_sample_id  
@@ -33,6 +36,7 @@ Sample {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 SequencingRead {
     SequencingProtocol protocol  
@@ -47,6 +51,7 @@ SequencingRead {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 GenomicRange {
     uuid entity_id  
@@ -57,6 +62,7 @@ GenomicRange {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 ReferenceGenome {
     string name  
@@ -68,6 +74,7 @@ ReferenceGenome {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 Accession {
     string accession_id  
@@ -80,6 +87,7 @@ Accession {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 HostOrganism {
     integer rails_host_genome_id  
@@ -95,6 +103,7 @@ HostOrganism {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 Metadatum {
     string field_name  
@@ -107,6 +116,7 @@ Metadatum {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 ConsensusGenome {
     uuid entity_id  
@@ -117,6 +127,7 @@ ConsensusGenome {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 MetricConsensusGenome {
     float reference_genome_length  
@@ -142,6 +153,7 @@ MetricConsensusGenome {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 Taxon {
     string wikipedia_id  
@@ -159,6 +171,7 @@ Taxon {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 UpstreamDatabase {
     string name  
@@ -170,6 +183,7 @@ UpstreamDatabase {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 IndexFile {
     IndexTypes name  
@@ -182,6 +196,7 @@ IndexFile {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 BulkDownload {
     BulkDownloadType download_type  
@@ -194,6 +209,7 @@ BulkDownload {
     integer collection_id  
     date created_at  
     date updated_at  
+    date deleted_at  
 }
 EntityMixin {
     uuid entity_id  

@@ -28,6 +28,7 @@ class BulkDownloadGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_bulk_download_groupby_output(

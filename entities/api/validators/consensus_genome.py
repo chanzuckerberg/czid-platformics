@@ -8,6 +8,7 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+import datetime
 import uuid
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -28,3 +29,10 @@ class ConsensusGenomeCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
+
+
+class ConsensusGenomeUpdateInputValidator(BaseModel):
+    # Pydantic stuff
+    model_config = ConfigDict(from_attributes=True)
+    deleted_at: Annotated[datetime.datetime | None, Field()]

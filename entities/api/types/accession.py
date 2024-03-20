@@ -155,6 +155,7 @@ class AccessionWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -175,6 +176,7 @@ class AccessionOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -201,6 +203,7 @@ class Accession(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -240,6 +243,7 @@ class AccessionMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -259,6 +263,7 @@ class AccessionCountColumns(enum.Enum):
     collectionId = "collection_id"
     createdAt = "created_at"
     updatedAt = "updated_at"
+    deletedAt = "deleted_at"
 
 
 """
@@ -307,11 +312,13 @@ class AccessionCreateInput:
     upstream_database_id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     collection_id: int
+    deleted_at: Optional[datetime.datetime] = None
 
 
 @strawberry.input()
 class AccessionUpdateInput:
     accession_name: Optional[str] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -429,6 +436,7 @@ async def create_accession(
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         del params["producing_run_id"]
+        del params["deleted_at"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.Accession.__tablename__, attr=attr)
@@ -479,6 +487,9 @@ async def update_accession(
         raise PlatformicsException("No fields to update")
 
     # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        del params["deleted_at"]
 
     # Fetch entities for update, if we have access to them
     entities = await get_db_rows(db.Accession, session, cerbos_client, principal, where, [], CerbosAction.UPDATE)

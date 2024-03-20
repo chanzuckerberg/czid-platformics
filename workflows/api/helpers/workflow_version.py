@@ -31,6 +31,7 @@ class WorkflowVersionGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_workflow_version_groupby_output(

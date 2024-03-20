@@ -40,6 +40,7 @@ class WorkflowCountColumns(sgqlc.types.Enum):
         "collectionId",
         "createdAt",
         "defaultVersion",
+        "deletedAt",
         "id",
         "minimumSupportedVersion",
         "name",
@@ -54,6 +55,7 @@ class WorkflowRunCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collectionId",
         "createdAt",
+        "deletedAt",
         "deprecatedBy",
         "endedAt",
         "entityInputs",
@@ -78,6 +80,7 @@ class WorkflowRunEntityInputCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collectionId",
         "createdAt",
+        "deletedAt",
         "entityType",
         "fieldName",
         "id",
@@ -108,6 +111,7 @@ class WorkflowRunStepCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collectionId",
         "createdAt",
+        "deletedAt",
         "endedAt",
         "id",
         "ownerUserId",
@@ -128,6 +132,7 @@ class WorkflowVersionCountColumns(sgqlc.types.Enum):
     __choices__ = (
         "collectionId",
         "createdAt",
+        "deletedAt",
         "deprecated",
         "graphJson",
         "id",
@@ -280,11 +285,12 @@ class UUIDComparators(sgqlc.types.Input):
 
 class WorkflowCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "default_version", "minimum_supported_version", "collection_id")
+    __field_names__ = ("name", "default_version", "minimum_supported_version", "collection_id", "deleted_at")
     name = sgqlc.types.Field(String, graphql_name="name")
     default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
     minimum_supported_version = sgqlc.types.Field(String, graphql_name="minimumSupportedVersion")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowOrderByClause(sgqlc.types.Input):
@@ -298,6 +304,7 @@ class WorkflowOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     name = sgqlc.types.Field(orderBy, graphql_name="name")
     default_version = sgqlc.types.Field(orderBy, graphql_name="defaultVersion")
@@ -307,16 +314,18 @@ class WorkflowOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("input_entity_id", "field_name", "entity_type", "workflow_run_id", "collection_id")
+    __field_names__ = ("input_entity_id", "field_name", "entity_type", "workflow_run_id", "collection_id", "deleted_at")
     input_entity_id = sgqlc.types.Field(ID, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
     entity_type = sgqlc.types.Field(String, graphql_name="entityType")
     workflow_run_id = sgqlc.types.Field(ID, graphql_name="workflowRunId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputOrderByClause(sgqlc.types.Input):
@@ -331,6 +340,7 @@ class WorkflowRunEntityInputOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     input_entity_id = sgqlc.types.Field(orderBy, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(orderBy, graphql_name="fieldName")
@@ -341,6 +351,7 @@ class WorkflowRunEntityInputOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputWhereClause(sgqlc.types.Input):
@@ -355,6 +366,7 @@ class WorkflowRunEntityInputWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     input_entity_id = sgqlc.types.Field(UUIDComparators, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(StrComparators, graphql_name="fieldName")
@@ -365,6 +377,7 @@ class WorkflowRunEntityInputWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputWhereClauseMutations(sgqlc.types.Input):
@@ -392,6 +405,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     rails_workflow_run_id = sgqlc.types.Field(orderBy, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(orderBy, graphql_name="startedAt")
@@ -409,6 +423,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class WorkflowRunStatusEnumComparators(sgqlc.types.Input):
@@ -427,11 +442,12 @@ class WorkflowRunStatusEnumComparators(sgqlc.types.Input):
 
 class WorkflowRunStepCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("workflow_run_id", "ended_at", "status", "collection_id")
+    __field_names__ = ("workflow_run_id", "ended_at", "status", "collection_id", "deleted_at")
     workflow_run_id = sgqlc.types.Field(ID, graphql_name="workflowRunId")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     status = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="status")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunStepOrderByClause(sgqlc.types.Input):
@@ -446,6 +462,7 @@ class WorkflowRunStepOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     workflow_run = sgqlc.types.Field(WorkflowRunOrderByClause, graphql_name="workflowRun")
     started_at = sgqlc.types.Field(orderBy, graphql_name="startedAt")
@@ -456,6 +473,7 @@ class WorkflowRunStepOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class WorkflowRunStepStatusEnumComparators(sgqlc.types.Input):
@@ -474,9 +492,10 @@ class WorkflowRunStepStatusEnumComparators(sgqlc.types.Input):
 
 class WorkflowRunStepUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("ended_at", "status")
+    __field_names__ = ("ended_at", "status", "deleted_at")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     status = sgqlc.types.Field(WorkflowRunStepStatus, graphql_name="status")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunStepWhereClause(sgqlc.types.Input):
@@ -491,6 +510,7 @@ class WorkflowRunStepWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     workflow_run = sgqlc.types.Field("WorkflowRunWhereClause", graphql_name="workflowRun")
     started_at = sgqlc.types.Field(DatetimeComparators, graphql_name="startedAt")
@@ -501,6 +521,7 @@ class WorkflowRunStepWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowRunStepWhereClauseMutations(sgqlc.types.Input):
@@ -519,6 +540,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
         "status",
         "error_message",
         "deprecated_by_id",
+        "deleted_at",
     )
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")
@@ -527,6 +549,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
     error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunWhereClause(sgqlc.types.Input):
@@ -550,6 +573,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     rails_workflow_run_id = sgqlc.types.Field(IntComparators, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DatetimeComparators, graphql_name="startedAt")
@@ -569,6 +593,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowRunWhereClauseMutations(sgqlc.types.Input):
@@ -579,10 +604,11 @@ class WorkflowRunWhereClauseMutations(sgqlc.types.Input):
 
 class WorkflowUpdateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("name", "default_version", "minimum_supported_version")
+    __field_names__ = ("name", "default_version", "minimum_supported_version", "deleted_at")
     name = sgqlc.types.Field(String, graphql_name="name")
     default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
     minimum_supported_version = sgqlc.types.Field(String, graphql_name="minimumSupportedVersion")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowVersionCreateInput(sgqlc.types.Input):
@@ -595,6 +621,7 @@ class WorkflowVersionCreateInput(sgqlc.types.Input):
         "workflow_id",
         "deprecated",
         "collection_id",
+        "deleted_at",
     )
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
@@ -603,6 +630,7 @@ class WorkflowVersionCreateInput(sgqlc.types.Input):
     workflow_id = sgqlc.types.Field(ID, graphql_name="workflowId")
     deprecated = sgqlc.types.Field(Boolean, graphql_name="deprecated")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowVersionOrderByClause(sgqlc.types.Input):
@@ -619,6 +647,7 @@ class WorkflowVersionOrderByClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     graph_json = sgqlc.types.Field(orderBy, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(orderBy, graphql_name="workflowUri")
@@ -631,6 +660,7 @@ class WorkflowVersionOrderByClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(orderBy, graphql_name="collectionId")
     created_at = sgqlc.types.Field(orderBy, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(orderBy, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(orderBy, graphql_name="deletedAt")
 
 
 class WorkflowVersionWhereClause(sgqlc.types.Input):
@@ -648,6 +678,7 @@ class WorkflowVersionWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     graph_json = sgqlc.types.Field(StrComparators, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(StrComparators, graphql_name="workflowUri")
@@ -661,6 +692,7 @@ class WorkflowVersionWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowVersionWhereClauseMutations(sgqlc.types.Input):
@@ -681,6 +713,7 @@ class WorkflowWhereClause(sgqlc.types.Input):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     name = sgqlc.types.Field(StrComparators, graphql_name="name")
     default_version = sgqlc.types.Field(StrComparators, graphql_name="defaultVersion")
@@ -691,6 +724,7 @@ class WorkflowWhereClause(sgqlc.types.Input):
     collection_id = sgqlc.types.Field(IntComparators, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DatetimeComparators, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DatetimeComparators, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DatetimeComparators, graphql_name="deletedAt")
 
 
 class WorkflowWhereClauseMutations(sgqlc.types.Input):
@@ -1166,6 +1200,7 @@ class WorkflowGroupByOptions(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     name = sgqlc.types.Field(String, graphql_name="name")
     default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
@@ -1175,6 +1210,7 @@ class WorkflowGroupByOptions(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowMinMaxColumns(sgqlc.types.Type):
@@ -1187,6 +1223,7 @@ class WorkflowMinMaxColumns(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     name = sgqlc.types.Field(String, graphql_name="name")
     default_version = sgqlc.types.Field(String, graphql_name="defaultVersion")
@@ -1195,6 +1232,7 @@ class WorkflowMinMaxColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowNumericalColumns(sgqlc.types.Type):
@@ -1309,6 +1347,7 @@ class WorkflowRunEntityInputGroupByOptions(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     input_entity_id = sgqlc.types.Field(UUID, graphql_name="inputEntityId")
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
@@ -1319,17 +1358,27 @@ class WorkflowRunEntityInputGroupByOptions(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("field_name", "entity_type", "owner_user_id", "collection_id", "created_at", "updated_at")
+    __field_names__ = (
+        "field_name",
+        "entity_type",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
     field_name = sgqlc.types.Field(String, graphql_name="fieldName")
     entity_type = sgqlc.types.Field(String, graphql_name="entityType")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInputNumericalColumns(sgqlc.types.Type):
@@ -1358,6 +1407,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
@@ -1375,6 +1425,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunMinMaxColumns(sgqlc.types.Type):
@@ -1392,6 +1443,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
@@ -1405,6 +1457,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunNumericalColumns(sgqlc.types.Type):
@@ -1473,6 +1526,7 @@ class WorkflowRunStepGroupByOptions(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     workflow_run = sgqlc.types.Field(WorkflowRunGroupByOptions, graphql_name="workflowRun")
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
@@ -1483,17 +1537,27 @@ class WorkflowRunStepGroupByOptions(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunStepMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = ("started_at", "ended_at", "owner_user_id", "collection_id", "created_at", "updated_at")
+    __field_names__ = (
+        "started_at",
+        "ended_at",
+        "owner_user_id",
+        "collection_id",
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
     started_at = sgqlc.types.Field(DateTime, graphql_name="startedAt")
     ended_at = sgqlc.types.Field(DateTime, graphql_name="endedAt")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunStepNumericalColumns(sgqlc.types.Type):
@@ -1563,6 +1627,7 @@ class WorkflowVersionGroupByOptions(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
@@ -1575,6 +1640,7 @@ class WorkflowVersionGroupByOptions(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowVersionMinMaxColumns(sgqlc.types.Type):
@@ -1588,6 +1654,7 @@ class WorkflowVersionMinMaxColumns(sgqlc.types.Type):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
     workflow_uri = sgqlc.types.Field(String, graphql_name="workflowUri")
@@ -1597,6 +1664,7 @@ class WorkflowVersionMinMaxColumns(sgqlc.types.Type):
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowVersionNumericalColumns(sgqlc.types.Type):
@@ -1619,6 +1687,7 @@ class Workflow(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     name = sgqlc.types.Field(String, graphql_name="name")
@@ -1656,6 +1725,7 @@ class Workflow(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
@@ -1680,6 +1750,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     rails_workflow_run_id = sgqlc.types.Field(Int, graphql_name="railsWorkflowRunId")
@@ -1768,6 +1839,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunEntityInput(sgqlc.types.Type, EntityInterface, Node):
@@ -1782,6 +1854,7 @@ class WorkflowRunEntityInput(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     input_entity_id = sgqlc.types.Field(ID, graphql_name="inputEntityId")
@@ -1808,6 +1881,7 @@ class WorkflowRunEntityInput(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowRunStep(sgqlc.types.Type, EntityInterface, Node):
@@ -1822,6 +1896,7 @@ class WorkflowRunStep(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     workflow_run = sgqlc.types.Field(
@@ -1848,6 +1923,7 @@ class WorkflowRunStep(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
@@ -1866,6 +1942,7 @@ class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
         "collection_id",
         "created_at",
         "updated_at",
+        "deleted_at",
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     graph_json = sgqlc.types.Field(String, graphql_name="graphJson")
@@ -1922,6 +1999,7 @@ class WorkflowVersion(sgqlc.types.Type, EntityInterface, Node):
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
+    deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
 ########################################################################
