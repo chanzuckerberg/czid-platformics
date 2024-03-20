@@ -30,7 +30,6 @@ from platformics.api.core.gql_to_sql import (
     EnumComparators,
     DatetimeComparators,
     IntComparators,
-    StrComparators,
     UUIDComparators,
 )
 from platformics.api.core.strawberry_extensions import DependencyExtension
@@ -110,7 +109,6 @@ Supported WHERE clause attributes
 @strawberry.input
 class BulkDownloadWhereClause(TypedDict):
     download_type: Optional[EnumComparators[BulkDownloadType]] | None
-    download_display_name: Optional[StrComparators] | None
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -128,7 +126,6 @@ Supported ORDER BY clause attributes
 @strawberry.input
 class BulkDownloadOrderByClause(TypedDict):
     download_type: Optional[orderBy] | None
-    download_display_name: Optional[orderBy] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
@@ -146,7 +143,6 @@ Define BulkDownload type
 @strawberry.type
 class BulkDownload(EntityInterface):
     download_type: BulkDownloadType
-    download_display_name: str
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
     id: strawberry.ID
@@ -189,7 +185,6 @@ Define columns that support min/max aggregations
 
 @strawberry.type
 class BulkDownloadMinMaxColumns:
-    download_display_name: Optional[str] = None
     owner_user_id: Optional[int] = None
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
@@ -205,7 +200,6 @@ Define enum of all columns to support count and count(distinct) aggregations
 @strawberry.enum
 class BulkDownloadCountColumns(enum.Enum):
     downloadType = "download_type"
-    downloadDisplayName = "download_display_name"
     file = "file"
     id = "id"
     producingRunId = "producing_run_id"
@@ -260,7 +254,6 @@ Mutation types
 @strawberry.input()
 class BulkDownloadCreateInput:
     download_type: BulkDownloadType
-    download_display_name: str
     producing_run_id: Optional[strawberry.ID] = None
     collection_id: int
     deleted_at: Optional[datetime.datetime] = None

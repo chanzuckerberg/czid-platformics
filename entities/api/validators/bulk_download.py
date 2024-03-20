@@ -13,7 +13,7 @@ from support.enums import BulkDownloadType
 import datetime
 import uuid
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import Annotated
 
 
@@ -21,12 +21,6 @@ class BulkDownloadCreateInputValidator(BaseModel):
     # Pydantic stuff
     model_config = ConfigDict(from_attributes=True)
     download_type: Annotated[BulkDownloadType, Field()]
-    download_display_name: Annotated[
-        str,
-        StringConstraints(
-            strip_whitespace=True,
-        ),
-    ]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
         int,

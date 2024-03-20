@@ -113,8 +113,8 @@ enums:
       level_superkingdom:
   BulkDownloadType:
     permissible_values:
-      concatenate:
-      zip:
+      consensus_genome:
+      consensus_genome_intermediate_output_files:
   HostOrganismCategory:
     permissible_values:
       human:
@@ -808,13 +808,9 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # download_type corresponds to the option the user selects in the bulk download modal
       download_type:
         range: BulkDownloadType
-        required: true
-        annotations:
-          mutable: false
-      download_display_name:
-        range: string
         required: true
         annotations:
           mutable: false
