@@ -5,6 +5,7 @@ Test "where" clause capabilities on GQL queries
 import pytest
 from platformics.database.connect import SyncDB
 from platformics.codegen.conftest import GQLTestClient, SessionStorage
+from platformics.codegen.tests.output.test_infra.factories.sample import SampleFactory
 from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 from support.enums import SequencingTechnology
 
@@ -155,3 +156,92 @@ async def test_where_clause_mutations(sync_db: SyncDB, gql_client: GQLTestClient
             assert sequencing_read["technology"] == new_technology
         else:
             assert sequencing_read["technology"] == prev_technology
+
+
+@pytest.mark.asyncio
+async def test_where_clause_regex_match(sync_db: SyncDB, gql_client: GQLTestClient) -> None:
+    """
+    Verify that the regex operators work as expected.
+    """
+    # Regex for any string with "MATCH" in it
+    regex = ".*MATCH.*"
+    with sync_db.session() as session:
+        SessionStorage.set_session(session)
+        # Sample names that match the regex (case-sensitive)
+        case_sensitive_matches = ["A MATCH", "A MATCHING SAMPLE"]
+        # Sample names that match the regex if case is ignored, but do not match if case is considered
+        case_insensitive_matches = ["a match if ignore case", "a matching sample if ignore case"]
+        # Sample names that don't match the regex at all
+        no_matches = ["asdf1234", "HCTAM"]
+        # Create the samples
+        all_sample_names = case_sensitive_matches + case_insensitive_matches + no_matches
+        for name in all_sample_names:
+            SampleFactory.create(name=name, owner_user_id=user_id, collection_id=project_id)
+
+    match_case_query = f"""
+        query GetSamplesMatchingCase {{
+            samples ( where: {{
+                name: {{
+                    _regex: "{regex}"
+                }}
+            }}) {{
+                name
+            }}
+        }}
+    """
+
+    match_case_query_output = await gql_client.query(match_case_query, member_projects=[project_id])
+    assert len(match_case_query_output["data"]["samples"]) == 2
+    output_sample_names = [sample["name"] for sample in match_case_query_output["data"]["samples"]]
+    assert sorted(output_sample_names) == sorted(case_sensitive_matches)
+
+    ignore_case_query = f"""
+        query GetSamplesMatchingIgnoreCase {{
+            samples ( where: {{
+                name: {{
+                    _iregex: "{regex}"
+                }}
+            }}) {{
+                name
+            }}
+        }}
+    """
+
+    ignore_case_query_output = await gql_client.query(ignore_case_query, member_projects=[project_id])
+    assert len(ignore_case_query_output["data"]["samples"]) == 4
+    output_sample_names = [sample["name"] for sample in ignore_case_query_output["data"]["samples"]]
+    assert sorted(output_sample_names) == sorted(case_sensitive_matches + case_insensitive_matches)
+
+    no_match_query = f"""
+        query GetSamplesNoMatch {{
+            samples ( where: {{
+                name: {{
+                    _nregex: "{regex}"
+                }}
+            }}) {{
+                name
+            }}
+        }}
+    """
+
+    no_match_query_output = await gql_client.query(no_match_query, member_projects=[project_id])
+    assert len(no_match_query_output["data"]["samples"]) == 4
+    output_sample_names = [sample["name"] for sample in no_match_query_output["data"]["samples"]]
+    assert sorted(output_sample_names) == sorted(no_matches + case_insensitive_matches)
+
+    no_match_ignore_case_query = f"""
+        query GetSamplesNoMatchIgnoreCase {{
+            samples ( where: {{
+                name: {{
+                    _niregex: "{regex}"
+                }}
+            }}) {{
+                name
+            }}
+        }}
+    """
+    
+    no_match_ignore_case_query_output = await gql_client.query(no_match_ignore_case_query, member_projects=[project_id])
+    assert len(no_match_ignore_case_query_output["data"]["samples"]) == 2
+    output_sample_names = [sample["name"] for sample in no_match_ignore_case_query_output["data"]["samples"]]
+    assert sorted(output_sample_names) == sorted(no_matches)

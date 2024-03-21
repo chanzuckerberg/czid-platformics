@@ -25,9 +25,9 @@ operator_map = {
     "_ilike": "ilike",
     "_nilike": "notilike",
     "_regex": "regexp_match",
-    # "_nregex": Optional[str] # TODO
-    # "_iregex": Optional[str]# TODO
-    # "_niregex": Optional[str]# TODO
+    "_nregex": {"comparator": "regexp_match", "should_negate": True, "flag": None},
+    "_iregex": {"comparator": "regexp_match", "should_negate": False, "flag": "i"},
+    "_niregex": {"comparator": "regexp_match", "should_negate": True, "flag": "i"},
 }
 
 aggregator_map = {
