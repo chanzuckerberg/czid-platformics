@@ -21,7 +21,6 @@ These are only used in aggregate queries.
 @strawberry.type
 class BulkDownloadGroupByOptions:
     download_type: Optional[BulkDownloadType] = None
-    download_display_name: Optional[str] = None
     id: Optional[uuid.UUID] = None
     producing_run_id: Optional[uuid.UUID] = None
     owner_user_id: Optional[int] = None

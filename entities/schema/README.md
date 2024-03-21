@@ -200,7 +200,6 @@ IndexFile {
 }
 BulkDownload {
     BulkDownloadType download_type  
-    string download_display_name  
     uuid entity_id  
     uuid id  
     string type  
