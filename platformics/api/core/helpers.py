@@ -164,8 +164,6 @@ def convert_where_clauses_to_sql(
                     query = query.filter(getattr(sa_model, col).is_(None))
                 else:
                     query = query.filter(getattr(sa_model, col).isnot(None))
-            elif sa_comparator == "not_regexp_match":
-                query = query.filter(~(getattr(getattr(sa_model, col), "regexp_match"))(value))
             # For the variants of regexp_match, we pass in a dict with the comparator, should_negate, and flag
             elif isinstance(sa_comparator, dict):
                 if sa_comparator["should_negate"]:
