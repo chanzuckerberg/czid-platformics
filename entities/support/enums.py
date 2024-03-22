@@ -73,8 +73,8 @@ class TaxonLevel(enum.Enum):
 
 @strawberry.enum
 class BulkDownloadType(enum.Enum):
-    concatenate = "concatenate"
-    zip = "zip"
+    consensus_genome = "consensus_genome"
+    consensus_genome_intermediate_output_files = "consensus_genome_intermediate_output_files"
 
 
 @strawberry.enum
