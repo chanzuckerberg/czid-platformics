@@ -21,6 +21,7 @@ from plugins.plugin_types import OutputLoader
 
 SARS_COV_2_TAXON_ID = "2697049"
 SARS_COV_2_ACCESSION_ID = "MN908947.3"
+UNCLASSIFIED_SEQUENCES_TAXON_ID = "12908"
 
 
 class ConsensusGenomeOutputLoader(OutputLoader):
@@ -50,12 +51,25 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             accession_id = res["accessions"][0]["id"]
         elif wgs:
             # This duplicates the else condition below but is kept for clarity to discern upload source
+            taxon_input = entity_inputs.get("taxon")
+            if taxon_input:
+                assert isinstance(taxon_input, EntityInput)
+                taxon_entity_id = taxon_input.entity_id
+            else:
+                op = Operation(Query)
+                taxa = op.taxa(
+                    where=TaxonWhereClause(
+                        upstream_database_identifier=StrComparators(_eq=UNCLASSIFIED_SEQUENCES_TAXON_ID)
+                    )
+                )
+                taxa.id()
+                res = self._entities_gql(op)
+                taxon_entity_id = res["taxa"][0]["id"]
+            accession_id = None
+        else:
             taxon_input = entity_inputs["taxon"]
             assert isinstance(taxon_input, EntityInput)
             taxon_entity_id = taxon_input.entity_id
-            accession_id = None
-        else:
-            
             accession_input = entity_inputs["accession"]
             assert isinstance(accession_input, EntityInput)
             accession_id = accession_input.entity_id
@@ -72,7 +86,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             input=ConsensusGenomeCreateInput(
                 producing_run_id=ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
-                taxon_id=ID(taxon_entity_id),
+                taxon_id=ID(taxon_entity_id) if taxon_entity_id else None,
                 sequencing_read_id=ID(sequencing_read_input.entity_id),
                 reference_genome_id=reference_genome_id,
                 accession_id=ID(accession_id) if accession_id else None,
