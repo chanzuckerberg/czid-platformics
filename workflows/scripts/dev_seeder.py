@@ -28,7 +28,7 @@ class DevSeeder:
         self.sess = app_db.session()
         SessionStorage.set_session(self.sess)  # needed for seed functions
 
-    def seed_workflow_runs(self, message_type: str, runner_id: str) -> None:
+    def seed_workflow_runs(self, message_type: str, runner_id: str, workflow_name: str) -> None:
         """seed workflow runs for testing loaders"""
         # check if a workflow run with the same runner_id exists
         existing_workflow_run = self.sess.query(WorkflowRun).filter(WorkflowRun.execution_id == runner_id).one_or_none()
@@ -40,7 +40,7 @@ class DevSeeder:
                 self.sess.query(WorkflowVersion)
                 .join(workflow_alias, WorkflowVersion.workflow)
                 .options(joinedload(WorkflowVersion.workflow))
-                .filter(workflow_alias.name == "Simple Manifest")
+                .filter(workflow_alias.name == workflow_name)
                 .first()
             )
             workflow_run = WorkflowRunFactory.create(
@@ -57,11 +57,17 @@ class DevSeeder:
             self.sess.add(workflow_run)
             self.sess.commit()
 
+def main(function: str, user_id: int, collection_id: str)->None:
+    seeder = DevSeeder(user_id, collection_id)
+    if function == "workflow_runs":
+        seeder.seed_workflow_runs("started", "test_runner_id", "Simple Manifest") # change "Simple Manifest" as needed
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="create dev seed data",
     )
+    parser.add_argument("function", type=str, help="seed function to run")
     parser.add_argument("--user", type=int, default=TEST_USER_ID)
     parser.add_argument("--project", type=int, default=TEST_COLLECTION_ID)
-    # TODO: does nothing right now
+    args = parser.parse_args()
+    main(args.function, args.user, args.project)
