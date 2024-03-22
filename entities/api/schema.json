@@ -14357,19 +14357,6 @@
             },
             {
               "args": [],
-              "name": "downloadDisplayName",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
               "name": "fileId",
               "type": {
                 "kind": "SCALAR",
@@ -14483,10 +14470,10 @@
         {
           "enumValues": [
             {
-              "name": "concatenate"
+              "name": "consensus_genome"
             },
             {
-              "name": "zip"
+              "name": "consensus_genome_intermediate_output_files"
             }
           ],
           "fields": null,
@@ -14506,15 +14493,6 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "BulkDownloadTypeEnumComparators",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "downloadDisplayName",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "StrComparators",
                 "ofType": null
               }
             },
@@ -14701,15 +14679,6 @@
             {
               "defaultValue": null,
               "name": "downloadType",
-              "type": {
-                "kind": "ENUM",
-                "name": "orderBy",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "downloadDisplayName",
               "type": {
                 "kind": "ENUM",
                 "name": "orderBy",
@@ -16791,15 +16760,6 @@
           "fields": [
             {
               "args": [],
-              "name": "downloadDisplayName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "SCALAR",
@@ -16859,15 +16819,6 @@
               "type": {
                 "kind": "ENUM",
                 "name": "BulkDownloadType",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "name": "downloadDisplayName",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
                 "ofType": null
               }
             },
@@ -16945,9 +16896,6 @@
           "enumValues": [
             {
               "name": "downloadType"
-            },
-            {
-              "name": "downloadDisplayName"
             },
             {
               "name": "file"
@@ -20830,19 +20778,6 @@
                 "ofType": {
                   "kind": "ENUM",
                   "name": "BulkDownloadType",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "name": "downloadDisplayName",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
                   "ofType": null
                 }
               }
