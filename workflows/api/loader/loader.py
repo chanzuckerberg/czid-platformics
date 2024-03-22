@@ -74,11 +74,15 @@ class LoaderDriver:
             for event in await self.bus.poll():
                 print("event", event, file=sys.stderr)
                 if isinstance(event, WorkflowStartedMessage):
+                    # Set the workflow run to running
                     workflow_run = (
                         await self.session.execute(
                             select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id)
                         )
                     ).scalar_one_or_none()
+
+                    # If workflow_run is not None and the status is CREATED, PENDING, or STARTED
+                    # then set the status to RUNNING
                     if workflow_run and workflow_run.status in [
                         WorkflowRunStatus.CREATED,
                         WorkflowRunStatus.PENDING,
@@ -88,6 +92,8 @@ class LoaderDriver:
                         await self.session.commit()
 
                 if isinstance(event, WorkflowSucceededMessage):
+                    # If the event is a WorkflowSucceededMessage, then set the workflow run to SUCCEEDED
+                    # and run the output loaders
                     _event: WorkflowSucceededMessage = event
                     result = await self.session.execute(
                         select(WorkflowRun)
@@ -100,6 +106,7 @@ class LoaderDriver:
                     workflow_run = result.scalar_one_or_none()
                     if workflow_run:
                         workflow_version = workflow_run.workflow_version
+                        # TODO: what does this do tmorse?
                         entity_inputs = Manifest.normalize_inputs(
                             (
                                 entity_input.field_name,
