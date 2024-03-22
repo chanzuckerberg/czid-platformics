@@ -49,7 +49,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             # This duplicates the else condition below but is kept for clarity to discern upload source
             taxon_input = entity_inputs["taxon"]
             assert isinstance(taxon_input, EntityInput)
-            taxon_entity_id = taxon_input.entity_id 
+            taxon_entity_id = taxon_input.entity_id
             accession_id = None
         else:
             taxon_input = entity_inputs["taxon"]
