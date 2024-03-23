@@ -33,8 +33,6 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload"
-        print(raw_inputs)
-        print(entity_inputs)
 
         wgs = entity_inputs.get("accession") is None
         if sars_cov_2:
