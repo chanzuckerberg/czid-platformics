@@ -345,7 +345,7 @@ enum ConsensusGenomeCountColumns {
 }
 
 input ConsensusGenomeCreateInput {
-  taxonId: ID!
+  taxonId: ID = null
   sequencingReadId: ID!
   referenceGenomeId: ID = null
   accessionId: ID = null

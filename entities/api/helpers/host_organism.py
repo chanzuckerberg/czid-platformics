@@ -6,6 +6,7 @@ Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead
 """
 
 
+
 from typing import Any, Optional
 import strawberry
 import datetime
@@ -16,7 +17,6 @@ from support.enums import HostOrganismCategory
 Define groupby options for HostOrganism type.
 These are only used in aggregate queries.
 """
-
 
 @strawberry.type
 class HostOrganismGroupByOptions:
