@@ -32,7 +32,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload"
-        wgs = raw_inputs.get("creation_source") == "Viral CG Upload"
+        wgs = entity_inputs.get("accession") is None  # if not sars_cov_2 and no accession is provided, it is a WGS run
         if sars_cov_2:
             op = Operation(Query)
             # Get the taxon id for SARS-CoV-2
