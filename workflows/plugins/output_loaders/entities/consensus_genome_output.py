@@ -21,7 +21,6 @@ from plugins.plugin_types import OutputLoader
 
 SARS_COV_2_TAXON_ID = "2697049"
 SARS_COV_2_ACCESSION_ID = "MN908947.3"
-UNCLASSIFIED_SEQUENCES_TAXON_ID = "12908"
 
 
 class ConsensusGenomeOutputLoader(OutputLoader):
@@ -33,8 +32,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload"
-
-        wgs = entity_inputs.get("accession") is None
+        wgs = raw_inputs.get("creation_source") == "Viral CG Upload" 
         if sars_cov_2:
             op = Operation(Query)
             # Get the taxon id for SARS-CoV-2
@@ -54,17 +52,10 @@ class ConsensusGenomeOutputLoader(OutputLoader):
                 assert isinstance(taxon_input, EntityInput)
                 taxon_entity_id = taxon_input.entity_id
             else:
-                op = Operation(Query)
-                taxa = op.taxa(
-                    where=TaxonWhereClause(
-                        upstream_database_identifier=StrComparators(_eq=UNCLASSIFIED_SEQUENCES_TAXON_ID)
-                    )
-                )
-                taxa.id()
-                res = self._entities_gql(op)
-                taxon_entity_id = res["taxa"][0]["id"]
+                taxon_entity_id = None
             accession_id = None
         else:
+            # creation source is from mNGS report
             taxon_input = entity_inputs["taxon"]
             assert isinstance(taxon_input, EntityInput)
             taxon_entity_id = taxon_input.entity_id
