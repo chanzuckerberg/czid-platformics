@@ -389,7 +389,7 @@ Mutation types
 
 @strawberry.input()
 class ConsensusGenomeCreateInput:
-    taxon_id: strawberry.ID
+    taxon_id: Optional[strawberry.ID] = None
     sequencing_read_id: strawberry.ID
     reference_genome_id: Optional[strawberry.ID] = None
     accession_id: Optional[strawberry.ID] = None
