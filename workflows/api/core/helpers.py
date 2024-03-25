@@ -57,7 +57,7 @@ def convert_where_clauses_to_sql(
             if sa_comparator == "IS_NULL":
                 query = query.filter(getattr(sa_model, k).is_(None))
             else:
-                query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))
+                query = query.filter(getattr(getattr(sa_model, k), sa_comparator)(value))  # type: ignore
     return query
 
 

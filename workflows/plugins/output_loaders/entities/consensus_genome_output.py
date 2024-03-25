@@ -32,6 +32,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         workflow_outputs: dict[str, JSONValue],
     ) -> None:
         sars_cov_2 = raw_inputs.get("sars_cov_2") or raw_inputs.get("creation_source") == "SARS-CoV-2 Upload"
+        wgs = raw_inputs.get("creation_source") == "Viral CG Upload"
         if sars_cov_2:
             op = Operation(Query)
             # Get the taxon id for SARS-CoV-2
@@ -44,7 +45,17 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             res = self._entities_gql(op)
             taxon_entity_id = res["taxa"][0]["id"]
             accession_id = res["accessions"][0]["id"]
+        elif wgs:
+            # This duplicates the else condition below but is kept for clarity to discern upload source
+            taxon_input = entity_inputs.get("taxon")
+            if taxon_input:
+                assert isinstance(taxon_input, EntityInput)
+                taxon_entity_id = taxon_input.entity_id
+            else:
+                taxon_entity_id = None
+            accession_id = None
         else:
+            # creation source is from mNGS report
             taxon_input = entity_inputs["taxon"]
             assert isinstance(taxon_input, EntityInput)
             taxon_entity_id = taxon_input.entity_id
@@ -64,10 +75,10 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             input=ConsensusGenomeCreateInput(
                 producing_run_id=ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
-                taxon_id=ID(taxon_entity_id),
+                taxon_id=ID(taxon_entity_id) if taxon_entity_id else None,
                 sequencing_read_id=ID(sequencing_read_input.entity_id),
                 reference_genome_id=reference_genome_id,
-                accession_id=ID(accession_id),
+                accession_id=ID(accession_id) if accession_id else None,
             )
         )
         consensus_genome.id()
