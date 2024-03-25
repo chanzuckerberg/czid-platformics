@@ -167,7 +167,6 @@ type BulkDownload implements EntityInterface & Node {
   _id: GlobalID!
   id: ID!
   downloadType: BulkDownloadType!
-  downloadDisplayName: String!
   fileId: ID
   file(where: FileWhereClause = null): File
   producingRunId: ID
@@ -195,7 +194,6 @@ type BulkDownloadAggregateFunctions {
 
 enum BulkDownloadCountColumns {
   downloadType
-  downloadDisplayName
   file
   id
   producingRunId
@@ -208,7 +206,6 @@ enum BulkDownloadCountColumns {
 
 input BulkDownloadCreateInput {
   downloadType: BulkDownloadType!
-  downloadDisplayName: String!
   producingRunId: ID = null
   collectionId: Int!
   deletedAt: DateTime = null
@@ -216,7 +213,6 @@ input BulkDownloadCreateInput {
 
 type BulkDownloadGroupByOptions {
   downloadType: BulkDownloadType
-  downloadDisplayName: String
   id: UUID
   producingRunId: UUID
   ownerUserId: Int
@@ -227,7 +223,6 @@ type BulkDownloadGroupByOptions {
 }
 
 type BulkDownloadMinMaxColumns {
-  downloadDisplayName: String
   ownerUserId: Int
   collectionId: Int
   createdAt: DateTime
@@ -242,7 +237,6 @@ type BulkDownloadNumericalColumns {
 
 input BulkDownloadOrderByClause {
   downloadType: orderBy
-  downloadDisplayName: orderBy
   id: orderBy
   producingRunId: orderBy
   ownerUserId: orderBy
@@ -253,8 +247,8 @@ input BulkDownloadOrderByClause {
 }
 
 enum BulkDownloadType {
-  concatenate
-  zip
+  consensus_genome
+  consensus_genome_intermediate_output_files
 }
 
 input BulkDownloadTypeEnumComparators {
@@ -275,7 +269,6 @@ input BulkDownloadUpdateInput {
 
 input BulkDownloadWhereClause {
   downloadType: BulkDownloadTypeEnumComparators
-  downloadDisplayName: StrComparators
   id: UUIDComparators
   producingRunId: UUIDComparators
   ownerUserId: IntComparators

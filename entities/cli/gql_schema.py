@@ -40,7 +40,6 @@ class BulkDownloadCountColumns(sgqlc.types.Enum):
         "collectionId",
         "createdAt",
         "deletedAt",
-        "downloadDisplayName",
         "downloadType",
         "file",
         "id",
@@ -52,7 +51,7 @@ class BulkDownloadCountColumns(sgqlc.types.Enum):
 
 class BulkDownloadType(sgqlc.types.Enum):
     __schema__ = gql_schema
-    __choices__ = ("concatenate", "zip")
+    __choices__ = ("consensus_genome", "consensus_genome_intermediate_output_files")
 
 
 class ConsensusGenomeCountColumns(sgqlc.types.Enum):
@@ -494,9 +493,8 @@ class BoolComparators(sgqlc.types.Input):
 
 class BulkDownloadCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
-    __field_names__ = ("download_type", "download_display_name", "producing_run_id", "collection_id", "deleted_at")
+    __field_names__ = ("download_type", "producing_run_id", "collection_id", "deleted_at")
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name="downloadType")
-    download_display_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="downloadDisplayName")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -506,7 +504,6 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "download_type",
-        "download_display_name",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -516,7 +513,6 @@ class BulkDownloadOrderByClause(sgqlc.types.Input):
         "deleted_at",
     )
     download_type = sgqlc.types.Field(orderBy, graphql_name="downloadType")
-    download_display_name = sgqlc.types.Field(orderBy, graphql_name="downloadDisplayName")
     id = sgqlc.types.Field(orderBy, graphql_name="id")
     producing_run_id = sgqlc.types.Field(orderBy, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(orderBy, graphql_name="ownerUserId")
@@ -550,7 +546,6 @@ class BulkDownloadWhereClause(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = (
         "download_type",
-        "download_display_name",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -560,7 +555,6 @@ class BulkDownloadWhereClause(sgqlc.types.Input):
         "deleted_at",
     )
     download_type = sgqlc.types.Field(BulkDownloadTypeEnumComparators, graphql_name="downloadType")
-    download_display_name = sgqlc.types.Field("StrComparators", graphql_name="downloadDisplayName")
     id = sgqlc.types.Field("UUIDComparators", graphql_name="id")
     producing_run_id = sgqlc.types.Field("UUIDComparators", graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field("IntComparators", graphql_name="ownerUserId")
@@ -2084,7 +2078,6 @@ class BulkDownloadGroupByOptions(sgqlc.types.Type):
     __schema__ = gql_schema
     __field_names__ = (
         "download_type",
-        "download_display_name",
         "id",
         "producing_run_id",
         "owner_user_id",
@@ -2094,7 +2087,6 @@ class BulkDownloadGroupByOptions(sgqlc.types.Type):
         "deleted_at",
     )
     download_type = sgqlc.types.Field(BulkDownloadType, graphql_name="downloadType")
-    download_display_name = sgqlc.types.Field(String, graphql_name="downloadDisplayName")
     id = sgqlc.types.Field(UUID, graphql_name="id")
     producing_run_id = sgqlc.types.Field(UUID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
@@ -2106,15 +2098,7 @@ class BulkDownloadGroupByOptions(sgqlc.types.Type):
 
 class BulkDownloadMinMaxColumns(sgqlc.types.Type):
     __schema__ = gql_schema
-    __field_names__ = (
-        "download_display_name",
-        "owner_user_id",
-        "collection_id",
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
-    download_display_name = sgqlc.types.Field(String, graphql_name="downloadDisplayName")
+    __field_names__ = ("owner_user_id", "collection_id", "created_at", "updated_at", "deleted_at")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(DateTime, graphql_name="createdAt")
@@ -4465,7 +4449,6 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     __field_names__ = (
         "id",
         "download_type",
-        "download_display_name",
         "file_id",
         "file",
         "producing_run_id",
@@ -4477,7 +4460,6 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     )
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="id")
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name="downloadType")
-    download_display_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="downloadDisplayName")
     file_id = sgqlc.types.Field(ID, graphql_name="fileId")
     file = sgqlc.types.Field(
         File,
