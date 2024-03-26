@@ -19,7 +19,7 @@ async def test_delete_old_bulk_downloads(
     user_id = 12345
     project_id = 123
 
-    # Create mock data: 2 SequencingReads, each with a different Sample, and each with R1/R2
+    # Create mock data: 3 current bulk downloads, 2 bulk downloads from 1 week ago, and 5 bulk downloads from 1 month ago
     with sync_db.session() as session:
         SessionStorage.set_session(session)
         current_time = datetime.datetime.now()
