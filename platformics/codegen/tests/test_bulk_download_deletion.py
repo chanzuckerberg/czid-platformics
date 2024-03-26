@@ -14,7 +14,7 @@ async def test_delete_old_bulk_downloads(
     gql_client: GQLTestClient,
 ) -> None:
     """
-    Test that we can make cascade deletions
+    Test that we can delete bulk downloads older than 7 days
     """
     user_id = 12345
     project_id = 123
