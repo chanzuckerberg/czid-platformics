@@ -28,11 +28,6 @@ module "stack" {
           cmd   = ["cp", "-r", "/workflows/cerbos/", "/var/policies/"]
           image = "{workflows}"
           tag   = "${var.image_tag}" # manually modified as `happy infra generate` appended an extra $ to the front 
-        },
-        private-key = {
-          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
-          image = "{workflows}"
-          tag   = "${var.image_tag}"
         }
       }
       sidecars = {
@@ -59,13 +54,6 @@ module "stack" {
       platform_architecture = "arm64"
       service_type          = "CLI"
       cmd                   = ["python3", "api/loader/run_loader.py"]
-      init_containers = {
-        private-key = {
-          cmd   = ["python3", "/workflows/platformics/scripts/make_private_key_pem.py", "sandbox"]
-          image = "{workflows-worker}"
-          tag   = "${var.image_tag}"
-        }
-      }
     }
   }
   additional_env_vars = {
@@ -76,8 +64,6 @@ module "stack" {
     IDENTITY_SERVICE_BASE_URL                             = "http://sandbox.czid.org"
     ENTITY_SERVICE_URL                                    = "http://entities-entities:8008"
     ENTITY_SERVICE_AUTH_TOKEN                             = ""
-    JWK_PRIVATE_KEY_FILE                                  = "/var/policies/private_key.pem"
-    JWK_PUBLIC_KEY_FILE                                   = "/var/policies/public_key.pem"
     WORKERS                                               = "2"
     PLATFORMICS_WORKFLOW_RUNNER_PLUGIN                    = "swipe"
     PLATFORMICS_EVENT_BUS_PLUGIN                          = "swipe"
