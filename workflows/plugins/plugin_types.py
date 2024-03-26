@@ -7,7 +7,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
-from typing import Any, Literal, TypedDict
+from typing import Any, Awaitable, Callable, Literal, TypedDict
 from urllib.parse import urlparse
 
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -58,16 +58,23 @@ def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:
 
 
 class EventBus(ABC):
-    """Abstract class that defines the Event Bus"""
-
     @abstractmethod
     async def send(self, message: WorkflowStatusMessage) -> None:
-        """Send message"""
+        """
+        Send a status message
+
+        This is primarily for certain runner interface implementations to emit events.
+        Many will not need to, but this provides the option.
+        """
         pass
 
     @abstractmethod
-    async def poll(self) -> list[WorkflowStatusMessage]:
-        """Poll for new messages"""
+    async def poll(self, handle_message: Callable[[WorkflowStatusMessage], Awaitable[None]]) -> None:
+        """
+        Polls for new messages and calls handle_message on each message
+
+        Callbacks are used because if they fail the poll function can decide not to commit the message.
+        """
         pass
 
 
