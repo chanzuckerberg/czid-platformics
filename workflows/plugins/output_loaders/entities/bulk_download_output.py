@@ -25,9 +25,6 @@ class BulkDownloadOutputLoader(OutputLoader):
         download_type = raw_inputs["bulk_download_type"]
         assert isinstance(download_type, str)
 
-        downlad_display_name = raw_inputs["download_display_name"]
-        assert isinstance(downlad_display_name, str)
-
         file_path = workflow_outputs["file"]
         assert isinstance(file_path, str)
 
@@ -36,7 +33,6 @@ class BulkDownloadOutputLoader(OutputLoader):
                 producing_run_id=ID(workflow_run.id),
                 collection_id=int(workflow_run.collection_id),
                 download_type=BulkDownloadType(download_type),
-                download_display_name=downlad_display_name,
             )
         )
         bulk_download.id()
