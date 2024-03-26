@@ -226,6 +226,7 @@ class IOLoader(BaseModel):
         loader_name: str,
         inputs: set[str],
     ) -> typing.Generator[InvalidInputReference, None, None]:
+        """checks that all input references are present and yields errors if they are not"""
         for k, input_name in self.inputs.items():
             if input_name not in inputs:
                 yield InvalidInputReference(
@@ -283,6 +284,7 @@ class Manifest(BaseModel):
 
     @model_validator(mode="after")
     def _unique_input_names(self):  # type: ignore
+        """ensures that raw input names do not duplicate entity input names"""
         input_names = set(self.entity_inputs.keys())
         duplicate_names = [k for k in self.raw_inputs if k in input_names]
         if duplicate_names:
@@ -318,18 +320,26 @@ class Manifest(BaseModel):
         entity_inputs: dict[str, EntityInput | list[EntityInput]],
         raw_inputs: dict[str, Primitive | list[Primitive]],
     ) -> _InputValidationErrors:
+        """Validates the inputs against the manifest"""
+
+        # for both entity and raw inputs
         for entity_or_raw, inputs, input_arguments in [
             ("entity", entity_inputs, self.entity_inputs),
             ("raw", raw_inputs, self.raw_inputs),
         ]:
             required_inputs = {k: False for k, v in input_arguments.items() if v.required}  # type: ignore
+
+            # loop through the inputs and validate them
             for name, input in inputs.items():  # type: ignore
+                # check if input_argument exists for the input name
                 input_argument = input_arguments.get(name)  # type: ignore
                 if not input_argument:
                     yield InputNotSupported(name, entity_or_raw)  # type: ignore
                     continue
+                # mark required input as found
                 if name in required_inputs:
                     required_inputs[name] = True
+                # validate the input
                 for error in input_argument.validate_input(input):
                     yield error
             for required_input in [k for k, v in required_inputs.items() if not v]:

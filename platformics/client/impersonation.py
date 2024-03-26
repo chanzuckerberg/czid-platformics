@@ -30,6 +30,7 @@ class ImpersonationClient:
             resp = await client.get(
                 f"{IDENTITY_SERVICE_URL}/impersonate/?user_id={user_id}",
                 headers={"Authorization": f"Bearer {self.get_token()}"},
+                timeout=8,
             )
             try:
                 return resp.json()["token"]
