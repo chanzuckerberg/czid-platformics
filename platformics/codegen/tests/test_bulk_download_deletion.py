@@ -41,6 +41,12 @@ async def test_delete_old_bulk_downloads(
         }
     """
 
+    # Verify that the mutation can't be called by a non-system user
+    result = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
+    assert result["data"] is None
+    assert "Unauthorized"
+
+    # Verify that the mutation deletes all bulk downloads older than 7 days
     result = await gql_client.query(query, user_id=user_id, member_projects=[project_id], service_identity="rails")
     assert len(result["data"]["deleteOldBulkDownloads"]) == 7
     assert [bd["id"] for bd in result["data"]["deleteOldBulkDownloads"]] == [str(bd.id) for bd in all_old_bulk_downloads]
