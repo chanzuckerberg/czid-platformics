@@ -131,7 +131,8 @@ class LoaderDriver:
                 ).scalar_one_or_none()
                 if workflow_run:
                     workflow_run.status = WorkflowRunStatus.FAILED
-                    workflow_run.error_message = event.error
+                    if event.error:
+                        workflow_run.error_message = event.error
                     await self.session.commit()
 
         return handle_message

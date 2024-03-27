@@ -13,8 +13,8 @@ import redis.asyncio as aioredis
 
 
 class EventBusRedis(EventBus):
-    def __init__(self, setings: RedisEventBusSettings) -> None:
-        self._settings = setings
+    def __init__(self, settings: RedisEventBusSettings) -> None:
+        self._settings = settings
         self._redis = aioredis.from_url(self._settings.REDIS_URL)
         self._logger = logging.getLogger("EventBusRedis")
 
@@ -33,7 +33,7 @@ class EventBusRedis(EventBus):
             await handle_message(
                 WorkflowFailedMessage(
                     runner_id=parsed_message.runner_id,
-                    error_type=type(e).__name__,
+                    error=type(e).__name__,
                     error_message=str(e),
                     stack_trace=traceback.format_exc(),
                 )
