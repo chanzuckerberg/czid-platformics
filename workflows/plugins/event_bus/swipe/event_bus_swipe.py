@@ -4,7 +4,7 @@ Retrieves messages from AWS SQS
 """
 import json
 import logging
-from typing import Awaitable, Callable, cast
+from typing import Awaitable, Callable, Optional, cast
 
 from settings import SWIPEEventBusSettings
 from plugins.plugin_types import (
@@ -17,11 +17,20 @@ from plugins.plugin_types import (
 )
 
 import boto3
+from botocore.config import Config
 
 
 class EventBusSWIPE(EventBus):
     def __init__(self, settings: SWIPEEventBusSettings) -> None:
         self._sqs = boto3.client("sqs", endpoint_url=settings.SQS_ENDPOINT)
+        # increase max_attempts due to possible API throttling
+        sfn_config = Config(
+            retries={
+                "max_attempts": 10,
+                "mode": "standard",
+            }
+        )
+        self._sfn = boto3.client("stepfunctions", endpoint_url=settings.SFN_ENDPOINT, config=sfn_config)
         if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self._sqs.list_queues()["QueueUrls"]:
             raise Exception("SQS_QUEUE_URL not found")
         self._sqs_queue_url = settings.SQS_QUEUE_URL
@@ -40,24 +49,42 @@ class EventBusSWIPE(EventBus):
             }.get(status),
         )
 
+    def _fetch_error(self, execution_arn: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
+        desc = self._sfn.describe_execution(executionArn=execution_arn)
+        error = desc.get("error", None)
+        cause = desc.get("cause", None)
+        error_message = stack_trace = None
+        try:
+            parsed_cause = json.loads(cause)
+            error_message = parsed_cause.get("errorMessage", None)
+            stack_trace = parsed_cause.get("stackTrace", None)
+        except json.JSONDecodeError:
+            pass
+        return error, error_message, stack_trace
+
     def _parse_message(self, message: dict) -> WorkflowStatusMessage | None:
         """Parse a message from SQS"""
         # TODO: handle aws.batch for step statuses
         if not message.get("source") == "aws.states":
             return None
         status = self._create_workflow_status(message["status"])
+        execution_arn = message["detail"]["executionArn"]
         if status == "WORKFLOW_SUCCESS":
             return WorkflowSucceededMessage(
-                runner_id=message["detail"]["executionArn"],
+                runner_id=execution_arn,
                 outputs=json.loads(message["detail"]["output"])["Result"],
             )
         if status == "WORKFLOW_FAILURE":
+            error, error_message, stack_trace = self._fetch_error(execution_arn)
             return WorkflowFailedMessage(
-                runner_id=message["detail"]["executionArn"],
+                runner_id=execution_arn,
+                error=error,
+                error_message=error_message,
+                stack_trace=stack_trace,
             )
         if status == "WORKFLOW_STARTED":
             return WorkflowStartedMessage(
-                runner_id=message["detail"]["executionArn"],
+                runner_id=execution_arn,
             )
         return None
 

@@ -7,7 +7,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
-from typing import Any, Awaitable, Callable, Literal, TypedDict
+from typing import Any, Awaitable, Callable, Literal, Optional, TypedDict
 from urllib.parse import urlparse
 
 from sgqlc.endpoint.http import HTTPEndpoint
@@ -43,6 +43,9 @@ class WorkflowSucceededMessage(WorkflowStatusMessage):
 
 class WorkflowFailedMessage(WorkflowStatusMessage):
     status: Literal["WORKFLOW_FAILURE"] = "WORKFLOW_FAILURE"
+    error: Optional[str] = None
+    error_message: Optional[str] = None
+    stack_trace: Optional[str] = None
 
 
 def parse_workflow_status_message(obj: dict) -> WorkflowStatusMessage:

@@ -3,6 +3,7 @@ Redis event bus plugin for local runs
 """
 import json
 import logging
+import traceback
 from typing import Awaitable, Callable
 
 from settings import RedisEventBusSettings
@@ -22,10 +23,18 @@ class EventBusRedis(EventBus):
 
     async def poll(self, handle_message: Callable[[WorkflowStatusMessage], Awaitable[None]]) -> None:
         _, message = await self._redis.brpop(self._settings.QUEUE_NAME)  # type: ignore
+        parsed_message = parse_workflow_status_message(json.loads(message))
         try:
-            await handle_message(parse_workflow_status_message(json.loads(message)))
+            await handle_message(parsed_message)
         except Exception as e:
             self._logger.warn(f"Failed to handle message {message}: {e}")
             self._logger.exception(e)
             # there are no retries for redis messages so the workflow fails here
-            await handle_message(WorkflowFailedMessage(message, str(e)))
+            await handle_message(
+                WorkflowFailedMessage(
+                    runner_id=parsed_message.runner_id,
+                    error_type=type(e).__name__,
+                    error_message=str(e),
+                    stack_trace=traceback.format_exc(),
+                )
+            )

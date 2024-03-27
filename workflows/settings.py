@@ -13,6 +13,7 @@ from platformics.settings import CLISettings as PlatformicCLISettings
 class SWIPEEventBusSettings(BaseModel):
     SQS_QUEUE_URL: str
     SQS_ENDPOINT: Optional[str] = None
+    SFN_ENDPOINT: Optional[str] = None
 
 
 class RedisEventBusSettings(BaseModel):
