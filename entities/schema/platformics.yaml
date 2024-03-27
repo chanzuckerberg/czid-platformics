@@ -269,7 +269,7 @@ classes:
         required: true
         annotations:
             minimum_length: 4
-            maximum_length: 64
+            maximum_length: 128
       # TODO: Uncomment when we migrate metadata
       # sample_type:
       #   range: string
