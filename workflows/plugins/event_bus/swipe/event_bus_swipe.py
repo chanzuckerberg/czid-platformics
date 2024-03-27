@@ -94,3 +94,4 @@ class EventBusSWIPE(EventBus):
                 )
             except Exception as e:
                 self._logger.warn(f"Failed to handle message {message_id}: {e}")
+                self._logger.exception(e)

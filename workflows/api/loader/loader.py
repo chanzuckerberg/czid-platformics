@@ -125,6 +125,13 @@ class LoaderDriver:
                         if workflow_run:
                             workflow_run.status = WorkflowRunStatus.FAILED
                             await self.session.commit()
+            if isinstance(event, WorkflowFailedMessage):
+                workflow_run = (
+                    await self.session.execute(select(WorkflowRun).where(WorkflowRun.execution_id == event.runner_id))
+                ).scalar_one_or_none()
+                if workflow_run:
+                    workflow_run.status = WorkflowRunStatus.FAILED
+                    await self.session.commit()
 
         return handle_message
 
