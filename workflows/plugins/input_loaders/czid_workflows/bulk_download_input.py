@@ -29,16 +29,18 @@ class BulkDownloadInputLoader(InputLoader):
             consensus_genome_input = entity_inputs["consensus_genomes"]
             op = Operation(Query)
             if isinstance(consensus_genome_input, EntityInput):
-                # if single input      
+                # if single input
                 consensus_genome = op.consensus_genomes(
                     where=ConsensusGenomeWhereClause(id=UUIDComparators(_eq=consensus_genome_input.entity_id))
                 )
-            else: 
+            else:
                 # must be list of inputs
                 consensus_genome = op.consensus_genomes(
-                    where=ConsensusGenomeWhereClause(id=UUIDComparators(_in=[cg.entity_id for cg in consensus_genome_input]))
+                    where=ConsensusGenomeWhereClause(
+                        id=UUIDComparators(_in=[cg.entity_id for cg in consensus_genome_input])
+                    )
                 )
-            
+
             consensus_genome.sequencing_read()
             consensus_genome.sequencing_read.sample()
             consensus_genome.sequencing_read.sample.id()
@@ -46,29 +48,25 @@ class BulkDownloadInputLoader(InputLoader):
             consensus_genome.accession()
             consensus_genome.accession.accession_id()
             if raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_OUTPUT:
-                consensus_genome.intermediate_output_files()
-                consensus_genome.intermediate_output_files.download_link()
-                consensus_genome.intermediate_output_files.download_link.url()
+                self._fetch_file(consensus_genome.intermediate_output_files())
             elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
-                consensus_genome.sequence()
-                consensus_genome.sequence.download_link()
-                consensus_genome.sequence.download_link.url()
+                self._fetch_file(consensus_genome.sequence())
             res = self._entities_gql(op)
             files: list[dict[str, Primitive]] = []
             for cg_res in res["consensusGenomes"]:
                 sample_name = f"{cg_res['sequencingRead']['sample']['name']}"
                 sample_id = f"{cg_res['sequencingRead']['sample']['id']}"
-                if cg_res['accession']:
+                if cg_res["accession"]:
                     accession = f"{cg_res['accession']['accessionId']}"
                     output_name = f"{sample_name}_{sample_id}_{accession}"
                 else:
                     output_name = f"{sample_name}_{sample_id}"
 
                 if raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_OUTPUT:
-                    download_link = cg_res["intermediateOutputFiles"]["downloadLink"]["url"]
+                    download_link = self._uri_file(cg_res["intermediateOutputFiles"])
                     suffix = ".zip"
                 elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
-                    download_link = cg_res["sequence"]["downloadLink"]["url"]
+                    download_link = self._uri_file(cg_res["sequence"])
                     suffix = ".fa"
                 files.append(
                     {
@@ -77,4 +75,5 @@ class BulkDownloadInputLoader(InputLoader):
                     }
                 )
             inputs["files"] = files  # type: ignore
+        print(inputs)
         return inputs
