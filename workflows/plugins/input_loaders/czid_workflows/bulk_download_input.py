@@ -40,7 +40,6 @@ class BulkDownloadInputLoader(InputLoader):
                         id=UUIDComparators(_in=[cg.entity_id for cg in consensus_genome_input])
                     )
                 )
-
             consensus_genome.sequencing_read()
             consensus_genome.sequencing_read.sample()
             consensus_genome.sequencing_read.sample.id()
@@ -75,5 +74,4 @@ class BulkDownloadInputLoader(InputLoader):
                     }
                 )
             inputs["files"] = files  # type: ignore
-        print(inputs)
         return inputs
