@@ -47,7 +47,7 @@ class BulkDownloadInputLoader(InputLoader):
             consensus_genome.accession()
             consensus_genome.accession.accession_id()
             if raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_OUTPUT:
-                self._fetch_file(consensus_genome.intermediate_output_files())
+                self._fetch_file(consensus_genome.intermediate_outputs())
             elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
                 self._fetch_file(consensus_genome.sequence())
             res = self._entities_gql(op)
@@ -62,7 +62,7 @@ class BulkDownloadInputLoader(InputLoader):
                     output_name = f"{sample_name}_{sample_id}"
 
                 if raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_OUTPUT:
-                    download_link = self._uri_file(cg_res["intermediateOutputFiles"])
+                    download_link = self._uri_file(cg_res["intermediateOutputs"])
                     suffix = ".zip"
                 elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
                     download_link = self._uri_file(cg_res["sequence"])
