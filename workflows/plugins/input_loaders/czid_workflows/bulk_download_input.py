@@ -64,9 +64,11 @@ class BulkDownloadInputLoader(InputLoader):
                 elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
                     download_link = cg_res["sequence"]["downloadLink"]["url"]
                     suffix = ".fa"
-                files.append({
+                files.append(
+                    {
                         "output_name": output_name + suffix,
                         "file_path": download_link,
-                })
-            inputs["files"] = files # type: ignore
+                    }
+                )
+            inputs["files"] = files  # type: ignore
         return inputs
