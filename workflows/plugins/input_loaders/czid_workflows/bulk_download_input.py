@@ -51,7 +51,7 @@ class BulkDownloadInputLoader(InputLoader):
             elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
                 self._fetch_file(consensus_genome.sequence())
             res = self._entities_gql(op)
-            files: list[dict[str, Primitive]] = []
+            files: list[dict[str, Primitive | None]] = []
             for cg_res in res["consensusGenomes"]:
                 sample_name = f"{cg_res['sequencingRead']['sample']['name']}"
                 sample_id = f"{cg_res['sequencingRead']['sample']['id']}"
