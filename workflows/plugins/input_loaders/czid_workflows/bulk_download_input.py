@@ -27,12 +27,18 @@ class BulkDownloadInputLoader(InputLoader):
         inputs: dict[str, JSONValue] = {}
         if raw_inputs.get("bulk_download_type") in CG_BULK_DOWNLOADS:
             consensus_genome_input = entity_inputs["consensus_genomes"]
-            assert isinstance(consensus_genome_input, EntityInput)
-
             op = Operation(Query)
-            consensus_genome = op.consensus_genomes(
-                where=ConsensusGenomeWhereClause(id=UUIDComparators(_eq=consensus_genome_input.entity_id))
-            )
+            if isinstance(consensus_genome_input, EntityInput):
+                # if single input      
+                consensus_genome = op.consensus_genomes(
+                    where=ConsensusGenomeWhereClause(id=UUIDComparators(_eq=consensus_genome_input.entity_id))
+                )
+            else: 
+                # must be list of inputs
+                consensus_genome = op.consensus_genomes(
+                    where=ConsensusGenomeWhereClause(id=UUIDComparators(_in=[cg.entity_id for cg in consensus_genome_input]))
+                )
+            
             consensus_genome.sequencing_read()
             consensus_genome.sequencing_read.sample()
             consensus_genome.sequencing_read.sample.id()
@@ -52,8 +58,8 @@ class BulkDownloadInputLoader(InputLoader):
             for cg_res in res["consensusGenomes"]:
                 sample_name = f"{cg_res['sequencingRead']['sample']['name']}"
                 sample_id = f"{cg_res['sequencingRead']['sample']['id']}"
-                accession = f"{cg_res['accession']['accessionId']}"
-                if accession:
+                if cg_res['accession']:
+                    accession = f"{cg_res['accession']['accessionId']}"
                     output_name = f"{sample_name}_{sample_id}_{accession}"
                 else:
                     output_name = f"{sample_name}_{sample_id}"

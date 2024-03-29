@@ -21,7 +21,7 @@ LOCAL_BUCKET = "local-bucket"
 
 DEFAULT_WORKFLOW_VERSIONS = {
     "consensus-genome": "3.5.0",
-    "bulk-download": "0.0.3",
+    "bulk-download": "0.0.4",
 }
 
 
