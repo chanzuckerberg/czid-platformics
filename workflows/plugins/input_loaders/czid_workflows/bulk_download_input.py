@@ -1,6 +1,3 @@
-import os
-import sys
-
 from sgqlc.operation import Operation
 
 from database.models.workflow_version import WorkflowVersion
@@ -49,9 +46,9 @@ class BulkDownloadInputLoader(InputLoader):
             elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
                 consensus_genome.sequence()
                 consensus_genome.sequence.download_link()
-                consensus_genome.sequence.download_link.url()    
+                consensus_genome.sequence.download_link.url()
             res = self._entities_gql(op)
-            inputs["files"] = []
+            files: list[dict[str, Primitive]] = []
             for cg_res in res["consensusGenomes"]:
                 sample_name = f"{cg_res['sequencingRead']['sample']['name']}"
                 sample_id = f"{cg_res['sequencingRead']['sample']['id']}"
@@ -67,10 +64,9 @@ class BulkDownloadInputLoader(InputLoader):
                 elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
                     download_link = cg_res["sequence"]["downloadLink"]["url"]
                     suffix = ".fa"
-                inputs["files"].append(
-                    {
+                files.append({
                         "output_name": output_name + suffix,
                         "file_path": download_link,
-                    }
-                )
+                })
+            inputs["files"] = files # type: ignore
         return inputs
