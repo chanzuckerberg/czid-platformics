@@ -67,6 +67,9 @@ class EventBusSWIPE(EventBus):
         # TODO: handle aws.batch for step statuses
         if not message.get("source") == "aws.states":
             return None
+        if not message.get("status"):
+            print("No status in message: ", message)
+            return None
         status = self._create_workflow_status(message["status"])
         execution_arn = message["detail"]["executionArn"]
         if status == "WORKFLOW_SUCCESS":
