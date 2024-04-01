@@ -66,10 +66,8 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         sequencing_read_input = entity_inputs["sequencing_read"]
         assert isinstance(sequencing_read_input, EntityInput)
         reference_genome_input = entity_inputs.get("reference_genome")
-        print("reference_genome_input: ", reference_genome_input)
         reference_genome_id: ID | None = None
         if reference_genome_input:
-            print("reference_genome_input.entity_id: ", reference_genome_input.entity_id)
             assert isinstance(reference_genome_input, EntityInput)
             reference_genome_id = ID(reference_genome_input.entity_id)
 
