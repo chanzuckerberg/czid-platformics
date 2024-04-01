@@ -9,6 +9,7 @@ from abc import abstractmethod
 from Bio import SeqIO
 from typing import Protocol
 
+
 from mypy_boto3_s3 import S3Client
 
 
@@ -101,12 +102,19 @@ class JsonHandler(FileFormatHandler):
     def validate(self) -> None:
         json.loads(self.contents())  # throws an exception for invalid JSON
 
+class ZipHandler(FileFormatHandler):
+    """
+    Validate ZIP files
+    """
+
+    def validate(self) -> None:
+        assert self.key.endswith(".zip") # throws an exception if the file is not a zip file
 
 def get_validator(format: str) -> type[FileFormatHandler]:
     """
     Returns the validator for a given file format
     """
-    if format == "fasta":
+    if format in ["fa", "fasta"]:
         return FastaHandler
     elif format == "fastq":
         return FastqHandler
@@ -114,5 +122,7 @@ def get_validator(format: str) -> type[FileFormatHandler]:
         return BedHandler
     elif format == "json":
         return JsonHandler
+    elif format == "zip":
+        return ZipHandler
     else:
         raise Exception(f"Unknown file format '{format}'")
