@@ -80,7 +80,7 @@ class EventBusSWIPE(EventBus):
                 runner_id=execution_arn,
                 error=error,
                 error_message=error_message,
-                stack_trace=str(stack_trace), # TODO: revert w/ todd's fix
+                stack_trace=stack_trace and str(stack_trace),
             )
         if status == "WORKFLOW_STARTED":
             return WorkflowStartedMessage(
