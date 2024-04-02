@@ -57,10 +57,12 @@ class DevSeeder:
             self.sess.add(workflow_run)
             self.sess.commit()
 
-def main(function: str, user_id: int, collection_id: str)->None:
+
+def main(function: str, user_id: int, collection_id: int) -> None:
     seeder = DevSeeder(user_id, collection_id)
     if function == "workflow_runs":
-        seeder.seed_workflow_runs("started", "test_runner_id", "Simple Manifest") # change "Simple Manifest" as needed
+        seeder.seed_workflow_runs("started", "test_runner_id", "Simple Manifest")  # change "Simple Manifest" as needed
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

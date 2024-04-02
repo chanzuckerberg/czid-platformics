@@ -73,7 +73,7 @@ class LoaderDriver:
                 )
             )
         await asyncio.gather(*loader_futures)
-        
+
     def _bind_handle_message(self) -> Callable[[WorkflowStatusMessage], Awaitable[None]]:
         async def handle_message(event: WorkflowStatusMessage) -> None:
             print("event", event, file=sys.stderr)

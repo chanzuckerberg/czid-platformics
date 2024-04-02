@@ -14,7 +14,13 @@ message_type_map = {
 
 
 async def main(
-    collection_id: int, user_id: int, message_type: str, runner_id: str, outputs_json: str, seed: bool, workflow_name: str
+    collection_id: int,
+    user_id: int,
+    message_type: str,
+    runner_id: str,
+    outputs_json: str,
+    seed: bool,
+    workflow_name: str,
 ) -> None:
     settings = APISettings.model_validate({})
     event_bus = load_event_bus(settings)
@@ -43,5 +49,13 @@ if __name__ == "__main__":
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        main(args.collection_id, args.user_id, args.message_type, args.runner_id, args.outputs_json, args.seed, args.workflow_name)
+        main(
+            args.collection_id,
+            args.user_id,
+            args.message_type,
+            args.runner_id,
+            args.outputs_json,
+            args.seed,
+            args.workflow_name,
+        )
     )
