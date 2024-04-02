@@ -80,6 +80,10 @@ def generate_entity_subclass_files(
     template = environment.get_template(f"{template_filename}.j2")
 
     for entity in view.entities:
+        if entity.has_custom_policy:
+            print(f"{entity.name} has a custom policy, skipping")
+            continue
+
         content = template.render(
             cls=entity,
             render_files=render_files,

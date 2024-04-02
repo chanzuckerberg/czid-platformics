@@ -325,6 +325,12 @@ class EntityWrapper:
     @cached_property
     def related_fields(self) -> list[FieldWrapper]:
         return [field for field in self.visible_fields if field.is_entity]
+    
+    @cached_property
+    def has_custom_policy(self) -> bool:
+        if "custom_policy" in self.wrapped_class.annotations:
+            return self.wrapped_class.annotations["custom_policy"].value
+        return False
 
 
 class ViewWrapper:
