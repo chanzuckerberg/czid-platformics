@@ -83,6 +83,10 @@ classes:
       updated_at:
         range: date
         readonly: true
+      deleted_at:
+        range: date
+        annotations:
+          system_writable_only: True
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.

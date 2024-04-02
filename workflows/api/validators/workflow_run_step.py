@@ -29,6 +29,7 @@ class WorkflowRunStepCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class WorkflowRunStepUpdateInputValidator(BaseModel):
@@ -36,3 +37,4 @@ class WorkflowRunStepUpdateInputValidator(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     ended_at: Annotated[datetime.datetime | None, Field()]
     status: Annotated[WorkflowRunStepStatus | None, Field()]
+    deleted_at: Annotated[datetime.datetime | None, Field()]

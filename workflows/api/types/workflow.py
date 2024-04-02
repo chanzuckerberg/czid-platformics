@@ -131,6 +131,7 @@ class WorkflowWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -148,6 +149,7 @@ class WorkflowOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -171,6 +173,7 @@ class Workflow(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -211,6 +214,7 @@ class WorkflowMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -229,6 +233,7 @@ class WorkflowCountColumns(enum.Enum):
     collectionId = "collection_id"
     createdAt = "created_at"
     updatedAt = "updated_at"
+    deletedAt = "deleted_at"
 
 
 """
@@ -276,6 +281,7 @@ class WorkflowCreateInput:
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
     collection_id: int
+    deleted_at: Optional[datetime.datetime] = None
 
 
 @strawberry.input()
@@ -283,6 +289,7 @@ class WorkflowUpdateInput:
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """

@@ -31,6 +31,7 @@ x-workflow-variables: &workflow-variables
   ? PLATFORMICS_EVENT_BUS_PLUGIN=redis
   ? PLATFORMICS_EVENT_BUS__SWIPE__SQS_QUEUE_URL=http://motoserver.czidnet:4000/123456789012/swipe-test-notifications-sfn-notifications-queue
   ? PLATFORMICS_EVENT_BUS__SWIPE__SQS_ENDPOINT=http://motoserver.czidnet:4000
+  ? PLATFORMICS_EVENT_BUS__SWIPE__SFN_ENDPOINT=http://motoserver.czidnet:4000
   ? PLATFORMICS_WORKFLOW_RUNNER_PLUGIN=local
   ? PLATFORMICS_WORKFLOW_RUNNER__LOCAL__S3_ENDPOINT=http://motoserver.czidnet:4000
   ? PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX=s3://local-bucket/nextgen/

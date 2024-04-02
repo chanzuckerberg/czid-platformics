@@ -17,6 +17,7 @@ import datetime
 from platformics.api.core.helpers import get_db_rows, get_aggregate_db_rows
 from api.validators.metric_consensus_genome import (
     MetricConsensusGenomeCreateInputValidator,
+    MetricConsensusGenomeUpdateInputValidator,
 )
 from api.helpers.metric_consensus_genome import (
     MetricConsensusGenomeGroupByOptions,
@@ -131,6 +132,7 @@ class MetricConsensusGenomeWhereClause(TypedDict):
     collection_id: Optional[IntComparators] | None
     created_at: Optional[DatetimeComparators] | None
     updated_at: Optional[DatetimeComparators] | None
+    deleted_at: Optional[DatetimeComparators] | None
 
 
 """
@@ -164,6 +166,7 @@ class MetricConsensusGenomeOrderByClause(TypedDict):
     collection_id: Optional[orderBy] | None
     created_at: Optional[orderBy] | None
     updated_at: Optional[orderBy] | None
+    deleted_at: Optional[orderBy] | None
 
 
 """
@@ -197,6 +200,7 @@ class MetricConsensusGenome(EntityInterface):
     collection_id: int
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -262,6 +266,7 @@ class MetricConsensusGenomeMinMaxColumns:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -293,6 +298,7 @@ class MetricConsensusGenomeCountColumns(enum.Enum):
     collectionId = "collection_id"
     createdAt = "created_at"
     updatedAt = "updated_at"
+    deletedAt = "deleted_at"
 
 
 """
@@ -356,6 +362,12 @@ class MetricConsensusGenomeCreateInput:
     coverage_viz: Optional[List[List[float]]] = None
     producing_run_id: Optional[strawberry.ID] = None
     collection_id: int
+    deleted_at: Optional[datetime.datetime] = None
+
+
+@strawberry.input()
+class MetricConsensusGenomeUpdateInput:
+    deleted_at: Optional[datetime.datetime] = None
 
 
 """
@@ -475,6 +487,7 @@ async def create_metric_consensus_genome(
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         del params["producing_run_id"]
+        del params["deleted_at"]
     # Validate that the user can create entities in this collection
     attr = {"collection_id": validated.collection_id}
     resource = Resource(id="NEW_ID", kind=db.MetricConsensusGenome.__tablename__, attr=attr)
@@ -502,6 +515,49 @@ async def create_metric_consensus_genome(
     session.add(new_entity)
     await session.commit()
     return new_entity
+
+
+@strawberry.mutation(extensions=[DependencyExtension()])
+async def update_metric_consensus_genome(
+    input: MetricConsensusGenomeUpdateInput,
+    where: MetricConsensusGenomeWhereClauseMutations,
+    session: AsyncSession = Depends(get_db_session, use_cache=False),
+    cerbos_client: CerbosClient = Depends(get_cerbos_client),
+    principal: Principal = Depends(require_auth_principal),
+    is_system_user: bool = Depends(is_system_user),
+) -> Sequence[db.Entity]:
+    """
+    Update MetricConsensusGenome objects. Used for mutations (see api/mutations.py).
+    """
+    validated = MetricConsensusGenomeUpdateInputValidator(**input.__dict__)
+    params = validated.model_dump()
+
+    # Need at least one thing to update
+    num_params = len([x for x in params if params[x] is not None])
+    if num_params == 0:
+        raise PlatformicsException("No fields to update")
+
+    # Validate that the user can read all of the entities they're linking to.
+    # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
+    if not is_system_user:
+        raise PlatformicsException("Unauthorized: MetricConsensusGenome is not mutable")
+
+    # Fetch entities for update, if we have access to them
+    entities = await get_db_rows(
+        db.MetricConsensusGenome, session, cerbos_client, principal, where, [], CerbosAction.UPDATE
+    )
+    if len(entities) == 0:
+        raise PlatformicsException("Unauthorized: Cannot update entities")
+
+    # Update DB
+    updated_at = datetime.datetime.now()
+    for entity in entities:
+        entity.updated_at = updated_at
+        for key in params:
+            if params[key] is not None:
+                setattr(entity, key, params[key])
+    await session.commit()
+    return entities
 
 
 @strawberry.mutation(extensions=[DependencyExtension()])

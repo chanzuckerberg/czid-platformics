@@ -8,6 +8,8 @@ Make changes to the template codegen/templates/api/types/class_name.py.j2 instea
 # ruff: noqa: E501 Line too long
 
 
+import datetime
+
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from typing_extensions import Annotated
 
@@ -39,6 +41,7 @@ class WorkflowCreateInputValidator(BaseModel):
             ge=0,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]
 
 
 class WorkflowUpdateInputValidator(BaseModel):
@@ -62,3 +65,4 @@ class WorkflowUpdateInputValidator(BaseModel):
             strip_whitespace=True,
         ),
     ]
+    deleted_at: Annotated[datetime.datetime | None, Field()]

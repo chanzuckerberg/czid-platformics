@@ -28,8 +28,7 @@ class BulkDownloadFactory(CommonFactory):
         # create a new row or not.
         sqlalchemy_get_or_create = ("entity_id",)
 
-    download_type = fuzzy.FuzzyChoice(["concatenate", "zip"])
-    download_display_name = fuzzy.FuzzyText()
+    download_type = fuzzy.FuzzyChoice(["consensus_genome", "consensus_genome_intermediate_output_files"])
     file = factory.RelatedFactory(
         FileFactory,
         factory_related_name="entity",

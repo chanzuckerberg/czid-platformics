@@ -36,6 +36,7 @@ class SequencingReadGroupByOptions:
     collection_id: Optional[int] = None
     created_at: Optional[datetime.datetime] = None
     updated_at: Optional[datetime.datetime] = None
+    deleted_at: Optional[datetime.datetime] = None
 
 
 def build_sequencing_read_groupby_output(

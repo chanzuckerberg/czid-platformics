@@ -113,8 +113,8 @@ enums:
       level_superkingdom:
   BulkDownloadType:
     permissible_values:
-      concatenate:
-      zip:
+      consensus_genome:
+      consensus_genome_intermediate_output_files:
   HostOrganismCategory:
     permissible_values:
       human:
@@ -182,6 +182,11 @@ classes:
       updated_at:
         range: date
         readonly: true
+      deleted_at:
+        range: date
+        annotations:
+          mutable: true
+          system_writable_only: True
     # NOTE - the LinkML schema doesn't support a native "plural name" field as far as I can tell, so
     # we're using an annotation here to tack on the extra functionality that we need. We do this because
     # English pluralization is hard, and we don't want to have to write a custom pluralization function.
@@ -232,13 +237,20 @@ classes:
         range: FileUploadClient
       upload_error:
         range: string
+      created_at:
+        range: date
+        required: true
+        readonly: true
+      updated_at:
+        range: date
+        readonly: true
 
   # ============================================================================
   # Entities
   # ============================================================================
 
   # ----------------------------------------------------------------------------
-  # Lab sample, associated with one or more SequencingRead entities.
+  # A representation of the physical lab sample, associated with one or more SequencingRead entities.
   # ----------------------------------------------------------------------------
   Sample:
     is_a: Entity
@@ -257,7 +269,7 @@ classes:
         required: true
         annotations:
             minimum_length: 4
-            maximum_length: 64
+            maximum_length: 128
       # TODO: Uncomment when we migrate metadata
       # sample_type:
       #   range: string
@@ -282,6 +294,7 @@ classes:
         inverse: HostOrganism.samples
         annotations:
           mutable: false
+      # A sample can be sequenced multiple times, so it can be associated with multiple SequencingReads
       sequencing_reads:
         range: SequencingRead
         multivalued: true
@@ -298,7 +311,7 @@ classes:
       plural: Samples
 
   # ----------------------------------------------------------------------------
-  # Collection of sequencing reads, stored in FASTQ files.
+  # Collection of sequencing reads (short fragments of DNA/RNA sequenced from a sample), stored in FASTQ files.
   # ----------------------------------------------------------------------------
   SequencingRead:
     is_a: Entity
@@ -414,13 +427,15 @@ classes:
       plural: ReferenceGenomes
 
   # ----------------------------------------------------------------------------
-  # Reference genomes
+  # A specific “instance” of a taxon stored in an upstream database, such as NCBI.
   # ----------------------------------------------------------------------------
   Accession:
     is_a: Entity
     mixins:
       - EntityMixin
     attributes:
+      # The "accession_id" is a unique identifier assigned by the upstream database (i.e. NCBI), e.g. "NC_045512.2"
+      # This is DIFFERENT from the accession's "id", which is a UUID that we generated for our own internal use
       accession_id:
         range: string
         required: true
@@ -526,7 +541,7 @@ classes:
       # - CG from mNGS: SequencingRead.taxon = null BUT ConsensusGenome.taxon = taxonId chosen from UI
       taxon:
         range: Taxon
-        required: true
+        required: false
         inverse: Taxon.consensus_genomes
         annotations:
           mutable: false
@@ -717,6 +732,10 @@ classes:
     annotations:
       plural: Taxa
 
+  # ----------------------------------------------------------------------------
+  # The third-party database from which we pull taxon lineage information.
+  # Note: we currently only use NCBI, but this could be expanded in the future.
+  # ----------------------------------------------------------------------------
   UpstreamDatabase:
     is_a: Entity
     mixins:
@@ -789,13 +808,9 @@ classes:
     mixins:
       - EntityMixin
     attributes:
+      # download_type corresponds to the option the user selects in the bulk download modal
       download_type:
         range: BulkDownloadType
-        required: true
-        annotations:
-          mutable: false
-      download_display_name:
-        range: string
         required: true
         annotations:
           mutable: false
