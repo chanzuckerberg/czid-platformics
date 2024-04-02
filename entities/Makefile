@@ -95,7 +95,7 @@ DIR_LINT_CODEGEN = database/models/ api/types/ api/validators/ api/{queries,muta
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
-	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix .
+	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix . --template-override-paths entities_templates/
 	$(docker_compose_run) $(FOLDER) black $(DIR_LINT_CODEGEN)
 	$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_CODEGEN)
 

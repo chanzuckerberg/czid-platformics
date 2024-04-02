@@ -172,7 +172,8 @@ classes:
       collection_id:
         range: integer
         minimum_value: 0
-        required: true
+        # bulkDownloads do not have a collection_id
+        required: false
         annotations:
           mutable: false
       created_at:
@@ -821,7 +822,6 @@ classes:
           cascade_delete: true
     annotations:
       plural: BulkDownloads
-      custom_policy: true
 
 
   # ============================================================================
