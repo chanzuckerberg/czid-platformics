@@ -139,8 +139,9 @@ async def load_workflow_run_step_aggregate_rows(
 async def load_workflow_run_entity_input_rows(
     root: "WorkflowRun",
     info: Info,
-    where: Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]
-    | None = None,
+    where: (
+        Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")] | None
+    ) = None,
     order_by: Optional[
         list[Annotated["WorkflowRunEntityInputOrderByClause", strawberry.lazy("api.types.workflow_run_entity_input")]]
     ] = [],
@@ -155,8 +156,9 @@ async def load_workflow_run_entity_input_rows(
 async def load_workflow_run_entity_input_aggregate_rows(
     root: "WorkflowRun",
     info: Info,
-    where: Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]
-    | None = None,
+    where: (
+        Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")] | None
+    ) = None,
 ) -> Optional[Annotated["WorkflowRunEntityInputAggregate", strawberry.lazy("api.types.workflow_run_entity_input")]]:
     selections = info.selected_fields[0].selections[0].selections
     dataloader = info.context["sqlalchemy_loader"]
@@ -199,13 +201,14 @@ class WorkflowRunWhereClause(TypedDict):
     workflow_runner_inputs_json: Optional[StrComparators] | None
     status: Optional[EnumComparators[WorkflowRunStatus]] | None
     error_message: Optional[StrComparators] | None
-    workflow_version: Optional[
-        Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]
-    ] | None
+    workflow_version: (
+        Optional[Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]] | None
+    )
     steps: Optional[Annotated["WorkflowRunStepWhereClause", strawberry.lazy("api.types.workflow_run_step")]] | None
-    entity_inputs: Optional[
-        Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]
-    ] | None
+    entity_inputs: (
+        Optional[Annotated["WorkflowRunEntityInputWhereClause", strawberry.lazy("api.types.workflow_run_entity_input")]]
+        | None
+    )
     raw_inputs_json: Optional[StrComparators] | None
     deprecated_by_id: Optional[UUIDComparators] | None
     id: Optional[UUIDComparators] | None
@@ -231,9 +234,9 @@ class WorkflowRunOrderByClause(TypedDict):
     workflow_runner_inputs_json: Optional[orderBy] | None
     status: Optional[orderBy] | None
     error_message: Optional[orderBy] | None
-    workflow_version: Optional[
-        Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]
-    ] | None
+    workflow_version: (
+        Optional[Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]] | None
+    )
     raw_inputs_json: Optional[orderBy] | None
     deprecated_by: Optional[orderBy] | None
     id: Optional[orderBy] | None
@@ -259,15 +262,15 @@ class WorkflowRun(EntityInterface):
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
     error_message: Optional[str] = None
-    workflow_version: Optional[
-        Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]
-    ] = load_workflow_version_rows  # type:ignore
-    steps: Sequence[
-        Annotated["WorkflowRunStep", strawberry.lazy("api.types.workflow_run_step")]
-    ] = load_workflow_run_step_rows  # type:ignore
-    steps_aggregate: Optional[
-        Annotated["WorkflowRunStepAggregate", strawberry.lazy("api.types.workflow_run_step")]
-    ] = load_workflow_run_step_aggregate_rows  # type:ignore
+    workflow_version: Optional[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]] = (
+        load_workflow_version_rows
+    )  # type:ignore
+    steps: Sequence[Annotated["WorkflowRunStep", strawberry.lazy("api.types.workflow_run_step")]] = (
+        load_workflow_run_step_rows
+    )  # type:ignore
+    steps_aggregate: Optional[Annotated["WorkflowRunStepAggregate", strawberry.lazy("api.types.workflow_run_step")]] = (
+        load_workflow_run_step_aggregate_rows
+    )  # type:ignore
     entity_inputs: Sequence[
         Annotated["WorkflowRunEntityInput", strawberry.lazy("api.types.workflow_run_entity_input")]
     ] = load_workflow_run_entity_input_rows  # type:ignore

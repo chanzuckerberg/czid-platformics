@@ -1,6 +1,7 @@
 """
 GraphQL web app runner
 """
+
 from datetime import datetime
 import json
 import logging

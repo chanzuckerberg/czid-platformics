@@ -2,6 +2,7 @@
 Remote Event Bus plugin
 Retrieves messages from AWS SQS
 """
+
 import json
 import logging
 from typing import Awaitable, Callable, Optional, cast

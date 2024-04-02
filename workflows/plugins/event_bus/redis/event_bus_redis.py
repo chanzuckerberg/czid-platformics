@@ -1,6 +1,7 @@
 """
 Redis event bus plugin for local runs
 """
+
 import json
 import logging
 import traceback

@@ -1,6 +1,7 @@
 """
 CLI program to start a listener
 """
+
 import asyncio
 
 from api.config import load_event_bus

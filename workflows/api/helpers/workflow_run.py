@@ -5,7 +5,6 @@ Auto-gereanted by running 'make codegen'. Do not edit.
 Make changes to the template codegen/templates/api/groupby_helpers.py.j2 instead.
 """
 
-
 from typing import Any, Optional
 import strawberry
 import datetime

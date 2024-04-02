@@ -187,12 +187,12 @@ class WorkflowVersion(EntityInterface):
     manifest: Optional[str] = None
     workflow: Optional[Annotated["Workflow", strawberry.lazy("api.types.workflow")]] = load_workflow_rows  # type:ignore
     deprecated: Optional[bool] = None
-    runs: Sequence[
-        Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
-    ] = load_workflow_run_rows  # type:ignore
-    runs_aggregate: Optional[
-        Annotated["WorkflowRunAggregate", strawberry.lazy("api.types.workflow_run")]
-    ] = load_workflow_run_aggregate_rows  # type:ignore
+    runs: Sequence[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]] = (
+        load_workflow_run_rows
+    )  # type:ignore
+    runs_aggregate: Optional[Annotated["WorkflowRunAggregate", strawberry.lazy("api.types.workflow_run")]] = (
+        load_workflow_run_aggregate_rows
+    )  # type:ignore
     id: strawberry.ID
     owner_user_id: int
     collection_id: int
