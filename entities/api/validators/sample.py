@@ -24,7 +24,7 @@ class SampleCreateInputValidator(BaseModel):
         StringConstraints(
             strip_whitespace=True,
             min_length=4,
-            max_length=64,
+            max_length=128,
         ),
     ]
     host_organism_id: Annotated[uuid.UUID | None, Field()]
@@ -46,7 +46,7 @@ class SampleUpdateInputValidator(BaseModel):
         StringConstraints(
             strip_whitespace=True,
             min_length=4,
-            max_length=64,
+            max_length=128,
         ),
     ]
     deleted_at: Annotated[datetime.datetime | None, Field()]
