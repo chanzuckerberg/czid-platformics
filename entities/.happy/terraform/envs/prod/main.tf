@@ -14,7 +14,7 @@ module "stack" {
       aws_iam = {
         policy_json = data.aws_iam_policy_document.entities.json,
       }
-      cpu               = "2"
+      cpu               = "8"
       health_check_path = "/graphql"
       init_containers = {
         init = {
@@ -28,7 +28,7 @@ module "stack" {
           tag   = "${var.image_tag}"
         }
       }
-      memory                = "1000Mi"
+      memory                = "8000Mi"
       name                  = "entities"
       platform_architecture = "arm64"
       port                  = 8008
@@ -36,7 +36,7 @@ module "stack" {
       sidecars = {
         cerbos = {
           args   = ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
-          cpu    = "100m"
+          cpu    = "400m"
           image  = "ghcr.io/cerbos/cerbos"
           memory = "300Mi"
           port   = 3592
@@ -65,9 +65,9 @@ module "stack" {
   tasks = {
     migrate = {
       cmd                   = ["/czid-platformics/entities/scripts/migrate.sh"]
-      cpu                   = "100m"
+      cpu                   = "400m"
       image                 = "{entities}:${var.image_tag}"
-      memory                = "1000Mi"
+      memory                = "2000Mi"
       platform_architecture = "arm64"
     }
   }

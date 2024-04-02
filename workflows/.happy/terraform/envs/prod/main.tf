@@ -18,8 +18,8 @@ module "stack" {
       health_check_path     = "/graphql"
       platform_architecture = "arm64"
       port                  = 8042
-      cpu                   = "2"
-      memory                = "1000Mi"
+      cpu                   = "8"
+      memory                = "8000Mi"
       service_type          = "INTERNAL"
 
       init_containers = {
@@ -37,7 +37,7 @@ module "stack" {
       sidecars = {
         cerbos = {
           args   = ["server", "--config", "/var/policies/cerbos/config/config.yaml"]
-          cpu    = "100m"
+          cpu    = "400m"
           image  = "ghcr.io/cerbos/cerbos"
           memory = "300Mi"
           port   = 3592
@@ -50,8 +50,8 @@ module "stack" {
       aws_iam = {
         policy_json = data.aws_iam_policy_document.workflows.json,
       }
-      cpu                   = "2"
-      memory                = "1000Mi"
+      cpu                   = "4"
+      memory                = "4000Mi"
       name                  = "workflows-worker"
       platform_architecture = "arm64"
       service_type          = "PRIVATE"
@@ -98,9 +98,9 @@ module "stack" {
   tasks = {
     migrate = {
       cmd                   = ["/workflows/scripts/migrate.sh"]
-      cpu                   = "100m"
+      cpu                   = "400m"
       image                 = "{workflows}:${var.image_tag}"
-      memory                = "1000Mi"
+      memory                = "2000Mi"
       platform_architecture = "arm64"
     }
   }
