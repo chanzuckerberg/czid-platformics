@@ -821,6 +821,7 @@ classes:
           cascade_delete: true
     annotations:
       plural: BulkDownloads
+      custom_policy: true
 
 
   # ============================================================================
