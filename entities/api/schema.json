@@ -19775,16 +19775,12 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
+              "defaultValue": "null",
               "name": "taxonId",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
               }
             },
             {

@@ -3,8 +3,9 @@ Remote Event Bus plugin
 Retrieves messages from AWS SQS
 """
 import json
-from typing import List, cast
-import boto3
+import logging
+from typing import Awaitable, Callable, Optional, cast
+
 from settings import SWIPEEventBusSettings
 from plugins.plugin_types import (
     EventBus,
@@ -15,40 +16,27 @@ from plugins.plugin_types import (
     WorkflowStatus,
 )
 
+import boto3
+from botocore.config import Config
+
 
 class EventBusSWIPE(EventBus):
     def __init__(self, settings: SWIPEEventBusSettings) -> None:
-        self.sqs = boto3.client("sqs", endpoint_url=settings.SQS_ENDPOINT)
-        self.settings = settings
-        if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self.sqs.list_queues()["QueueUrls"]:
-            raise Exception("SQS_QUEUE_URL not found")
-
-    def retrieve_messages(self, url: str) -> List:
-        """Retrieve a list of SQS messages and delete them from queue"""
-        resp = self.sqs.receive_message(
-            QueueUrl=url,
-            MaxNumberOfMessages=5,
-            WaitTimeSeconds=5,
+        self._sqs = boto3.client("sqs", endpoint_url=settings.SQS_ENDPOINT)
+        # increase max_attempts due to possible API throttling
+        sfn_config = Config(
+            retries={
+                "max_attempts": 10,
+                "mode": "standard",
+            }
         )
-        # If no messages, just return
-        if not resp.get("Messages", None):
-            return []
+        self._sfn = boto3.client("stepfunctions", endpoint_url=settings.SFN_ENDPOINT, config=sfn_config)
+        if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self._sqs.list_queues()["QueueUrls"]:
+            raise Exception("SQS_QUEUE_URL not found")
+        self._sqs_queue_url = settings.SQS_QUEUE_URL
+        self._logger = logging.getLogger("EventBusSWIPE")
 
-        messages = []
-        for message in resp["Messages"]:
-            receipt_handle = message["ReceiptHandle"]
-            body = json.loads(message["Body"])
-            content = json.loads(body["Message"]) if body.get("Message") else body
-
-            messages.append(content)
-            self.sqs.delete_message(
-                QueueUrl=url,
-                ReceiptHandle=receipt_handle,
-            )
-
-        return messages
-
-    def create_workflow_status(self, status: str) -> WorkflowStatus:
+    def _create_workflow_status(self, status: str) -> WorkflowStatus:
         """maps the SFN status to a workflow status"""
         return cast(
             WorkflowStatus,
@@ -61,41 +49,76 @@ class EventBusSWIPE(EventBus):
             }.get(status),
         )
 
+    def _fetch_error(self, execution_arn: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
+        desc = self._sfn.describe_execution(executionArn=execution_arn)
+        error = desc.get("error", None)
+        cause = desc.get("cause", None)
+        error_message = stack_trace = None
+        try:
+            parsed_cause = json.loads(cause)
+            error_message = parsed_cause.get("errorMessage", None)
+            stack_trace = parsed_cause.get("stackTrace", None)
+        except json.JSONDecodeError:
+            pass
+        return error, error_message, stack_trace
+
+    def _parse_message(self, message: dict) -> WorkflowStatusMessage | None:
+        """Parse a message from SQS"""
+        # TODO: handle aws.batch for step statuses
+        if not message.get("source") == "aws.states":
+            return None
+        status = self._create_workflow_status(message["status"])
+        execution_arn = message["detail"]["executionArn"]
+        if status == "WORKFLOW_SUCCESS":
+            return WorkflowSucceededMessage(
+                runner_id=execution_arn,
+                outputs=json.loads(message["detail"]["output"])["Result"],
+            )
+        if status == "WORKFLOW_FAILURE":
+            error, error_message, stack_trace = self._fetch_error(execution_arn)
+            return WorkflowFailedMessage(
+                runner_id=execution_arn,
+                error=error,
+                error_message=error_message,
+                stack_trace=stack_trace and str(stack_trace),
+            )
+        if status == "WORKFLOW_STARTED":
+            return WorkflowStartedMessage(
+                runner_id=execution_arn,
+            )
+        return None
+
     async def send(self, message: WorkflowStatusMessage) -> None:
-        pass
+        """
+        The SWIPE WorkflowRunner does not need to send messages
+        """
+        raise NotImplementedError
 
-    async def poll(self) -> List[WorkflowStatusMessage]:
-        if self.settings.SQS_QUEUE_URL is None:
-            return []
+    async def poll(self, handle_message: Callable[[WorkflowStatusMessage], Awaitable[None]]) -> None:
+        resp = self._sqs.receive_message(
+            QueueUrl=self._sqs_queue_url,
+            MaxNumberOfMessages=5,
+            WaitTimeSeconds=5,
+        )
 
-        messages = self.retrieve_messages(self.settings.SQS_QUEUE_URL)
-        workflow_statuses: list[WorkflowStatusMessage] = []
+        # If no messages, just return
+        if not resp.get("Messages", None):
+            return
 
-        for message in messages:
-            if message.get("source") == "aws.states":
-                status = self.create_workflow_status(message["detail"]["status"])
-                if status == "WORKFLOW_SUCCESS":
-                    print("messsage detail", message["detail"]["output"])
-                    workflow_statuses.append(
-                        WorkflowSucceededMessage(
-                            runner_id=message["detail"]["executionArn"],
-                            outputs=json.loads(message["detail"]["output"])["Result"],
-                        )
-                    )
-                if status == "WORKFLOW_FAILURE":
-                    workflow_statuses.append(
-                        WorkflowFailedMessage(
-                            runner_id=message["detail"]["executionArn"],
-                        )
-                    )
-                if status == "WORKFLOW_STARTED":
-                    workflow_statuses.append(
-                        WorkflowStartedMessage(
-                            runner_id=message["detail"]["executionArn"],
-                        )
-                    )
-            elif message.get("source") == "aws.batch":
-                # TODO: return step status messages
-                pass
-
-        return workflow_statuses
+        for message in resp["Messages"]:
+            message_id = message["MessageId"]
+            receipt_handle = message["ReceiptHandle"]
+            body = json.loads(message["Body"])
+            content = json.loads(body["Message"]) if body.get("Message") else body
+            parsed_message = self._parse_message(content)
+            if not parsed_message:
+                continue
+            try:
+                await handle_message(parsed_message)
+                self._sqs.delete_message(
+                    QueueUrl=self._sqs_queue_url,
+                    ReceiptHandle=receipt_handle,
+                )
+            except Exception as e:
+                self._logger.warn(f"Failed to handle message {message_id}: {e}")
+                self._logger.exception(e)

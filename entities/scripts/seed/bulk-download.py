@@ -38,8 +38,8 @@ def main() -> tuple[list[dict[str, str]], dict[str, str]]:
             file_ids.append({"name": "files", "entity_type": "file", "entity_id": str(file.id)})
 
     return file_ids, {
-        "bulk_download_type": "zip",
-        "download_display_name": "Test",
+        "bulk_download_type": "consensus_genome",
+        "aggregate_action": "zip",
     }
 
 

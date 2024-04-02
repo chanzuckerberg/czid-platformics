@@ -581,7 +581,7 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
         "collection_id",
         "deleted_at",
     )
-    taxon_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="taxonId")
+    taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     sequencing_read_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="sequencingReadId")
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     accession_id = sgqlc.types.Field(ID, graphql_name="accessionId")

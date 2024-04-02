@@ -269,7 +269,7 @@ classes:
         required: true
         annotations:
             minimum_length: 4
-            maximum_length: 64
+            maximum_length: 128
       # TODO: Uncomment when we migrate metadata
       # sample_type:
       #   range: string
@@ -541,7 +541,7 @@ classes:
       # - CG from mNGS: SequencingRead.taxon = null BUT ConsensusGenome.taxon = taxonId chosen from UI
       taxon:
         range: Taxon
-        required: true
+        required: false
         inverse: Taxon.consensus_genomes
         annotations:
           mutable: false

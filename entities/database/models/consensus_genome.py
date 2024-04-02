@@ -36,7 +36,7 @@ class ConsensusGenome(Entity):
     taxon_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("taxon.entity_id"),
-        nullable=False,
+        nullable=True,
         index=True,
     )
     taxon: Mapped["Taxon"] = relationship(

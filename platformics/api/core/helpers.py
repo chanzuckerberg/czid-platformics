@@ -171,7 +171,7 @@ def convert_where_clauses_to_sql(
                 else:
                     query = query.filter(getattr(getattr(sa_model, col), sa_comparator["comparator"])(value, sa_comparator["flag"]))
             else:
-                query = query.filter(getattr(getattr(sa_model, col), sa_comparator)(value))
+                query = query.filter(getattr(getattr(sa_model, col), sa_comparator)(value)) # type: ignore
 
     return query, local_order_by, local_group_by
 
