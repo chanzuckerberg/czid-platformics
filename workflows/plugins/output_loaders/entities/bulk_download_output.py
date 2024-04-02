@@ -28,7 +28,10 @@ class BulkDownloadOutputLoader(OutputLoader):
         file_path = workflow_outputs["file"]
         assert isinstance(file_path, str)
 
-        file_format = file_path.split(".")[-1]
+        file_format = file_path.split(".")[-1] 
+        # if file_path ends with .txt, change file_format to fasta
+        file_format = "fasta" if file_format == "txt" else file_format 
+
         bulk_download = op.create_bulk_download(
             input=BulkDownloadCreateInput(
                 producing_run_id=ID(workflow_run.id),
