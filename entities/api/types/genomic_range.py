@@ -425,7 +425,7 @@ async def create_genomic_range(
         del params["producing_run_id"]
         del params["deleted_at"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": validated.collection_id, "owner_user_id": principal.id}
+    attr = {"collection_id": validated.collection_id, "owner_user_id": int(principal.id)}
     resource = Resource(id="NEW_ID", kind=db.GenomicRange.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
