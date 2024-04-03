@@ -80,12 +80,21 @@ def generate_entity_subclass_files(
     template = environment.get_template(f"{template_filename}.j2")
 
     for entity in view.entities:
-        content = template.render(
-            cls=entity,
-            render_files=render_files,
-            view=view,
-        )
         dest_filename = str(template_filename).replace("class_name", entity.snake_name)
+
+        if f"{dest_filename}.j2" in environment.list_templates():
+            override_template = environment.get_template(f"{dest_filename}.j2")
+            content = override_template.render(
+                cls=entity,
+                render_files=render_files,
+                view=view,
+            )
+        else:
+            content = template.render(
+                cls=entity,
+                render_files=render_files,
+                view=view,
+            )
         with open(os.path.join(output_prefix, dest_filename), mode="w", encoding="utf-8") as outfile:
             outfile.write(content)
             print(f"... wrote {dest_filename}")

@@ -41,7 +41,7 @@ class Entity(Base):
     # Attributes for each entity
     producing_run_id: Mapped[uuid.UUID] = mapped_column(UUID, nullable=True)
     owner_user_id: Mapped[int] = mapped_column(Integer, nullable=False)
-    collection_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    collection_id: Mapped[int] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
