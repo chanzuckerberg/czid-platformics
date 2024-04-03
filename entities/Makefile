@@ -90,6 +90,7 @@ codegen-test-schema:  ## Run codegen on the test schema
 	cp -r cerbos/policies/derived_roles_common.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
 	cp -r cerbos/policies/entity.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
 	cp -r cerbos/policies/file.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
+	cp -r cerbos/policies/bulk_download.yaml $(DIR_LINT_CODEGEN_TEST)cerbos/policies/
 
 DIR_LINT_CODEGEN = database/models/ api/types/ api/validators/ api/{queries,mutations}.py test_infra/factories/ api/validators
 DIR_LINT_GRAPHQL = cli/gql_schema.py

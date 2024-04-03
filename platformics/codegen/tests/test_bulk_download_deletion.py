@@ -26,9 +26,9 @@ async def test_delete_old_bulk_downloads(
         one_week_ago = current_time - datetime.timedelta(days=7)
         one_month_ago = current_time - datetime.timedelta(days=30)
 
-        current_bulk_downloads = BulkDownloadFactory.create_batch(3, owner_user_id=user_id, collection_id=project_id)
-        one_week_old_bulk_downloads = BulkDownloadFactory.create_batch(2, owner_user_id=user_id, collection_id=project_id, created_at=one_week_ago)
-        one_month_old_bulk_downloads = BulkDownloadFactory.create_batch(5, owner_user_id=user_id, collection_id=project_id, created_at=one_month_ago)
+        current_bulk_downloads = BulkDownloadFactory.create_batch(3, owner_user_id=user_id, collection_id=None)
+        one_week_old_bulk_downloads = BulkDownloadFactory.create_batch(2, owner_user_id=user_id, collection_id=None, created_at=one_week_ago)
+        one_month_old_bulk_downloads = BulkDownloadFactory.create_batch(5, owner_user_id=user_id, collection_id=None, created_at=one_month_ago)
         all_old_bulk_downloads = one_week_old_bulk_downloads + one_month_old_bulk_downloads
         FileFactory.update_file_ids()
 
