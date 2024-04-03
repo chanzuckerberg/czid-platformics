@@ -1,5 +1,8 @@
 """
-Test deletion of bulkDownloads > 7 days old
+Test collection_id policy for entities and bulk downloads
+1. Test that users cannot create normal entities without a collection_id, or update them to have a null collection_id.
+2. Test that users cannot create bulk downloads WITH a collection_id.
+3. Test that only owners can view their own bulk downloads
 """
 
 import pytest
