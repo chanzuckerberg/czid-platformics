@@ -40,4 +40,4 @@ derivedRoles:
       condition:
         match:
           - expr: request.resource.attr.owner_user_id == request.principal.attr.user_id
-          - expr: request.resource.attr.collection_id == none
+          - expr: request.resource.attr.collection_id is null
