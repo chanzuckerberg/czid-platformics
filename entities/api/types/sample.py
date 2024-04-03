@@ -236,7 +236,7 @@ class Sample(EntityInterface):
     id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int
-    collection_id: int
+    collection_id: Optional[int] = None
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
     deleted_at: Optional[datetime.datetime] = None
@@ -349,7 +349,7 @@ class SampleCreateInput:
     name: str
     host_organism_id: Optional[strawberry.ID] = None
     producing_run_id: Optional[strawberry.ID] = None
-    collection_id: int
+    collection_id: Optional[int] = None
     deleted_at: Optional[datetime.datetime] = None
 
 
@@ -477,7 +477,7 @@ async def create_sample(
         del params["producing_run_id"]
         del params["deleted_at"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": validated.collection_id}
+    attr = {"collection_id": validated.collection_id, "owner_user_id": principal.id}
     resource = Resource(id="NEW_ID", kind=db.Sample.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
