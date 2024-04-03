@@ -63,7 +63,7 @@ async def test_null_collection_id_for_bulk_downloads(
     gql_client: GQLTestClient,
 ) -> None:
     """
-    Test that users cannot create bulk downloads WITH a collection_id, or update them to have a collection_id.
+    Test that users cannot create bulk downloads WITH a collection_id.
     """
     owner_user_id = 333
     collection_id = 444
