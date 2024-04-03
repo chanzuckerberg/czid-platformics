@@ -381,7 +381,7 @@ async def create_bulk_download(
         del params["producing_run_id"]
         del params["deleted_at"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": validated.collection_id, "owner_user_id": principal.id}
+    attr = {"collection_id": validated.collection_id, "owner_user_id": principal.attr["user_id"]}
     resource = Resource(id="NEW_ID", kind=db.BulkDownload.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
