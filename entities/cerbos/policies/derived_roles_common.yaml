@@ -42,4 +42,4 @@ derivedRoles:
           all: 
             of: 
               - expr: request.resource.attr.owner_user_id == request.principal.attr.user_id
-              - expr: type(request.resource.attr.collection_id) == type(null)
+              - expr: request.resource.attr.collection_id == null
