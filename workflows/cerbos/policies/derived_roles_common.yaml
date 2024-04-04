@@ -32,3 +32,12 @@ derivedRoles:
           any:
             of:
               - expr: request.resource.attr.collection_id in request.principal.attr.viewer_projects
+            
+    - name: bulk_download_owner
+      parentRoles: ["user"]
+      condition:
+        match:
+          all: 
+            of: 
+              - expr: request.resource.attr.owner_user_id == request.principal.attr.user_id
+              - expr: request.resource.attr.collection_id == null
