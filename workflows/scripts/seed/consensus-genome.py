@@ -23,7 +23,7 @@ def main() -> str:
     session.add(cg_workflow)
     session.commit()
 
-    workflow_uri = session.transfer_wdl("run.wdl", "consensus-genome", "3.5.0")
+    workflow_uri = session.transfer_wdl("run.wdl", "consensus-genome", version)
     cg_workflow_version = session.create_or_fetch_entity(WorkflowVersion, version=version, workflow=cg_workflow)
     cg_workflow_version.workflow_uri = workflow_uri
     with TempCZIDWorkflowFile("manifest.yml", "consensus-genome", branch="main") as manifest_file:
