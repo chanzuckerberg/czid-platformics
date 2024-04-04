@@ -69,7 +69,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         reference_genome_id: ID | None = None
         if reference_genome_input:
             assert isinstance(reference_genome_input, EntityInput)
-            reference_genome_id = ID(reference_genome_input.entity_id)
+            reference_genome_id = ID(reference_genome_input.entity_id)  # type: ignore
 
         consensus_genome = op.create_consensus_genome(
             input=ConsensusGenomeCreateInput(
