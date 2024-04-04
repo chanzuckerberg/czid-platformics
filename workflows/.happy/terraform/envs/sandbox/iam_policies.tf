@@ -39,7 +39,8 @@ data "aws_iam_policy_document" "workflows" {
       "states:StartExecution"
     ]
     resources = [
-      "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-sandbox-default-wdl"
+      "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-sandbox-default-wdl",
+      "arn:aws:states:us-west-2:${var.aws_account_id}:execution:idseq-swipe-sandbox-default-wdl:*"
     ]
   }
   statement {
