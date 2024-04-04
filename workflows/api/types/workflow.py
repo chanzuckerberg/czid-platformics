@@ -170,7 +170,7 @@ class Workflow(EntityInterface):
     ] = load_workflow_version_aggregate_rows  # type:ignore
     id: strawberry.ID
     owner_user_id: int
-    collection_id: int
+    collection_id: Optional[int] = None
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
     deleted_at: Optional[datetime.datetime] = None
@@ -280,7 +280,7 @@ class WorkflowCreateInput:
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
-    collection_id: int
+    collection_id: Optional[int] = None
     deleted_at: Optional[datetime.datetime] = None
 
 
@@ -408,7 +408,7 @@ async def create_workflow(
     if not is_system_user:
         raise PlatformicsException("Unauthorized: Workflow is not creatable")
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": validated.collection_id}
+    attr = {"collection_id": validated.collection_id, "owner_user_id": int(principal.id)}
     resource = Resource(id="NEW_ID", kind=db.Workflow.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")

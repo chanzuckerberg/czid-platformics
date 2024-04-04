@@ -152,7 +152,7 @@ class WorkflowRunEntityInput(EntityInterface):
     ] = load_workflow_run_rows  # type:ignore
     id: strawberry.ID
     owner_user_id: int
-    collection_id: int
+    collection_id: Optional[int] = None
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
     deleted_at: Optional[datetime.datetime] = None
@@ -264,7 +264,7 @@ class WorkflowRunEntityInputCreateInput:
     field_name: Optional[str] = None
     entity_type: Optional[str] = None
     workflow_run_id: Optional[strawberry.ID] = None
-    collection_id: int
+    collection_id: Optional[int] = None
     deleted_at: Optional[datetime.datetime] = None
 
 
@@ -386,7 +386,7 @@ async def create_workflow_run_entity_input(
     if not is_system_user:
         del params["deleted_at"]
     # Validate that the user can create entities in this collection
-    attr = {"collection_id": validated.collection_id}
+    attr = {"collection_id": validated.collection_id, "owner_user_id": int(principal.id)}
     resource = Resource(id="NEW_ID", kind=db.WorkflowRunEntityInput.__tablename__, attr=attr)
     if not cerbos_client.is_allowed("create", principal, resource):
         raise PlatformicsException("Unauthorized: Cannot create entity in this collection")
