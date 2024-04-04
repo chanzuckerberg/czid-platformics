@@ -99,7 +99,7 @@ classes:
       collection_id:
         range: integer
         minimum_value: 0
-        required: true
+        required: false
         annotations:
           mutable: false
       created_at:

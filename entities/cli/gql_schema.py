@@ -406,7 +406,7 @@ class AccessionCreateInput(sgqlc.types.Input):
     accession_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="accessionName")
     upstream_database_id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name="upstreamDatabaseId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -496,7 +496,7 @@ class BulkDownloadCreateInput(sgqlc.types.Input):
     __field_names__ = ("download_type", "producing_run_id", "collection_id", "deleted_at")
     download_type = sgqlc.types.Field(sgqlc.types.non_null(BulkDownloadType), graphql_name="downloadType")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -586,7 +586,7 @@ class ConsensusGenomeCreateInput(sgqlc.types.Input):
     reference_genome_id = sgqlc.types.Field(ID, graphql_name="referenceGenomeId")
     accession_id = sgqlc.types.Field(ID, graphql_name="accessionId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -763,7 +763,7 @@ class GenomicRangeCreateInput(sgqlc.types.Input):
     __schema__ = gql_schema
     __field_names__ = ("producing_run_id", "collection_id", "deleted_at")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -853,7 +853,7 @@ class HostOrganismCreateInput(sgqlc.types.Input):
     category = sgqlc.types.Field(sgqlc.types.non_null(HostOrganismCategory), graphql_name="category")
     is_deuterostome = sgqlc.types.Field(sgqlc.types.non_null(Boolean), graphql_name="isDeuterostome")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -955,7 +955,7 @@ class IndexFileCreateInput(sgqlc.types.Input):
     upstream_database_id = sgqlc.types.Field(ID, graphql_name="upstreamDatabaseId")
     host_organism_id = sgqlc.types.Field(ID, graphql_name="hostOrganismId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1071,7 +1071,7 @@ class MetadatumCreateInput(sgqlc.types.Input):
     field_name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="fieldName")
     value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="value")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1183,7 +1183,7 @@ class MetricConsensusGenomeCreateInput(sgqlc.types.Input):
         graphql_name="coverageViz",
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1306,7 +1306,7 @@ class ReferenceGenomeCreateInput(sgqlc.types.Input):
     __field_names__ = ("name", "producing_run_id", "collection_id", "deleted_at")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1376,7 +1376,7 @@ class SampleCreateInput(sgqlc.types.Input):
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     host_organism_id = sgqlc.types.Field(ID, graphql_name="hostOrganismId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1485,7 +1485,7 @@ class SequencingReadCreateInput(sgqlc.types.Input):
     taxon_id = sgqlc.types.Field(ID, graphql_name="taxonId")
     primer_file_id = sgqlc.types.Field(ID, graphql_name="primerFileId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1672,7 +1672,7 @@ class TaxonCreateInput(sgqlc.types.Input):
     tax_kingdom_id = sgqlc.types.Field(ID, graphql_name="taxKingdomId")
     tax_superkingdom_id = sgqlc.types.Field(ID, graphql_name="taxSuperkingdomId")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -1863,7 +1863,7 @@ class UpstreamDatabaseCreateInput(sgqlc.types.Input):
     __field_names__ = ("name", "producing_run_id", "collection_id", "deleted_at")
     name = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="name")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
 
 
@@ -4438,7 +4438,7 @@ class Accession(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4468,7 +4468,7 @@ class BulkDownload(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4594,7 +4594,7 @@ class ConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4652,7 +4652,7 @@ class GenomicRange(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4740,7 +4740,7 @@ class HostOrganism(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4808,7 +4808,7 @@ class IndexFile(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4850,7 +4850,7 @@ class Metadatum(sgqlc.types.Type, EntityInterface, Node):
     value = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name="value")
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4921,7 +4921,7 @@ class MetricConsensusGenome(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -4981,7 +4981,7 @@ class ReferenceGenome(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -5083,7 +5083,7 @@ class Sample(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -5211,7 +5211,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -5325,7 +5325,7 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -5435,7 +5435,7 @@ class UpstreamDatabase(sgqlc.types.Type, EntityInterface, Node):
     )
     producing_run_id = sgqlc.types.Field(ID, graphql_name="producingRunId")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
-    collection_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="collectionId")
+    collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")
     updated_at = sgqlc.types.Field(DateTime, graphql_name="updatedAt")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
