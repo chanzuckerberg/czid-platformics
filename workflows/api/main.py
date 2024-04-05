@@ -133,6 +133,9 @@ async def _create_workflow_run(
     if (input.collection_id is None) and (workflow.name != "bulk-download"):
         raise PlatformicsException("Collection ID is required for this workflow")
 
+    if (input.collection_id) and (workflow.name == "bulk-download"):
+        raise PlatformicsException("Bulk downloads cannot be created in a collection")
+
     entity_inputs_list = [
         (ei.name, EntityInput(entity_type=ei.entity_type, entity_id=ei.entity_id)) for ei in input.entity_inputs or []
     ]
@@ -215,6 +218,9 @@ async def _run_workflow_run(
     workflow = await session.get_one(db.Workflow, workflow_version.workflow_id)
     if (workflow_run.collection_id is None) and (workflow.name != "bulk-download"):
         raise PlatformicsException("Collection ID is required for this workflow")
+
+    if (workflow_run.collection_id) and (workflow.name == "bulk-download"):
+        raise PlatformicsException("Bulk downloads cannot be run on a collection")
 
     manifest = Manifest.from_yaml(str(workflow_version.manifest))
     workflow_entity_inputs = (
