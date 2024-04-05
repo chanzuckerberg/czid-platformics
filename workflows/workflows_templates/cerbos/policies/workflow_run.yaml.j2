@@ -26,7 +26,7 @@ resourcePolicy:
     - actions: ['create', 'update', 'view', 'delete', 'download']
       effect: EFFECT_ALLOW
       derivedRoles:
-        - bulk_download_owner
+        - single_user_owner
         
   schemas:
     principalSchema:
