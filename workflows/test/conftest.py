@@ -62,8 +62,10 @@ class GQLTestClient:
         result = await self.http_client.post("/graphql", json={"query": query}, headers=gql_headers)
         return result.json()
 
+
 async def patched_s3_client() -> typing.AsyncGenerator[S3Client, None]:
     yield boto3.client("s3")
+
 
 @pytest_asyncio.fixture()
 async def gql_client(http_client: AsyncClient) -> GQLTestClient:
