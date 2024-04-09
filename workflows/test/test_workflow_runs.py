@@ -79,3 +79,24 @@ async def test_null_workflow_run_fail(
     )
 
     assert error in output["errors"][0]["message"]
+
+
+@pytest.mark.asyncio
+async def test_null_collection_id_workflow_entity_input(
+    sync_db: SyncDB,
+    gql_client: GQLTestClient,
+) -> None:
+    owner_user_id = 333
+    collection_id = 444
+
+    request = """
+        mutation MyMutation2 {
+            createWorkflowRunEntityInput(
+                input: {fieldName: "a_field_name", entityType: "an_entity_type"}
+            ) {
+                id
+            }
+        }
+    """
+    output = await gql_client.query(request, user_id=owner_user_id, member_projects=[collection_id])
+    assert "Unauthorized: Cannot create entity in this collection" == output["errors"][0]["message"].strip()
