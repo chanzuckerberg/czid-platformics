@@ -69,8 +69,6 @@ def convert_where_clauses_to_sql(
         raise PlatformicsException("Max filter depth exceeded")
     depth += 1
 
-    if not whereClause and not order_by and not group_by:
-        return query, [], []
     if not order_by:
         order_by = []
     if not whereClause:
@@ -100,6 +98,11 @@ def convert_where_clauses_to_sql(
             all_joins[col]["where"] = v
         else:
             local_where_clauses[col] = v
+    # Unless deleted_at is explicitly set in the where clause, we should only return rows where deleted_at is null.
+    # This is to ensure that we don't return soft-deleted rows.
+    # Don't do this for files, since they don't have a deleted_at field.
+    if "deleted_at" not in local_where_clauses.keys() and sa_model.__name__ != "File":
+        local_where_clauses["deleted_at"] = {'_is_null': True}
     for group in group_by:  # type: ignore
         col = strcase.to_snake(group.name)
         if col in mapper.relationships:  # type: ignore
