@@ -245,3 +245,55 @@ async def test_where_clause_regex_match(sync_db: SyncDB, gql_client: GQLTestClie
     assert len(no_match_ignore_case_query_output["data"]["samples"]) == 2
     output_sample_names = [sample["name"] for sample in no_match_ignore_case_query_output["data"]["samples"]]
     assert sorted(output_sample_names) == sorted(no_matches)
+
+@pytest.mark.asyncio
+async def test_soft_deleted_objects(sync_db: SyncDB, gql_client: GQLTestClient) -> None:
+    """
+    Verify that the where clause works as expected with soft-deleted objects.
+    By default, soft-deleted objects should not be returned.
+    """
+    sequencing_reads = generate_sequencing_reads(sync_db)
+    # Soft delete the first 3 sequencing reads by updating the deleted_at field
+    deleted_ids = [str(sequencing_reads[0].id), str(sequencing_reads[1].id), str(sequencing_reads[2].id)]
+    query = f"""
+        mutation DeleteSequencingReads {{
+            updateSequencingRead (
+                where: {{
+                    id: {{ _in: [ "{deleted_ids[0]}", "{deleted_ids[1]}", "{deleted_ids[2]}" ] }},
+                }},
+                input: {{
+                    deletedAt: "2021-01-01T00:00:00Z",
+                }}
+            ) {{
+                id
+            }}
+        }}
+    """
+    output = await gql_client.query(query, member_projects=[project_id])
+    assert len(output["data"]["updateSequencingRead"]) == 3
+
+    # Check that the soft-deleted sequencing reads are not returned
+    query = """
+        query GetSequencingReads {
+            sequencingReads {
+                id
+            }
+        }
+    """
+    output = await gql_client.query(query, member_projects=[project_id])
+    assert len(output["data"]["sequencingReads"]) == 2
+    for sequencing_read in output["data"]["sequencingReads"]:
+        assert sequencing_read["id"] not in deleted_ids
+
+    # Check that the soft-deleted sequencing reads are returned when explicitly requested
+    query = """
+        query GetSequencingReads {
+            sequencingReads ( where: { deletedAt: { _is_null: false } }) {
+                id
+            }
+        }
+    """
+    output = await gql_client.query(query, member_projects=[project_id])
+    assert len(output["data"]["sequencingReads"]) == 3
+    for sequencing_read in output["data"]["sequencingReads"]:
+        assert sequencing_read["id"] in deleted_ids

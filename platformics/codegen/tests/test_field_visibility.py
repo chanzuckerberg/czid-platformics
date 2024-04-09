@@ -74,12 +74,6 @@ async def test_hidden_mutations(
     output = await gql_client.query(query, user_id=user_id, member_projects=[project_id])
     mutations = [field["name"] for field in output["data"]["__schema"]["mutationType"]["fields"]]
 
-    # There are no mutable fields on GenomicRange (some are readonly, and others are mutable: false), so we shouldn't have a mutation for it.
-    assert "updateGenomicRange" not in mutations
-
-    # However we *can* create a genomic range.
-    assert "createGenomicRange" in mutations
-
     # ImmutableType has `mutable: false` set on the entire table so it shouldn't have a mutation
     assert "updateImmutableType" not in mutations
 
@@ -136,7 +130,7 @@ async def test_update_fields(
     ]
     fields = [field["name"] for field in create_type["inputFields"]]
     # We have a limited subset of mutable fields on SequencingRead
-    assert set(fields) == set(["nucleicAcid", "clearlabsExport", "technology", "sampleId"])
+    assert set(fields) == set(["nucleicAcid", "clearlabsExport", "technology", "sampleId", "deletedAt"])
 
 
 # Make sure we only allow certain fields to be set at entity creation time.
@@ -187,4 +181,4 @@ async def test_creation_fields(
     fields = [field["name"] for field in create_type["inputFields"]]
     # Producing run id and collection id are always settable on a new entity.
     # producingRunId is only settable by a system user, and collectionId is settable by users.
-    assert set(fields) == set(["producingRunId", "collectionId"])
+    assert set(fields) == set(["producingRunId", "collectionId", "deletedAt"])
