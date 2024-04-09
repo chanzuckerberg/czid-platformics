@@ -119,7 +119,7 @@ type Query {
 }
 
 input RunWorkflowVersionInput {
-  collectionId: Int
+  collectionId: Int = null
   workflowVersionId: ID!
   entityInputs: [EntityInputType!]
   rawInputJson: String

@@ -7047,7 +7047,7 @@
           "fields": null,
           "inputFields": [
             {
-              "defaultValue": null,
+              "defaultValue": "null",
               "name": "collectionId",
               "type": {
                 "kind": "SCALAR",

@@ -12,6 +12,7 @@ resourcePolicy:
       effect: EFFECT_ALLOW
       derivedRoles:
         - project_viewer
+        - single_user_owner
 
     - actions: ['download', 'delete']
       effect: EFFECT_ALLOW
@@ -24,7 +25,7 @@ resourcePolicy:
       derivedRoles:
         - project_member
         - single_user_owner
-    
+        
   schemas:
     principalSchema:
       ref: cerbos:///principal.json
