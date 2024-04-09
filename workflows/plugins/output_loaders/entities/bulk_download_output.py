@@ -35,7 +35,7 @@ class BulkDownloadOutputLoader(OutputLoader):
         bulk_download = op.create_bulk_download(
             input=BulkDownloadCreateInput(
                 producing_run_id=ID(workflow_run.id),
-                collection_id=int(workflow_run.collection_id),
+                collection_id=int(workflow_run.collection_id) if workflow_run.collection_id else None,
                 download_type=BulkDownloadType(download_type),
             )
         )

@@ -119,7 +119,7 @@ type Query {
 }
 
 input RunWorkflowVersionInput {
-  collectionId: Int!
+  collectionId: Int = null
   workflowVersionId: ID!
   entityInputs: [EntityInputType!]
   rawInputJson: String
@@ -185,7 +185,7 @@ type Workflow implements EntityInterface & Node {
   ): WorkflowVersionConnection!
   versionsAggregate(where: WorkflowVersionWhereClause = null): WorkflowVersionAggregate
   ownerUserId: Int!
-  collectionId: Int!
+  collectionId: Int
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -223,7 +223,7 @@ input WorkflowCreateInput {
   name: String = null
   defaultVersion: String = null
   minimumSupportedVersion: String = null
-  collectionId: Int!
+  collectionId: Int = null
   deletedAt: DateTime = null
 }
 
@@ -316,7 +316,7 @@ type WorkflowRun implements EntityInterface & Node {
   entityInputsAggregate(where: WorkflowRunEntityInputWhereClause = null): WorkflowRunEntityInputAggregate
   rawInputsJson: String
   ownerUserId: Int!
-  collectionId: Int!
+  collectionId: Int
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -386,7 +386,7 @@ type WorkflowRunEntityInput implements EntityInterface & Node {
   entityType: String
   workflowRun(where: WorkflowRunWhereClause = null, orderBy: [WorkflowRunOrderByClause!] = []): WorkflowRun
   ownerUserId: Int!
-  collectionId: Int!
+  collectionId: Int
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -434,7 +434,7 @@ input WorkflowRunEntityInputCreateInput {
   fieldName: String = null
   entityType: String = null
   workflowRunId: ID = null
-  collectionId: Int!
+  collectionId: Int = null
   deletedAt: DateTime = null
 }
 
@@ -600,7 +600,7 @@ type WorkflowRunStep implements EntityInterface & Node {
   endedAt: DateTime
   status: WorkflowRunStepStatus
   ownerUserId: Int!
-  collectionId: Int!
+  collectionId: Int
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -647,7 +647,7 @@ input WorkflowRunStepCreateInput {
   workflowRunId: ID = null
   endedAt: DateTime = null
   status: WorkflowRunStepStatus = null
-  collectionId: Int!
+  collectionId: Int = null
   deletedAt: DateTime = null
 }
 
@@ -814,7 +814,7 @@ type WorkflowVersion implements EntityInterface & Node {
   ): WorkflowRunConnection!
   runsAggregate(where: WorkflowRunWhereClause = null): WorkflowRunAggregate
   ownerUserId: Int!
-  collectionId: Int!
+  collectionId: Int
   createdAt: DateTime!
   updatedAt: DateTime
   deletedAt: DateTime
@@ -867,7 +867,7 @@ input WorkflowVersionCreateInput {
   manifest: String = null
   workflowId: ID = null
   deprecated: Boolean = null
-  collectionId: Int!
+  collectionId: Int = null
   deletedAt: DateTime = null
 }
 
