@@ -4,7 +4,7 @@ Test "where" clause capabilities on GQL queries
 
 import pytest
 from platformics.database.connect import SyncDB
-from platformics.codegen.conftest import GQLTestClient, SessionStorage
+from platformics.codegen.conftest import GQLTestClient, SessionStorage, FileFactory
 from platformics.codegen.tests.output.test_infra.factories.sample import SampleFactory
 from platformics.codegen.tests.output.test_infra.factories.sequencing_read import SequencingReadFactory
 from support.enums import SequencingTechnology
@@ -253,10 +253,11 @@ async def test_soft_deleted_objects(sync_db: SyncDB, gql_client: GQLTestClient) 
     By default, soft-deleted objects should not be returned.
     """
     sequencing_reads = generate_sequencing_reads(sync_db)
+    FileFactory.update_file_ids()
     # Soft delete the first 3 sequencing reads by updating the deleted_at field
     deleted_ids = [str(sequencing_reads[0].id), str(sequencing_reads[1].id), str(sequencing_reads[2].id)]
-    query = f"""
-        mutation DeleteSequencingReads {{
+    soft_delete_mutation = f"""
+        mutation SoftDeleteSequencingReads {{
             updateSequencingRead (
                 where: {{
                     id: {{ _in: [ "{deleted_ids[0]}", "{deleted_ids[1]}", "{deleted_ids[2]}" ] }},
@@ -269,31 +270,51 @@ async def test_soft_deleted_objects(sync_db: SyncDB, gql_client: GQLTestClient) 
             }}
         }}
     """
-    output = await gql_client.query(query, member_projects=[project_id])
+    output = await gql_client.query(soft_delete_mutation, member_projects=[project_id])
     assert len(output["data"]["updateSequencingRead"]) == 3
 
     # Check that the soft-deleted sequencing reads are not returned
-    query = """
+    regular_query = """
         query GetSequencingReads {
             sequencingReads {
                 id
             }
         }
     """
-    output = await gql_client.query(query, member_projects=[project_id])
+    output = await gql_client.query(regular_query, member_projects=[project_id])
     assert len(output["data"]["sequencingReads"]) == 2
     for sequencing_read in output["data"]["sequencingReads"]:
         assert sequencing_read["id"] not in deleted_ids
 
     # Check that the soft-deleted sequencing reads are returned when explicitly requested
-    query = """
+    soft_deleted_query = """
         query GetSequencingReads {
             sequencingReads ( where: { deletedAt: { _is_null: false } }) {
                 id
             }
         }
     """
-    output = await gql_client.query(query, member_projects=[project_id])
+    output = await gql_client.query(soft_deleted_query, member_projects=[project_id])
     assert len(output["data"]["sequencingReads"]) == 3
     for sequencing_read in output["data"]["sequencingReads"]:
         assert sequencing_read["id"] in deleted_ids
+
+    # Check that we can hard-delete the soft-deleted objects
+    hard_delete_mutation = f"""
+        mutation DeleteSequencingReads {{
+            deleteSequencingRead (
+                where: {{
+                    id: {{ _in: [ "{deleted_ids[0]}", "{deleted_ids[1]}", "{deleted_ids[2]}" ] }},
+                }}
+            ) {{
+                id
+            }}
+        }}
+    """
+
+    output = await gql_client.query(hard_delete_mutation, user_id=user_id, member_projects=[project_id])
+    assert len(output["data"]["deleteSequencingRead"]) == 3
+
+    # Check that the hard-deleted sequencing reads are not returned
+    output = await gql_client.query(soft_deleted_query, member_projects=[project_id])
+    assert len(output["data"]["sequencingReads"]) == 0
