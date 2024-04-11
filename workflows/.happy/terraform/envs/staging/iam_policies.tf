@@ -40,7 +40,8 @@ data "aws_iam_policy_document" "workflows" {
     ]
     resources = [
       "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-staging-default-wdl",
-      "arn:aws:states:us-west-2:${var.aws_account_id}:execution:idseq-swipe-staging-default-wdl:*"
+      "arn:aws:states:us-west-2:${var.aws_account_id}:execution:idseq-swipe-staging-default-wdl:*",
+      "arn:aws:states:us-west-2:${var.aws_account_id}:execution:idseq-swipe-staging-short-read-mngs-wdl:*"
     ]
   }
   statement {

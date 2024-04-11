@@ -52,9 +52,9 @@ class EventBusSWIPE(EventBus):
     def _fetch_error(self, execution_arn: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
         try:
             desc = self._sfn.describe_execution(executionArn=execution_arn)
-        except self._sfn.exceptions.AccessDeniedException as e:
-            self._logger.warning(f"Access denied to describe execution {execution_arn}: ", exc_info=e)
-            return None, None, None
+        except Exception as e:
+            self._logger.warning(f"Could not describe execution {execution_arn}: ", exc_info=e)
+            return "UnknownError", "Could not retrieve SFN error", None
         error = desc.get("error", None)
         cause = desc.get("cause", None)
         error_message = stack_trace = None
