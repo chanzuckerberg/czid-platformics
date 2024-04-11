@@ -109,7 +109,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
                 reference_genome_length=int(quast_data["Reference length"]),
                 percent_genome_called=round((stats["n_actg"] / float(quast_data["Reference length"]) * 100), 1),
                 percent_identity=round((p_identity * 100), 1),
-                gc_percent=round(float(quast_data["GC (%)"]), 1),
+                gc_percent=round(float(quast_data.get("GC (%)", 0)), 1),
                 total_reads=stats["total_reads"],
                 mapped_reads=stats["mapped_reads"],
                 ref_snps=stats["ref_snps"],
