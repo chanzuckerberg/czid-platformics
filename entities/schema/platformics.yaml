@@ -75,7 +75,7 @@ enums:
         description: Targeted sequencing (see https://www.illumina.com/products/by-brand/ampliseq.html)
       artic:
         description: SARS-CoV-2 protocol (see https://artic.network/resources/ncov/ncov-amplicon-v3.pdf)
-      artic_v3:
+      artic_short_amplicons:
         description: SARS-CoV-2 protocol version 3 with short amplicons (275 bp) from Biohub
       artic_v4:
         description: SARS-CoV-2 protocol version 4 (see https://raw.githubusercontent.com/artic-network/artic-ncov2019/master/primer_schemes/nCoV-2019/V4/SARS-CoV-2.primer.bed)
