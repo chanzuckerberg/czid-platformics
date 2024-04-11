@@ -16,6 +16,7 @@ module "stack" {
       }
       name                  = "workflows"
       health_check_path     = "/graphql"
+      period_seconds        = 10
       platform_architecture = "arm64"
       port                  = 8042
       cpu                   = "2"
