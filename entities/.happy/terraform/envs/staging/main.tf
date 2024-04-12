@@ -16,6 +16,7 @@ module "stack" {
       }
       cpu               = "2"
       health_check_path = "/graphql"
+      period_seconds    = 10
       init_containers = {
         init = {
           cmd   = ["cp", "-r", "/czid-platformics/entities/cerbos/", "/var/policies/"]

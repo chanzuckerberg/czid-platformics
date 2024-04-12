@@ -50,7 +50,11 @@ class EventBusSWIPE(EventBus):
         )
 
     def _fetch_error(self, execution_arn: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
-        desc = self._sfn.describe_execution(executionArn=execution_arn)
+        try:
+            desc = self._sfn.describe_execution(executionArn=execution_arn)
+        except Exception as e:
+            self._logger.warning(f"Could not describe execution {execution_arn}: ", exc_info=e)
+            return "UnknownError", "Could not retrieve SFN error", None
         error = desc.get("error", None)
         cause = desc.get("cause", None)
         error_message = stack_trace = None
@@ -67,7 +71,7 @@ class EventBusSWIPE(EventBus):
         # TODO: handle aws.batch for step statuses
         if not message.get("source") == "aws.states":
             return None
-        status = self._create_workflow_status(message["status"])
+        status = self._create_workflow_status(message["detail"]["status"])
         execution_arn = message["detail"]["executionArn"]
         if status == "WORKFLOW_SUCCESS":
             return WorkflowSucceededMessage(

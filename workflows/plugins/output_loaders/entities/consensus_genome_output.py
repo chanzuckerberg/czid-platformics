@@ -69,7 +69,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
         reference_genome_id: ID | None = None
         if reference_genome_input:
             assert isinstance(reference_genome_input, EntityInput)
-            reference_genome_id = ID(reference_genome_input.entity_id)
+            reference_genome_id = ID(reference_genome_input.entity_id)  # type: ignore
 
         consensus_genome = op.create_consensus_genome(
             input=ConsensusGenomeCreateInput(
@@ -99,6 +99,7 @@ class ConsensusGenomeOutputLoader(OutputLoader):
             )
             if len(row) == 2
         }
+        p_identity = 0 if stats["n_actg"] == 0 else (stats["n_actg"] - stats["ref_snps"]) / float(stats["n_actg"])
 
         metric_consensus_genome = op.create_metric_consensus_genome(
             input=MetricConsensusGenomeCreateInput(
@@ -107,8 +108,8 @@ class ConsensusGenomeOutputLoader(OutputLoader):
                 consensus_genome_id=ID(consensus_genome_id),
                 reference_genome_length=int(quast_data["Reference length"]),
                 percent_genome_called=round((stats["n_actg"] / float(quast_data["Reference length"]) * 100), 1),
-                percent_identity=round(((stats["n_actg"] - stats["ref_snps"]) / float(stats["n_actg"]) * 100), 1),
-                gc_percent=round(float(quast_data["GC (%)"]), 1),
+                percent_identity=round((p_identity * 100), 1),
+                gc_percent=round(float(quast_data.get("GC (%)", 0)), 1),
                 total_reads=stats["total_reads"],
                 mapped_reads=stats["mapped_reads"],
                 ref_snps=stats["ref_snps"],

@@ -34,7 +34,7 @@ class SequencingReadCreateInputValidator(BaseModel):
     primer_file_id: Annotated[uuid.UUID | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
-        int,
+        int | None,
         Field(
             ge=0,
         ),
