@@ -110,7 +110,7 @@ class SampleCountColumns(sgqlc.types.Enum):
 
 class SequencingProtocol(sgqlc.types.Enum):
     __schema__ = entities_schema
-    __choices__ = ('ampliseq', 'artic', 'artic_v3', 'artic_v4', 'artic_v5', 'combined_msspe_artic', 'covidseq', 'easyseq', 'midnight', 'msspe', 'snap', 'varskip')
+    __choices__ = ('ampliseq', 'artic', 'artic_short_amplicons', 'artic_v4', 'artic_v5', 'combined_msspe_artic', 'covidseq', 'easyseq', 'midnight', 'msspe', 'snap', 'varskip')
 
 
 class SequencingReadCountColumns(sgqlc.types.Enum):

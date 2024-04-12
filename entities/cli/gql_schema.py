@@ -272,7 +272,7 @@ class SequencingProtocol(sgqlc.types.Enum):
     __choices__ = (
         "ampliseq",
         "artic",
-        "artic_v3",
+        "artic_short_amplicons",
         "artic_v4",
         "artic_v5",
         "combined_msspe_artic",

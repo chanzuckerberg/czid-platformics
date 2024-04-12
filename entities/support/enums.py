@@ -40,7 +40,7 @@ class NucleicAcid(enum.Enum):
 class SequencingProtocol(enum.Enum):
     ampliseq = "ampliseq"
     artic = "artic"
-    artic_v3 = "artic_v3"
+    artic_short_amplicons = "artic_short_amplicons"
     artic_v4 = "artic_v4"
     artic_v5 = "artic_v5"
     combined_msspe_artic = "combined_msspe_artic"
