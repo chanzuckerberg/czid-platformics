@@ -4,22 +4,21 @@ on:
 
 run-name: Create development environment for user ${{ github.actor }}
 jobs:
-  run-deploy-entities-to-dev:
-    uses: ./.github/workflows/reusable-deploy.yml
-    with:
-      environment: dev
-      service: entities
-      developer_name: ${{ github.actor }}
-    secrets: inherit
+  #run-deploy-entities-to-dev:
+  #  uses: ./.github/workflows/reusable-deploy.yml
+  #  with:
+  #    environment: dev
+  #    service: entities
+  #    developer_name: ${{ github.actor }}
+  #  secrets: inherit
 
-  run-deploy-workflows-to-dev:
-    uses: ./.github/workflows/reusable-deploy.yml
-    with:
-      environment: dev
-      service: workflows
-      developer_name: ${{ github.actor }}
-    secrets: inherit
-
+  #run-deploy-workflows-to-dev:
+  #  uses: ./.github/workflows/reusable-deploy.yml
+  #  with:
+  #    environment: dev
+  #    service: workflows
+  #    developer_name: ${{ github.actor }}
+  #  secrets: inherit
   run-deploy-graphql-fed-to-dev:
     uses: chanzuckerberg/czid-graphql-federation-server/.github/workflows/reusable-deploy.yml@rlim/fix-reusable-deploy
     with:
