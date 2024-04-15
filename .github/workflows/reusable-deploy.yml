@@ -10,6 +10,10 @@ on:
         type: string
       developer_name: 
         type: string
+    outputs:
+      stack_name: 
+        description: "The stack name used for deploy"
+        value: ${{ jobs.run-deploy.outputs.stack_name }}
 
 jobs:
   run-deploy:
@@ -18,6 +22,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      stack_name: ${{ steps.stack_name.outputs.sname }}
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
