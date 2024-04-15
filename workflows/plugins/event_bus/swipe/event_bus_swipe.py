@@ -31,8 +31,8 @@ class EventBusSWIPE(EventBus):
             }
         )
         self._sfn = boto3.client("stepfunctions", endpoint_url=settings.SFN_ENDPOINT, config=sfn_config)
-        if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self._sqs.list_queues()["QueueUrls"]:
-            raise Exception("SQS_QUEUE_URL not found")
+        #if settings.SQS_QUEUE_URL and settings.SQS_QUEUE_URL not in self._sqs.list_queues()["QueueUrls"]:
+        #    raise Exception("SQS_QUEUE_URL not found")
         self._sqs_queue_url = settings.SQS_QUEUE_URL
         self._logger = logging.getLogger("EventBusSWIPE")
 
