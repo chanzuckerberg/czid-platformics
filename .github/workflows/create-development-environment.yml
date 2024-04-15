@@ -4,29 +4,29 @@ on:
 
 run-name: Create development environment for user ${{ github.actor }}
 jobs:
-  run-deploy-entities-to-dev:
-    uses: ./.github/workflows/reusable-deploy.yml
-    with:
-      environment: dev
-      service: entities
-      developer_name: ${{ github.actor }}
-    secrets: inherit
-
-  #run-deploy-workflows-to-dev:
+  #run-deploy-entities-to-dev:
   #  uses: ./.github/workflows/reusable-deploy.yml
   #  with:
   #    environment: dev
-  #    service: workflows
+  #    service: entities
   #    developer_name: ${{ github.actor }}
   #  secrets: inherit
+
+  run-deploy-workflows-to-dev:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: dev
+      service: workflows
+      developer_name: ${{ github.actor }}
+    secrets: inherit
   run-deploy-graphql-fed-to-dev:
     uses: chanzuckerberg/czid-graphql-federation-server/.github/workflows/reusable-deploy.yml@rlim/fix-reusable-deploy
-    needs: run-deploy-entities-to-dev
+    needs: run-deploy-workflows-to-dev #run-deploy-entities-to-dev
     with:
       environment: dev
       api_url: http://localhost:3000
       allowed_cors_origin: http://localhost:3000
-      nextgen_entities_url: http://${{ needs.run-deploy-entities-to-dev.outputs.stack_name }}-entities:8008
-      nextgen_workflows_url: http://${{github.actor}}-workflows:8042
+      nextgen_entities_url: http://rzlim0-entities-entities:8008 # http://${{ needs.run-deploy-entities-to-dev.outputs.stack_name }}-entities:8008
+      nextgen_workflows_url: http://${{ needs.run-deploy-workflows-to-dev.outputs.stack_name }}-workflows:8042
       stack_name: ${{ github.actor }}-fed
     secrets: inherit
