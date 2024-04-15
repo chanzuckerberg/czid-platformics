@@ -21,12 +21,12 @@ jobs:
     secrets: inherit
 
   run-deploy-graphql-fed-to-dev:
-    uses: chanzuckerberg/czid-graphql-federation-server/.github/workflows/reusable-deploy.yml@main
+    uses: chanzuckerberg/czid-graphql-federation-server/.github/workflows/reusable-deploy.yml@rlim/fix-reusable-deploy
     with:
       environment: dev
       api_url: http://localhost:3000
       allowed_cors_origin: http://localhost:3000
-      nextgen_entities_url: http://${github.actor}-entities:8008
-      nextgen_workflows_url: http://${github.actor}-workflows:8042
+      nextgen_entities_url: http://${{github.actor}}-entities:8008
+      nextgen_workflows_url: http://${{github.actor}}-workflows:8042
       stack_name: ${{ github.actor }}-fed
     secrets: inherit
