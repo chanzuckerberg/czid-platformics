@@ -10,6 +10,10 @@ on:
         type: string
       developer_name: 
         type: string
+    outputs:
+      stack_name: 
+        description: "The stack name used for deploy"
+        value: ${{ jobs.run-deploy.outputs.stack_name }}
 
 jobs:
   run-deploy:
@@ -18,6 +22,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      stack_name: ${{ steps.stack_name.outputs.sname }}
     steps: 
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,9 +33,14 @@ jobs:
       - name: Set stack name
         id: stack_name 
         run: |
+          if [ "${{ inputs.service }}" == "entities" ]; then
+            SERVICE=en 
+          elif [ "${{ inputs.service }}" == "workflows" ]; then
+            SERVICE=wf
+          fi
           if [ "${{ inputs.environment }}" = "dev" ]; then
             # we must limit stackname length due to role name limitations
-            sname=$(echo ${{ inputs.developer_name }} | cut -c1-6)-${{ inputs.service }}
+            sname=$(echo ${{ inputs.developer_name }} | cut -c1-6)-${SERVICE}
             echo "sname=$sname" >> $GITHUB_OUTPUT
           else
             echo "sname=${{ inputs.service }}" >> $GITHUB_OUTPUT
