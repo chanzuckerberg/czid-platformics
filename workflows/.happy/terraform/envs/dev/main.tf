@@ -87,6 +87,7 @@ module "stack" {
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__OUTPUT_S3_PREFIX  = "s3://idseq-samples-development/nextgen/"
     PLATFORMICS_WORKFLOW_RUNNER__SWIPE__STATE_MACHINE_ARN = "arn:aws:states:us-west-2:${var.aws_account_id}:stateMachine:idseq-swipe-development-default-wdl"
     WORKERS                                               = "2"
+    SERVICE_NAME                                          = "workflows"
   }
   create_dashboard = false
   routing_method = "CONTEXT"
