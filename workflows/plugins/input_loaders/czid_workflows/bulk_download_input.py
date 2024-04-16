@@ -28,6 +28,11 @@ class BulkDownloadInputLoader(InputLoader):
         if raw_inputs.get("bulk_download_type") in CG_BULK_DOWNLOADS:
             consensus_genome_input = entity_inputs["consensus_genomes"]
             op = Operation(Query)
+            if raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
+                # if output is consensus genome
+                # set output name to Consensus Genome.fa
+                # ignored if zip output
+                inputs["concatenated_output_name"] = "Consensus Genome.fa"
             if isinstance(consensus_genome_input, EntityInput):
                 # if single input
                 consensus_genome = op.consensus_genomes(
