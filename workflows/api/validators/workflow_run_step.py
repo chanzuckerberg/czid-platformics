@@ -24,7 +24,7 @@ class WorkflowRunStepCreateInputValidator(BaseModel):
     ended_at: Annotated[datetime.datetime | None, Field()]
     status: Annotated[WorkflowRunStepStatus | None, Field()]
     collection_id: Annotated[
-        int,
+        int | None,
         Field(
             ge=0,
         ),

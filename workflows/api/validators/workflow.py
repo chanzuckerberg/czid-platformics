@@ -36,7 +36,7 @@ class WorkflowCreateInputValidator(BaseModel):
         ),
     ]
     collection_id: Annotated[
-        int,
+        int | None,
         Field(
             ge=0,
         ),

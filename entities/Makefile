@@ -74,7 +74,7 @@ codegen-test-schema:  ## Run codegen on the test schema
 	mkdir -p $(DIR_LINT_CODEGEN_TEST)test_infra/factories
 	mkdir -p $(DIR_LINT_CODEGEN_TEST)cerbos/policies
 	# Make sure the codegen CLI has a `template-override-dir` argument so it uses our modified template for queries.py
-	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --template-override-paths platformics/codegen/tests/test_schemas/overrides --output-prefix $(DIR_LINT_CODEGEN_TEST)
+	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile platformics/codegen/tests/test_schemas/platformics.yaml --template-override-paths platformics/codegen/tests/test_schemas/overrides --template-override-paths entities_templates/ --output-prefix $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) black  $(DIR_LINT_CODEGEN_TEST)
 	$(docker_compose_run) $(FOLDER) ruff check --fix  $(DIR_LINT_CODEGEN_TEST)
 	# TODO FIXME these need to be owned by one module or the other! This is a crappy hack!!
@@ -95,7 +95,7 @@ DIR_LINT_CODEGEN = database/models/ api/types/ api/validators/ api/{queries,muta
 DIR_LINT_GRAPHQL = cli/gql_schema.py
 .PHONY: codegen
 codegen:  ## Update the GQL types used by the CLI
-	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix .
+	$(docker_compose) exec entities python3 platformics/codegen/generator.py api generate --schemafile schema/platformics.yaml --output-prefix . --template-override-paths entities_templates/
 	$(docker_compose_run) $(FOLDER) black $(DIR_LINT_CODEGEN)
 	$(docker_compose_run) $(FOLDER) ruff check --fix $(DIR_LINT_CODEGEN)
 

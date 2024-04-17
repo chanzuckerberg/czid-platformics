@@ -42,7 +42,7 @@ class MetricConsensusGenomeCreateInputValidator(BaseModel):
     coverage_viz: Annotated[list[list[float]] | None, Field()]
     producing_run_id: Annotated[uuid.UUID | None, Field()]
     collection_id: Annotated[
-        int,
+        int | None,
         Field(
             ge=0,
         ),
