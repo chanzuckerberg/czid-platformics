@@ -1,6 +1,7 @@
 """
 Populate the database with mock data for local development
 """
+
 import json
 from typing import Any
 from urllib.parse import urlparse

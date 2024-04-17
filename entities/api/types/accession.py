@@ -143,12 +143,12 @@ Supported WHERE clause attributes
 class AccessionWhereClause(TypedDict):
     accession_id: Optional[StrComparators] | None
     accession_name: Optional[StrComparators] | None
-    upstream_database: Optional[
-        Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]
-    ] | None
-    consensus_genomes: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    upstream_database: (
+        Optional[Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]] | None
+    )
+    consensus_genomes: (
+        Optional[Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    )
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -167,9 +167,9 @@ Supported ORDER BY clause attributes
 class AccessionOrderByClause(TypedDict):
     accession_id: Optional[orderBy] | None
     accession_name: Optional[orderBy] | None
-    upstream_database: Optional[
-        Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]
-    ] | None
+    upstream_database: (
+        Optional[Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]] | None
+    )
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
@@ -188,12 +188,12 @@ Define Accession type
 class Accession(EntityInterface):
     accession_id: str
     accession_name: str
-    upstream_database: Optional[
-        Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]
-    ] = load_upstream_database_rows  # type:ignore
-    consensus_genomes: Sequence[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
+    upstream_database: Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]] = (
+        load_upstream_database_rows
+    )  # type:ignore
+    consensus_genomes: Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]] = (
+        load_consensus_genome_rows
+    )  # type:ignore
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore

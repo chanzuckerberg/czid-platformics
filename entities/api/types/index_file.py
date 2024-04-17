@@ -150,9 +150,9 @@ Supported WHERE clause attributes
 class IndexFileWhereClause(TypedDict):
     name: Optional[EnumComparators[IndexTypes]] | None
     version: Optional[StrComparators] | None
-    upstream_database: Optional[
-        Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]
-    ] | None
+    upstream_database: (
+        Optional[Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]] | None
+    )
     host_organism: Optional[Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")]] | None
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
@@ -172,9 +172,9 @@ Supported ORDER BY clause attributes
 class IndexFileOrderByClause(TypedDict):
     name: Optional[orderBy] | None
     version: Optional[orderBy] | None
-    upstream_database: Optional[
-        Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]
-    ] | None
+    upstream_database: (
+        Optional[Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]] | None
+    )
     host_organism: Optional[Annotated["HostOrganismOrderByClause", strawberry.lazy("api.types.host_organism")]] | None
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
@@ -196,12 +196,12 @@ class IndexFile(EntityInterface):
     version: str
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    upstream_database: Optional[
-        Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]
-    ] = load_upstream_database_rows  # type:ignore
-    host_organism: Optional[
-        Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]
-    ] = load_host_organism_rows  # type:ignore
+    upstream_database: Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]] = (
+        load_upstream_database_rows
+    )  # type:ignore
+    host_organism: Optional[Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]] = (
+        load_host_organism_rows
+    )  # type:ignore
     id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int

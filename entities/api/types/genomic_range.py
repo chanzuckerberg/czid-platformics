@@ -147,9 +147,9 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class GenomicRangeWhereClause(TypedDict):
-    sequencing_reads: Optional[
-        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
-    ] | None
+    sequencing_reads: (
+        Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    )
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -184,9 +184,9 @@ Define GenomicRange type
 class GenomicRange(EntityInterface):
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
-    sequencing_reads: Sequence[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows  # type:ignore
+    sequencing_reads: Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = (
+        load_sequencing_read_rows
+    )  # type:ignore
     sequencing_reads_aggregate: Optional[
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore

@@ -149,9 +149,9 @@ Supported WHERE clause attributes
 @strawberry.input
 class ReferenceGenomeWhereClause(TypedDict):
     name: Optional[StrComparators] | None
-    consensus_genomes: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    consensus_genomes: (
+        Optional[Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    )
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -188,9 +188,9 @@ class ReferenceGenome(EntityInterface):
     file_id: Optional[strawberry.ID]
     file: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("file")  # type: ignore
     name: str
-    consensus_genomes: Sequence[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
+    consensus_genomes: Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]] = (
+        load_consensus_genome_rows
+    )  # type:ignore
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore

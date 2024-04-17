@@ -177,9 +177,9 @@ class SampleWhereClause(TypedDict):
     rails_sample_id: Optional[IntComparators] | None
     name: Optional[StrComparators] | None
     host_organism: Optional[Annotated["HostOrganismWhereClause", strawberry.lazy("api.types.host_organism")]] | None
-    sequencing_reads: Optional[
-        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
-    ] | None
+    sequencing_reads: (
+        Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    )
     metadatas: Optional[Annotated["MetadatumWhereClause", strawberry.lazy("api.types.metadatum")]] | None
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
@@ -218,21 +218,21 @@ Define Sample type
 class Sample(EntityInterface):
     rails_sample_id: Optional[int] = None
     name: str
-    host_organism: Optional[
-        Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]
-    ] = load_host_organism_rows  # type:ignore
-    sequencing_reads: Sequence[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows  # type:ignore
+    host_organism: Optional[Annotated["HostOrganism", strawberry.lazy("api.types.host_organism")]] = (
+        load_host_organism_rows
+    )  # type:ignore
+    sequencing_reads: Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = (
+        load_sequencing_read_rows
+    )  # type:ignore
     sequencing_reads_aggregate: Optional[
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore
-    metadatas: Sequence[
-        Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]
-    ] = load_metadatum_rows  # type:ignore
-    metadatas_aggregate: Optional[
-        Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]
-    ] = load_metadatum_aggregate_rows  # type:ignore
+    metadatas: Sequence[Annotated["Metadatum", strawberry.lazy("api.types.metadatum")]] = (
+        load_metadatum_rows
+    )  # type:ignore
+    metadatas_aggregate: Optional[Annotated["MetadatumAggregate", strawberry.lazy("api.types.metadatum")]] = (
+        load_metadatum_aggregate_rows
+    )  # type:ignore
     id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int

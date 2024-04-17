@@ -144,8 +144,9 @@ async def load_accession_rows(
 async def load_metric_consensus_genome_rows(
     root: "ConsensusGenome",
     info: Info,
-    where: Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
-    | None = None,
+    where: (
+        Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")] | None
+    ) = None,
     order_by: Optional[
         list[Annotated["MetricConsensusGenomeOrderByClause", strawberry.lazy("api.types.metric_consensus_genome")]]
     ] = [],
@@ -206,16 +207,17 @@ Supported WHERE clause attributes
 @strawberry.input
 class ConsensusGenomeWhereClause(TypedDict):
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
-    sequencing_read: Optional[
-        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
-    ] | None
-    reference_genome: Optional[
-        Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
+    sequencing_read: (
+        Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    )
+    reference_genome: (
+        Optional[Annotated["ReferenceGenomeWhereClause", strawberry.lazy("api.types.reference_genome")]] | None
+    )
     accession: Optional[Annotated["AccessionWhereClause", strawberry.lazy("api.types.accession")]] | None
-    metrics: Optional[
-        Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]
-    ] | None
+    metrics: (
+        Optional[Annotated["MetricConsensusGenomeWhereClause", strawberry.lazy("api.types.metric_consensus_genome")]]
+        | None
+    )
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -233,16 +235,17 @@ Supported ORDER BY clause attributes
 @strawberry.input
 class ConsensusGenomeOrderByClause(TypedDict):
     taxon: Optional[Annotated["TaxonOrderByClause", strawberry.lazy("api.types.taxon")]] | None
-    sequencing_read: Optional[
-        Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]
-    ] | None
-    reference_genome: Optional[
-        Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]
-    ] | None
+    sequencing_read: (
+        Optional[Annotated["SequencingReadOrderByClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    )
+    reference_genome: (
+        Optional[Annotated["ReferenceGenomeOrderByClause", strawberry.lazy("api.types.reference_genome")]] | None
+    )
     accession: Optional[Annotated["AccessionOrderByClause", strawberry.lazy("api.types.accession")]] | None
-    metrics: Optional[
-        Annotated["MetricConsensusGenomeOrderByClause", strawberry.lazy("api.types.metric_consensus_genome")]
-    ] | None
+    metrics: (
+        Optional[Annotated["MetricConsensusGenomeOrderByClause", strawberry.lazy("api.types.metric_consensus_genome")]]
+        | None
+    )
     id: Optional[orderBy] | None
     producing_run_id: Optional[orderBy] | None
     owner_user_id: Optional[orderBy] | None
@@ -260,20 +263,20 @@ Define ConsensusGenome type
 @strawberry.type
 class ConsensusGenome(EntityInterface):
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    sequencing_read: Optional[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows  # type:ignore
-    reference_genome: Optional[
-        Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]
-    ] = load_reference_genome_rows  # type:ignore
-    accession: Optional[
-        Annotated["Accession", strawberry.lazy("api.types.accession")]
-    ] = load_accession_rows  # type:ignore
+    sequencing_read: Optional[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = (
+        load_sequencing_read_rows
+    )  # type:ignore
+    reference_genome: Optional[Annotated["ReferenceGenome", strawberry.lazy("api.types.reference_genome")]] = (
+        load_reference_genome_rows
+    )  # type:ignore
+    accession: Optional[Annotated["Accession", strawberry.lazy("api.types.accession")]] = (
+        load_accession_rows
+    )  # type:ignore
     sequence_id: Optional[strawberry.ID]
     sequence: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("sequence")  # type: ignore
-    metrics: Optional[
-        Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]
-    ] = load_metric_consensus_genome_rows  # type:ignore
+    metrics: Optional[Annotated["MetricConsensusGenome", strawberry.lazy("api.types.metric_consensus_genome")]] = (
+        load_metric_consensus_genome_rows
+    )  # type:ignore
     intermediate_outputs_id: Optional[strawberry.ID]
     intermediate_outputs: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("intermediate_outputs")  # type: ignore
     id: strawberry.ID

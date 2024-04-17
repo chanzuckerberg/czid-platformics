@@ -3,6 +3,7 @@
 Create Date: 2024-02-15 21:42:46.044741
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql

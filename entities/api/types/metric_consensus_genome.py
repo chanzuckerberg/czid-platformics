@@ -109,9 +109,9 @@ Supported WHERE clause attributes
 
 @strawberry.input
 class MetricConsensusGenomeWhereClause(TypedDict):
-    consensus_genome: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    consensus_genome: (
+        Optional[Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    )
     reference_genome_length: Optional[FloatComparators] | None
     percent_genome_called: Optional[FloatComparators] | None
     percent_identity: Optional[FloatComparators] | None
@@ -142,9 +142,9 @@ Supported ORDER BY clause attributes
 
 @strawberry.input
 class MetricConsensusGenomeOrderByClause(TypedDict):
-    consensus_genome: Optional[
-        Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    consensus_genome: (
+        Optional[Annotated["ConsensusGenomeOrderByClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    )
     reference_genome_length: Optional[orderBy] | None
     percent_genome_called: Optional[orderBy] | None
     percent_identity: Optional[orderBy] | None
@@ -176,9 +176,9 @@ Define MetricConsensusGenome type
 
 @strawberry.type
 class MetricConsensusGenome(EntityInterface):
-    consensus_genome: Optional[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
+    consensus_genome: Optional[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]] = (
+        load_consensus_genome_rows
+    )  # type:ignore
     reference_genome_length: Optional[float] = None
     percent_genome_called: Optional[float] = None
     percent_identity: Optional[float] = None

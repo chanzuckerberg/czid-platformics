@@ -207,16 +207,16 @@ class HostOrganism(EntityInterface):
     version: str
     category: HostOrganismCategory
     is_deuterostome: bool
-    indexes: Sequence[
-        Annotated["IndexFile", strawberry.lazy("api.types.index_file")]
-    ] = load_index_file_rows  # type:ignore
-    indexes_aggregate: Optional[
-        Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]
-    ] = load_index_file_aggregate_rows  # type:ignore
+    indexes: Sequence[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]] = (
+        load_index_file_rows
+    )  # type:ignore
+    indexes_aggregate: Optional[Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]] = (
+        load_index_file_aggregate_rows
+    )  # type:ignore
     samples: Sequence[Annotated["Sample", strawberry.lazy("api.types.sample")]] = load_sample_rows  # type:ignore
-    samples_aggregate: Optional[
-        Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]
-    ] = load_sample_aggregate_rows  # type:ignore
+    samples_aggregate: Optional[Annotated["SampleAggregate", strawberry.lazy("api.types.sample")]] = (
+        load_sample_aggregate_rows
+    )  # type:ignore
     id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int

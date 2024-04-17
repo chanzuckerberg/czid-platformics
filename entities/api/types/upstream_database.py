@@ -229,21 +229,21 @@ Define UpstreamDatabase type
 class UpstreamDatabase(EntityInterface):
     name: str
     taxa: Sequence[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    taxa_aggregate: Optional[
-        Annotated["TaxonAggregate", strawberry.lazy("api.types.taxon")]
-    ] = load_taxon_aggregate_rows  # type:ignore
-    indexes: Sequence[
-        Annotated["IndexFile", strawberry.lazy("api.types.index_file")]
-    ] = load_index_file_rows  # type:ignore
-    indexes_aggregate: Optional[
-        Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]
-    ] = load_index_file_aggregate_rows  # type:ignore
-    accessions: Sequence[
-        Annotated["Accession", strawberry.lazy("api.types.accession")]
-    ] = load_accession_rows  # type:ignore
-    accessions_aggregate: Optional[
-        Annotated["AccessionAggregate", strawberry.lazy("api.types.accession")]
-    ] = load_accession_aggregate_rows  # type:ignore
+    taxa_aggregate: Optional[Annotated["TaxonAggregate", strawberry.lazy("api.types.taxon")]] = (
+        load_taxon_aggregate_rows
+    )  # type:ignore
+    indexes: Sequence[Annotated["IndexFile", strawberry.lazy("api.types.index_file")]] = (
+        load_index_file_rows
+    )  # type:ignore
+    indexes_aggregate: Optional[Annotated["IndexFileAggregate", strawberry.lazy("api.types.index_file")]] = (
+        load_index_file_aggregate_rows
+    )  # type:ignore
+    accessions: Sequence[Annotated["Accession", strawberry.lazy("api.types.accession")]] = (
+        load_accession_rows
+    )  # type:ignore
+    accessions_aggregate: Optional[Annotated["AccessionAggregate", strawberry.lazy("api.types.accession")]] = (
+        load_accession_aggregate_rows
+    )  # type:ignore
     id: strawberry.ID
     producing_run_id: Optional[strawberry.ID] = None
     owner_user_id: int

@@ -186,9 +186,9 @@ class TaxonWhereClause(TypedDict):
     common_name: Optional[StrComparators] | None
     name: Optional[StrComparators] | None
     is_phage: Optional[BoolComparators] | None
-    upstream_database: Optional[
-        Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]
-    ] | None
+    upstream_database: (
+        Optional[Annotated["UpstreamDatabaseWhereClause", strawberry.lazy("api.types.upstream_database")]] | None
+    )
     upstream_database_identifier: Optional[StrComparators] | None
     level: Optional[EnumComparators[TaxonLevel]] | None
     tax_parent_id: Optional[UUIDComparators] | None
@@ -200,12 +200,12 @@ class TaxonWhereClause(TypedDict):
     tax_phylum_id: Optional[UUIDComparators] | None
     tax_kingdom_id: Optional[UUIDComparators] | None
     tax_superkingdom_id: Optional[UUIDComparators] | None
-    consensus_genomes: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
-    sequencing_reads: Optional[
-        Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]
-    ] | None
+    consensus_genomes: (
+        Optional[Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    )
+    sequencing_reads: (
+        Optional[Annotated["SequencingReadWhereClause", strawberry.lazy("api.types.sequencing_read")]] | None
+    )
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -227,9 +227,9 @@ class TaxonOrderByClause(TypedDict):
     common_name: Optional[orderBy] | None
     name: Optional[orderBy] | None
     is_phage: Optional[orderBy] | None
-    upstream_database: Optional[
-        Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]
-    ] | None
+    upstream_database: (
+        Optional[Annotated["UpstreamDatabaseOrderByClause", strawberry.lazy("api.types.upstream_database")]] | None
+    )
     upstream_database_identifier: Optional[orderBy] | None
     level: Optional[orderBy] | None
     tax_parent: Optional[orderBy] | None
@@ -262,20 +262,20 @@ class Taxon(EntityInterface):
     common_name: Optional[str] = None
     name: str
     is_phage: bool
-    upstream_database: Optional[
-        Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]
-    ] = load_upstream_database_rows  # type:ignore
+    upstream_database: Optional[Annotated["UpstreamDatabase", strawberry.lazy("api.types.upstream_database")]] = (
+        load_upstream_database_rows
+    )  # type:ignore
     upstream_database_identifier: str
     level: TaxonLevel
-    consensus_genomes: Sequence[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
+    consensus_genomes: Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]] = (
+        load_consensus_genome_rows
+    )  # type:ignore
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
-    sequencing_reads: Sequence[
-        Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]
-    ] = load_sequencing_read_rows  # type:ignore
+    sequencing_reads: Sequence[Annotated["SequencingRead", strawberry.lazy("api.types.sequencing_read")]] = (
+        load_sequencing_read_rows
+    )  # type:ignore
     sequencing_reads_aggregate: Optional[
         Annotated["SequencingReadAggregate", strawberry.lazy("api.types.sequencing_read")]
     ] = load_sequencing_read_aggregate_rows  # type:ignore

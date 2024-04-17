@@ -209,9 +209,9 @@ class SequencingReadWhereClause(TypedDict):
     medaka_model: Optional[StrComparators] | None
     taxon: Optional[Annotated["TaxonWhereClause", strawberry.lazy("api.types.taxon")]] | None
     primer_file: Optional[Annotated["GenomicRangeWhereClause", strawberry.lazy("api.types.genomic_range")]] | None
-    consensus_genomes: Optional[
-        Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]
-    ] | None
+    consensus_genomes: (
+        Optional[Annotated["ConsensusGenomeWhereClause", strawberry.lazy("api.types.consensus_genome")]] | None
+    )
     id: Optional[UUIDComparators] | None
     producing_run_id: Optional[UUIDComparators] | None
     owner_user_id: Optional[IntComparators] | None
@@ -261,12 +261,12 @@ class SequencingRead(EntityInterface):
     clearlabs_export: bool
     medaka_model: Optional[str] = None
     taxon: Optional[Annotated["Taxon", strawberry.lazy("api.types.taxon")]] = load_taxon_rows  # type:ignore
-    primer_file: Optional[
-        Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]
-    ] = load_genomic_range_rows  # type:ignore
-    consensus_genomes: Sequence[
-        Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
-    ] = load_consensus_genome_rows  # type:ignore
+    primer_file: Optional[Annotated["GenomicRange", strawberry.lazy("api.types.genomic_range")]] = (
+        load_genomic_range_rows
+    )  # type:ignore
+    consensus_genomes: Sequence[Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]] = (
+        load_consensus_genome_rows
+    )  # type:ignore
     consensus_genomes_aggregate: Optional[
         Annotated["ConsensusGenomeAggregate", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_aggregate_rows  # type:ignore
