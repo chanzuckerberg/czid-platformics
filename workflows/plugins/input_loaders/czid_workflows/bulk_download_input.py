@@ -49,6 +49,11 @@ class BulkDownloadInputLoader(InputLoader):
             if raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_OUTPUT:
                 self._fetch_file(consensus_genome.intermediate_outputs())
             elif raw_inputs.get("bulk_download_type") == CG_BULK_DOWNLOAD_CONSENSUS:
+                # if output is consensus genome
+                # set output name to Consensus Genome.fa
+                # ignored if zip output
+                inputs["concatenated_output_name"] = "Consensus Genome.fa"
+
                 self._fetch_file(consensus_genome.sequence())
             res = self._entities_gql(op)
             files: list[dict[str, Primitive | None]] = []
