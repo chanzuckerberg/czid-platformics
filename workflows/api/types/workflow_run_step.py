@@ -140,9 +140,9 @@ Define WorkflowRunStep type
 
 @strawberry.type
 class WorkflowRunStep(EntityInterface):
-    workflow_run: Optional[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]] = (
-        load_workflow_run_rows
-    )  # type:ignore
+    workflow_run: Optional[
+        Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
+    ] = load_workflow_run_rows  # type:ignore
     started_at: Optional[datetime.datetime] = None
     ended_at: Optional[datetime.datetime] = None
     status: Optional[WorkflowRunStepStatus] = None

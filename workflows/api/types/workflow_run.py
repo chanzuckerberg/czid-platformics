@@ -262,15 +262,15 @@ class WorkflowRun(EntityInterface):
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
     error_message: Optional[str] = None
-    workflow_version: Optional[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]] = (
-        load_workflow_version_rows
-    )  # type:ignore
-    steps: Sequence[Annotated["WorkflowRunStep", strawberry.lazy("api.types.workflow_run_step")]] = (
-        load_workflow_run_step_rows
-    )  # type:ignore
-    steps_aggregate: Optional[Annotated["WorkflowRunStepAggregate", strawberry.lazy("api.types.workflow_run_step")]] = (
-        load_workflow_run_step_aggregate_rows
-    )  # type:ignore
+    workflow_version: Optional[
+        Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]
+    ] = load_workflow_version_rows  # type:ignore
+    steps: Sequence[
+        Annotated["WorkflowRunStep", strawberry.lazy("api.types.workflow_run_step")]
+    ] = load_workflow_run_step_rows  # type:ignore
+    steps_aggregate: Optional[
+        Annotated["WorkflowRunStepAggregate", strawberry.lazy("api.types.workflow_run_step")]
+    ] = load_workflow_run_step_aggregate_rows  # type:ignore
     entity_inputs: Sequence[
         Annotated["WorkflowRunEntityInput", strawberry.lazy("api.types.workflow_run_entity_input")]
     ] = load_workflow_run_entity_input_rows  # type:ignore

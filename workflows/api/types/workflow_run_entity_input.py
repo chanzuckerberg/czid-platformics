@@ -147,9 +147,9 @@ class WorkflowRunEntityInput(EntityInterface):
     input_entity_id: Optional[strawberry.ID] = None
     field_name: Optional[str] = None
     entity_type: Optional[str] = None
-    workflow_run: Optional[Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]] = (
-        load_workflow_run_rows
-    )  # type:ignore
+    workflow_run: Optional[
+        Annotated["WorkflowRun", strawberry.lazy("api.types.workflow_run")]
+    ] = load_workflow_run_rows  # type:ignore
     id: strawberry.ID
     owner_user_id: int
     collection_id: Optional[int] = None

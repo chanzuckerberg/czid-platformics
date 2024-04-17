@@ -162,9 +162,9 @@ class Workflow(EntityInterface):
     name: Optional[str] = None
     default_version: Optional[str] = None
     minimum_supported_version: Optional[str] = None
-    versions: Sequence[Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]] = (
-        load_workflow_version_rows
-    )  # type:ignore
+    versions: Sequence[
+        Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]
+    ] = load_workflow_version_rows  # type:ignore
     versions_aggregate: Optional[
         Annotated["WorkflowVersionAggregate", strawberry.lazy("api.types.workflow_version")]
     ] = load_workflow_version_aggregate_rows  # type:ignore
