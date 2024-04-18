@@ -275,6 +275,7 @@ class WorkflowRun(EntityInterface):
         Annotated["WorkflowRunEntityInputAggregate", strawberry.lazy("api.types.workflow_run_entity_input")]
     ] = load_workflow_run_entity_input_aggregate_rows  # type:ignore
     raw_inputs_json: Optional[str] = None
+    deprecated_by_id: Optional[strawberry.ID]
     id: strawberry.ID
     owner_user_id: int
     collection_id: Optional[int] = None

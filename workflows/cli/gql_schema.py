@@ -1746,6 +1746,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
         "entity_inputs",
         "entity_inputs_aggregate",
         "raw_inputs_json",
+        "deprecated_by_id",
         "owner_user_id",
         "collection_id",
         "created_at",
@@ -1835,6 +1836,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
         ),
     )
     raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
+    deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
     owner_user_id = sgqlc.types.Field(sgqlc.types.non_null(Int), graphql_name="ownerUserId")
     collection_id = sgqlc.types.Field(Int, graphql_name="collectionId")
     created_at = sgqlc.types.Field(sgqlc.types.non_null(DateTime), graphql_name="createdAt")

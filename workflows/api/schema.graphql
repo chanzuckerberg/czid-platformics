@@ -315,6 +315,7 @@ type WorkflowRun implements EntityInterface & Node {
   ): WorkflowRunEntityInputConnection!
   entityInputsAggregate(where: WorkflowRunEntityInputWhereClause = null): WorkflowRunEntityInputAggregate
   rawInputsJson: String
+  deprecatedById: ID
   ownerUserId: Int!
   collectionId: Int
   createdAt: DateTime!
