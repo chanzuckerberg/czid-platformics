@@ -626,8 +626,6 @@ async def update_workflow_run(
         )
         if not deprecated_by:
             raise PlatformicsException("Unauthorized: deprecated_by does not exist")
-        params["deprecated_by"] = deprecated_by[0]
-        del params["deprecated_by_id"]
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         del params["ended_at"]

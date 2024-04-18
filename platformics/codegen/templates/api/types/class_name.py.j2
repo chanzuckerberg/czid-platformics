@@ -582,8 +582,10 @@ async def update_{{ cls.snake_name }}(
         {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": validated.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
+            {%- if field.type != cls.name %}
         params["{{field.name}}"] = {{field.name}}[0]
         del params["{{field.name}}_id"]
+            {%- endif %}
         {%- endif %}
     {%- endfor %}
 
