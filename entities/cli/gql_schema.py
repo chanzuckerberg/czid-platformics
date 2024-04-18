@@ -5229,6 +5229,15 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         "upstream_database",
         "upstream_database_identifier",
         "level",
+        "tax_parent_id",
+        "tax_species_id",
+        "tax_genus_id",
+        "tax_family_id",
+        "tax_order_id",
+        "tax_class_id",
+        "tax_phylum_id",
+        "tax_kingdom_id",
+        "tax_superkingdom_id",
         "consensus_genomes",
         "consensus_genomes_aggregate",
         "sequencing_reads",
@@ -5267,6 +5276,15 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
         sgqlc.types.non_null(String), graphql_name="upstreamDatabaseIdentifier"
     )
     level = sgqlc.types.Field(sgqlc.types.non_null(TaxonLevel), graphql_name="level")
+    tax_parent_id = sgqlc.types.Field(ID, graphql_name="taxParentId")
+    tax_species_id = sgqlc.types.Field(ID, graphql_name="taxSpeciesId")
+    tax_genus_id = sgqlc.types.Field(ID, graphql_name="taxGenusId")
+    tax_family_id = sgqlc.types.Field(ID, graphql_name="taxFamilyId")
+    tax_order_id = sgqlc.types.Field(ID, graphql_name="taxOrderId")
+    tax_class_id = sgqlc.types.Field(ID, graphql_name="taxClassId")
+    tax_phylum_id = sgqlc.types.Field(ID, graphql_name="taxPhylumId")
+    tax_kingdom_id = sgqlc.types.Field(ID, graphql_name="taxKingdomId")
+    tax_superkingdom_id = sgqlc.types.Field(ID, graphql_name="taxSuperkingdomId")
     consensus_genomes = sgqlc.types.Field(
         sgqlc.types.non_null(ConsensusGenomeConnection),
         graphql_name="consensusGenomes",

@@ -267,6 +267,15 @@ class Taxon(EntityInterface):
     ] = load_upstream_database_rows  # type:ignore
     upstream_database_identifier: str
     level: TaxonLevel
+    tax_parent_id: Optional[strawberry.ID]
+    tax_species_id: Optional[strawberry.ID]
+    tax_genus_id: Optional[strawberry.ID]
+    tax_family_id: Optional[strawberry.ID]
+    tax_order_id: Optional[strawberry.ID]
+    tax_class_id: Optional[strawberry.ID]
+    tax_phylum_id: Optional[strawberry.ID]
+    tax_kingdom_id: Optional[strawberry.ID]
+    tax_superkingdom_id: Optional[strawberry.ID]
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore

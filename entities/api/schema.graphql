@@ -2091,6 +2091,15 @@ type Taxon implements EntityInterface & Node {
   upstreamDatabase(where: UpstreamDatabaseWhereClause = null, orderBy: [UpstreamDatabaseOrderByClause!] = []): UpstreamDatabase
   upstreamDatabaseIdentifier: String!
   level: TaxonLevel!
+  taxParentId: ID
+  taxSpeciesId: ID
+  taxGenusId: ID
+  taxFamilyId: ID
+  taxOrderId: ID
+  taxClassId: ID
+  taxPhylumId: ID
+  taxKingdomId: ID
+  taxSuperkingdomId: ID
   consensusGenomes(
     where: ConsensusGenomeWhereClause = null
     orderBy: [ConsensusGenomeOrderByClause!] = []

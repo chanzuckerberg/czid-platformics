@@ -256,6 +256,8 @@ class {{ cls.name }}(EntityInterface):
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: Optional[strawberry.ID]
     {{ attr.name }}: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("{{ attr.name }}")  # type: ignore
+        {%- elif attr.type == cls.name %}
+    {{ attr.name }}_id: Optional[strawberry.ID]
         {%- elif attr.inverse %}
     {{ attr.name }}: {{ "Sequence" if attr.multivalued else "Optional" }}[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows  # type:ignore
             {%- if attr.multivalued %}
