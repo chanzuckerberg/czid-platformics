@@ -129,6 +129,10 @@ classes:
         range: WorkflowRunStatus 
         annotations:
           system_writable_only: true
+      error_label: 
+        range: string
+        annotations:
+          system_writable_only: true
       error_message:
         range: string
         annotations:

@@ -730,6 +730,15 @@
             },
             {
               "args": [],
+              "name": "errorLabel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "errorMessage",
               "type": {
                 "kind": "SCALAR",
@@ -2724,6 +2733,15 @@
             },
             {
               "defaultValue": null,
+              "name": "errorLabel",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "StrComparators",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "errorMessage",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -4160,6 +4178,15 @@
             },
             {
               "defaultValue": null,
+              "name": "errorLabel",
+              "type": {
+                "kind": "ENUM",
+                "name": "orderBy",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "name": "errorMessage",
               "type": {
                 "kind": "ENUM",
@@ -4478,6 +4505,15 @@
             },
             {
               "args": [],
+              "name": "errorLabel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "errorMessage",
               "type": {
                 "kind": "SCALAR",
@@ -4614,6 +4650,15 @@
             },
             {
               "args": [],
+              "name": "errorLabel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "errorMessage",
               "type": {
                 "kind": "SCALAR",
@@ -4731,6 +4776,9 @@
             },
             {
               "name": "status"
+            },
+            {
+              "name": "errorLabel"
             },
             {
               "name": "errorMessage"
@@ -7204,6 +7252,15 @@
               "type": {
                 "kind": "ENUM",
                 "name": "WorkflowRunStatus",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "null",
+              "name": "errorLabel",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
