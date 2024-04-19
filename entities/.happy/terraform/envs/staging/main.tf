@@ -10,8 +10,8 @@ module "stack" {
   app_name         = var.app
   deployment_stage = "staging"
   services = {
-    cache_volume_mount_dir = "/var/policies"
     entities = {
+      cache_volume_mount_dir = "/var/policies"
       aws_iam = {
         policy_json = data.aws_iam_policy_document.entities.json,
       }
