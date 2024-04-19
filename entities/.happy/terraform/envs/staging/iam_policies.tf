@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "entities" {
     ]
     resources = ["*"]
   }
-    statement {
+  statement {
     effect = "Allow"
     actions = [
       "s3:PutObject",

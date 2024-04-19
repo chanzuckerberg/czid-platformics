@@ -57,7 +57,7 @@ module "stack" {
     WORKERS                 = "2"
   }
   create_dashboard = false
-  routing_method = "CONTEXT"
+  routing_method   = "CONTEXT"
   tasks = {
     migrate = {
       cmd                   = ["/czid-platformics/entities/scripts/migrate.sh"]

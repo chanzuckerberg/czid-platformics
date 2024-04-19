@@ -17,7 +17,7 @@ module "stack" {
       }
       name                  = "workflows"
       health_check_path     = "/graphql"
-      period_seconds    = 10
+      period_seconds        = 10
       platform_architecture = "arm64"
       port                  = 8042
       cpu                   = "2"
@@ -90,7 +90,7 @@ module "stack" {
     SERVICE_NAME                                          = "workflows"
   }
   create_dashboard = false
-  routing_method = "CONTEXT"
+  routing_method   = "CONTEXT"
   tasks = {
     migrate = {
       cmd                   = ["/workflows/scripts/migrate.sh"]
