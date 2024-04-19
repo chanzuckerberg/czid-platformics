@@ -17,6 +17,7 @@ WorkflowRun {
     string outputs_json  
     string workflow_runner_inputs_json  
     WorkflowRunStatus status  
+    string error_label  
     string error_message  
     string raw_inputs_json  
     uuid entity_id  

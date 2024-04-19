@@ -198,6 +198,7 @@ class WorkflowRunWhereClause(TypedDict):
     outputs_json: Optional[StrComparators] | None
     workflow_runner_inputs_json: Optional[StrComparators] | None
     status: Optional[EnumComparators[WorkflowRunStatus]] | None
+    error_label: Optional[StrComparators] | None
     error_message: Optional[StrComparators] | None
     workflow_version: Optional[
         Annotated["WorkflowVersionWhereClause", strawberry.lazy("api.types.workflow_version")]
@@ -230,6 +231,7 @@ class WorkflowRunOrderByClause(TypedDict):
     outputs_json: Optional[orderBy] | None
     workflow_runner_inputs_json: Optional[orderBy] | None
     status: Optional[orderBy] | None
+    error_label: Optional[orderBy] | None
     error_message: Optional[orderBy] | None
     workflow_version: Optional[
         Annotated["WorkflowVersionOrderByClause", strawberry.lazy("api.types.workflow_version")]
@@ -258,6 +260,7 @@ class WorkflowRun(EntityInterface):
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_label: Optional[str] = None
     error_message: Optional[str] = None
     workflow_version: Optional[
         Annotated["WorkflowVersion", strawberry.lazy("api.types.workflow_version")]
@@ -322,6 +325,7 @@ class WorkflowRunMinMaxColumns:
     execution_id: Optional[str] = None
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
+    error_label: Optional[str] = None
     error_message: Optional[str] = None
     raw_inputs_json: Optional[str] = None
     owner_user_id: Optional[int] = None
@@ -345,6 +349,7 @@ class WorkflowRunCountColumns(enum.Enum):
     outputsJson = "outputs_json"
     workflowRunnerInputsJson = "workflow_runner_inputs_json"
     status = "status"
+    errorLabel = "error_label"
     errorMessage = "error_message"
     workflowVersion = "workflow_version"
     steps = "steps"
@@ -408,6 +413,7 @@ class WorkflowRunCreateInput:
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_label: Optional[str] = None
     error_message: Optional[str] = None
     workflow_version_id: Optional[strawberry.ID] = None
     raw_inputs_json: Optional[str] = None
@@ -423,6 +429,7 @@ class WorkflowRunUpdateInput:
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_label: Optional[str] = None
     error_message: Optional[str] = None
     deprecated_by_id: Optional[strawberry.ID] = None
     deleted_at: Optional[datetime.datetime] = None
@@ -548,6 +555,7 @@ async def create_workflow_run(
         del params["outputs_json"]
         del params["workflow_runner_inputs_json"]
         del params["status"]
+        del params["error_label"]
         del params["error_message"]
         del params["deleted_at"]
     # Validate that the user can create entities in this collection
@@ -633,6 +641,7 @@ async def update_workflow_run(
         del params["outputs_json"]
         del params["workflow_runner_inputs_json"]
         del params["status"]
+        del params["error_label"]
         del params["error_message"]
         del params["deleted_at"]
 

@@ -59,6 +59,7 @@ class WorkflowRunCountColumns(sgqlc.types.Enum):
         "deprecatedBy",
         "endedAt",
         "entityInputs",
+        "errorLabel",
         "errorMessage",
         "executionId",
         "id",
@@ -396,6 +397,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_label",
         "error_message",
         "workflow_version",
         "raw_inputs_json",
@@ -414,6 +416,7 @@ class WorkflowRunOrderByClause(sgqlc.types.Input):
     outputs_json = sgqlc.types.Field(orderBy, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(orderBy, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(orderBy, graphql_name="status")
+    error_label = sgqlc.types.Field(orderBy, graphql_name="errorLabel")
     error_message = sgqlc.types.Field(orderBy, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field("WorkflowVersionOrderByClause", graphql_name="workflowVersion")
     raw_inputs_json = sgqlc.types.Field(orderBy, graphql_name="rawInputsJson")
@@ -538,6 +541,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_label",
         "error_message",
         "deprecated_by_id",
         "deleted_at",
@@ -547,6 +551,7 @@ class WorkflowRunUpdateInput(sgqlc.types.Input):
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
+    error_label = sgqlc.types.Field(String, graphql_name="errorLabel")
     error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     deprecated_by_id = sgqlc.types.Field(ID, graphql_name="deprecatedById")
     deleted_at = sgqlc.types.Field(DateTime, graphql_name="deletedAt")
@@ -562,6 +567,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_label",
         "error_message",
         "workflow_version",
         "steps",
@@ -582,6 +588,7 @@ class WorkflowRunWhereClause(sgqlc.types.Input):
     outputs_json = sgqlc.types.Field(StrComparators, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(StrComparators, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatusEnumComparators, graphql_name="status")
+    error_label = sgqlc.types.Field(StrComparators, graphql_name="errorLabel")
     error_message = sgqlc.types.Field(StrComparators, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field("WorkflowVersionWhereClause", graphql_name="workflowVersion")
     steps = sgqlc.types.Field(WorkflowRunStepWhereClause, graphql_name="steps")
@@ -1398,6 +1405,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_label",
         "error_message",
         "workflow_version",
         "raw_inputs_json",
@@ -1416,6 +1424,7 @@ class WorkflowRunGroupByOptions(sgqlc.types.Type):
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
+    error_label = sgqlc.types.Field(String, graphql_name="errorLabel")
     error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field("WorkflowVersionGroupByOptions", graphql_name="workflowVersion")
     raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
@@ -1437,6 +1446,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
         "execution_id",
         "outputs_json",
         "workflow_runner_inputs_json",
+        "error_label",
         "error_message",
         "raw_inputs_json",
         "owner_user_id",
@@ -1451,6 +1461,7 @@ class WorkflowRunMinMaxColumns(sgqlc.types.Type):
     execution_id = sgqlc.types.Field(String, graphql_name="executionId")
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
+    error_label = sgqlc.types.Field(String, graphql_name="errorLabel")
     error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     raw_inputs_json = sgqlc.types.Field(String, graphql_name="rawInputsJson")
     owner_user_id = sgqlc.types.Field(Int, graphql_name="ownerUserId")
@@ -1739,6 +1750,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
         "outputs_json",
         "workflow_runner_inputs_json",
         "status",
+        "error_label",
         "error_message",
         "workflow_version",
         "steps",
@@ -1761,6 +1773,7 @@ class WorkflowRun(sgqlc.types.Type, EntityInterface, Node):
     outputs_json = sgqlc.types.Field(String, graphql_name="outputsJson")
     workflow_runner_inputs_json = sgqlc.types.Field(String, graphql_name="workflowRunnerInputsJson")
     status = sgqlc.types.Field(WorkflowRunStatus, graphql_name="status")
+    error_label = sgqlc.types.Field(String, graphql_name="errorLabel")
     error_message = sgqlc.types.Field(String, graphql_name="errorMessage")
     workflow_version = sgqlc.types.Field(
         "WorkflowVersion",
