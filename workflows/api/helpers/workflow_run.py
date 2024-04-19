@@ -28,6 +28,7 @@ class WorkflowRunGroupByOptions:
     outputs_json: Optional[str] = None
     workflow_runner_inputs_json: Optional[str] = None
     status: Optional[WorkflowRunStatus] = None
+    error_label: Optional[str] = None
     error_message: Optional[str] = None
     workflow_version: Optional[WorkflowVersionGroupByOptions] = None
     raw_inputs_json: Optional[str] = None

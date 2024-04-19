@@ -10,6 +10,10 @@ on:
         type: string
       developer_name: 
         type: string
+      operation:
+        type: string
+        required: false
+        default: "create-or-update"
     outputs:
       stack_name: 
         description: "The stack name used for deploy"
@@ -62,3 +66,4 @@ jobs:
           create-tag: true
           stack-name: ${{ steps.stack_name.outputs.sname }} 
           working-directory: ${{ inputs.service }}
+          operation: ${{ inputs.operation }}

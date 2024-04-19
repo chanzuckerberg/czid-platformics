@@ -127,7 +127,8 @@ class LoaderDriver:
                 if workflow_run:
                     workflow_run.status = WorkflowRunStatus.FAILED
                     if event.error:
-                        workflow_run.error_message = event.error
+                        workflow_run.error_label = event.error
+                        workflow_run.error_message = event.error_message or ""
                     await self.session.commit()
 
         return handle_message

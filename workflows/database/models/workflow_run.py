@@ -38,6 +38,7 @@ class WorkflowRun(Entity):
     outputs_json: Mapped[str] = mapped_column(String, nullable=True)
     workflow_runner_inputs_json: Mapped[str] = mapped_column(String, nullable=True)
     status: Mapped[WorkflowRunStatus] = mapped_column(Enum(WorkflowRunStatus, native_enum=False), nullable=True)
+    error_label: Mapped[str] = mapped_column(String, nullable=True)
     error_message: Mapped[str] = mapped_column(String, nullable=True)
     workflow_version_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
