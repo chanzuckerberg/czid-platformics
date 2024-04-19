@@ -278,6 +278,7 @@ type WorkflowRun implements EntityInterface & Node {
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
+  errorLabel: String
   errorMessage: String
   workflowVersion(where: WorkflowVersionWhereClause = null, orderBy: [WorkflowVersionOrderByClause!] = []): WorkflowVersion
   steps(
@@ -354,6 +355,7 @@ enum WorkflowRunCountColumns {
   outputsJson
   workflowRunnerInputsJson
   status
+  errorLabel
   errorMessage
   workflowVersion
   steps
@@ -513,6 +515,7 @@ type WorkflowRunGroupByOptions {
   outputsJson: String
   workflowRunnerInputsJson: String
   status: WorkflowRunStatus
+  errorLabel: String
   errorMessage: String
   workflowVersion: WorkflowVersionGroupByOptions
   rawInputsJson: String
@@ -532,6 +535,7 @@ type WorkflowRunMinMaxColumns {
   executionId: String
   outputsJson: String
   workflowRunnerInputsJson: String
+  errorLabel: String
   errorMessage: String
   rawInputsJson: String
   ownerUserId: Int
@@ -555,6 +559,7 @@ input WorkflowRunOrderByClause {
   outputsJson: orderBy
   workflowRunnerInputsJson: orderBy
   status: orderBy
+  errorLabel: orderBy
   errorMessage: orderBy
   workflowVersion: WorkflowVersionOrderByClause
   rawInputsJson: orderBy
@@ -748,6 +753,7 @@ input WorkflowRunUpdateInput {
   outputsJson: String = null
   workflowRunnerInputsJson: String = null
   status: WorkflowRunStatus = null
+  errorLabel: String = null
   errorMessage: String = null
   deprecatedById: ID = null
   deletedAt: DateTime = null
@@ -761,6 +767,7 @@ input WorkflowRunWhereClause {
   outputsJson: StrComparators
   workflowRunnerInputsJson: StrComparators
   status: WorkflowRunStatusEnumComparators
+  errorLabel: StrComparators
   errorMessage: StrComparators
   workflowVersion: WorkflowVersionWhereClause
   steps: WorkflowRunStepWhereClause

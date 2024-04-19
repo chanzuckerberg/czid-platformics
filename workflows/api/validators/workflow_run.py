@@ -41,6 +41,12 @@ class WorkflowRunCreateInputValidator(BaseModel):
         ),
     ]
     status: Annotated[WorkflowRunStatus | None, Field()]
+    error_label: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     error_message: Annotated[
         str | None,
         StringConstraints(
@@ -87,6 +93,12 @@ class WorkflowRunUpdateInputValidator(BaseModel):
         ),
     ]
     status: Annotated[WorkflowRunStatus | None, Field()]
+    error_label: Annotated[
+        str | None,
+        StringConstraints(
+            strip_whitespace=True,
+        ),
+    ]
     error_message: Annotated[
         str | None,
         StringConstraints(
