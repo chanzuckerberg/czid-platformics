@@ -267,6 +267,15 @@ class Taxon(EntityInterface):
     ] = load_upstream_database_rows  # type:ignore
     upstream_database_identifier: str
     level: TaxonLevel
+    tax_parent_id: Optional[strawberry.ID]
+    tax_species_id: Optional[strawberry.ID]
+    tax_genus_id: Optional[strawberry.ID]
+    tax_family_id: Optional[strawberry.ID]
+    tax_order_id: Optional[strawberry.ID]
+    tax_class_id: Optional[strawberry.ID]
+    tax_phylum_id: Optional[strawberry.ID]
+    tax_kingdom_id: Optional[strawberry.ID]
+    tax_superkingdom_id: Optional[strawberry.ID]
     consensus_genomes: Sequence[
         Annotated["ConsensusGenome", strawberry.lazy("api.types.consensus_genome")]
     ] = load_consensus_genome_rows  # type:ignore
@@ -702,8 +711,6 @@ async def update_taxon(
         )
         if not tax_parent:
             raise PlatformicsException("Unauthorized: tax_parent does not exist")
-        params["tax_parent"] = tax_parent[0]
-        del params["tax_parent_id"]
     # Check that tax_species relationship is accessible.
     if validated.tax_species_id:
         tax_species = await get_db_rows(
@@ -717,8 +724,6 @@ async def update_taxon(
         )
         if not tax_species:
             raise PlatformicsException("Unauthorized: tax_species does not exist")
-        params["tax_species"] = tax_species[0]
-        del params["tax_species_id"]
     # Check that tax_genus relationship is accessible.
     if validated.tax_genus_id:
         tax_genus = await get_db_rows(
@@ -726,8 +731,6 @@ async def update_taxon(
         )
         if not tax_genus:
             raise PlatformicsException("Unauthorized: tax_genus does not exist")
-        params["tax_genus"] = tax_genus[0]
-        del params["tax_genus_id"]
     # Check that tax_family relationship is accessible.
     if validated.tax_family_id:
         tax_family = await get_db_rows(
@@ -735,8 +738,6 @@ async def update_taxon(
         )
         if not tax_family:
             raise PlatformicsException("Unauthorized: tax_family does not exist")
-        params["tax_family"] = tax_family[0]
-        del params["tax_family_id"]
     # Check that tax_order relationship is accessible.
     if validated.tax_order_id:
         tax_order = await get_db_rows(
@@ -744,8 +745,6 @@ async def update_taxon(
         )
         if not tax_order:
             raise PlatformicsException("Unauthorized: tax_order does not exist")
-        params["tax_order"] = tax_order[0]
-        del params["tax_order_id"]
     # Check that tax_class relationship is accessible.
     if validated.tax_class_id:
         tax_class = await get_db_rows(
@@ -753,8 +752,6 @@ async def update_taxon(
         )
         if not tax_class:
             raise PlatformicsException("Unauthorized: tax_class does not exist")
-        params["tax_class"] = tax_class[0]
-        del params["tax_class_id"]
     # Check that tax_phylum relationship is accessible.
     if validated.tax_phylum_id:
         tax_phylum = await get_db_rows(
@@ -762,8 +759,6 @@ async def update_taxon(
         )
         if not tax_phylum:
             raise PlatformicsException("Unauthorized: tax_phylum does not exist")
-        params["tax_phylum"] = tax_phylum[0]
-        del params["tax_phylum_id"]
     # Check that tax_kingdom relationship is accessible.
     if validated.tax_kingdom_id:
         tax_kingdom = await get_db_rows(
@@ -777,8 +772,6 @@ async def update_taxon(
         )
         if not tax_kingdom:
             raise PlatformicsException("Unauthorized: tax_kingdom does not exist")
-        params["tax_kingdom"] = tax_kingdom[0]
-        del params["tax_kingdom_id"]
     # Check that tax_superkingdom relationship is accessible.
     if validated.tax_superkingdom_id:
         tax_superkingdom = await get_db_rows(
@@ -792,8 +785,6 @@ async def update_taxon(
         )
         if not tax_superkingdom:
             raise PlatformicsException("Unauthorized: tax_superkingdom does not exist")
-        params["tax_superkingdom"] = tax_superkingdom[0]
-        del params["tax_superkingdom_id"]
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         del params["deleted_at"]

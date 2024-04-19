@@ -2911,7 +2911,7 @@ class SequencingRead(sgqlc.types.Type, EntityInterface, Node):
 
 class Taxon(sgqlc.types.Type, EntityInterface, Node):
     __schema__ = entities_schema
-    __field_names__ = ('id', 'wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'consensus_genomes', 'consensus_genomes_aggregate', 'sequencing_reads', 'sequencing_reads_aggregate', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at', 'deleted_at')
+    __field_names__ = ('id', 'wikipedia_id', 'description', 'common_name', 'name', 'is_phage', 'upstream_database', 'upstream_database_identifier', 'level', 'tax_parent_id', 'tax_species_id', 'tax_genus_id', 'tax_family_id', 'tax_order_id', 'tax_class_id', 'tax_phylum_id', 'tax_kingdom_id', 'tax_superkingdom_id', 'consensus_genomes', 'consensus_genomes_aggregate', 'sequencing_reads', 'sequencing_reads_aggregate', 'producing_run_id', 'owner_user_id', 'collection_id', 'created_at', 'updated_at', 'deleted_at')
     id = sgqlc.types.Field(sgqlc.types.non_null(ID), graphql_name='id')
     wikipedia_id = sgqlc.types.Field(String, graphql_name='wikipediaId')
     description = sgqlc.types.Field(String, graphql_name='description')
@@ -2925,6 +2925,15 @@ class Taxon(sgqlc.types.Type, EntityInterface, Node):
     )
     upstream_database_identifier = sgqlc.types.Field(sgqlc.types.non_null(String), graphql_name='upstreamDatabaseIdentifier')
     level = sgqlc.types.Field(sgqlc.types.non_null(TaxonLevel), graphql_name='level')
+    tax_parent_id = sgqlc.types.Field(ID, graphql_name='taxParentId')
+    tax_species_id = sgqlc.types.Field(ID, graphql_name='taxSpeciesId')
+    tax_genus_id = sgqlc.types.Field(ID, graphql_name='taxGenusId')
+    tax_family_id = sgqlc.types.Field(ID, graphql_name='taxFamilyId')
+    tax_order_id = sgqlc.types.Field(ID, graphql_name='taxOrderId')
+    tax_class_id = sgqlc.types.Field(ID, graphql_name='taxClassId')
+    tax_phylum_id = sgqlc.types.Field(ID, graphql_name='taxPhylumId')
+    tax_kingdom_id = sgqlc.types.Field(ID, graphql_name='taxKingdomId')
+    tax_superkingdom_id = sgqlc.types.Field(ID, graphql_name='taxSuperkingdomId')
     consensus_genomes = sgqlc.types.Field(sgqlc.types.non_null(ConsensusGenomeConnection), graphql_name='consensusGenomes', args=sgqlc.types.ArgDict((
         ('where', sgqlc.types.Arg(ConsensusGenomeWhereClause, graphql_name='where', default=None)),
         ('order_by', sgqlc.types.Arg(sgqlc.types.list_of(sgqlc.types.non_null(ConsensusGenomeOrderByClause)), graphql_name='orderBy', default=())),

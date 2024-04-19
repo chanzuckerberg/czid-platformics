@@ -256,6 +256,8 @@ class {{ cls.name }}(EntityInterface):
         {%- elif attr.type == "File" %}
     {{ attr.name }}_id: Optional[strawberry.ID]
     {{ attr.name }}: Optional[Annotated["File", strawberry.lazy("api.files")]] = load_files_from("{{ attr.name }}")  # type: ignore
+        {%- elif attr.type == cls.name %}
+    {{ attr.name }}_id: Optional[strawberry.ID]
         {%- elif attr.inverse %}
     {{ attr.name }}: {{ "Sequence" if attr.multivalued else "Optional" }}[Annotated["{{ attr.type }}", strawberry.lazy("api.types.{{ attr.related_class.snake_name }}")]] = load_{{ attr.related_class.snake_name }}_rows  # type:ignore
             {%- if attr.multivalued %}
@@ -580,8 +582,10 @@ async def update_{{ cls.snake_name }}(
         {{field.name}} = await get_db_rows(db.{{ field.related_class.name }}, session, cerbos_client, principal, {"id": {"_eq": validated.{{field.name}}_id } }, [], CerbosAction.VIEW)
         if not {{field.name}}:
             raise PlatformicsException("Unauthorized: {{field.name}} does not exist")
+            {%- if field.type != cls.name %}
         params["{{field.name}}"] = {{field.name}}[0]
         del params["{{field.name}}_id"]
+            {%- endif %}
         {%- endif %}
     {%- endfor %}
 

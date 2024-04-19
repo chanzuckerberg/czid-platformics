@@ -278,6 +278,7 @@ class WorkflowRun(EntityInterface):
         Annotated["WorkflowRunEntityInputAggregate", strawberry.lazy("api.types.workflow_run_entity_input")]
     ] = load_workflow_run_entity_input_aggregate_rows  # type:ignore
     raw_inputs_json: Optional[str] = None
+    deprecated_by_id: Optional[strawberry.ID]
     id: strawberry.ID
     owner_user_id: int
     collection_id: Optional[int] = None
@@ -633,8 +634,6 @@ async def update_workflow_run(
         )
         if not deprecated_by:
             raise PlatformicsException("Unauthorized: deprecated_by does not exist")
-        params["deprecated_by"] = deprecated_by[0]
-        del params["deprecated_by_id"]
     # If we have any system_writable fields present, make sure that our auth'd user *is* a system user
     if not is_system_user:
         del params["ended_at"]

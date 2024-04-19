@@ -983,6 +983,15 @@
             },
             {
               "args": [],
+              "name": "deprecatedById",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
               "name": "ownerUserId",
               "type": {
                 "kind": "NON_NULL",
