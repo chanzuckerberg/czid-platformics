@@ -1,4 +1,4 @@
-name: Deploy to Staging
+name: Deploy to Prod
 on:
   workflow_dispatch:
   workflow_call:
@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
       # TODO make a release script
 
-  run-deploy-entities-to-staging:
+  run-deploy-entities-to-prod:
     uses: ./.github/workflows/reusable-deploy.yml
     with:
       environment: prod
@@ -19,7 +19,7 @@ jobs:
       developer_name: ${{ github.actor }}
     secrets: inherit
 
-  run-deploy-workflows-to-staging:
+  run-deploy-workflows-to-prod:
     uses: ./.github/workflows/reusable-deploy.yml
     with:
       environment: prod
