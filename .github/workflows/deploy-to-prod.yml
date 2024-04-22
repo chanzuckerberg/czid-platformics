@@ -1,0 +1,28 @@
+name: Deploy to Staging
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  run-release:
+    runs-on: [ARM64, self-hosted, Linux]
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+      # TODO make a release script
+
+  run-deploy-entities-to-staging:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: prod
+      service: entities
+      developer_name: ${{ github.actor }}
+    secrets: inherit
+
+  run-deploy-workflows-to-staging:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: prod
+      service: workflows
+      developer_name: ${{ github.actor }}
+    secrets: inherit

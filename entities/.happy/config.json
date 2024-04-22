@@ -190,7 +190,8 @@
                 "auth_method": "eks"
             },
             "terraform_directory": ".happy/terraform/envs/prod",
-            "task_launch_type": "k8s"
+            "task_launch_type": "k8s",
+            "auto_run_migrations": true
         }
     },
     "tasks": {
