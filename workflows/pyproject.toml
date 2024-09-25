@@ -42,7 +42,7 @@ linkml = "^1.5.7"
 strcase = "^1.0.0"
 linkml-runtime = "^1.6.0"
 faker-enum = "^0.0.2"
-strawberry-graphql = "0.209.8"
+strawberry-graphql = "0.243.0"
 pytest-asyncio = "^0.23.5"
 
 
