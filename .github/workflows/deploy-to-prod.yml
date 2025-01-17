@@ -5,7 +5,7 @@ on:
 
 jobs:
   run-release:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: [ARM64]
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
