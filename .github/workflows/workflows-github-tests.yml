@@ -13,7 +13,7 @@ on:
 
 jobs:
   py-lint:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       # Build images and run linters
@@ -26,7 +26,7 @@ jobs:
           make local-build
           make check-lint
   py-test:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v3
       # Set up a local dev env and run tests
